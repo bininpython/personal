@@ -58,6 +58,23 @@ export default function StudentsPage() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [students, setStudents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const res = await fetch('/api/students');
+        const data = await res.json();
+        if (data.students) setStudents(data.students);
+      } catch (err) {
+        console.error('Error fetching students:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudents();
+  }, []);
 
   const filteredStudents = students.filter(s => {
     const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase());
@@ -146,72 +163,82 @@ export default function StudentsPage() {
       {/* Grid View */}
       {view === 'grid' && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStudents.map((student, i) => (
-            <Card
-              key={student.id}
-              className="group border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer animate-slide-up"
-              style={{ animationDelay: `${0.05 * i}s` }}
-              onClick={() => router.push(`/students/${student.id}`)}
-            >
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="w-12 h-12">
-                      <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                        {student.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <h3 className="font-semibold text-sm">{student.name}</h3>
-                      <p className="text-xs text-muted-foreground">{student.goal}</p>
+          {loading ? (
+            <div className="col-span-full py-12 text-center text-muted-foreground">
+              Carregando alunos...
+            </div>
+          ) : filteredStudents.length === 0 ? (
+            <div className="col-span-full py-12 text-center text-muted-foreground">
+              Nenhum aluno encontrado.
+            </div>
+          ) : (
+            filteredStudents.map((student, i) => (
+              <Card
+                key={student.id}
+                className="group border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer animate-slide-up"
+                style={{ animationDelay: `${0.05 * i}s` }}
+                onClick={() => router.push(`/students/${student.id}`)}
+              >
+                <CardContent className="p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-12 h-12">
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                          {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-semibold text-sm">{student.name}</h3>
+                        <p className="text-xs text-muted-foreground">{student.goal}</p>
+                      </div>
                     </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
+                        <DropdownMenuItem><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive"><Archive className="w-4 h-4 mr-2" /> Arquivar</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
-                      <DropdownMenuItem><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive"><Archive className="w-4 h-4 mr-2" /> Arquivar</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Conclusão</span>
-                    <div className="flex items-center gap-1">
-                      <span className="font-semibold">{student.completion}%</span>
-                      {getTrendIcon(student.trend)}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground">Conclusão</span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">{student.completion}%</span>
+                        {getTrendIcon(student.trend)}
+                      </div>
                     </div>
-                  </div>
-                  <Progress value={student.completion} className="h-1.5" />
+                    <Progress value={student.completion} className="h-1.5" />
 
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Último treino</span>
-                      <p className="font-medium">{student.lastWorkout}</p>
-                    </div>
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Frequência</span>
-                      <p className="font-medium">{student.frequency}</p>
-                    </div>
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Nível</span>
-                      <p className="font-medium">{student.level}</p>
-                    </div>
-                    <div className="text-xs">
-                      {getStatusBadge(student.status)}
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Último treino</span>
+                        <p className="font-medium">{student.lastWorkout}</p>
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Frequência</span>
+                        <p className="font-medium">{student.frequency}</p>
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-muted-foreground">Nível</span>
+                        <p className="font-medium">{student.level}</p>
+                      </div>
+                      <div className="text-xs">
+                        {getStatusBadge(student.status)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
       )}
 
@@ -231,7 +258,19 @@ export default function StudentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((student) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                      Carregando alunos...
+                    </td>
+                  </tr>
+                ) : filteredStudents.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                      Nenhum aluno encontrado.
+                    </td>
+                  </tr>
+                ) : filteredStudents.map((student) => (
                   <tr
                     key={student.id}
                     className="border-b last:border-0 hover:bg-accent/50 cursor-pointer transition-colors"

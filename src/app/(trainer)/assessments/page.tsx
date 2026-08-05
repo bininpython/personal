@@ -7,17 +7,30 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-const mockAssessments = [
-  { id: '1', student: 'João Pedro Silva', date: '15/07/2026', weight: 78.5, weightDiff: -1.2, bf: 18, bfDiff: -1.5, type: 'Reavaliação' },
-  { id: '2', student: 'Maria Oliveira', date: '10/07/2026', weight: 65, weightDiff: 0, bf: 24, bfDiff: 0, type: 'Inicial' },
-  { id: '3', student: 'Carlos Santos', date: '05/07/2026', weight: 92, weightDiff: +2.1, bf: 15, bfDiff: -0.5, type: 'Reavaliação' },
-];
+import { useEffect } from 'react';
 
 export default function AssessmentsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const [assessments, setAssessments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = mockAssessments.filter(a => a.student.toLowerCase().includes(search.toLowerCase()));
+  useEffect(() => {
+    const fetchAssessments = async () => {
+      try {
+        const res = await fetch('/api/assessments');
+        const data = await res.json();
+        if (data.assessments) setAssessments(data.assessments);
+      } catch (err) {
+        console.error('Error fetching assessments:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAssessments();
+  }, []);
+
+  const filtered = assessments.filter(a => a.student.toLowerCase().includes(search.toLowerCase()));
 
   const getDiffIcon = (diff: number) => {
     if (diff > 0) return <TrendingUp className="w-4 h-4 text-amber-500" />;
@@ -54,46 +67,56 @@ export default function AssessmentsPage() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((assessment, i) => (
-          <Card key={assessment.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
-            <CardHeader className="pb-3 border-b border-border/30">
-              <div className="flex justify-between items-start">
-                <div>
-                  <CardTitle className="text-lg">{assessment.student}</CardTitle>
-                  <CardDescription className="flex items-center gap-1.5 mt-1 text-xs">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {assessment.date} • {assessment.type}
-                  </CardDescription>
+        {loading ? (
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            Carregando avaliações...
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            Nenhuma avaliação encontrada.
+          </div>
+        ) : (
+          filtered.map((assessment, i) => (
+            <Card key={assessment.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+              <CardHeader className="pb-3 border-b border-border/30">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg">{assessment.student}</CardTitle>
+                    <CardDescription className="flex items-center gap-1.5 mt-1 text-xs">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {assessment.date} • {assessment.type}
+                    </CardDescription>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <ClipboardList className="w-5 h-5 text-primary" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <ClipboardList className="w-5 h-5 text-primary" />
+              </CardHeader>
+              <CardContent className="pt-4 grid grid-cols-2 gap-4">
+                <div className="bg-muted/30 p-3 rounded-lg text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Peso Corporal</p>
+                  <p className="text-xl font-bold">{assessment.weight} <span className="text-sm font-normal text-muted-foreground">kg</span></p>
+                  <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
+                    {getDiffIcon(assessment.weightDiff)}
+                    <span className={assessment.weightDiff < 0 ? 'text-emerald-500' : assessment.weightDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
+                      {formatDiff(assessment.weightDiff)} kg
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 grid grid-cols-2 gap-4">
-              <div className="bg-muted/30 p-3 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Peso Corporal</p>
-                <p className="text-xl font-bold">{assessment.weight} <span className="text-sm font-normal text-muted-foreground">kg</span></p>
-                <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
-                  {getDiffIcon(assessment.weightDiff)}
-                  <span className={assessment.weightDiff < 0 ? 'text-emerald-500' : assessment.weightDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
-                    {formatDiff(assessment.weightDiff)} kg
-                  </span>
+                <div className="bg-muted/30 p-3 rounded-lg text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Percentual Gordura</p>
+                  <p className="text-xl font-bold">{assessment.bf} <span className="text-sm font-normal text-muted-foreground">%</span></p>
+                  <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
+                    {getDiffIcon(assessment.bfDiff)}
+                    <span className={assessment.bfDiff < 0 ? 'text-emerald-500' : assessment.bfDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
+                      {formatDiff(assessment.bfDiff)}%
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-muted/30 p-3 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground mb-1">Percentual Gordura</p>
-                <p className="text-xl font-bold">{assessment.bf} <span className="text-sm font-normal text-muted-foreground">%</span></p>
-                <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
-                  {getDiffIcon(assessment.bfDiff)}
-                  <span className={assessment.bfDiff < 0 ? 'text-emerald-500' : assessment.bfDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
-                    {formatDiff(assessment.bfDiff)}%
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );

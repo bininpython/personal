@@ -109,3 +109,69 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET(request: Request) {
+  try {
+    await initDemoData();
+
+    const session = await getSession();
+    if (!session || session.role !== 'trainer') {
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    }
+
+    const trainerId = session.trainer_id;
+
+    // --- Supabase Path ---
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .eq('trainer_id', trainerId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      // Transform to match the expected format
+      const formattedStudents = data.map(s => ({
+        id: s.id,
+        name: s.name,
+        goal: s.goal || 'Não definido',
+        level: s.level === 'beginner' ? 'Iniciante' : s.level === 'intermediate' ? 'Intermediário' : 'Avançado',
+        lastWorkout: 'Sem dados',
+        frequency: '0x/sem',
+        completion: 0,
+        status: s.status,
+        trend: 'stable'
+      }));
+
+      return NextResponse.json({ students: formattedStudents });
+    }
+    // -----------------------
+
+    const { getStudentsByTrainerId } = await import('@/lib/demo-data');
+    const demoStudents = getStudentsByTrainerId(trainerId);
+
+    const formattedStudents = demoStudents.map(s => ({
+      id: s.id,
+      name: s.full_name,
+      goal: s.goal || 'Não definido',
+      level: s.experience_level === 'beginner' ? 'Iniciante' : s.experience_level === 'intermediate' ? 'Intermediário' : 'Avançado',
+      lastWorkout: 'Sem dados',
+      frequency: '0x/sem',
+      completion: 0,
+      status: s.status,
+      trend: 'stable'
+    }));
+
+    return NextResponse.json({ students: formattedStudents });
+  } catch (error) {
+    console.error('[Get Students] Error:', error);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    );
+  }
+}

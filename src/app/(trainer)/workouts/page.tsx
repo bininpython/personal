@@ -11,19 +11,30 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 
-// Mock data
-const mockPlans = [
-  { id: '1', name: 'Ficha Hipertrofia', student: 'João Silva', goal: 'Hipertrofia', days: 4, duration: '60 min', status: 'active', startDate: '01/08/2026', endDate: '01/10/2026' },
-  { id: '2', name: 'Adaptação', student: 'Maria Oliveira', goal: 'Emagrecimento', days: 3, duration: '45 min', status: 'active', startDate: '15/07/2026', endDate: '15/08/2026' },
-  { id: '3', name: 'Foco Glúteos', student: 'Ana Beatriz Costa', goal: 'Hipertrofia', days: 5, duration: '50 min', status: 'draft', startDate: '-', endDate: '-' },
-  { id: '4', name: 'Força Máxima', student: 'Carlos Santos', goal: 'Força', days: 4, duration: '75 min', status: 'active', startDate: '10/06/2026', endDate: '10/08/2026' },
-];
+import { useEffect } from 'react';
 
 export default function WorkoutsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const [plans, setPlans] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPlans = mockPlans.filter(p => 
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const res = await fetch('/api/workout-plans');
+        const data = await res.json();
+        if (data.plans) setPlans(data.plans);
+      } catch (err) {
+        console.error('Error fetching plans:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlans();
+  }, []);
+
+  const filteredPlans = plans.filter(p => 
     p.name.toLowerCase().includes(search.toLowerCase()) || 
     p.student.toLowerCase().includes(search.toLowerCase())
   );
@@ -58,64 +69,74 @@ export default function WorkoutsPage() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredPlans.map((plan, i) => (
-          <Card key={plan.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
-            <CardHeader className="pb-3 border-b border-border/30">
-              <div className="flex items-start justify-between">
-                <div>
-                  <Badge variant="outline" className={plan.status === 'active' ? 'text-emerald-500 border-emerald-500/30' : 'text-amber-500 border-amber-500/30'}>
-                    {plan.status === 'active' ? 'Ativo' : 'Rascunho'}
-                  </Badge>
-                  <CardTitle className="text-lg mt-2">{plan.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-1.5 mt-1">
-                    <User className="w-3.5 h-3.5" />
-                    {plan.student}
-                  </CardDescription>
+        {loading ? (
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            Carregando fichas...
+          </div>
+        ) : filteredPlans.length === 0 ? (
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            Nenhuma ficha encontrada.
+          </div>
+        ) : (
+          filteredPlans.map((plan, i) => (
+            <Card key={plan.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
+              <CardHeader className="pb-3 border-b border-border/30">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <Badge variant="outline" className={plan.status === 'active' ? 'text-emerald-500 border-emerald-500/30' : 'text-amber-500 border-amber-500/30'}>
+                      {plan.status === 'active' ? 'Ativo' : 'Rascunho'}
+                    </Badge>
+                    <CardTitle className="text-lg mt-2">{plan.name}</CardTitle>
+                    <CardDescription className="flex items-center gap-1.5 mt-1">
+                      <User className="w-3.5 h-3.5" />
+                      {plan.student}
+                    </CardDescription>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Edit3 className="w-4 h-4 mr-2 text-muted-foreground" /> Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Copy className="w-4 h-4 mr-2 text-muted-foreground" /> Duplicar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash2 className="w-4 h-4 mr-2" /> Excluir
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Edit3 className="w-4 h-4 mr-2 text-muted-foreground" /> Editar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Copy className="w-4 h-4 mr-2 text-muted-foreground" /> Duplicar
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-destructive">
-                      <Trash2 className="w-4 h-4 mr-2" /> Excluir
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Objetivo</span>
-                <span className="font-medium">{plan.goal}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Frequência</span>
-                <span className="font-medium">{plan.days}x na semana</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Duração média</span>
-                <span className="font-medium">{plan.duration}</span>
-              </div>
-              <div className="bg-muted/50 rounded-md p-2 mt-4 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>Início:</span>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Objetivo</span>
+                  <span className="font-medium">{plan.goal}</span>
                 </div>
-                <span className="font-medium">{plan.startDate}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Frequência</span>
+                  <span className="font-medium">{plan.days}x na semana</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Duração média</span>
+                  <span className="font-medium">{plan.duration}</span>
+                </div>
+                <div className="bg-muted/50 rounded-md p-2 mt-4 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>Início:</span>
+                  </div>
+                  <span className="font-medium">{plan.startDate}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );

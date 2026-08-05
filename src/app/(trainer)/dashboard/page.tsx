@@ -55,13 +55,34 @@ const alerts = [
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [greeting, setGreeting] = useState('');
+  const [stats, setStats] = useState({
+    activeStudents: 0,
+    trainedToday: 0,
+    completionRate: 0,
+    alerts: 0,
+  });
+  const [recent, setRecent] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Bom dia');
     else if (hour < 18) setGreeting('Boa tarde');
     else setGreeting('Boa noite');
+
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/dashboard');
+        const data = await res.json();
+        if (data.stats) setStats(data.stats);
+        if (data.recentStudents) setRecent(data.recentStudents);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
@@ -85,10 +106,10 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Alunos Ativos', value: '5', icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10', change: '+2 este mês' },
-          { label: 'Treinaram Hoje', value: '3', icon: Activity, color: 'text-blue-500', bg: 'bg-blue-500/10', change: '60% do total' },
-          { label: 'Taxa de Conclusão', value: '83%', icon: Target, color: 'text-amber-500', bg: 'bg-amber-500/10', change: '+5% vs semana anterior' },
-          { label: 'Alertas', value: '3', icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '1 prioritário' },
+          { label: 'Alunos Ativos', value: stats.activeStudents.toString(), icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10', change: '' },
+          { label: 'Treinaram Hoje', value: stats.trainedToday.toString(), icon: Activity, color: 'text-blue-500', bg: 'bg-blue-500/10', change: '' },
+          { label: 'Taxa de Conclusão', value: `${stats.completionRate}%`, icon: Target, color: 'text-amber-500', bg: 'bg-amber-500/10', change: '' },
+          { label: 'Alertas', value: stats.alerts.toString(), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '' },
         ].map((stat, i) => (
           <Card key={i} className="border-border/50 hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: `${0.05 * i}s` }}>
             <CardContent className="p-4 sm:p-5">
@@ -198,33 +219,39 @@ export default function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            {recentStudents.map((student, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                onClick={() => router.push('/students')}
-              >
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
-                    {student.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{student.name}</p>
-                  <p className="text-xs text-muted-foreground">{student.goal} · {student.lastWorkout}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="text-right">
-                    <div className="flex items-center gap-1">
-                      <span className="text-sm font-semibold">{student.completion}%</span>
-                      {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
-                      {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />}
+            {recent.length === 0 ? (
+              <div className="py-8 text-center text-muted-foreground text-sm">
+                Nenhum aluno recente encontrado.
+              </div>
+            ) : (
+              recent.map((student, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                  onClick={() => router.push('/students')}
+                >
+                  <Avatar className="w-10 h-10">
+                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                      {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{student.name}</p>
+                    <p className="text-xs text-muted-foreground">{student.goal} · {student.lastWorkout}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <div className="flex items-center gap-1 justify-end">
+                        <span className="text-sm font-semibold">{student.completion}%</span>
+                        {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
+                        {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />}
+                      </div>
+                      <Progress value={student.completion} className="w-16 h-1.5 mt-1" />
                     </div>
-                    <Progress value={student.completion} className="w-16 h-1.5 mt-1" />
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
 
@@ -239,18 +266,24 @@ export default function DashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {alerts.map((alert, i) => (
-                <div
-                  key={i}
-                  className={`p-3 rounded-lg border text-sm
-                    ${alert.severity === 'high' ? 'border-red-500/20 bg-red-500/5' :
-                      alert.severity === 'medium' ? 'border-amber-500/20 bg-amber-500/5' :
-                      'border-emerald-500/20 bg-emerald-500/5'}`}
-                >
-                  <p className="text-xs font-medium">{alert.message}</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{alert.time}</p>
+              {stats.alerts === 0 ? (
+                <div className="py-4 text-center text-muted-foreground text-sm">
+                  Nenhum alerta recente.
                 </div>
-              ))}
+              ) : (
+                alerts.map((alert, i) => (
+                  <div
+                    key={i}
+                    className={`p-3 rounded-lg border text-sm
+                      ${alert.severity === 'high' ? 'border-red-500/20 bg-red-500/5' :
+                        alert.severity === 'medium' ? 'border-amber-500/20 bg-amber-500/5' :
+                        'border-emerald-500/20 bg-emerald-500/5'}`}
+                  >
+                    <p className="text-xs font-medium">{alert.message}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{alert.time}</p>
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
 
