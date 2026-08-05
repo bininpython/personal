@@ -1,143 +1,135 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Plus, Search, Filter, MoreHorizontal, Calendar, User, Copy, Trash2, Edit3 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Calendar, Dumbbell, Loader2, Plus, Search, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
-import { useEffect } from 'react';
+interface WorkoutPlanSummary {
+  id: string;
+  name: string;
+  student: string;
+  goal: string;
+  days: number;
+  workoutDayCount: number;
+  exerciseCount: number;
+  status: 'active' | 'draft' | 'archived';
+  startDate: string | null;
+}
 
 export default function WorkoutsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
-  const [plans, setPlans] = useState<any[]>([]);
+  const [plans, setPlans] = useState<WorkoutPlanSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const loadPlans = async () => {
       try {
-        const res = await fetch('/api/workout-plans');
-        const data = await res.json();
-        if (data.plans) setPlans(data.plans);
-      } catch (err) {
-        console.error('Error fetching plans:', err);
+        const response = await fetch('/api/workout-plans', { cache: 'no-store' });
+        const data = await response.json() as { plans?: WorkoutPlanSummary[]; error?: string };
+        if (!response.ok) throw new Error(data.error || 'Não foi possível carregar as fichas.');
+        setPlans(data.plans ?? []);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'Não foi possível carregar as fichas.');
       } finally {
         setLoading(false);
       }
     };
-    fetchPlans();
+
+    void loadPlans();
   }, []);
 
-  const filteredPlans = plans.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) || 
-    p.student.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredPlans = useMemo(() => {
+    const term = search.trim().toLocaleLowerCase('pt-BR');
+    if (!term) return plans;
+    return plans.filter((plan) => (
+      plan.name.toLocaleLowerCase('pt-BR').includes(term)
+      || plan.student.toLocaleLowerCase('pt-BR').includes(term)
+    ));
+  }, [plans, search]);
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 pb-10 animate-fade-in">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Fichas de Treino</h1>
-          <p className="text-muted-foreground mt-1">Gerencie os treinos dos seus alunos</p>
+          <p className="mt-1 text-muted-foreground">Acompanhe as fichas publicadas para seus alunos.</p>
         </div>
-        <Button onClick={() => router.push('/workouts/new')} className="h-10">
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Ficha
+        <Button onClick={() => router.push('/exercises')} className="h-10">
+          <Plus className="mr-2 size-4" /> Nova ficha
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar por ficha ou aluno..." 
-            className="pl-9 h-10"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <Button variant="outline" className="h-10 w-full sm:w-auto">
-          <Filter className="w-4 h-4 mr-2" />
-          Filtros
-        </Button>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Buscar por ficha ou aluno..."
+          className="h-10 pl-9"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {loading ? (
-          <div className="col-span-full py-12 text-center text-muted-foreground">
-            Carregando fichas...
-          </div>
-        ) : filteredPlans.length === 0 ? (
-          <div className="col-span-full py-12 text-center text-muted-foreground">
-            Nenhuma ficha encontrada.
-          </div>
-        ) : (
-          filteredPlans.map((plan, i) => (
-            <Card key={plan.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
-              <CardHeader className="pb-3 border-b border-border/30">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <Badge variant="outline" className={plan.status === 'active' ? 'text-emerald-500 border-emerald-500/30' : 'text-amber-500 border-amber-500/30'}>
-                      {plan.status === 'active' ? 'Ativo' : 'Rascunho'}
-                    </Badge>
-                    <CardTitle className="text-lg mt-2">{plan.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-1.5 mt-1">
-                      <User className="w-3.5 h-3.5" />
-                      {plan.student}
-                    </CardDescription>
-                  </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Edit3 className="w-4 h-4 mr-2 text-muted-foreground" /> Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Copy className="w-4 h-4 mr-2 text-muted-foreground" /> Duplicar
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash2 className="w-4 h-4 mr-2" /> Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+      {loading ? (
+        <div className="flex justify-center py-16 text-muted-foreground">
+          <Loader2 className="mr-2 size-5 animate-spin" /> Carregando fichas...
+        </div>
+      ) : error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
+      ) : filteredPlans.length === 0 ? (
+        <div className="rounded-xl border border-dashed py-16 text-center">
+          <Dumbbell className="mx-auto mb-3 size-10 text-muted-foreground/30" />
+          <p className="font-medium">Nenhuma ficha encontrada</p>
+          <p className="mt-1 text-sm text-muted-foreground">Monte a primeira ficha no diagrama de exercícios.</p>
+          <Button variant="outline" className="mt-4" onClick={() => router.push('/exercises')}>Abrir montador</Button>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredPlans.map((plan) => (
+            <Card key={plan.id} className="border-border/60">
+              <CardHeader className="border-b border-border/40 pb-4">
+                <Badge
+                  variant="outline"
+                  className={plan.status === 'active'
+                    ? 'border-emerald-500/30 text-emerald-600'
+                    : 'border-muted-foreground/30 text-muted-foreground'}
+                >
+                  {plan.status === 'active' ? 'Ativa' : plan.status === 'archived' ? 'Arquivada' : 'Rascunho'}
+                </Badge>
+                <CardTitle className="mt-2 text-lg">{plan.name}</CardTitle>
+                <CardDescription className="flex items-center gap-1.5">
+                  <User className="size-3.5" /> {plan.student}
+                </CardDescription>
               </CardHeader>
-              <CardContent className="pt-4 space-y-3">
-                <div className="flex items-center justify-between text-sm">
+              <CardContent className="space-y-3 pt-4 text-sm">
+                <div className="flex items-center justify-between gap-3">
                   <span className="text-muted-foreground">Objetivo</span>
-                  <span className="font-medium">{plan.goal}</span>
+                  <span className="truncate font-medium">{plan.goal}</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Estrutura</span>
+                  <span className="font-medium">{plan.workoutDayCount} treino(s) · {plan.exerciseCount} exercícios</span>
+                </div>
+                <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Frequência</span>
-                  <span className="font-medium">{plan.days}x na semana</span>
+                  <span className="font-medium">{plan.days}x por semana</span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Duração média</span>
-                  <span className="font-medium">{plan.duration}</span>
-                </div>
-                <div className="bg-muted/50 rounded-md p-2 mt-4 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>Início:</span>
-                  </div>
-                  <span className="font-medium">{plan.startDate}</span>
+                <div className="flex items-center justify-between rounded-lg bg-muted/50 p-2 text-xs">
+                  <span className="flex items-center gap-1.5 text-muted-foreground"><Calendar className="size-3.5" /> Início</span>
+                  <span className="font-medium">
+                    {plan.startDate ? new Date(`${plan.startDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Não informado'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

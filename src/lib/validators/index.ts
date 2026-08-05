@@ -106,6 +106,32 @@ export const workoutPlanSchema = z.object({
 
 export type WorkoutPlanInput = z.infer<typeof workoutPlanSchema>;
 
+// ---- Workout Builder (trainer anatomy screen) ----
+
+export const workoutBuilderExerciseSchema = z.object({
+  exerciseKey: z.string().trim().min(3).max(180),
+  sets: z.number().int().min(1, 'Mínimo de 1 série').max(20, 'Máximo de 20 séries'),
+  reps: z.string().trim().min(1, 'Informe as repetições').max(50),
+  restTime: z.number().int().min(0).max(900),
+  method: z.string().trim().max(100).optional(),
+}).strict();
+
+export const workoutBuilderDaySchema = z.object({
+  label: z.string().trim().min(1).max(4),
+  name: z.string().trim().min(2, 'Informe o nome do treino').max(100),
+  exercises: z.array(workoutBuilderExerciseSchema).min(1, 'Adicione pelo menos um exercício').max(100),
+}).strict();
+
+export const workoutPlanCreateSchema = z.object({
+  studentId: z.string().uuid('Aluno inválido'),
+  name: z.string().trim().min(2, 'Informe o nome da ficha').max(120),
+  goal: z.string().trim().max(200).optional(),
+  daysPerWeek: z.number().int().min(1).max(7),
+  days: z.array(workoutBuilderDaySchema).min(1, 'Adicione pelo menos um treino').max(7),
+}).strict();
+
+export type WorkoutPlanCreateInput = z.infer<typeof workoutPlanCreateSchema>;
+
 // ---- Workout Exercise ----
 
 export const workoutExerciseSchema = z.object({

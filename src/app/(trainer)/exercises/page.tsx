@@ -1,426 +1,661 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import Model, { IMuscleStats } from '@phelian/react-body-highlighter';
-import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User, RotateCcw, PlayCircle } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Model, {
+  type IExerciseData,
+  type IMuscleStats,
+} from '@phelian/react-body-highlighter';
+import {
+  Check,
+  Dumbbell,
+  Info,
+  Loader2,
+  PlayCircle,
+  Plus,
+  RotateCcw,
+  Save,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogDescription,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  EXERCISE_CATALOG,
+  MUSCLE_REGIONS,
+  isMuscleRegion,
+  type ExerciseCatalogItem,
+  type MuscleRegion,
+} from '@/lib/exercises/catalog';
 
-// Map of categories from the demo data to the muscles in react-body-highlighter
-const MUSCLE_MAP: Record<string, string> = {
-  chest: 'chest',
-  back: 'upper-back',
-  'lower-back': 'lower-back',
-  shoulders: 'front-deltoids',
-  'back-deltoids': 'back-deltoids',
-  biceps: 'biceps',
-  triceps: 'triceps',
-  abs: 'abs',
-  quadriceps: 'quadriceps',
-  hamstrings: 'hamstring',
-  calves: 'calves',
-  glutes: 'gluteal'
-};
+interface StudentOption {
+  id: string;
+  name: string;
+  status: string;
+}
 
-// Reverse map for translations
-const MUSCLE_NAMES: Record<string, string> = {
-  chest: 'Peito',
-  'upper-back': 'Costas Superior',
-  'lower-back': 'Lombar',
-  'front-deltoids': 'Ombros (Frente)',
-  'back-deltoids': 'Ombros (Trás)',
-  biceps: 'Bíceps',
-  triceps: 'Tríceps',
-  abs: 'Abdômen',
-  obliques: 'Oblíquos',
-  quadriceps: 'Quadríceps',
-  hamstring: 'Posterior de Coxa',
-  calves: 'Panturrilha',
-  gluteal: 'Glúteos',
-  trapezius: 'Trapézio',
-  forearm: 'Antebraço',
-  adductor: 'Adutores',
-  abductors: 'Abdutores',
-  neck: 'Pescoço'
-};
+interface BuilderExercise extends ExerciseCatalogItem {
+  sets: number;
+  reps: string;
+  restTime: number;
+  method: string;
+}
+
+interface BuilderDay {
+  id: string;
+  label: string;
+  name: string;
+  exercises: BuilderExercise[];
+}
+
+interface ExerciseResponse {
+  exercises?: ExerciseCatalogItem[];
+  error?: string;
+}
+
+const DAY_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+const DIFFICULTY_LABELS = {
+  beginner: 'Iniciante',
+  intermediate: 'Intermediário',
+  advanced: 'Avançado',
+} as const;
+
+function createDay(index: number): BuilderDay {
+  const label = DAY_LABELS[index];
+  return {
+    id: `${label}-${Date.now()}-${index}`,
+    label,
+    name: `Treino ${label}`,
+    exercises: [],
+  };
+}
 
 export default function ExercisesPage() {
-  const [activeMuscle, setActiveMuscle] = useState<string | null>(null);
-  const [exercises, setExercises] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [cart, setCart] = useState<any[]>([]);
-  const [students, setStudents] = useState<any[]>([]);
+  const [activeMuscle, setActiveMuscle] = useState<MuscleRegion>('chest');
+  const [exercises, setExercises] = useState<ExerciseCatalogItem[]>([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [students, setStudents] = useState<StudentOption[]>([]);
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [viewType, setViewType] = useState<'anterior' | 'posterior'>('anterior');
-  
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [days, setDays] = useState<BuilderDay[]>([createDay(0)]);
+  const [activeDayId, setActiveDayId] = useState(() => days[0].id);
+  const [isSaveOpen, setIsSaveOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [planName, setPlanName] = useState('');
-  const [dayLabel, setDayLabel] = useState('A');
+  const [goal, setGoal] = useState('');
+  const [daysPerWeek, setDaysPerWeek] = useState(1);
   const [submitting, setSubmitting] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
-  // When a muscle is clicked in the SVG Model
-  const handleMuscleClick = useCallback(async (stats: IMuscleStats) => {
-    const muscle = stats.muscle;
+  const activeDay = days.find((day) => day.id === activeDayId) ?? days[0];
+  const totalSelected = days.reduce((total, day) => total + day.exercises.length, 0);
+
+  const loadMuscle = useCallback(async (muscle: MuscleRegion) => {
     setActiveMuscle(muscle);
     setLoading(true);
-
-    // Mapear o nome do músculo SVG para a categoria de exercícios da nossa API
-    let category: string = muscle;
-    if (muscle === 'front-deltoids' || muscle === 'back-deltoids') category = 'shoulders';
-    if (muscle === 'upper-back' || muscle === 'lower-back' || muscle === 'trapezius') category = 'back';
-    if (muscle === 'gluteal') category = 'glutes';
-    if (muscle === 'hamstring') category = 'hamstrings';
+    setSearch('');
 
     try {
-      const res = await fetch(`/api/exercises?category=${category}`);
-      const data = await res.json();
-      if (data.exercises) setExercises(data.exercises);
-    } catch (err) {
-      console.error(err);
+      const response = await fetch(`/api/exercises?muscle=${encodeURIComponent(muscle)}`, {
+        cache: 'no-store',
+      });
+      const data = await response.json() as ExerciseResponse;
+      if (!response.ok) throw new Error(data.error || 'Não foi possível carregar os exercícios.');
+      setExercises(data.exercises ?? []);
+    } catch (error) {
+      console.error(error);
+      toast.error(error instanceof Error ? error.message : 'Não foi possível carregar os exercícios.');
+      setExercises([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Fetch students for the dropdown
   useEffect(() => {
-    const fetchStudents = async () => {
+    const initialLoad = window.setTimeout(() => void loadMuscle('chest'), 0);
+
+    const loadStudents = async () => {
       try {
-        const res = await fetch('/api/students');
-        const data = await res.json();
-        if (data.students) setStudents(data.students);
-      } catch (err) {
-        console.error(err);
+        const response = await fetch('/api/students', { cache: 'no-store' });
+        const data = await response.json() as { students?: StudentOption[] };
+        if (response.ok) setStudents((data.students ?? []).filter((student) => student.status === 'active'));
+      } catch (error) {
+        console.error('[Exercises] Student list error:', error);
       }
     };
-    fetchStudents();
-  }, []);
 
-  const addToCart = (exercise: any) => {
-    if (!cart.find((item) => item.id === exercise.id)) {
-      setCart([...cart, { ...exercise, sets: 3, reps: '10', restTime: 60 }]);
+    void loadStudents();
+    return () => window.clearTimeout(initialLoad);
+  }, [loadMuscle]);
+
+  const handleMuscleClick = useCallback((stats: IMuscleStats) => {
+    if (isMuscleRegion(stats.muscle)) {
+      void loadMuscle(stats.muscle);
     }
-  };
+  }, [loadMuscle]);
 
-  const removeFromCart = (id: string) => {
-    setCart(cart.filter((item) => item.id !== id));
-  };
+  const filteredExercises = useMemo(() => {
+    const term = search.trim().toLocaleLowerCase('pt-BR');
+    if (!term) return exercises;
+    return exercises.filter((exercise) => (
+      exercise.name.toLocaleLowerCase('pt-BR').includes(term)
+      || exercise.equipment.toLocaleLowerCase('pt-BR').includes(term)
+    ));
+  }, [exercises, search]);
 
-  const submitPlan = async () => {
-    if (!selectedStudentId || !planName || cart.length === 0) return;
+  const modelData: IExerciseData[] = [{
+    name: 'Músculo selecionado',
+    muscles: [activeMuscle],
+  }];
+
+  function addExercise(exercise: ExerciseCatalogItem) {
+    if (activeDay.exercises.some((item) => item.key === exercise.key)) {
+      toast.info('Este exercício já está no treino atual.');
+      return;
+    }
+
+    setDays((current) => current.map((day) => (
+      day.id === activeDay.id
+        ? {
+          ...day,
+          exercises: [...day.exercises, {
+            ...exercise,
+            sets: 3,
+            reps: '10–12',
+            restTime: 60,
+            method: '',
+          }],
+        }
+        : day
+    )));
+  }
+
+  function removeExercise(dayId: string, exerciseKey: string) {
+    setDays((current) => current.map((day) => (
+      day.id === dayId
+        ? { ...day, exercises: day.exercises.filter((exercise) => exercise.key !== exerciseKey) }
+        : day
+    )));
+  }
+
+  function updateExercise(
+    dayId: string,
+    exerciseKey: string,
+    field: 'sets' | 'reps' | 'restTime' | 'method',
+    value: string | number,
+  ) {
+    setDays((current) => current.map((day) => (
+      day.id === dayId
+        ? {
+          ...day,
+          exercises: day.exercises.map((exercise) => (
+            exercise.key === exerciseKey ? { ...exercise, [field]: value } : exercise
+          )),
+        }
+        : day
+    )));
+  }
+
+  function addDay() {
+    if (days.length >= 7) return;
+    const nextDay = createDay(days.length);
+    setDays((current) => [...current, nextDay]);
+    setActiveDayId(nextDay.id);
+    setDaysPerWeek((current) => Math.max(current, days.length + 1));
+  }
+
+  function removeDay(dayId: string) {
+    if (days.length === 1) return;
+    const remaining = days.filter((day) => day.id !== dayId).map((day, index) => ({
+      ...day,
+      label: DAY_LABELS[index],
+      name: day.name === `Treino ${day.label}` ? `Treino ${DAY_LABELS[index]}` : day.name,
+    }));
+    setDays(remaining);
+    setActiveDayId(remaining[0].id);
+    setDaysPerWeek((current) => Math.min(current, remaining.length));
+  }
+
+  function openSaveDialog() {
+    const emptyDay = days.find((day) => day.exercises.length === 0);
+    if (emptyDay) {
+      setActiveDayId(emptyDay.id);
+      toast.error(`Adicione pelo menos um exercício ao Treino ${emptyDay.label}.`);
+      return;
+    }
+    setDaysPerWeek((current) => Math.max(current, days.length));
+    setIsSaveOpen(true);
+  }
+
+  async function submitPlan() {
+    if (!selectedStudentId || !planName.trim()) {
+      toast.error('Selecione o aluno e informe o nome da ficha.');
+      return;
+    }
+
     setSubmitting(true);
-    setIsSaving(true);
     try {
-      const payload = {
-        studentId: selectedStudentId,
-        name: planName,
-        dayLabel: dayLabel,
-        exercises: cart.map(item => ({
-          exerciseId: item.id,
-          sets: item.sets,
-          reps: item.reps,
-          restTime: item.restTime
-        }))
-      };
-
-      const res = await fetch('/api/workout-plans', {
+      const response = await fetch('/api/workout-plans', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          studentId: selectedStudentId,
+          name: planName,
+          goal,
+          daysPerWeek,
+          days: days.map((day) => ({
+            label: day.label,
+            name: day.name,
+            exercises: day.exercises.map((exercise) => ({
+              exerciseKey: exercise.key,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              restTime: exercise.restTime,
+              method: exercise.method || undefined,
+            })),
+          })),
+        }),
       });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível salvar a ficha.');
 
-      if (res.ok) {
-        setCart([]);
-        setIsModalOpen(false);
-        setPlanName('');
-        setSelectedStudentId('');
-        alert('Ficha enviada para o aluno com sucesso!');
-      }
-    } catch (err) {
-      console.error(err);
+      toast.success('Ficha publicada para o aluno.');
+      const firstDay = createDay(0);
+      setDays([firstDay]);
+      setActiveDayId(firstDay.id);
+      setSelectedStudentId('');
+      setPlanName('');
+      setGoal('');
+      setDaysPerWeek(1);
+      setIsSaveOpen(false);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível salvar a ficha.');
     } finally {
       setSubmitting(false);
-      setIsSaving(false);
     }
-  };
-
-  // Build data prop to highlight the active muscle
-  const modelData = activeMuscle ? [{ name: 'Selected', muscles: [activeMuscle as any] }] : [];
+  }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 pb-10 animate-fade-in">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Montador de Fichas</h1>
-          <p className="text-muted-foreground mt-1">Selecione o músculo no diagrama para adicionar exercícios</p>
+          <p className="mt-1 text-muted-foreground">
+            Clique em um músculo, escolha os exercícios e publique para o aluno.
+          </p>
         </div>
-        {cart.length > 0 && (
-          <Button onClick={() => setIsModalOpen(true)} className="h-10 bg-primary hover:bg-primary/90 shadow-md">
-            <Save className="w-4 h-4 mr-2" />
-            Finalizar Ficha ({cart.length})
-          </Button>
-        )}
+        <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-10">
+          <Save className="mr-2 size-4" />
+          Publicar ficha ({totalSelected})
+        </Button>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-6">
-        
-        {/* DIAGRAMA DO CORPO HUMANO SVG (Left Column) */}
-        <Card className="lg:col-span-4 border-border/50 bg-card/50 overflow-hidden">
-          <CardHeader className="pb-3 text-center border-b border-border/30">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Anatomia 3D</CardTitle>
-              <div className="flex bg-muted rounded-md p-0.5">
-                <button 
+      <div className="flex items-start gap-2 rounded-xl border border-blue-500/20 bg-blue-500/5 p-3 text-sm text-muted-foreground">
+        <Info className="mt-0.5 size-4 shrink-0 text-blue-500" />
+        <span>
+          Biblioteca com {EXERCISE_CATALOG.length} exercícios. Movimentos compostos aparecem em todos os músculos que ajudam a trabalhar.
+          A prescrição deve respeitar a avaliação, as limitações e o nível do aluno.
+        </span>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[330px_minmax(360px,1fr)_minmax(390px,1fr)]">
+        <Card className="overflow-hidden border-border/60">
+          <CardHeader className="border-b border-border/40 pb-3">
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="text-base">Anatomia interativa</CardTitle>
+              <div className="flex rounded-lg bg-muted p-0.5 text-xs">
+                <button
+                  type="button"
                   onClick={() => setGender('male')}
-                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-colors ${gender === 'male' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
+                  className={`rounded-md px-2.5 py-1 ${gender === 'male' ? 'bg-background font-medium shadow-sm' : 'text-muted-foreground'}`}
                 >
                   Masc
                 </button>
-                <button 
+                <button
+                  type="button"
                   onClick={() => setGender('female')}
-                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-colors ${gender === 'female' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
+                  className={`rounded-md px-2.5 py-1 ${gender === 'female' ? 'bg-background font-medium shadow-sm' : 'text-muted-foreground'}`}
                 >
                   Fem
                 </button>
               </div>
             </div>
-            <div className="flex justify-center mt-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => setViewType(viewType === 'anterior' ? 'posterior' : 'anterior')}
-                className="text-xs h-7"
-              >
-                <RotateCcw className="w-3 h-3 mr-2" />
-                Girar ({viewType === 'anterior' ? 'Frente' : 'Costas'})
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setViewType((current) => current === 'anterior' ? 'posterior' : 'anterior')}
+              className="mt-3 w-full"
+            >
+              <RotateCcw className="mr-2 size-3.5" />
+              Girar para {viewType === 'anterior' ? 'costas' : 'frente'}
+            </Button>
           </CardHeader>
-          <CardContent className="p-4 flex flex-col items-center justify-center min-h-[400px]">
-            <div className="anatomy-wrapper relative drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
-              <Model
-                data={modelData}
-                type={viewType}
-                bodyType={gender}
-                style={{ width: '100%', maxWidth: '280px' }}
-                svgStyle={{ height: 'auto' }}
-                bodyColor="#cbd5e1" // Slate 300 to give more depth
-                highlightedColors={['#3b82f6']} // Blue 500
-                onClick={handleMuscleClick}
+          <CardContent className="flex flex-col items-center p-4">
+            <Model
+              data={modelData}
+              type={viewType}
+              bodyType={gender}
+              onClick={handleMuscleClick}
+              style={{ width: '100%', maxWidth: '250px', cursor: 'pointer' }}
+              svgStyle={{ height: 'auto' }}
+              bodyColor="#cbd5e1"
+              highlightedColors={["#2563eb"]}
+            />
+            <p className="mt-3 text-center text-sm font-semibold text-blue-600 dark:text-blue-400">
+              {MUSCLE_REGIONS[activeMuscle]}
+            </p>
+            <div className="mt-4 flex w-full flex-wrap justify-center gap-1.5">
+              {(Object.entries(MUSCLE_REGIONS) as Array<[MuscleRegion, string]>).map(([muscle, label]) => (
+                <button
+                  type="button"
+                  key={muscle}
+                  onClick={() => void loadMuscle(muscle)}
+                  className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
+                    activeMuscle === muscle
+                      ? 'border-blue-500 bg-blue-500 text-white'
+                      : 'border-border bg-background text-muted-foreground hover:border-blue-400 hover:text-foreground'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="min-w-0 border-border/60">
+          <CardHeader className="space-y-3 border-b border-border/40 pb-4">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Dumbbell className="size-4" />
+                Exercícios: {MUSCLE_REGIONS[activeMuscle]}
+              </CardTitle>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {exercises.length} opções trabalham este grupo muscular
+              </p>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Buscar exercício ou equipamento..."
+                className="pl-9"
               />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* LISTA DE EXERCICIOS (Middle Column) */}
-        <Card className="lg:col-span-4 border-border/50">
-          <CardHeader className="pb-3 border-b border-border/30">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Dumbbell className="w-4 h-4 text-primary" />
-              {activeMuscle ? `Exercícios: ${MUSCLE_NAMES[activeMuscle] || activeMuscle}` : 'Selecione um músculo'}
-            </CardTitle>
           </CardHeader>
-          <CardContent className="p-0 overflow-y-auto max-h-[580px] custom-scrollbar">
-            {!activeMuscle ? (
-              <div className="p-8 text-center text-muted-foreground text-sm flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-3">
-                  <User className="w-6 h-6 text-muted-foreground/50" />
+          <CardContent className="p-0">
+            <ScrollArea className="h-[690px]">
+              {loading ? (
+                <div className="flex h-52 items-center justify-center text-muted-foreground">
+                  <Loader2 className="mr-2 size-5 animate-spin" /> Carregando exercícios...
                 </div>
-                Clique em uma região do diagrama SVG ao lado para ver os exercícios correspondentes.
-              </div>
-            ) : loading ? (
-              <div className="p-8 text-center text-muted-foreground text-sm">Carregando...</div>
-            ) : exercises.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground text-sm">Nenhum exercício encontrado.</div>
-            ) : (
-              <div className="divide-y divide-border/30">
-                {exercises.map((ex) => (
-                  <div key={ex.id} className="p-4 hover:bg-accent/30 transition-colors flex items-center justify-between group">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-sm">{ex.name}</h4>
-                        {ex.video_url && (
-                          <button onClick={() => setPlayingVideo(ex.video_url)} title="Assistir Vídeo">
-                            <PlayCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors" />
-                          </button>
+              ) : filteredExercises.length === 0 ? (
+                <div className="flex h-52 items-center justify-center px-6 text-center text-sm text-muted-foreground">
+                  Nenhum exercício corresponde à busca.
+                </div>
+              ) : (
+                <div className="divide-y divide-border/40">
+                  {filteredExercises.map((exercise) => {
+                    const selected = activeDay.exercises.some((item) => item.key === exercise.key);
+                    return (
+                      <div key={exercise.key} className="p-4 transition-colors hover:bg-muted/30">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold leading-tight">{exercise.name}</h3>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              <Badge variant="outline">{exercise.equipment}</Badge>
+                              <Badge variant="secondary">{DIFFICULTY_LABELS[exercise.difficulty]}</Badge>
+                              {exercise.videoUrl && <Badge className="bg-red-500/10 text-red-600">Com vídeo</Badge>}
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant={selected ? 'secondary' : 'default'}
+                            disabled={selected}
+                            onClick={() => addExercise(exercise)}
+                            aria-label={`Adicionar ${exercise.name}`}
+                          >
+                            {selected ? <Check className="size-4" /> : <Plus className="size-4" />}
+                          </Button>
+                        </div>
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{exercise.instructions}</p>
+                        {exercise.videoUrl && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setPlayingVideo(exercise.videoUrl)}
+                            className="mt-2 h-7 px-2 text-xs text-blue-600"
+                          >
+                            <PlayCircle className="mr-1.5 size-3.5" /> Ver execução
+                          </Button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{ex.instructions || ex.description}</p>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={() => addToCart(ex)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2"
-                      disabled={cart.some(i => i.id === ex.id)}
-                    >
-                      {cart.some(i => i.id === ex.id) ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                      ) : (
-                        <Plus className="w-4 h-4 text-primary" />
-                      )}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* CARRINHO / FICHA ATUAL (Right Column) */}
-        <Card className="lg:col-span-4 border-border/50 bg-primary/5">
-          <CardHeader className="pb-3 border-b border-border/30">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Save className="w-4 h-4 text-primary" />
-              Ficha em Construção
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 overflow-y-auto max-h-[580px] custom-scrollbar">
-            {cart.length === 0 ? (
-              <div className="p-8 text-center text-muted-foreground text-sm flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-3">
-                  <CheckCircle2 className="w-6 h-6 text-muted-foreground/50" />
+                    );
+                  })}
                 </div>
-                Nenhum exercício selecionado ainda.
-              </div>
-            ) : (
-              <div className="p-4 space-y-4">
-                {cart.map((item) => (
-                  <div key={item.id} className="bg-card p-3 rounded-lg border border-border/50 shadow-sm relative">
-                    <button 
-                      onClick={() => removeFromCart(item.id)}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                    <h4 className="font-medium text-sm pr-4 mb-2 truncate">{item.name}</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1 block">Séries</label>
-                        <Input 
-                          type="number" 
-                          value={item.sets} 
-                          onChange={(e) => {
-                            const newCart = [...cart];
-                            const idx = newCart.findIndex(i => i.id === item.id);
-                            newCart[idx].sets = parseInt(e.target.value);
-                            setCart(newCart);
-                          }}
-                          className="h-8 text-xs" 
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1 block">Reps</label>
-                        <Input 
-                          type="text" 
-                          value={item.reps}
-                          onChange={(e) => {
-                            const newCart = [...cart];
-                            const idx = newCart.findIndex(i => i.id === item.id);
-                            newCart[idx].reps = e.target.value;
-                            setCart(newCart);
-                          }}
-                          className="h-8 text-xs" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+              )}
+            </ScrollArea>
           </CardContent>
         </Card>
 
+        <Card className="min-w-0 border-border/60">
+          <CardHeader className="space-y-3 border-b border-border/40 pb-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <CardTitle className="text-base">Ficha em construção</CardTitle>
+                <p className="mt-1 text-xs text-muted-foreground">Configure séries, repetições, descanso e método.</p>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={addDay} disabled={days.length >= 7}>
+                <Plus className="mr-1 size-3.5" /> Dia
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {days.map((day) => (
+                <button
+                  type="button"
+                  key={day.id}
+                  onClick={() => setActiveDayId(day.id)}
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                    activeDay.id === day.id
+                      ? 'border-blue-500 bg-blue-500 text-white'
+                      : 'border-border bg-background text-muted-foreground'
+                  }`}
+                >
+                  {day.label} · {day.exercises.length}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={activeDay.name}
+                onChange={(event) => setDays((current) => current.map((day) => (
+                  day.id === activeDay.id ? { ...day, name: event.target.value } : day
+                )))}
+                aria-label="Nome do treino"
+              />
+              {days.length > 1 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => removeDay(activeDay.id)}
+                  aria-label="Excluir dia"
+                >
+                  <Trash2 className="size-4 text-destructive" />
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[690px]">
+              {activeDay.exercises.length === 0 ? (
+                <div className="flex h-64 flex-col items-center justify-center px-8 text-center text-muted-foreground">
+                  <Dumbbell className="mb-3 size-9 opacity-30" />
+                  <p className="font-medium">Nenhum exercício selecionado</p>
+                  <p className="mt-1 text-xs">Escolha um músculo e use o botão + para montar o Treino {activeDay.label}.</p>
+                </div>
+              ) : (
+                <div className="space-y-3 p-4">
+                  {activeDay.exercises.map((exercise, index) => (
+                    <div key={exercise.key} className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <span className="text-[10px] font-bold uppercase text-blue-500">{index + 1}º exercício</span>
+                          <h3 className="truncate text-sm font-semibold">{exercise.name}</h3>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeExercise(activeDay.id, exercise.key)}
+                          className="size-8 shrink-0"
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        <div>
+                          <Label className="text-[10px]">Séries</Label>
+                          <Input
+                            type="number"
+                            min={1}
+                            max={20}
+                            value={exercise.sets}
+                            onChange={(event) => updateExercise(activeDay.id, exercise.key, 'sets', Number(event.target.value))}
+                            className="mt-1 h-8 px-2 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-[10px]">Repetições</Label>
+                          <Input
+                            value={exercise.reps}
+                            onChange={(event) => updateExercise(activeDay.id, exercise.key, 'reps', event.target.value)}
+                            className="mt-1 h-8 px-2 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-[10px]">Descanso (s)</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={900}
+                            value={exercise.restTime}
+                            onChange={(event) => updateExercise(activeDay.id, exercise.key, 'restTime', Number(event.target.value))}
+                            className="mt-1 h-8 px-2 text-sm"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <Label className="text-[10px]">Método / observação</Label>
+                        <Input
+                          value={exercise.method}
+                          onChange={(event) => updateExercise(activeDay.id, exercise.key, 'method', event.target.value)}
+                          placeholder="Ex.: drop-set na última série"
+                          className="mt-1 h-8 px-2 text-sm"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Modal Enviar Ficha */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+      <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Enviar Ficha para Aluno</DialogTitle>
+            <DialogTitle>Publicar ficha para o aluno</DialogTitle>
             <DialogDescription>
-              A ficha será salva e enviada imediatamente para o aplicativo do aluno.
+              Ao publicar, esta ficha passa a ser o treino ativo do aluno e a anterior é arquivada.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 gap-4">
-              <div className="space-y-2 col-span-3">
-                <label className="text-sm font-medium">Nome da Ficha</label>
-                <Input 
-                  placeholder="Ex: Treino - Hipertrofia Peito" 
-                  value={planName}
-                  onChange={(e) => setPlanName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2 col-span-1">
-                <label className="text-sm font-medium">Tipo</label>
-                <select 
-                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  value={dayLabel}
-                  onChange={(e) => setDayLabel(e.target.value)}
-                >
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                  <option value="D">D</option>
-                  <option value="E">E</option>
-                  <option value="F">F</option>
-                </select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Selecionar Aluno</label>
-              <select 
-                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="student">Aluno</Label>
+              <select
+                id="student"
                 value={selectedStudentId}
-                onChange={(e) => setSelectedStudentId(e.target.value)}
+                onChange={(event) => setSelectedStudentId(event.target.value)}
+                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
               >
-                <option value="" disabled>Escolha um aluno...</option>
-                {students.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
+                <option value="">Selecione um aluno</option>
+                {students.map((student) => <option key={student.id} value={student.id}>{student.name}</option>)}
               </select>
+              {students.length === 0 && (
+                <p className="text-xs text-amber-600">Cadastre um aluno ativo antes de publicar a ficha.</p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="plan-name">Nome da ficha</Label>
+              <Input
+                id="plan-name"
+                value={planName}
+                onChange={(event) => setPlanName(event.target.value)}
+                placeholder="Ex.: Hipertrofia — fase 1"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="goal">Objetivo</Label>
+              <Input
+                id="goal"
+                value={goal}
+                onChange={(event) => setGoal(event.target.value)}
+                placeholder="Ex.: Ganho de massa muscular"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="frequency">Frequência semanal</Label>
+              <Input
+                id="frequency"
+                type="number"
+                min={days.length}
+                max={7}
+                value={daysPerWeek}
+                onChange={(event) => setDaysPerWeek(Number(event.target.value))}
+              />
+              <p className="text-xs text-muted-foreground">A ficha contém {days.length} treino(s) e {totalSelected} exercício(s).</p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-            <Button className="w-full bg-blue-500 hover:bg-blue-600" onClick={submitPlan} disabled={isSaving || submitting || !selectedStudentId || !planName}>
-              {isSaving || submitting ? 'Enviando...' : 'Confirmar e Enviar'}
+            <Button variant="outline" onClick={() => setIsSaveOpen(false)}>Cancelar</Button>
+            <Button onClick={() => void submitPlan()} disabled={submitting || students.length === 0}>
+              {submitting && <Loader2 className="mr-2 size-4 animate-spin" />}
+              Publicar agora
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Video Dialog */}
-      <Dialog open={!!playingVideo} onOpenChange={(open) => !open && setPlayingVideo(null)}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-black border-zinc-800">
-          <div className="relative w-full aspect-video flex items-center justify-center bg-black">
+      <Dialog open={Boolean(playingVideo)} onOpenChange={(open) => !open && setPlayingVideo(null)}>
+        <DialogContent className="overflow-hidden border-zinc-800 bg-black p-0 sm:max-w-3xl">
+          <DialogTitle className="sr-only">Vídeo de execução do exercício</DialogTitle>
+          <div className="aspect-video w-full bg-black">
             {playingVideo && (
-              <video 
-                src={playingVideo} 
-                controls 
-                autoPlay 
-                playsInline
-                className="w-full h-full object-contain"
-              />
+              <video src={playingVideo} controls autoPlay playsInline className="size-full object-contain" />
             )}
           </div>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }

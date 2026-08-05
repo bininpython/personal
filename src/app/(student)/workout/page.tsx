@@ -1,545 +1,379 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Dumbbell, Clock, Check, ChevronLeft, ChevronRight, AlertTriangle,
-  Play, Pause, RotateCcw, MessageSquare, SkipForward, Minus, Plus, X, PlayCircle
+  Check,
+  CheckCircle2,
+  Clock3,
+  Dumbbell,
+  Loader2,
+  PlayCircle,
+  RefreshCw,
+  RotateCcw,
+  Target,
 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
-} from '@/components/ui/dialog';
-import { DIFFICULTY_LABELS, TRAINING_METHODS, MUSCLE_GROUPS } from '@/constants';
 
-const workoutExercises = [
-  {
-    id: '1', name: 'Supino Reto com Barra', category: 'Peitoral', method: 'standard',
-    primaryMuscle: 'chest', secondaryMuscles: ['triceps', 'shoulders'],
-    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/SUPINO%20RETO.mp4',
-    sets: [
-      { number: 1, reps: 12, load: 30, completed: false },
-      { number: 2, reps: 12, load: 30, completed: false },
-      { number: 3, reps: 10, load: 35, completed: false },
-      { number: 4, reps: 8, load: 40, completed: false },
-    ],
-    restSeconds: 90,
-    instructions: 'Deite no banco, segure a barra na largura dos ombros, desça até o peito e empurre.',
-    notes: 'Foco na contração do peitoral',
-  },
-  {
-    id: '2', name: 'Supino Inclinado com Halteres', category: 'Peitoral', method: 'standard',
-    primaryMuscle: 'chest', secondaryMuscles: ['triceps', 'shoulders'],
-    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/SUPINO%20INCLINADO%2030.mp4',
-    sets: [
-      { number: 1, reps: 12, load: 16, completed: false },
-      { number: 2, reps: 12, load: 16, completed: false },
-      { number: 3, reps: 10, load: 18, completed: false },
-    ],
-    restSeconds: 60,
-    instructions: 'Banco a 30-45°, desça os halteres ao lado do peito e empurre.',
-    notes: '',
-  },
-  {
-    id: '3', name: 'Crucifixo na Máquina', category: 'Peitoral', method: 'standard',
-    primaryMuscle: 'chest', secondaryMuscles: ['shoulders'],
-    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/VOADOR.mp4',
-    sets: [
-      { number: 1, reps: 15, load: 25, completed: false },
-      { number: 2, reps: 15, load: 25, completed: false },
-      { number: 3, reps: 12, load: 30, completed: false },
-    ],
-    restSeconds: 60,
-    instructions: 'Sente-se, segure as alavancas e junte na frente do peito.',
-    notes: '',
-  },
-  {
-    id: '4', name: 'Tríceps Pulley', category: 'Tríceps', method: 'standard',
-    primaryMuscle: 'triceps', secondaryMuscles: [],
-    sets: [
-      { number: 1, reps: 12, load: 20, completed: false },
-      { number: 2, reps: 12, load: 20, completed: false },
-      { number: 3, reps: 10, load: 25, completed: false },
-    ],
-    restSeconds: 60,
-    instructions: 'Em pé, estenda os cotovelos empurrando a barra para baixo.',
-    notes: '',
-  },
-  {
-    id: '5', name: 'Tríceps Testa', category: 'Tríceps', method: 'standard',
-    primaryMuscle: 'triceps', secondaryMuscles: ['shoulders'],
-    sets: [
-      { number: 1, reps: 12, load: 15, completed: false },
-      { number: 2, reps: 12, load: 15, completed: false },
-      { number: 3, reps: 10, load: 18, completed: false },
-    ],
-    restSeconds: 60,
-    instructions: 'Deitado no banco, desça a barra até a testa e estenda.',
-    notes: '',
-  },
-];
+interface StudentExercise {
+  id: string;
+  exerciseId: string;
+  name: string;
+  muscle: string;
+  instructions: string;
+  videoUrl: string | null;
+  sets: number;
+  reps: string;
+  restTime: number;
+  method: string;
+}
 
-type SetData = {
-  number: number;
-  reps: number;
-  load: number;
-  completed: boolean;
-  performedReps?: number;
-  performedLoad?: number;
-  difficulty?: string;
-  rpe?: number;
+interface WorkoutDay {
+  id: string;
+  label: string;
+  name: string;
+  exercises: StudentExercise[];
+}
+
+interface WorkoutPlan {
+  id: string;
+  name: string;
+  goal: string;
+  daysPerWeek: number;
+  startDate: string | null;
+  updatedAt: string;
+  days: WorkoutDay[];
+}
+
+interface WorkoutResponse {
+  plan?: WorkoutPlan | null;
+  error?: string;
+}
+
+const MUSCLE_LABELS: Record<string, string> = {
+  chest: 'Peito',
+  'upper-back': 'Costas',
+  'lower-back': 'Lombar',
+  trapezius: 'Trapézio',
+  'front-deltoids': 'Ombros',
+  'back-deltoids': 'Ombro posterior',
+  biceps: 'Bíceps',
+  triceps: 'Tríceps',
+  forearm: 'Antebraço',
+  abs: 'Abdômen',
+  obliques: 'Oblíquos',
+  neck: 'Pescoço',
+  quadriceps: 'Quadríceps',
+  hamstring: 'Posterior de coxa',
+  adductor: 'Adutores',
+  abductors: 'Abdutores',
+  gluteal: 'Glúteos',
+  calves: 'Panturrilhas',
 };
 
-export default function WorkoutPage() {
-  const router = useRouter();
-  const [currentExercise, setCurrentExercise] = useState(0);
-  const [exercises, setExercises] = useState(workoutExercises.map(e => ({
-    ...e,
-    sets: e.sets.map(s => ({ ...s, performedReps: s.reps, performedLoad: s.load })) as SetData[],
-    completed: false,
-    skipped: false,
-  })));
-  const [timer, setTimer] = useState(0);
-  const [timerRunning, setTimerRunning] = useState(false);
-  const [restTimer, setRestTimer] = useState(0);
-  const [restTimerRunning, setRestTimerRunning] = useState(false);
-  const [showPainDialog, setShowPainDialog] = useState(false);
-  const [showSkipDialog, setShowSkipDialog] = useState(false);
-  const [showCompleteDialog, setShowCompleteDialog] = useState(false);
-  const [painNote, setPainNote] = useState('');
-  const [skipReason, setSkipReason] = useState('');
-  const [workoutStarted, setWorkoutStarted] = useState(false);
+function progressStorageKey(planId: string) {
+  return `fitcontrol-workout-progress:${planId}`;
+}
+
+export default function StudentWorkoutPage() {
+  const [plan, setPlan] = useState<WorkoutPlan | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
+  const [selectedDayId, setSelectedDayId] = useState('');
+  const [completedSets, setCompletedSets] = useState<Set<string>>(new Set());
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
 
-  // Workout timer
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (timerRunning) {
-      interval = setInterval(() => setTimer(t => t + 1), 1000);
-    }
-    return () => clearInterval(interval);
-  }, [timerRunning]);
+  const loadPlan = useCallback(async (silent = false) => {
+    if (silent) setRefreshing(true);
+    else setLoading(true);
 
-  // Rest timer
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (restTimerRunning && restTimer > 0) {
-      interval = setInterval(() => {
-        setRestTimer(t => {
-          if (t <= 1) {
-            setRestTimerRunning(false);
-            return 0;
+    try {
+      const response = await fetch('/api/workout-plans', { cache: 'no-store' });
+      const data = await response.json() as WorkoutResponse;
+      if (!response.ok) throw new Error(data.error || 'Não foi possível carregar sua ficha.');
+
+      const nextPlan = data.plan ?? null;
+      setPlan((current) => {
+        if (nextPlan && current?.id !== nextPlan.id) {
+          setSelectedDayId(nextPlan.days[0]?.id ?? '');
+          try {
+            const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id));
+            setCompletedSets(new Set(saved ? JSON.parse(saved) as string[] : []));
+          } catch {
+            setCompletedSets(new Set());
           }
-          return t - 1;
-        });
-      }, 1000);
+        }
+        if (!nextPlan) {
+          setSelectedDayId('');
+          setCompletedSets(new Set());
+        }
+        return nextPlan;
+      });
+      setError('');
+      setLastSync(new Date());
+    } catch (loadError) {
+      console.error('[Student Workout] Load error:', loadError);
+      setError(loadError instanceof Error ? loadError.message : 'Não foi possível carregar sua ficha.');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-    return () => clearInterval(interval);
-  }, [restTimerRunning, restTimer]);
+  }, []);
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  };
+  useEffect(() => {
+    const initialLoad = window.setTimeout(() => void loadPlan(), 0);
 
-  const exercise = exercises[currentExercise];
-  const totalSets = exercises.reduce((sum, e) => sum + e.sets.length, 0);
-  const completedSets = exercises.reduce((sum, e) => sum + e.sets.filter(s => s.completed).length, 0);
-  const progressPercent = Math.round((completedSets / totalSets) * 100);
+    const interval = window.setInterval(() => void loadPlan(true), 10_000);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void loadPlan(true);
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
-  const toggleSet = (setIndex: number) => {
-    const updated = [...exercises];
-    const set = updated[currentExercise].sets[setIndex];
-    set.completed = !set.completed;
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, [loadPlan]);
 
-    // Auto-start rest timer when completing a set
-    if (set.completed) {
-      setRestTimer(exercise.restSeconds);
-      setRestTimerRunning(true);
-    }
+  useEffect(() => {
+    if (!plan) return;
+    window.localStorage.setItem(progressStorageKey(plan.id), JSON.stringify([...completedSets]));
+  }, [completedSets, plan]);
 
-    setExercises(updated);
-  };
+  const activeDay = plan?.days.find((day) => day.id === selectedDayId) ?? plan?.days[0] ?? null;
+  const totalSets = activeDay?.exercises.reduce((total, exercise) => total + exercise.sets, 0) ?? 0;
+  const completedInDay = useMemo(() => {
+    if (!activeDay) return 0;
+    return activeDay.exercises.reduce((total, exercise) => {
+      let exerciseCompleted = 0;
+      for (let index = 0; index < exercise.sets; index += 1) {
+        if (completedSets.has(`${exercise.id}:${index}`)) exerciseCompleted += 1;
+      }
+      return total + exerciseCompleted;
+    }, 0);
+  }, [activeDay, completedSets]);
+  const progress = totalSets > 0 ? Math.round((completedInDay / totalSets) * 100) : 0;
 
-  const updateSetField = (setIndex: number, field: keyof SetData, value: number) => {
-    const updated = [...exercises];
-    (updated[currentExercise].sets[setIndex] as Record<string, unknown>)[field] = value;
-    setExercises(updated);
-  };
+  function toggleSet(exerciseId: string, setIndex: number) {
+    const key = `${exerciseId}:${setIndex}`;
+    setCompletedSets((current) => {
+      const next = new Set(current);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
-  const startWorkout = () => {
-    setWorkoutStarted(true);
-    setTimerRunning(true);
-  };
+  function resetDay() {
+    if (!activeDay) return;
+    const exerciseIds = new Set(activeDay.exercises.map((exercise) => exercise.id));
+    setCompletedSets((current) => new Set(
+      [...current].filter((key) => !exerciseIds.has(key.split(':')[0])),
+    ));
+  }
 
-  const handleSkip = () => {
-    const updated = [...exercises];
-    updated[currentExercise].skipped = true;
-    setExercises(updated);
-    setShowSkipDialog(false);
-    setSkipReason('');
-    if (currentExercise < exercises.length - 1) {
-      setCurrentExercise(currentExercise + 1);
-    }
-  };
-
-  const isWorkoutComplete = exercises.every(e =>
-    e.skipped || e.sets.every(s => s.completed)
-  );
-
-  const finishWorkout = () => {
-    setTimerRunning(false);
-    setShowCompleteDialog(true);
-  };
-
-  // Pre-workout view
-  if (!workoutStarted) {
+  if (loading) {
     return (
-      <div className="space-y-6 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Dumbbell className="w-6 h-6 text-blue-500" />
-            Treino A — Peito/Tríceps
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {exercises.length} exercícios · ~55 min · {totalSets} séries
-          </p>
-        </div>
+      <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground">
+        <Loader2 className="mr-2 size-6 animate-spin" /> Carregando sua ficha...
+      </div>
+    );
+  }
 
-        <div className="space-y-3">
-          {exercises.map((ex, i) => (
-            <Card key={i} className="border-border/50">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-sm font-bold text-blue-500">
-                  {i + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{ex.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {ex.sets.length} séries · {ex.sets[0].reps} reps · {ex.sets[0].load} kg · {ex.restSeconds}s desc.
-                  </p>
-                </div>
-                <Badge variant="outline" className="text-[10px] shrink-0">
-                  {ex.category}
-                </Badge>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+  if (error && !plan) {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center text-center">
+        <Dumbbell className="mb-4 size-12 text-muted-foreground/40" />
+        <h1 className="text-xl font-bold">Não foi possível abrir sua ficha</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
+        <Button className="mt-5" onClick={() => void loadPlan()}>
+          <RefreshCw className="mr-2 size-4" /> Tentar novamente
+        </Button>
+      </div>
+    );
+  }
 
-        <Button
-          className="w-full h-14 bg-blue-500 hover:bg-blue-600 text-white text-lg shadow-lg shadow-blue-500/20"
-          onClick={startWorkout}
-        >
-          <Play className="w-5 h-5 mr-2" />
-          Iniciar Treino
+  if (!plan || plan.days.length === 0) {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 text-center">
+        <div className="mb-4 rounded-full bg-muted p-5">
+          <Dumbbell className="size-10 text-muted-foreground/50" />
+        </div>
+        <h1 className="text-xl font-bold">Sua ficha ainda não foi publicada</h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Assim que o personal publicar seu treino, ele aparecerá automaticamente nesta tela.
+        </p>
+        <Button variant="outline" className="mt-5" onClick={() => void loadPlan(true)} disabled={refreshing}>
+          <RefreshCw className={`mr-2 size-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar agora
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setCurrentExercise(Math.max(0, currentExercise - 1))} disabled={currentExercise === 0}>
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <span className="text-sm font-medium">{currentExercise + 1}/{exercises.length}</span>
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setCurrentExercise(Math.min(exercises.length - 1, currentExercise + 1))} disabled={currentExercise === exercises.length - 1}>
-            <ChevronRight className="w-4 h-4" />
+    <div className="mx-auto max-w-4xl space-y-5 pb-12 animate-fade-in">
+      <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-5 text-white shadow-lg sm:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-xs text-blue-100">
+              <span className="inline-flex size-2 rounded-full bg-emerald-300" />
+              Ficha sincronizada com seu personal
+            </div>
+            <h1 className="mt-2 text-2xl font-bold">{plan.name}</h1>
+            <p className="mt-1 text-sm text-blue-100">{plan.goal}</p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void loadPlan(true)}
+            disabled={refreshing}
+            className="bg-white/15 text-white hover:bg-white/25"
+          >
+            <RefreshCw className={`mr-2 size-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            Atualizar
           </Button>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-sm font-mono">
-            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
-            <span>{formatTime(timer)}</span>
+        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl bg-white/10 p-3">
+            <Target className="mb-1 size-4 text-blue-200" />
+            <p className="text-lg font-bold">{plan.daysPerWeek}x</p>
+            <p className="text-[11px] text-blue-100">por semana</p>
           </div>
-          <Badge variant="outline" className="font-mono">{progressPercent}%</Badge>
+          <div className="rounded-xl bg-white/10 p-3">
+            <Dumbbell className="mb-1 size-4 text-blue-200" />
+            <p className="text-lg font-bold">{plan.days.length}</p>
+            <p className="text-[11px] text-blue-100">treinos diferentes</p>
+          </div>
+          <div className="col-span-2 rounded-xl bg-white/10 p-3 sm:col-span-1">
+            <RefreshCw className="mb-1 size-4 text-blue-200" />
+            <p className="text-sm font-bold">Automático</p>
+            <p className="text-[11px] text-blue-100">
+              {lastSync ? `Atualizado às ${lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronização ativa'}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Progress */}
-      <Progress value={progressPercent} className="h-2" />
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {plan.days.map((day) => (
+          <button
+            type="button"
+            key={day.id}
+            onClick={() => setSelectedDayId(day.id)}
+            className={`min-w-[120px] rounded-xl border px-4 py-3 text-left transition-colors ${
+              activeDay?.id === day.id
+                ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                : 'border-border bg-card hover:border-blue-400'
+            }`}
+          >
+            <span className="block text-[10px] font-bold uppercase opacity-75">Treino {day.label}</span>
+            <span className="mt-0.5 block truncate text-sm font-semibold">{day.name}</span>
+          </button>
+        ))}
+      </div>
 
-      {/* Exercise Card */}
-      <Card className="border-border/50">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs mb-2">{exercise.category}</Badge>
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                {exercise.name}
-                {(exercise as any).video_url && (
-                  <button onClick={() => setPlayingVideo((exercise as any).video_url)} title="Assistir Vídeo">
-                    <PlayCircle className="w-5 h-5 text-blue-500 hover:text-blue-600 transition-colors" />
-                  </button>
-                )}
-              </h2>
-              {exercise.instructions && (
-                <p className="text-xs text-muted-foreground mt-1">{exercise.instructions}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Muscle info */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            <Badge variant="outline" className="text-[10px] bg-emerald-500/5 border-emerald-500/20 text-emerald-500">
-              {MUSCLE_GROUPS[exercise.primaryMuscle as keyof typeof MUSCLE_GROUPS]?.name || exercise.primaryMuscle}
-            </Badge>
-            {exercise.secondaryMuscles.map((m, i) => (
-              <Badge key={i} variant="outline" className="text-[10px]">
-                {MUSCLE_GROUPS[m as keyof typeof MUSCLE_GROUPS]?.name || m}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Sets Checklist */}
-          <div className="space-y-3">
-            {exercise.sets.map((set, si) => (
-              <div
-                key={si}
-                className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200
-                  ${set.completed
-                    ? 'bg-emerald-500/5 border-emerald-500/20'
-                    : 'bg-card border-border/50'}`}
-              >
-                <Checkbox
-                  checked={set.completed}
-                  onCheckedChange={() => toggleSet(si)}
-                  className="w-6 h-6 rounded-md"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-semibold">Série {set.number}</span>
-                    {set.completed && <Check className="w-3.5 h-3.5 text-emerald-500" />}
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Label className="text-[10px] text-muted-foreground">Reps</Label>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateSetField(si, 'performedReps', Math.max(0, (set.performedReps || set.reps) - 1))}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={set.performedReps ?? set.reps}
-                          onChange={(e) => updateSetField(si, 'performedReps', parseInt(e.target.value) || 0)}
-                          className="w-12 h-7 text-center text-sm p-0 font-mono"
-                        />
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateSetField(si, 'performedReps', (set.performedReps || set.reps) + 1)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Label className="text-[10px] text-muted-foreground">Carga</Label>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateSetField(si, 'performedLoad', Math.max(0, (set.performedLoad || set.load) - 2.5))}>
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <Input
-                          type="number"
-                          value={set.performedLoad ?? set.load}
-                          onChange={(e) => updateSetField(si, 'performedLoad', parseFloat(e.target.value) || 0)}
-                          className="w-14 h-7 text-center text-sm p-0 font-mono"
-                        />
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => updateSetField(si, 'performedLoad', (set.performedLoad || set.load) + 2.5)}>
-                          <Plus className="w-3 h-3" />
-                        </Button>
-                      </div>
-                      <span className="text-[10px] text-muted-foreground">kg</span>
-                    </div>
-                  </div>
+      {activeDay && (
+        <>
+          <Card className="border-border/60">
+            <CardContent className="p-4 sm:p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold">Progresso de hoje</p>
+                  <p className="text-xs text-muted-foreground">{completedInDay} de {totalSets} séries concluídas neste aparelho</p>
                 </div>
+                <span className="text-2xl font-bold text-blue-600">{progress}%</span>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              <Progress value={progress} className="mt-3" />
+              {progress > 0 && (
+                <Button variant="ghost" size="sm" onClick={resetDay} className="mt-2 h-7 px-2 text-xs text-muted-foreground">
+                  <RotateCcw className="mr-1.5 size-3" /> Reiniciar marcações
+                </Button>
+              )}
+            </CardContent>
+          </Card>
 
-      {/* Rest Timer */}
-      {restTimerRunning && (
-        <Card className="border-amber-500/30 bg-amber-500/5 animate-fade-in">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-amber-500" />
-              <div>
-                <p className="text-sm font-medium">Descanso</p>
-                <p className="text-2xl font-bold font-mono text-amber-500">{formatTime(restTimer)}</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setRestTimerRunning(false)}>
-                <Pause className="w-3.5 h-3.5" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => { setRestTimer(exercise.restSeconds); setRestTimerRunning(true); }}>
-                <RotateCcw className="w-3.5 h-3.5" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => { setRestTimer(0); setRestTimerRunning(false); }}>
-                <SkipForward className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+          <div className="space-y-4">
+            {activeDay.exercises.map((exercise, exerciseIndex) => {
+              const completedCount = Array.from({ length: exercise.sets }).filter((_, setIndex) => (
+                completedSets.has(`${exercise.id}:${setIndex}`)
+              )).length;
+              const isComplete = completedCount === exercise.sets;
+
+              return (
+                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : ''}`}>
+                  <CardHeader className="border-b border-border/40 pb-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 gap-3">
+                        <div className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${isComplete ? 'bg-emerald-500 text-white' : 'bg-blue-500/10 text-blue-600'}`}>
+                          {isComplete ? <Check className="size-4" /> : exerciseIndex + 1}
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="text-base leading-tight">{exercise.name}</CardTitle>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {exercise.muscle && <Badge variant="outline">{MUSCLE_LABELS[exercise.muscle] || exercise.muscle}</Badge>}
+                            <Badge variant="secondary">{exercise.sets} × {exercise.reps}</Badge>
+                            <Badge variant="secondary"><Clock3 className="mr-1 size-3" /> {exercise.restTime}s</Badge>
+                          </div>
+                        </div>
+                      </div>
+                      {exercise.videoUrl && (
+                        <Button type="button" size="icon" variant="outline" onClick={() => setPlayingVideo(exercise.videoUrl)}>
+                          <PlayCircle className="size-4 text-red-500" />
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4 p-4 sm:p-5">
+                    {exercise.instructions && (
+                      <p className="text-sm leading-relaxed text-muted-foreground">{exercise.instructions}</p>
+                    )}
+                    {exercise.method && (
+                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-sm">
+                        <span className="font-semibold">Orientação do personal:</span> {exercise.method}
+                      </div>
+                    )}
+                    <div>
+                      <p className="mb-2 text-xs font-medium text-muted-foreground">Toque para marcar cada série</p>
+                      <div className="flex flex-wrap gap-2">
+                        {Array.from({ length: exercise.sets }).map((_, setIndex) => {
+                          const checked = completedSets.has(`${exercise.id}:${setIndex}`);
+                          return (
+                            <button
+                              type="button"
+                              key={setIndex}
+                              onClick={() => toggleSet(exercise.id, setIndex)}
+                              className={`flex h-10 min-w-20 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors ${
+                                checked
+                                  ? 'border-emerald-500 bg-emerald-500 text-white'
+                                  : 'border-border bg-background hover:border-blue-400'
+                              }`}
+                            >
+                              {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
+                              {exercise.reps} reps
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </>
       )}
 
-      {/* Action Buttons */}
-      <div className="grid grid-cols-2 gap-3">
-        <Button
-          variant="outline"
-          className="h-11 border-red-500/30 text-red-500 hover:bg-red-500/10"
-          onClick={() => setShowPainDialog(true)}
-        >
-          <AlertTriangle className="w-4 h-4 mr-2" />
-          Dor/Desconforto
-        </Button>
-        <Button
-          variant="outline"
-          className="h-11"
-          onClick={() => setShowSkipDialog(true)}
-        >
-          <SkipForward className="w-4 h-4 mr-2" />
-          Pular Exercício
-        </Button>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex gap-3">
-        {currentExercise < exercises.length - 1 ? (
-          <Button
-            className="flex-1 h-12 bg-blue-500 hover:bg-blue-600 text-white"
-            onClick={() => setCurrentExercise(currentExercise + 1)}
-          >
-            Próximo Exercício
-            <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
-        ) : (
-          <Button
-            className="flex-1 h-12 bg-emerald-500 hover:bg-emerald-600 text-white"
-            onClick={finishWorkout}
-          >
-            <Check className="w-5 h-5 mr-2" />
-            Finalizar Treino
-          </Button>
-        )}
-      </div>
-
-      {/* Pain Dialog */}
-      <Dialog open={showPainDialog} onOpenChange={setShowPainDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-              Relatar Dor ou Desconforto
-            </DialogTitle>
-            <DialogDescription>
-              Informe ao seu personal sobre qualquer dor ou desconforto durante o exercício.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
-            <Label>Descreva a dor ou desconforto</Label>
-            <Textarea
-              placeholder="Ex: Dor no ombro direito durante o movimento..."
-              value={painNote}
-              onChange={(e) => setPainNote(e.target.value)}
-              rows={3}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPainDialog(false)}>Cancelar</Button>
-            <Button className="bg-red-500 hover:bg-red-600 text-white" onClick={() => { setShowPainDialog(false); setPainNote(''); }}>
-              Enviar Relato
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Skip Dialog */}
-      <Dialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Pular Exercício</DialogTitle>
-            <DialogDescription>
-              Tem certeza de que deseja pular {exercise.name}?
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
-            <Label>Motivo (opcional)</Label>
-            <Textarea
-              placeholder="Ex: Equipamento ocupado, dor..."
-              value={skipReason}
-              onChange={(e) => setSkipReason(e.target.value)}
-              rows={2}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSkipDialog(false)}>Cancelar</Button>
-            <Button onClick={handleSkip}>Pular Exercício</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Complete Dialog */}
-      <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl">
-              🎉 Treino Concluído!
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-emerald-500">{progressPercent}%</div>
-              <p className="text-sm text-muted-foreground mt-1">de conclusão</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="p-3 rounded-lg bg-muted/50">
-                <div className="text-lg font-bold">{formatTime(timer)}</div>
-                <p className="text-[10px] text-muted-foreground">Duração</p>
-              </div>
-              <div className="p-3 rounded-lg bg-muted/50">
-                <div className="text-lg font-bold">{completedSets}/{totalSets}</div>
-                <p className="text-[10px] text-muted-foreground">Séries</p>
-              </div>
-            </div>
-            <div className="p-3 rounded-lg bg-muted/50 text-center">
-              <div className="text-lg font-bold">
-                {exercises.reduce((sum, e) => sum + e.sets.filter(s => s.completed).reduce((sSum, s) => sSum + (s.performedReps || 0) * (s.performedLoad || 0), 0), 0).toLocaleString()} kg
-              </div>
-              <p className="text-[10px] text-muted-foreground">Volume Total</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white" onClick={() => router.push('/home')}>
-              Voltar ao Início
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Video Dialog */}
-      <Dialog open={!!playingVideo} onOpenChange={(open) => !open && setPlayingVideo(null)}>
-        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-black border-zinc-800">
-          <div className="relative w-full aspect-video flex items-center justify-center bg-black">
-            {playingVideo && (
-              <video 
-                src={playingVideo} 
-                controls 
-                autoPlay 
-                playsInline
-                className="w-full h-full object-contain"
-              />
-            )}
+      <Dialog open={Boolean(playingVideo)} onOpenChange={(open) => !open && setPlayingVideo(null)}>
+        <DialogContent className="overflow-hidden border-zinc-800 bg-black p-0 sm:max-w-3xl">
+          <DialogTitle className="sr-only">Vídeo de execução do exercício</DialogTitle>
+          <div className="aspect-video w-full bg-black">
+            {playingVideo && <video src={playingVideo} controls autoPlay playsInline className="size-full object-contain" />}
           </div>
         </DialogContent>
       </Dialog>

@@ -1,249 +1,136 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Dumbbell, Clock, Flame, Trophy, TrendingUp,
-  ChevronRight, Calendar, MessageSquare, Target, Activity, Zap
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { ChevronRight, Dumbbell, Loader2, RefreshCw, Target, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
-import { MuscleAnatomy } from '@/components/ui/muscle-anatomy';
 
-// Demo data
-const todayWorkout = {
-  name: 'Treino A — Peito/Tríceps',
-  estimatedTime: 55,
-  exercises: 5,
-  muscleGroups: ['Peitoral', 'Tríceps'],
-  anatomyGroups: ['chest', 'triceps'] as any,
-  completedPercentage: 0,
-};
-
-const weekProgress = [
-  { day: 'Seg', done: true },
-  { day: 'Ter', done: true },
-  { day: 'Qua', done: false, isToday: true },
-  { day: 'Qui', done: false },
-  { day: 'Sex', done: false },
-  { day: 'Sáb', done: false },
-  { day: 'Dom', done: false },
-];
-
-const recentAchievements = [
-  { icon: Trophy, name: 'Primeiro Treino', date: 'Há 90 dias' },
-  { icon: Flame, name: '7 Dias de Fogo', date: 'Há 60 dias' },
-  { icon: Target, name: '10 Treinos', date: 'Há 30 dias' },
-];
-
-const lastRecords = [
-  { exercise: 'Supino Reto', load: '60 kg', date: 'Há 3 dias' },
-  { exercise: 'Agachamento', load: '100 kg', date: 'Há 5 dias' },
-];
+interface HomePlan {
+  id: string;
+  name: string;
+  goal: string;
+  daysPerWeek: number;
+  days: Array<{
+    id: string;
+    label: string;
+    name: string;
+    exercises: Array<{ id: string; name: string }>;
+  }>;
+}
 
 export default function StudentHomePage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [greeting, setGreeting] = useState('');
+  const [greeting] = useState(() => {
+    const hour = new Date().getHours();
+    return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  });
+  const [plan, setPlan] = useState<HomePlan | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Bom dia');
-    else if (hour < 18) setGreeting('Boa tarde');
-    else setGreeting('Boa noite');
+    const loadPlan = async () => {
+      try {
+        const response = await fetch('/api/workout-plans', { cache: 'no-store' });
+        const data = await response.json() as { plan?: HomePlan | null };
+        if (response.ok) setPlan(data.plan ?? null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadPlan();
+    const interval = window.setInterval(loadPlan, 10_000);
+    return () => window.clearInterval(interval);
   }, []);
 
-  const streak = 5;
+  const nextWorkout = plan?.days[0] ?? null;
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Greeting */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
           {greeting}, {user?.name?.split(' ')[0] || 'Aluno'}
         </h1>
-        <p className="text-muted-foreground mt-1">
-          Pronto para mais um treino?
-        </p>
+        <p className="mt-1 text-muted-foreground">Seu treino fica sincronizado com o personal.</p>
       </div>
 
-      {/* Streak & Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <Card className="border-border/50">
-          <CardContent className="p-3 text-center">
-            <Flame className="w-5 h-5 text-amber-500 mx-auto mb-1" />
-            <div className="text-lg font-bold">{streak}</div>
-            <p className="text-[10px] text-muted-foreground">Dias seguidos</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-3 text-center">
-            <Target className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
-            <div className="text-lg font-bold">85%</div>
-            <p className="text-[10px] text-muted-foreground">Conclusão</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-3 text-center">
-            <Activity className="w-5 h-5 text-blue-500 mx-auto mb-1" />
-            <div className="text-lg font-bold">10</div>
-            <p className="text-[10px] text-muted-foreground">Treinos</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Today's Workout CTA */}
-      <Card className="border border-border/50 bg-muted/20 overflow-hidden">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 mb-2">
-                Treino de hoje
-              </Badge>
-              <h2 className="text-lg font-bold">{todayWorkout.name}</h2>
-            </div>
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-              <Dumbbell className="w-6 h-6 text-blue-500" />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              <span>{todayWorkout.estimatedTime} min</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Dumbbell className="w-3.5 h-3.5" />
-              <span>{todayWorkout.exercises} exercícios</span>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {todayWorkout.muscleGroups.map((mg, i) => (
-              <Badge key={i} variant="outline" className="text-[10px] border-blue-500/20 text-blue-500">
-                {mg}
-              </Badge>
-            ))}
-          </div>
-
-          <Button
-            className="w-full h-12 text-base shadow-sm"
-            onClick={() => router.push('/workout')}
-          >
-            <Zap className="w-5 h-5 mr-2" />
-            Iniciar Treino
-          </Button>
-
-          <div className="mt-6 pt-6 border-t border-blue-500/20">
-            <h3 className="text-sm font-medium mb-4 text-center">Músculos Ativados Hoje</h3>
-            <MuscleAnatomy highlighted={todayWorkout.anatomyGroups} highlightColor="#3b82f6" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Weekly Progress */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary" />
-            Progresso Semanal
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between gap-2">
-            {weekProgress.map((day, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                    ${day.done
-                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                      : day.isToday
-                        ? 'bg-blue-500/10 text-blue-500 border-2 border-blue-500/50'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                >
-                  {day.done ? '✓' : day.day.charAt(0)}
-                </div>
-                <span className={`text-[10px] font-medium ${day.isToday ? 'text-blue-500' : 'text-muted-foreground'}`}>
-                  {day.day}
-                </span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Records */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-500" />
-              Últimos Recordes
-            </CardTitle>
-            <Button variant="ghost" size="sm" className="text-xs" onClick={() => router.push('/progress')}>
-              Ver mais
-              <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {lastRecords.map((record, i) => (
-            <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
+      {loading ? (
+        <div className="flex justify-center py-16 text-muted-foreground">
+          <Loader2 className="mr-2 size-5 animate-spin" /> Buscando sua ficha...
+        </div>
+      ) : plan && nextWorkout ? (
+        <Card className="overflow-hidden border-blue-500/20 bg-gradient-to-br from-blue-500/[0.08] to-transparent">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium">{record.exercise}</p>
-                <p className="text-xs text-muted-foreground">{record.date}</p>
+                <Badge className="mb-2 bg-emerald-500/10 text-emerald-600">Ficha ativa e sincronizada</Badge>
+                <h2 className="text-xl font-bold">{nextWorkout.name}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{plan.name} · {plan.goal}</p>
               </div>
-              <Badge className="bg-muted text-foreground border-border/50 font-bold">
-                {record.load}
-              </Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* Achievements */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-primary" />
-            Conquistas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {recentAchievements.map((ach, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 min-w-[80px]">
-                <div className="w-14 h-14 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center text-2xl">
-                  <ach.icon className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <p className="text-[10px] font-medium text-center leading-tight">{ach.name}</p>
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-blue-500 text-white">
+                <Dumbbell className="size-6" />
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Messages from trainer */}
-      <Card className="border-border/50">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-              <MessageSquare className="w-5 h-5 text-emerald-500" />
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium">Mensagem do Personal</p>
-              <p className="text-xs text-muted-foreground">Ótimo treino ontem! Continue assim!</p>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="rounded-xl border bg-background/70 p-3">
+                <Dumbbell className="mb-1 size-4 text-blue-500" />
+                <p className="font-bold">{nextWorkout.exercises.length} exercícios</p>
+                <p className="text-[11px] text-muted-foreground">no Treino {nextWorkout.label}</p>
+              </div>
+              <div className="rounded-xl border bg-background/70 p-3">
+                <Target className="mb-1 size-4 text-emerald-500" />
+                <p className="font-bold">{plan.daysPerWeek}x por semana</p>
+                <p className="text-[11px] text-muted-foreground">frequência prescrita</p>
+              </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => router.push('/student-messages')}>
-              <ChevronRight className="w-4 h-4" />
+            <Button className="mt-5 h-12 w-full text-base" onClick={() => router.push('/workout')}>
+              <Zap className="mr-2 size-5" /> Abrir meu treino
             </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center p-8 text-center">
+            <div className="mb-3 rounded-full bg-muted p-4"><Dumbbell className="size-8 text-muted-foreground/50" /></div>
+            <h2 className="font-bold">Aguardando sua primeira ficha</h2>
+            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+              Quando o personal publicar seu treino, ele aparecerá automaticamente aqui.
+            </p>
+            <Button variant="outline" className="mt-4" onClick={() => router.push('/workout')}>
+              <RefreshCw className="mr-2 size-4" /> Verificar ficha
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {plan && plan.days.length > 1 && (
+        <Card className="border-border/60">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Treinos da ficha</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {plan.days.map((day) => (
+              <button
+                type="button"
+                key={day.id}
+                onClick={() => router.push('/workout')}
+                className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition-colors hover:border-blue-400 hover:bg-blue-500/[0.03]"
+              >
+                <div>
+                  <p className="text-xs font-bold uppercase text-blue-500">Treino {day.label}</p>
+                  <p className="font-medium">{day.name}</p>
+                  <p className="text-xs text-muted-foreground">{day.exercises.length} exercícios</p>
+                </div>
+                <ChevronRight className="size-4 text-muted-foreground" />
+              </button>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
