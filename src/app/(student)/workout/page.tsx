@@ -116,6 +116,7 @@ export default function WorkoutPage() {
   const [painNote, setPainNote] = useState('');
   const [skipReason, setSkipReason] = useState('');
   const [workoutStarted, setWorkoutStarted] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
   // Workout timer
   useEffect(() => {
@@ -279,9 +280,9 @@ export default function WorkoutPage() {
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {exercise.name}
                 {(exercise as any).video_url && (
-                  <a href={(exercise as any).video_url} target="_blank" rel="noopener noreferrer" title="Assistir Vídeo">
+                  <button onClick={() => setPlayingVideo((exercise as any).video_url)} title="Assistir Vídeo">
                     <PlayCircle className="w-5 h-5 text-blue-500 hover:text-blue-600 transition-colors" />
-                  </a>
+                  </button>
                 )}
               </h2>
               {exercise.instructions && (
@@ -523,6 +524,23 @@ export default function WorkoutPage() {
               Voltar ao Início
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Video Dialog */}
+      <Dialog open={!!playingVideo} onOpenChange={(open) => !open && setPlayingVideo(null)}>
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-black border-zinc-800">
+          <div className="relative w-full aspect-video flex items-center justify-center bg-black">
+            {playingVideo && (
+              <video 
+                src={playingVideo} 
+                controls 
+                autoPlay 
+                playsInline
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -12,7 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from '@/components/ui/dialog';
 
 // Map of categories from the demo data to the muscles in react-body-highlighter
@@ -68,6 +67,8 @@ export default function ExercisesPage() {
   const [planName, setPlanName] = useState('');
   const [dayLabel, setDayLabel] = useState('A');
   const [submitting, setSubmitting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
   // When a muscle is clicked in the SVG Model
   const handleMuscleClick = useCallback(async (stats: IMuscleStats) => {
@@ -120,6 +121,7 @@ export default function ExercisesPage() {
   const submitPlan = async () => {
     if (!selectedStudentId || !planName || cart.length === 0) return;
     setSubmitting(true);
+    setIsSaving(true);
     try {
       const payload = {
         studentId: selectedStudentId,
@@ -150,6 +152,7 @@ export default function ExercisesPage() {
       console.error(err);
     } finally {
       setSubmitting(false);
+      setIsSaving(false);
     }
   };
 
@@ -247,9 +250,9 @@ export default function ExercisesPage() {
                       <div className="flex items-center gap-2">
                         <h4 className="font-medium text-sm">{ex.name}</h4>
                         {ex.video_url && (
-                          <a href={ex.video_url} target="_blank" rel="noopener noreferrer" title="Ver Vídeo de Execução">
+                          <button onClick={() => setPlayingVideo(ex.video_url)} title="Assistir Vídeo">
                             <PlayCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors" />
-                          </a>
+                          </button>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{ex.instructions || ex.description}</p>
@@ -391,10 +394,27 @@ export default function ExercisesPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-            <Button onClick={submitPlan} disabled={submitting || !selectedStudentId || !planName}>
-              {submitting ? 'Salvando...' : 'Salvar e Enviar'}
+            <Button className="w-full bg-blue-500 hover:bg-blue-600" onClick={submitPlan} disabled={isSaving || submitting || !selectedStudentId || !planName}>
+              {isSaving || submitting ? 'Enviando...' : 'Confirmar e Enviar'}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Video Dialog */}
+      <Dialog open={!!playingVideo} onOpenChange={(open) => !open && setPlayingVideo(null)}>
+        <DialogContent className="sm:max-w-xl p-0 overflow-hidden bg-black border-zinc-800">
+          <div className="relative w-full aspect-video flex items-center justify-center bg-black">
+            {playingVideo && (
+              <video 
+                src={playingVideo} 
+                controls 
+                autoPlay 
+                playsInline
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
