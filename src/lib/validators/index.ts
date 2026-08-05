@@ -15,11 +15,7 @@ export const trainerRegisterSchema = z.object({
     .regex(/^[A-Za-z0-9\-#\s]+$/, 'Código deve conter apenas letras, números, hífens, espaços e hashtag'),
   password: z
     .string()
-    .min(PASSWORD_MIN_LENGTH, `Senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres`)
-    .regex(/[a-z]/, 'Senha deve conter pelo menos uma letra minúscula')
-    .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
-    .regex(/\d/, 'Senha deve conter pelo menos um número')
-    .regex(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 'Senha deve conter pelo menos um caractere especial'),
+    .min(PASSWORD_MIN_LENGTH, `Senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres`),
   confirm_password: z.string(),
   professional_name: z.string().optional(),
   cref: z.string().optional(),
