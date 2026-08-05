@@ -11,7 +11,7 @@ export async function updateSession(request: NextRequest) {
 
   // If no env vars, just skip Supabase logic and allow demo mode
   if (!supabaseUrl || !supabaseAnonKey) {
-    return supabaseResponse;
+    return { response: supabaseResponse, user: null };
   }
 
   const supabase = createServerClient(
