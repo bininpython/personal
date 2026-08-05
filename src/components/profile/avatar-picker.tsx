@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { Camera, Check, ImagePlus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { AVATAR_OPTIONS } from '@/lib/profile/avatars';
+import { AVATAR_COUNT, AVATAR_OPTIONS, type AvatarCategory } from '@/lib/profile/avatars';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -19,10 +19,23 @@ function initials(name: string) {
   return name.split(' ').filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || 'FC';
 }
 
+const CATEGORY_OPTIONS: Array<{ value: 'all' | AvatarCategory; label: string }> = [
+  { value: 'all', label: 'Todos' },
+  { value: 'people', label: 'Pessoas' },
+  { value: 'weights', label: 'Pesos' },
+  { value: 'gear', label: 'Acessórios' },
+  { value: 'movement', label: 'Movimento' },
+  { value: 'achievements', label: 'Conquistas' },
+];
+
 export function AvatarPicker({ name, avatarUrl, onChange, sizeClassName = 'size-20' }: AvatarPickerProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [category, setCategory] = useState<'all' | AvatarCategory>('all');
+  const visibleAvatars = category === 'all'
+    ? AVATAR_OPTIONS
+    : AVATAR_OPTIONS.filter((avatar) => avatar.category === category);
 
   async function selectAvatar(url: string) {
     setSaving(true);
@@ -80,7 +93,7 @@ export function AvatarPicker({ name, avatarUrl, onChange, sizeClassName = 'size-
         <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Foto de perfil</DialogTitle>
-            <DialogDescription>Envie uma foto ou escolha um dos 50 avatares.</DialogDescription>
+            <DialogDescription>Envie uma foto ou escolha um dos {AVATAR_COUNT} avatares.</DialogDescription>
           </DialogHeader>
           <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(event) => void uploadPhoto(event.target.files?.[0])} />
           <Button type="button" variant="outline" disabled={saving} onClick={() => inputRef.current?.click()}>
@@ -88,8 +101,23 @@ export function AvatarPicker({ name, avatarUrl, onChange, sizeClassName = 'size-
             Enviar minha foto
           </Button>
           <p className="text-xs text-muted-foreground">JPG, PNG ou WebP, com até 3 MB.</p>
+          <div className="flex gap-2 overflow-x-auto pb-1" aria-label="Categorias de avatares">
+            {CATEGORY_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                type="button"
+                size="sm"
+                variant={category === option.value ? 'default' : 'outline'}
+                disabled={saving}
+                onClick={() => setCategory(option.value)}
+                className="shrink-0"
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
           <div className="grid grid-cols-5 gap-3 sm:grid-cols-10">
-            {AVATAR_OPTIONS.map((avatar) => (
+            {visibleAvatars.map((avatar) => (
               <button
                 key={avatar.id}
                 type="button"

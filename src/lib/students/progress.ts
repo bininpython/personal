@@ -2,6 +2,7 @@ import 'server-only';
 import { buildWeeklyWorkoutSeries, calculateStudentPerformance } from '@/lib/analytics/performance';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { StudentProgressData } from '@/types/student-progress';
+import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 
 type Related<T> = T | T[] | null;
 
@@ -156,7 +157,7 @@ export async function getStudentProgress(studentId: string): Promise<StudentProg
       name: student.name,
       goal: student.goal || 'Objetivo geral',
       status: student.status,
-      avatarUrl: typeof authResult.data.user?.user_metadata?.avatar_url === 'string' ? authResult.data.user.user_metadata.avatar_url : '',
+      avatarUrl: storedAvatarUrl(authResult.data.user?.user_metadata),
       startDate: student.start_date || student.created_at,
       currentWeight: numeric(student.weight),
       height: numeric(student.height),

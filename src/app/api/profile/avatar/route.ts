@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
 import { isAvatarOption } from '@/lib/profile/avatars';
+import { mergeUserMetadata, storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 
@@ -24,14 +25,13 @@ async function saveAvatar(userId: string, avatarUrl: string) {
   const { data, error: userError } = await admin.auth.admin.getUserById(userId);
   if (userError || !data.user) throw userError || new Error('Usuário não encontrado.');
 
-  const { error } = await admin.auth.admin.updateUserById(userId, {
-    user_metadata: {
-      ...data.user.user_metadata,
-      avatar_url: avatarUrl,
-    },
+  const { data: updatedData, error } = await admin.auth.admin.updateUserById(userId, {
+    user_metadata: mergeUserMetadata(data.user.user_metadata, { avatar_url: avatarUrl }),
   });
   if (error) throw error;
-  return avatarUrl;
+  const savedAvatar = storedAvatarUrl(updatedData.user?.user_metadata);
+  if (savedAvatar !== avatarUrl) throw new Error('O avatar não foi confirmado pelo serviço de autenticação.');
+  return savedAvatar;
 }
 
 export async function PATCH(request: Request) {

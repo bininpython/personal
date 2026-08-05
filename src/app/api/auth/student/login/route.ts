@@ -7,6 +7,7 @@ import {
   canonicalizeStudentAccessCode,
 } from '@/lib/auth/credentials';
 import { createClient } from '@/lib/supabase/server';
+import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 
 const GENERIC_LOGIN_ERROR = 'Nome ou código de acesso inválido.';
 
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
         role: 'student',
         name: student.name,
         trainer_id: student.trainer_id,
+        avatar_url: storedAvatarUrl(authData.user.user_metadata),
       },
     }, 200);
   } catch (error) {

@@ -4,6 +4,7 @@ import { studentProfileUpdateSchema } from '@/lib/validators';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 
 function json(body: Record<string, unknown>, status: number) {
   return NextResponse.json(body, {
@@ -60,9 +61,7 @@ export async function GET(
 
   const admin = createAdminClient();
   const { data: authData } = await admin.auth.admin.getUserById(student.id);
-  const avatarUrl = typeof authData.user?.user_metadata?.avatar_url === 'string'
-    ? authData.user.user_metadata.avatar_url
-    : '';
+  const avatarUrl = storedAvatarUrl(authData.user?.user_metadata);
 
   return json({
     student: {

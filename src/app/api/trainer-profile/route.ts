@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import { mergeUserMetadata, storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 
 const updateProfileSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome').max(100, 'Nome muito longo'),
@@ -30,7 +31,11 @@ export async function GET() {
     if (error) throw error;
     if (!data) return json({ error: 'Perfil não encontrado.' }, 404);
 
-    return json({ profile: { name: data.name, trainer_code: data.code, avatar_url: session.avatar_url || '' } });
+    const { data: authData, error: authError } = await admin.auth.admin.getUserById(session.sub);
+    if (authError) throw authError;
+    const avatarUrl = storedAvatarUrl(authData.user?.user_metadata);
+
+    return json({ profile: { name: data.name, trainer_code: data.code, avatar_url: avatarUrl } });
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O banco de dados ainda não está configurado.' }, 503);
@@ -57,8 +62,10 @@ export async function PATCH(request: Request) {
       .eq('id', session.trainer_id);
     if (error) throw error;
 
+    const { data: authData, error: getAuthError } = await admin.auth.admin.getUserById(session.sub);
+    if (getAuthError) console.error('[Trainer Profile] Metadata read error:', getAuthError);
     const { error: authError } = await admin.auth.admin.updateUserById(session.sub, {
-      user_metadata: { name: parsed.data.name },
+      user_metadata: mergeUserMetadata(authData.user?.user_metadata, { name: parsed.data.name }),
     });
     if (authError) console.error('[Trainer Profile] Metadata update error:', authError);
 

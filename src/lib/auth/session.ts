@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 
 export type SessionRole = 'trainer' | 'student';
 
@@ -34,7 +35,7 @@ export async function getSession(): Promise<AuthSession | null> {
         name: trainer.name,
         trainer_id: trainer.id,
         trainer_code: trainer.code,
-        avatar_url: typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : undefined,
+        avatar_url: storedAvatarUrl(user.user_metadata) || undefined,
       };
     }
 
@@ -51,7 +52,7 @@ export async function getSession(): Promise<AuthSession | null> {
       role: 'student',
       name: student.name,
       trainer_id: student.trainer_id,
-      avatar_url: typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : undefined,
+      avatar_url: storedAvatarUrl(user.user_metadata) || undefined,
     };
   } catch (error) {
     console.error('[Auth] Failed to resolve session:', error);

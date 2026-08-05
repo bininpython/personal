@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
+import { AVATAR_COUNT } from '@/lib/profile/avatars';
 
 interface TrainerProfile {
   name: string;
@@ -112,7 +113,7 @@ export default function TrainerSettingsPage() {
                         await refreshUser();
                       }}
                     />
-                    <div><p className="font-medium">Foto ou avatar</p><p className="text-xs text-muted-foreground">Envie uma foto ou escolha entre 50 opções.</p></div>
+                    <div><p className="font-medium">Foto ou avatar</p><p className="text-xs text-muted-foreground">Envie uma foto ou escolha entre {AVATAR_COUNT} opções.</p></div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="trainer-name">Nome</Label>

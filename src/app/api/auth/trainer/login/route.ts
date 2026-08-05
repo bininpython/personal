@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { trainerLoginSchema } from '@/lib/validators';
 import { buildSyntheticEmail } from '@/lib/auth/credentials';
+import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
 import { createClient } from '@/lib/supabase/server';
 
 function json(body: Record<string, unknown>, status: number) {
@@ -45,6 +46,7 @@ export async function POST(request: Request) {
         role: 'trainer',
         name: trainer.name,
         trainer_id: trainer.id,
+        avatar_url: storedAvatarUrl(data.user.user_metadata),
       },
     }, 200);
   } catch (error) {
