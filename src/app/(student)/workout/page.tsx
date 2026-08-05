@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Dumbbell, Clock, Check, ChevronLeft, ChevronRight, AlertTriangle,
-  Play, Pause, RotateCcw, MessageSquare, SkipForward, Minus, Plus, X
+  Play, Pause, RotateCcw, MessageSquare, SkipForward, Minus, Plus, X, PlayCircle
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,9 +21,9 @@ import { DIFFICULTY_LABELS, TRAINING_METHODS, MUSCLE_GROUPS } from '@/constants'
 
 // Demo exercises for the workout
 const workoutExercises = [
-  {
     id: '1', name: 'Supino Reto com Barra', category: 'Peitoral', method: 'standard',
     primaryMuscle: 'chest', secondaryMuscles: ['triceps', 'shoulders'],
+    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/SUPINO%20RETO.mp4',
     sets: [
       { number: 1, reps: 12, load: 30, completed: false },
       { number: 2, reps: 12, load: 30, completed: false },
@@ -37,6 +37,7 @@ const workoutExercises = [
   {
     id: '2', name: 'Supino Inclinado com Halteres', category: 'Peitoral', method: 'standard',
     primaryMuscle: 'chest', secondaryMuscles: ['triceps', 'shoulders'],
+    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/SUPINO%20INCLINADO%2030.mp4',
     sets: [
       { number: 1, reps: 12, load: 16, completed: false },
       { number: 2, reps: 12, load: 16, completed: false },
@@ -49,6 +50,7 @@ const workoutExercises = [
   {
     id: '3', name: 'Crucifixo na Máquina', category: 'Peitoral', method: 'standard',
     primaryMuscle: 'chest', secondaryMuscles: ['shoulders'],
+    video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/VOADOR.mp4',
     sets: [
       { number: 1, reps: 15, load: 25, completed: false },
       { number: 2, reps: 15, load: 25, completed: false },
@@ -274,7 +276,14 @@ export default function WorkoutPage() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-xs mb-2">{exercise.category}</Badge>
-              <h2 className="text-lg font-bold">{exercise.name}</h2>
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                {exercise.name}
+                {(exercise as any).video_url && (
+                  <a href={(exercise as any).video_url} target="_blank" rel="noopener noreferrer" title="Assistir Vídeo">
+                    <PlayCircle className="w-5 h-5 text-blue-500 hover:text-blue-600 transition-colors" />
+                  </a>
+                )}
+              </h2>
               {exercise.instructions && (
                 <p className="text-xs text-muted-foreground mt-1">{exercise.instructions}</p>
               )}

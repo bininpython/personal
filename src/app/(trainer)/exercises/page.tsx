@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Model, { IMuscleStats } from '@phelian/react-body-highlighter';
-import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User, RotateCcw } from 'lucide-react';
+import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User, RotateCcw, PlayCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -243,9 +243,16 @@ export default function ExercisesPage() {
               <div className="divide-y divide-border/30">
                 {exercises.map((ex) => (
                   <div key={ex.id} className="p-4 hover:bg-accent/30 transition-colors flex items-center justify-between group">
-                    <div>
-                      <h4 className="font-medium text-sm">{ex.name}</h4>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{ex.description}</p>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-medium text-sm">{ex.name}</h4>
+                        {ex.video_url && (
+                          <a href={ex.video_url} target="_blank" rel="noopener noreferrer" title="Ver Vídeo de Execução">
+                            <PlayCircle className="w-4 h-4 text-blue-500 hover:text-blue-600 transition-colors" />
+                          </a>
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{ex.instructions || ex.description}</p>
                     </div>
                     <Button 
                       variant="ghost" 
