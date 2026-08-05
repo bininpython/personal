@@ -86,17 +86,19 @@ export default function TrainerLoginPage() {
           <CardContent className="pt-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="trainer_code">Código de Acesso (Login)</Label>
+                <Label htmlFor="trainer_code">Código do Personal</Label>
                 <Input
                   id="trainer_code"
-                  placeholder="Ex: #xxx-nome"
+                  placeholder="Ex: 482915"
                   autoComplete="username"
-                  className="h-11"
+                  inputMode="numeric"
+                  className="h-11 font-mono tracking-wider placeholder:tracking-normal"
                   {...register('trainer_code')}
                 />
                 {errors.trainer_code && (
                   <p className="text-sm text-destructive">{errors.trainer_code.message}</p>
                 )}
+                <p className="text-xs text-muted-foreground">Use o código de 6 dígitos gerado no cadastro.</p>
               </div>
 
               <div className="space-y-2">

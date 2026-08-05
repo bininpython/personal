@@ -2,6 +2,13 @@
 
 Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanharem a execução e a evolução dos treinos.
 
+## Acesso
+
+- O personal cria a conta somente com nome, cidade, estado e senha. O sistema gera um código numérico exclusivo de 6 dígitos.
+- Cada personal pode cadastrar até 10 alunos.
+- Cada aluno recebe um código aleatório e globalmente exclusivo de 4 dígitos. O código fica reservado para sempre e não é reutilizado.
+- O aluno entra somente com o nome cadastrado e o código. E-mails técnicos usados pela autenticação nunca são exibidos nem solicitados.
+
 ## Desenvolvimento
 
 1. Copie `.env.example` para `.env.local`.

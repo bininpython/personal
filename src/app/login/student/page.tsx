@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dumbbell, User, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
+import { Dumbbell, User, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -18,7 +18,6 @@ import { APP_NAME } from '@/constants';
 export default function StudentLoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [showCode, setShowCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -86,7 +85,7 @@ export default function StudentLoginPage() {
           <CardContent className="pt-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Seu Nome</Label>
+                <Label htmlFor="name">Seu nome</Label>
                 <Input
                   id="name"
                   placeholder="Digite seu nome completo"
@@ -100,25 +99,22 @@ export default function StudentLoginPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="access_code">Código de Acesso</Label>
-                <div className="relative">
-                  <Input
-                    id="access_code"
-                    type={showCode ? 'text' : 'password'}
-                    placeholder="Ex: JP8X41"
-                    autoComplete="off"
-                    className="h-11 pr-10 font-mono tracking-wider"
-                    {...register('access_code')}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCode(!showCode)}
-                    aria-label={showCode ? 'Ocultar código' : 'Mostrar código'}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
+                <Label htmlFor="access_code">Código de acesso com 4 números</Label>
+                <Input
+                  id="access_code"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={4}
+                  placeholder="Ex: 4821"
+                  autoComplete="one-time-code"
+                  className="h-11 text-center font-mono text-xl tracking-[0.35em] placeholder:text-base placeholder:tracking-normal"
+                  {...register('access_code', {
+                    onChange: (event) => {
+                      event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4);
+                    },
+                  })}
+                />
                 {errors.access_code && (
                   <p className="text-sm text-destructive">{errors.access_code.message}</p>
                 )}
@@ -145,7 +141,7 @@ export default function StudentLoginPage() {
 
             <div className="mt-6 p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
               <p className="text-xs text-muted-foreground text-center">
-                Esqueceu seu código? Solicite um novo código ao seu personal trainer.
+                Esqueceu seu código? Peça ao seu personal para consultá-lo na lista de alunos.
               </p>
             </div>
 

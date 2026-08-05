@@ -30,7 +30,7 @@ create table public.students (
     name text not null,
     nickname text,
     birth_date date,
-    access_code text unique not null,
+    access_code text unique not null check (access_code ~ '^[0-9]{4}$'),
     mock_email text unique not null, -- Usado para gerenciar Auth sem o aluno precisar digitar e-mail
     status text default 'active' check (status in ('active', 'inactive')),
     goal text,
@@ -46,6 +46,72 @@ create table public.students (
     notes text,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
+
+-- Reserva permanente dos códigos. Mesmo que um aluno seja removido,
+-- seu código nunca volta a ficar disponível.
+create table public.student_access_codes (
+    code text primary key check (code ~ '^[0-9]{4}$'),
+    trainer_id uuid not null,
+    student_id uuid unique,
+    allocated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+create or replace function public.enforce_student_access_code_format()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+    if new.access_code !~ '^[0-9]{4}$' then
+        raise exception using
+            errcode = '23514',
+            message = 'student_access_code_must_have_four_digits';
+    end if;
+
+    return new;
+end;
+$$;
+
+create trigger enforce_student_access_code_format_trigger
+before insert or update of access_code on public.students
+for each row execute function public.enforce_student_access_code_format();
+
+create or replace function public.enforce_trainer_student_limit()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+    student_total integer;
+begin
+    perform pg_advisory_xact_lock(hashtext(new.trainer_id::text));
+
+    if tg_op = 'UPDATE' then
+        select count(*) into student_total
+        from public.students
+        where trainer_id = new.trainer_id and id <> old.id;
+    else
+        select count(*) into student_total
+        from public.students
+        where trainer_id = new.trainer_id;
+    end if;
+
+    if student_total >= 10 then
+        raise exception using errcode = 'P0001', message = 'student_limit_reached';
+    end if;
+
+    return new;
+end;
+$$;
+
+create trigger enforce_trainer_student_limit_trigger
+before insert or update of trainer_id on public.students
+for each row execute function public.enforce_trainer_student_limit();
+
+revoke all on function public.enforce_student_access_code_format() from public;
+revoke all on function public.enforce_trainer_student_limit() from public;
 
 -- Workout Plans (Fichas de Treino)
 create table public.workout_plans (
@@ -242,6 +308,7 @@ create table public.appointments (
 
 alter table public.trainers enable row level security;
 alter table public.students enable row level security;
+alter table public.student_access_codes enable row level security;
 alter table public.workout_plans enable row level security;
 alter table public.workout_days enable row level security;
 alter table public.workout_exercises enable row level security;
@@ -251,18 +318,20 @@ alter table public.workout_sessions enable row level security;
 alter table public.exercise_sessions enable row level security;
 alter table public.set_records enable row level security;
 
+revoke all on table public.student_access_codes from anon, authenticated;
+grant all on table public.student_access_codes to service_role;
+
 -- Trainers Policy
 create policy "Trainers can read their own profile"
 on public.trainers for select
 to authenticated
 using (auth.uid() = auth_user_id);
 
--- Students Policy
-create policy "Trainers can manage their own students"
-on public.students for all
+-- Students Policies. Criação e alterações passam somente pela API segura do servidor.
+create policy "Trainers can read their own students"
+on public.students for select
 to authenticated
-using (trainer_id = (select id from public.trainers where auth_user_id = (select auth.uid())))
-with check (trainer_id = (select id from public.trainers where auth_user_id = (select auth.uid())));
+using (trainer_id = (select id from public.trainers where auth_user_id = (select auth.uid())));
 
 create policy "Students can read their own profile"
 on public.students for select

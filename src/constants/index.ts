@@ -15,6 +15,7 @@ export const TRAINER_LOCKOUT_MINUTES = 15;
 export const STUDENT_LOCKOUT_MINUTES = 10;
 export const SESSION_EXPIRY_DAYS = 7;
 export const REMEMBER_ME_EXPIRY_DAYS = 30;
+export const MAX_STUDENTS_PER_TRAINER = 10;
 
 // ---- Password Requirements ----
 
@@ -23,8 +24,8 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+
 
 // ---- Access Code ----
 
-export const ACCESS_CODE_MIN_LENGTH = 4;
-export const NEW_ACCESS_CODE_MIN_LENGTH = 6;
+export const TRAINER_ACCESS_CODE_LENGTH = 6;
+export const STUDENT_ACCESS_CODE_LENGTH = 4;
 
 // ---- Muscle Groups ----
 
@@ -183,11 +184,6 @@ export const ACHIEVEMENT_DEFINITIONS = [
   { criteria_type: 'month_consistency', name: 'Consistência Mensal', description: 'Atingiu meta de frequência no mês!', icon: 'Calendar' },
   { criteria_type: 'perfect_week', name: 'Semana Perfeita', description: 'Completou todos os treinos da semana!', icon: 'CheckCircle' },
 ] as const;
-
-// ---- Trainer Code Prefix ----
-
-export const TRAINER_CODE_PREFIX = '#PRO-';
-export const STUDENT_CODE_PREFIX = 'AL-';
 
 // ---- RPE Scale ----
 

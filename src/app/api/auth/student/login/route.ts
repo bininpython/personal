@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { studentLoginSchema } from '@/lib/validators';
 import { normalizeName } from '@/lib/auth/hash';
 import {
+  buildStudentAuthPassword,
   buildSyntheticEmail,
   canonicalizeStudentAccessCode,
 } from '@/lib/auth/credentials';
@@ -27,29 +28,21 @@ export async function POST(request: Request) {
     const { name, access_code } = result.data;
     const canonicalCode = canonicalizeStudentAccessCode(access_code);
     const email = buildSyntheticEmail('student', canonicalCode);
+    const password = buildStudentAuthPassword(canonicalCode);
     const supabase = await createClient();
-    const submittedCode = access_code.trim();
-    const candidatePasswords = submittedCode === canonicalCode
-      ? [canonicalCode]
-      : [submittedCode, canonicalCode];
-    let authenticatedUserId = '';
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    for (const password of candidatePasswords) {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (!error && data.user) {
-        authenticatedUserId = data.user.id;
-        break;
-      }
-    }
-
-    if (!authenticatedUserId) {
+    if (authError || !authData.user) {
       return json({ error: GENERIC_LOGIN_ERROR }, 401);
     }
 
     const { data: student, error: profileError } = await supabase
       .from('students')
       .select('id, trainer_id, name, status')
-      .eq('id', authenticatedUserId)
+      .eq('id', authData.user.id)
       .maybeSingle();
 
     if (

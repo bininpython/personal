@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Users, Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
-  ArrowUpRight, ArrowDownRight, Calendar, Activity, Eye, Edit, Archive, ChevronDown
+  ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive, Copy, Check
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,46 +19,30 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
+import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
+import { toast } from 'sonner';
 
-const students = [
-  {
-    id: '1', name: 'João Pedro Silva', goal: 'Hipertrofia', level: 'Intermediário',
-    lastWorkout: 'Hoje', frequency: '4x/sem', completion: 92, status: 'active',
-    startDate: '07/05/2026', nextAssessment: '15/08/2026', trend: 'up',
-    weight: '78 kg', height: '175 cm',
-  },
-  {
-    id: '2', name: 'Maria Oliveira', goal: 'Emagrecimento', level: 'Iniciante',
-    lastWorkout: 'Ontem', frequency: '3x/sem', completion: 78, status: 'active',
-    startDate: '05/06/2026', nextAssessment: '20/08/2026', trend: 'up',
-    weight: '65 kg', height: '162 cm',
-  },
-  {
-    id: '3', name: 'Carlos Santos', goal: 'Força', level: 'Avançado',
-    lastWorkout: 'Há 2 dias', frequency: '5x/sem', completion: 95, status: 'active',
-    startDate: '05/02/2026', nextAssessment: '10/08/2026', trend: 'stable',
-    weight: '92 kg', height: '182 cm',
-  },
-  {
-    id: '4', name: 'Ana Beatriz Costa', goal: 'Condicionamento', level: 'Intermediário',
-    lastWorkout: 'Há 4 dias', frequency: '3x/sem', completion: 60, status: 'active',
-    startDate: '20/06/2026', nextAssessment: '25/08/2026', trend: 'down',
-    weight: '58 kg', height: '168 cm',
-  },
-  {
-    id: '5', name: 'Lucas Mendes', goal: 'Definição Muscular', level: 'Intermediário',
-    lastWorkout: 'Ontem', frequency: '4x/sem', completion: 85, status: 'active',
-    startDate: '06/04/2026', nextAssessment: '18/08/2026', trend: 'up',
-    weight: '82 kg', height: '178 cm',
-  },
-];
+interface StudentSummary {
+  id: string;
+  name: string;
+  access_code: string;
+  goal: string;
+  level: string;
+  lastWorkout: string;
+  frequency: string;
+  completion: number;
+  status: string;
+  trend: string;
+}
 
 export default function StudentsPage() {
   const router = useRouter();
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [students, setStudents] = useState<any[]>([]);
+  const [students, setStudents] = useState<StudentSummary[]>([]);
+  const [studentLimit, setStudentLimit] = useState(MAX_STUDENTS_PER_TRAINER);
+  const [copiedCode, setCopiedCode] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -66,15 +50,30 @@ export default function StudentsPage() {
       try {
         const res = await fetch('/api/students');
         const data = await res.json();
-        if (data.students) setStudents(data.students);
-      } catch (err) {
-        console.error('Error fetching students:', err);
+        if (!res.ok) throw new Error(data.error || 'Erro ao carregar alunos');
+        setStudents(data.students || []);
+        setStudentLimit(data.student_limit || MAX_STUDENTS_PER_TRAINER);
+      } catch {
+        toast.error('Não foi possível carregar os alunos.');
       } finally {
         setLoading(false);
       }
     };
     fetchStudents();
   }, []);
+
+  const copyAccessCode = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCode(code);
+      toast.success('Código copiado!');
+      setTimeout(() => setCopiedCode(''), 2000);
+    } catch {
+      toast.error('Não foi possível copiar o código.');
+    }
+  };
+
+  const limitReached = students.length >= studentLimit;
 
   const filteredStudents = students.filter(s => {
     const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase());
@@ -107,10 +106,15 @@ export default function StudentsPage() {
             Alunos
           </h1>
           <p className="text-muted-foreground mt-1">
-            {filteredStudents.length} aluno{filteredStudents.length !== 1 ? 's' : ''} encontrado{filteredStudents.length !== 1 ? 's' : ''}
+            {students.length} de {studentLimit} alunos cadastrados
           </p>
         </div>
-        <Button onClick={() => router.push('/students/new')} className="bg-primary hover:bg-primary/90 shrink-0">
+        <Button
+          onClick={() => router.push('/students/new')}
+          className="bg-primary hover:bg-primary/90 shrink-0"
+          disabled={limitReached}
+          title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Cadastrar Aluno
         </Button>
@@ -208,6 +212,22 @@ export default function StudentsPage() {
                   </div>
 
                   <div className="space-y-3">
+                    <button
+                      type="button"
+                      className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs hover:bg-muted"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void copyAccessCode(student.access_code);
+                      }}
+                    >
+                      <span className="text-muted-foreground">Código do aluno</span>
+                      <span className="flex items-center gap-2 font-mono text-sm font-bold tracking-widest">
+                        {student.access_code}
+                        {copiedCode === student.access_code
+                          ? <Check className="h-3.5 w-3.5 text-emerald-500" />
+                          : <Copy className="h-3.5 w-3.5" />}
+                      </span>
+                    </button>
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">Conclusão</span>
                       <div className="flex items-center gap-1">
@@ -251,6 +271,7 @@ export default function StudentsPage() {
                 <tr className="border-b">
                   <th className="text-left p-4 text-xs font-medium text-muted-foreground">Aluno</th>
                   <th className="text-left p-4 text-xs font-medium text-muted-foreground hidden sm:table-cell">Objetivo</th>
+                  <th className="text-left p-4 text-xs font-medium text-muted-foreground">Código</th>
                   <th className="text-left p-4 text-xs font-medium text-muted-foreground hidden md:table-cell">Último Treino</th>
                   <th className="text-left p-4 text-xs font-medium text-muted-foreground">Conclusão</th>
                   <th className="text-left p-4 text-xs font-medium text-muted-foreground hidden lg:table-cell">Status</th>
@@ -260,13 +281,13 @@ export default function StudentsPage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    <td colSpan={7} className="p-8 text-center text-muted-foreground">
                       Carregando alunos...
                     </td>
                   </tr>
                 ) : filteredStudents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                    <td colSpan={7} className="p-8 text-center text-muted-foreground">
                       Nenhum aluno encontrado.
                     </td>
                   </tr>
@@ -290,6 +311,23 @@ export default function StudentsPage() {
                       </div>
                     </td>
                     <td className="p-4 text-sm hidden sm:table-cell">{student.goal}</td>
+                    <td className="p-4">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="font-mono font-bold tracking-widest"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          void copyAccessCode(student.access_code);
+                        }}
+                      >
+                        {student.access_code}
+                        {copiedCode === student.access_code
+                          ? <Check className="ml-2 h-3.5 w-3.5 text-emerald-500" />
+                          : <Copy className="ml-2 h-3.5 w-3.5" />}
+                      </Button>
+                    </td>
                     <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">{student.lastWorkout}</td>
                     <td className="p-4">
                       <div className="flex items-center gap-2">
