@@ -28,16 +28,19 @@ export async function GET(request: Request) {
       const { data: exercises, error } = await query;
       if (error) throw error;
       
-      return NextResponse.json({ exercises });
+      if (exercises && exercises.length > 0) {
+        return NextResponse.json({ exercises });
+      }
+      // If DB is empty for this category, fallback to demo data
     }
     // -----------------------
 
-    // Demo Data
+    // Demo Data Fallback
     const { getAllExercises } = await import('@/lib/demo-data');
     let allExercises = getAllExercises();
     
     if (category) {
-      allExercises = allExercises.filter(e => e.category === category || e.primary_muscle === category);
+      allExercises = allExercises.filter(e => e.category === category || (e as any).primary_muscle === category || (e as any).primaryMuscle === category);
     }
 
     return NextResponse.json({ exercises: allExercises });
