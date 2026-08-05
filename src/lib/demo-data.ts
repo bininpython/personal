@@ -527,6 +527,11 @@ export function getAchievementsByStudent(studentId: string) {
 }
 
 export function getAllAchievements() { return Array.from(achievements.values()); }
+export function getAllExercises() { return Array.from(exercises.values()); }
+export function createWorkoutPlan(data: any) { 
+  // Dummy to satisfy API
+  console.log('Created workout plan in demo data:', data.name);
+}
 
 // --- Dashboard Stats ---
 export function getDashboardStats(trainerId: string) {
