@@ -10,6 +10,8 @@ import type {
   StudentAchievement, Appointment,
 } from '@/types';
 import { hashPassword, normalizeName, getCodeHint } from '@/lib/auth/hash';
+import fs from 'fs';
+import path from 'path';
 
 // ---- Demo trainer password: Treino@2026Forte ----
 // ---- Demo trainer code: #PRO-ABNER ----
@@ -19,6 +21,43 @@ let demoInitialized = false;
 // Storage
 const trainers: Map<string, Trainer & { password_hash: string }> = new Map();
 const students: Map<string, Student & { access_code_hash: string }> = new Map();
+
+const DB_FILE = path.join(process.cwd(), '.demo-db.json');
+
+function saveDb() {
+  try {
+    const data = {
+      trainers: Array.from(trainers.entries()),
+      students: Array.from(students.entries()),
+    };
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+  } catch (err) {
+    console.error('Failed to save demo db', err);
+  }
+}
+
+function loadDb(): boolean {
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const fileData = fs.readFileSync(DB_FILE, 'utf-8');
+      if (fileData) {
+        const data = JSON.parse(fileData);
+        if (data.trainers) {
+          trainers.clear();
+          for (const [k, v] of data.trainers) trainers.set(k, v);
+        }
+        if (data.students) {
+          students.clear();
+          for (const [k, v] of data.students) students.set(k, v);
+        }
+        return true;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load demo db', err);
+  }
+  return false;
+}
 const workoutPlans: Map<string, WorkoutPlan> = new Map();
 const workoutDays: Map<string, WorkoutDay> = new Map();
 const exercises: Map<string, Exercise> = new Map();
@@ -52,6 +91,8 @@ function today(): string {
 export async function initDemoData() {
   if (demoInitialized) return;
   demoInitialized = true;
+
+  const dbLoaded = loadDb();
 
   // --- Trainer ---
   const trainerId = uuid();
@@ -123,6 +164,10 @@ export async function initDemoData() {
       created_at: daysAgo(s.daysAgoStart),
       updated_at: new Date().toISOString(),
     });
+  }
+
+  if (!dbLoaded) {
+    saveDb();
   }
 
   // --- Exercises (20+ exercises) ---
@@ -866,10 +911,18 @@ export function findStudentByNameAndTrainer(normalizedName: string, trainerId: s
 
 export function addStudent(student: Student & { access_code_hash: string }) {
   students.set(student.id, student);
+  saveDb();
 }
 export function updateStudent(id: string, updates: Partial<Student & { access_code_hash: string }>) {
   const existing = students.get(id);
-  if (existing) students.set(id, { ...existing, ...updates });
+  if (existing) {
+    students.set(id, { ...existing, ...updates });
+    saveDb();
+  }
+}
+export function deleteStudent(id: string) {
+  students.delete(id);
+  saveDb();
 }
 
 export function getExercises() { return Array.from(exercises.values()); }
