@@ -22,6 +22,9 @@ interface RelatedPlan {
 const completeWorkoutSchema = z.object({
   workoutDayId: z.string().uuid(),
   completionPercentage: z.number().min(0).max(100).default(100),
+  durationSeconds: z.number().int().min(0).max(21_600).optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+  feedback: z.string().trim().max(1000).optional(),
 }).strict();
 
 function json(body: Record<string, unknown>, status = 200) {
@@ -46,7 +49,7 @@ export async function GET() {
         .from('workout_sessions')
         .select(`
           id, started_at, completed_at, duration_seconds, completion_percentage,
-          total_volume, status, workout_days (name, day_label), workout_plans (name)
+          total_volume, status, rating, feedback, workout_days (name, day_label), workout_plans (name)
         `)
         .eq('student_id', session.sub)
         .order('started_at', { ascending: false }),
@@ -72,6 +75,8 @@ export async function GET() {
         completion: Number(item.completion_percentage ?? 0),
         volume: Number(item.total_volume ?? 0),
         status: item.status,
+        rating: item.rating,
+        feedback: item.feedback,
       };
     });
 
@@ -162,6 +167,9 @@ export async function POST(request: Request) {
         completion_percentage: parsed.data.completionPercentage,
         total_volume: 0,
         status: 'completed',
+        duration_seconds: parsed.data.durationSeconds ?? null,
+        rating: parsed.data.rating ?? null,
+        feedback: parsed.data.feedback || null,
       })
       .select('id')
       .single();

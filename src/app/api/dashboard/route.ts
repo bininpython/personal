@@ -1,103 +1,82 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { getTrainerAnalytics } from '@/lib/analytics/trainer-analytics';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function GET() {
   try {
     const session = await getSession();
     if (!session || session.role !== 'trainer') {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+      return NextResponse.json({ error: 'Não autorizado.' }, { status: 401 });
     }
 
-    const trainerId = session.trainer_id;
-    const supabase = createAdminClient();
-    
-    const { data: students, error } = await supabase
-      .from('students')
-      .select('id, name, goal, status')
-      .eq('trainer_id', trainerId);
+    const analytics = await getTrainerAnalytics(session.trainer_id);
+    const admin = createAdminClient();
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+    const studentIds = analytics.students.map((student) => student.id);
 
-    if (error) throw error;
+    const [todaySessions, todayAppointments] = await Promise.all([
+      studentIds.length > 0
+        ? admin
+          .from('workout_sessions')
+          .select('student_id')
+          .in('student_id', studentIds)
+          .eq('status', 'completed')
+          .gte('completed_at', start.toISOString())
+          .lt('completed_at', end.toISOString())
+        : Promise.resolve({ data: [], error: null }),
+      admin
+        .from('appointments')
+        .select('id')
+        .eq('trainer_id', session.trainer_id)
+        .eq('status', 'scheduled')
+        .gte('start_time', start.toISOString())
+        .lt('start_time', end.toISOString()),
+    ]);
+    if (todaySessions.error) throw todaySessions.error;
+    if (todayAppointments.error) throw todayAppointments.error;
 
-    const activeStudents = students.filter((student) => student.status === 'active').length;
-    const studentIds = students.map((student) => student.id);
-    const { data: sessions, error: sessionError } = studentIds.length > 0
-      ? await supabase
-        .from('workout_sessions')
-        .select('student_id, started_at, completed_at, completion_percentage, status')
-        .in('student_id', studentIds)
-        .order('started_at', { ascending: false })
-      : { data: [], error: null };
-
-    if (sessionError) throw sessionError;
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const trainedToday = new Set(
-      (sessions ?? [])
-        .filter((workout) => new Date(workout.started_at) >= today)
-        .map((workout) => workout.student_id),
-    ).size;
-    const completedSessions = (sessions ?? []).filter((workout) => workout.status === 'completed');
-    const completionRate = completedSessions.length > 0
-      ? Math.round(completedSessions.reduce(
-        (total, workout) => total + Number(workout.completion_percentage ?? 0),
-        0,
-      ) / completedSessions.length)
+    const trainedToday = new Set((todaySessions.data ?? []).map((item) => item.student_id)).size;
+    const activePerformance = analytics.students.filter((student) => student.status === 'active');
+    const completionRate = activePerformance.length > 0
+      ? Math.round(activePerformance.reduce((sum, student) => sum + student.completionAverage, 0) / activePerformance.length)
       : 0;
-
-    const stats = {
-      activeStudents,
-      trainedToday,
-      completionRate,
-      alerts: 0,
-    };
-
-    // Calculate goal distribution
-    const goalCounts: Record<string, number> = {};
-    students.forEach(s => {
-      const goal = s.goal || 'Geral';
-      goalCounts[goal] = (goalCounts[goal] || 0) + 1;
-    });
-
     const chartColors = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
-    const goalDistribution = Object.entries(goalCounts).map(([name, value], index) => ({
-      name,
-      value,
-      color: chartColors[index % chartColors.length],
-    }));
 
-    const studentRanking = students.map((student) => {
-      const studentSessions = (sessions ?? []).filter((workout) => workout.student_id === student.id);
-      const completed = studentSessions.filter((workout) => workout.status === 'completed');
-      const completion = completed.length > 0
-        ? Math.round(completed.reduce(
-          (total, workout) => total + Number(workout.completion_percentage ?? 0),
-          0,
-        ) / completed.length)
-        : 0;
-      const lastWorkout = studentSessions[0]?.completed_at || studentSessions[0]?.started_at;
-
-      return {
-      id: student.id,
-      name: student.name,
-      goal: student.goal || 'Geral',
-      lastWorkout: lastWorkout
-        ? new Date(lastWorkout).toLocaleDateString('pt-BR')
-        : 'Sem treino registrado',
-      avatar_url: '',
-      completion,
-      workouts: completed.length,
-      trend: 'stable' as const,
-      };
-    }).sort((a, b) => b.completion - a.completion || b.workouts - a.workouts).slice(0, 5);
-
-    return NextResponse.json({ stats, goalDistribution, studentRanking });
+    return NextResponse.json({
+      stats: {
+        activeStudents: analytics.summary.activeStudents,
+        trainedToday,
+        completionRate,
+        averageConsistency: analytics.summary.averageConsistency,
+        atRisk: analytics.summary.atRisk,
+        alerts: analytics.summary.atRisk + analytics.summary.attention,
+        appointmentsToday: (todayAppointments.data ?? []).length,
+      },
+      goalDistribution: analytics.goalDistribution.map((goal, index) => ({ ...goal, color: chartColors[index % chartColors.length] })),
+      studentRanking: analytics.students.slice().sort((left, right) => right.consistencyScore - left.consistencyScore).slice(0, 5).map((student) => ({
+        id: student.id,
+        name: student.name,
+        goal: student.goal,
+        lastWorkout: student.lastWorkoutAt ? new Date(student.lastWorkoutAt).toLocaleDateString('pt-BR') : 'Sem treino registrado',
+        completion: student.completionAverage,
+        consistency: student.consistencyScore,
+        workouts: student.workouts30d,
+        risk: student.risk,
+        trend: student.trend,
+      })),
+      priorities: analytics.students.filter((student) => student.risk !== 'low').slice(0, 3).map((student) => ({
+        id: student.id,
+        name: student.name,
+        risk: student.risk,
+        recommendation: student.recommendation,
+      })),
+    }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
-    console.error('[Get Dashboard] Error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error('[Dashboard] Error:', error);
+    return NextResponse.json({ error: 'Não foi possível carregar o dashboard.' }, { status: 500 });
   }
 }

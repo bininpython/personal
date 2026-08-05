@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Dumbbell, Loader2, RefreshCw, Target, Zap } from 'lucide-react';
+import { CalendarDays, ChevronRight, Dumbbell, Loader2, RefreshCw, Target, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +21,15 @@ interface HomePlan {
   }>;
 }
 
+interface StudentAppointment {
+  id: string;
+  studentName: string;
+  type: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+}
+
 export default function StudentHomePage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -29,14 +38,22 @@ export default function StudentHomePage() {
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   });
   const [plan, setPlan] = useState<HomePlan | null>(null);
+  const [appointments, setAppointments] = useState<StudentAppointment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadPlan = async () => {
       try {
-        const response = await fetch('/api/workout-plans', { cache: 'no-store' });
-        const data = await response.json() as { plan?: HomePlan | null };
-        if (response.ok) setPlan(data.plan ?? null);
+        const [planResponse, appointmentResponse] = await Promise.all([
+          fetch('/api/workout-plans', { cache: 'no-store' }),
+        fetch('/api/appointments?upcoming=true', { cache: 'no-store' }),
+        ]);
+        const data = await planResponse.json() as { plan?: HomePlan | null };
+        if (planResponse.ok) setPlan(data.plan ?? null);
+        if (appointmentResponse.ok) {
+          const appointmentData = await appointmentResponse.json() as { appointments?: StudentAppointment[] };
+          setAppointments((appointmentData.appointments ?? []).filter((item) => item.status === 'scheduled' && new Date(item.endTime) >= new Date()).slice(0, 3));
+        }
       } finally {
         setLoading(false);
       }
@@ -129,6 +146,13 @@ export default function StudentHomePage() {
               </button>
             ))}
           </CardContent>
+        </Card>
+      )}
+
+      {appointments.length > 0 && (
+        <Card className="border-border/60">
+          <CardHeader className="pb-3"><CardTitle className="flex items-center gap-2 text-base"><CalendarDays className="size-4 text-blue-500" /> Próximos compromissos</CardTitle></CardHeader>
+          <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-xl border p-3"><p className="font-medium">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</p></div>)}</CardContent>
         </Card>
       )}
     </div>

@@ -73,6 +73,25 @@ export default function StudentsPage() {
     }
   };
 
+  const updateStudentStatus = async (student: StudentSummary) => {
+    const nextStatus = student.status === 'active' ? 'inactive' : 'active';
+    const action = nextStatus === 'inactive' ? 'arquivar' : 'reativar';
+    if (!window.confirm(`Deseja ${action} ${student.name}?`)) return;
+    try {
+      const response = await fetch(`/api/students/${student.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error || `Não foi possível ${action} o aluno.`);
+      setStudents((current) => current.map((item) => item.id === student.id ? { ...item, status: nextStatus } : item));
+      toast.success(nextStatus === 'inactive' ? 'Aluno arquivado.' : 'Aluno reativado.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `Não foi possível ${action} o aluno.`);
+    }
+  };
+
   const limitReached = students.length >= studentLimit;
 
   const filteredStudents = students.filter(s => {
@@ -202,9 +221,9 @@ export default function StudentsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}`)}><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
-                        <DropdownMenuItem disabled><Edit className="w-4 h-4 mr-2" /> Edição em breve</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}#edit`)}><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem disabled><Archive className="w-4 h-4 mr-2" /> Arquivamento em breve</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => void updateStudentStatus(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

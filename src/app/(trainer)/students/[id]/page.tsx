@@ -2,218 +2,144 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, User, Activity, Dumbbell, ClipboardList, TrendingUp, Mail, Edit3, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, Loader2, Mail, TrendingUp, User } from 'lucide-react';
+import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
 
 interface StudentDetails {
   full_name: string;
-  status: string;
+  status: 'active' | 'inactive';
   goal: string;
   current_weight: number;
   height: number;
-  experience_level: string;
+  experience_level: 'beginner' | 'intermediate' | 'advanced';
   start_date: string;
   injuries: string;
   restrictions: string;
+  medical_notes: string;
   notes: string;
 }
+
+interface StudentPerformance {
+  id: string;
+  plannedFrequency: number;
+  workouts7d: number;
+  workouts30d: number;
+  completionAverage: number;
+  consistencyScore: number;
+  daysSinceLastWorkout: number | null;
+  weightChange: number | null;
+  bodyFatChange: number | null;
+  risk: 'low' | 'medium' | 'high';
+  recommendation: string;
+}
+
+const LEVEL_LABELS = { beginner: 'Iniciante', intermediate: 'Intermediário', advanced: 'Avançado' };
 
 export default function StudentProfilePage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [student, setStudent] = useState<StudentDetails | null>(null);
+  const [performance, setPerformance] = useState<StudentPerformance | null>(null);
+  const [draft, setDraft] = useState<StudentDetails | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
-    const fetchStudent = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(`/api/students/${params.id}`);
-        const data = await res.json() as { student?: StudentDetails; error?: string };
-        
-        if (!res.ok) {
-          toast.error(data.error || 'Erro ao carregar aluno');
-          router.push('/students');
-          return;
+        const [studentResponse, analyticsResponse] = await Promise.all([
+          fetch(`/api/students/${params.id}`, { cache: 'no-store' }),
+          fetch('/api/analytics', { cache: 'no-store' }),
+        ]);
+        const studentData = await studentResponse.json() as { student?: StudentDetails; error?: string };
+        if (!studentResponse.ok || !studentData.student) throw new Error(studentData.error || 'Erro ao carregar aluno');
+        setStudent(studentData.student);
+        setDraft(studentData.student);
+        if (analyticsResponse.ok) {
+          const analytics = await analyticsResponse.json() as { students?: StudentPerformance[] };
+          setPerformance(analytics.students?.find((item) => item.id === params.id) ?? null);
         }
-
-        setStudent(data.student ?? null);
-      } catch {
-        toast.error('Erro de conexão ao carregar aluno');
+        if (window.location.hash === '#edit') setEditOpen(true);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Erro de conexão ao carregar aluno');
+        router.push('/students');
       } finally {
         setLoading(false);
       }
     };
-    fetchStudent();
+    void fetchData();
   }, [params.id, router]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+  function openEdit() {
+    setDraft(student ? { ...student } : null);
+    setEditOpen(true);
   }
 
-  if (!student) {
-    return (
-      <div className="text-center py-12 text-muted-foreground">
-        Aluno não encontrado.
-      </div>
-    );
+  async function saveStudent() {
+    if (!draft) return;
+    setSaving(true);
+    try {
+      const payload = {
+        full_name: draft.full_name,
+        status: draft.status,
+        goal: draft.goal,
+        experience_level: draft.experience_level,
+        ...(draft.height > 0 ? { height: draft.height } : {}),
+        ...(draft.current_weight > 0 ? { current_weight: draft.current_weight } : {}),
+        restrictions: draft.restrictions,
+        injuries: draft.injuries,
+        medical_notes: draft.medical_notes,
+        notes: draft.notes,
+      };
+      const response = await fetch(`/api/students/${params.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível salvar o aluno.');
+      setStudent({ ...draft });
+      setEditOpen(false);
+      window.history.replaceState(null, '', window.location.pathname);
+      toast.success('Perfil do aluno atualizado.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível salvar o aluno.');
+    } finally {
+      setSaving(false);
+    }
   }
+
+  if (loading) return <div className="flex min-h-[400px] items-center justify-center"><Loader2 className="size-8 animate-spin text-primary" /></div>;
+  if (!student) return <div className="py-12 text-center text-muted-foreground">Aluno não encontrado.</div>;
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/students')} className="shrink-0">
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">Perfil do Aluno</h1>
-          <p className="text-muted-foreground mt-1">Gerencie os dados e o progresso do aluno</p>
-        </div>
-      </div>
+    <div className="space-y-6 pb-10 animate-fade-in">
+      <div className="flex items-center gap-4"><Button variant="ghost" size="icon" onClick={() => router.push('/students')}><ChevronLeft /></Button><div><h1 className="text-2xl font-bold tracking-tight">Perfil do Aluno</h1><p className="mt-1 text-muted-foreground">Dados, constância e acompanhamento individual.</p></div></div>
+      <Card className="border-border/60 bg-gradient-to-r from-background to-muted/20"><CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center"><div className="flex items-center gap-4"><Avatar className="size-20 border-2 border-primary/20"><AvatarFallback className="bg-primary/10 text-2xl font-bold text-primary">{student.full_name.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><h2 className="text-2xl font-bold">{student.full_name}</h2><Badge className={student.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' : ''}>{student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground"><Activity className="size-3.5" /> {student.goal || 'Sem objetivo'}</p></div></div><div className="flex w-full gap-2 sm:w-auto"><Button variant="outline" className="flex-1" onClick={() => router.push(`/messages?contactId=${params.id}`)}><Mail className="mr-2 size-4" /> Mensagem</Button><Button variant="secondary" className="flex-1" onClick={openEdit}><Edit3 className="mr-2 size-4" /> Editar</Button></div></CardContent></Card>
 
-      {/* Header Card */}
-      <Card className="border-border/50 bg-gradient-to-r from-background to-muted/20">
-        <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <Avatar className="w-20 h-20 border-2 border-primary/20">
-              <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
-                {student.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold">{student.full_name}</h2>
-                <Badge className={student.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-muted text-muted-foreground'}>
-                  {student.status === 'active' ? 'Ativo' : 'Inativo'}
-                </Badge>
-              </div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5" /> {student.goal || 'Sem objetivo'}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex gap-2 w-full sm:w-auto">
-            <Button variant="outline" className="flex-1 sm:flex-none" disabled title="Mensagens diretas ainda não disponíveis">
-              <Mail className="w-4 h-4 mr-2" />
-              Mensagem
-            </Button>
-            <Button variant="secondary" className="flex-1 sm:flex-none" disabled title="Edição será adicionada em uma próxima atualização">
-              <Edit3 className="w-4 h-4 mr-2" />
-              Editar Perfil
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      {performance && <div className="grid grid-cols-2 gap-3 lg:grid-cols-5"><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.consistencyScore}%</p><p className="text-xs text-muted-foreground">constância</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.workouts7d}/{performance.plannedFrequency}</p><p className="text-xs text-muted-foreground">meta semanal</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.completionAverage}%</p><p className="text-xs text-muted-foreground">conclusão média</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.workouts30d}</p><p className="text-xs text-muted-foreground">treinos em 30 dias</p></CardContent></Card><Card><CardContent className="p-4"><Badge variant="outline" className={performance.risk === 'high' ? 'text-red-600' : performance.risk === 'medium' ? 'text-amber-600' : 'text-emerald-600'}>{performance.risk === 'high' ? 'Risco alto' : performance.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge><p className="mt-2 text-xs text-muted-foreground">{performance.daysSinceLastWorkout === null ? 'Sem treino' : `${performance.daysSinceLastWorkout} dia(s) desde o último`}</p></CardContent></Card></div>}
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-4 w-full h-12">
-          <TabsTrigger value="overview" className="h-full">
-            <User className="w-4 h-4 mr-2 hidden sm:inline" /> Visão Geral
-          </TabsTrigger>
-          <TabsTrigger value="workouts" className="h-full">
-            <Dumbbell className="w-4 h-4 mr-2 hidden sm:inline" /> Fichas
-          </TabsTrigger>
-          <TabsTrigger value="progress" className="h-full">
-            <TrendingUp className="w-4 h-4 mr-2 hidden sm:inline" /> Evolução
-          </TabsTrigger>
-          <TabsTrigger value="assessments" className="h-full">
-            <ClipboardList className="w-4 h-4 mr-2 hidden sm:inline" /> Avaliações
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6 mt-6 focus-visible:outline-none focus-visible:ring-0">
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card className="md:col-span-2 border-border/50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Dados Físicos & Métricas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-muted/40">
-                    <p className="text-sm text-muted-foreground mb-1">Peso</p>
-                    <p className="text-xl font-bold">{student.current_weight ? `${student.current_weight} kg` : '--'}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-muted/40">
-                    <p className="text-sm text-muted-foreground mb-1">Altura</p>
-                    <p className="text-xl font-bold">{student.height ? `${student.height} cm` : '--'}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-muted/40">
-                    <p className="text-sm text-muted-foreground mb-1">Nível</p>
-                    <p className="text-xl font-bold capitalize">{student.experience_level || '--'}</p>
-                  </div>
-                  <div className="p-4 rounded-xl bg-muted/40">
-                    <p className="text-sm text-muted-foreground mb-1">Início</p>
-                    <p className="text-xl font-bold">{student.start_date ? new Date(`${student.start_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR') : '--'}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border-border/50 bg-amber-500/5 border-amber-500/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2 text-amber-600 dark:text-amber-500">
-                  <Activity className="w-5 h-5" />
-                  Observações e Lesões
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {student.injuries || student.restrictions || student.notes || 'Nenhuma observação registrada.'}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="workouts" className="focus-visible:outline-none focus-visible:ring-0">
-          <Card className="border-border/50 text-center py-12">
-            <CardContent>
-              <Dumbbell className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-bold mb-2">Fichas do aluno</h3>
-              <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
-                Consulte as fichas publicadas ou abra o montador para criar uma nova.
-              </p>
-              <div className="flex justify-center gap-2"><Button variant="outline" onClick={() => router.push('/workouts')}>Ver fichas</Button><Button onClick={() => router.push('/exercises')}>Criar nova ficha</Button></div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="progress" className="focus-visible:outline-none focus-visible:ring-0">
-          <Card className="border-border/50 text-center py-12">
-            <CardContent>
-              <TrendingUp className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-bold mb-2">Evolução na conta do aluno</h3>
-              <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                A frequência, o histórico e as medidas registradas aparecem na área do aluno. O painel individual do personal será ampliado em uma próxima atualização.
-              </p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="assessments" className="focus-visible:outline-none focus-visible:ring-0">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold">Histórico de Avaliações Físicas</h3>
-            <Button variant="outline" onClick={() => router.push('/assessments/new')}>Nova Avaliação</Button>
-          </div>
-          <Card className="border-border/50 text-center py-12">
-            <CardContent>
-              <ClipboardList className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground text-sm mb-5">Consulte o histórico real na página de avaliações.</p>
-              <Button variant="outline" onClick={() => router.push('/assessments')}>Ver avaliações</Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
+      <Tabs value={activeTab} onValueChange={setActiveTab}><TabsList className="grid h-12 w-full grid-cols-4"><TabsTrigger value="overview"><User className="mr-2 hidden size-4 sm:inline" /> Visão geral</TabsTrigger><TabsTrigger value="workouts"><Dumbbell className="mr-2 hidden size-4 sm:inline" /> Fichas</TabsTrigger><TabsTrigger value="progress"><TrendingUp className="mr-2 hidden size-4 sm:inline" /> Evolução</TabsTrigger><TabsTrigger value="assessments"><ClipboardList className="mr-2 hidden size-4 sm:inline" /> Avaliações</TabsTrigger></TabsList>
+        <TabsContent value="overview" className="mt-6"><div className="grid gap-6 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle className="text-lg">Dados físicos</CardTitle></CardHeader><CardContent><div className="grid grid-cols-2 gap-4">{[['Peso', student.current_weight ? `${student.current_weight} kg` : '--'], ['Altura', student.height ? `${student.height} cm` : '--'], ['Nível', LEVEL_LABELS[student.experience_level]], ['Início', student.start_date ? new Date(`${student.start_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR') : '--']].map(([label, value]) => <div key={label} className="rounded-xl bg-muted/40 p-4"><p className="text-sm text-muted-foreground">{label}</p><p className="text-xl font-bold">{value}</p></div>)}</div></CardContent></Card><Card className="border-amber-500/20 bg-amber-500/5"><CardHeader><CardTitle className="text-lg text-amber-600">Observações</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{student.injuries || student.restrictions || student.notes || 'Nenhuma observação registrada.'}</p></CardContent></Card></div></TabsContent>
+        <TabsContent value="workouts"><Card className="py-12 text-center"><CardContent><Dumbbell className="mx-auto mb-4 size-12 text-muted-foreground/40" /><h3 className="font-bold">Fichas do aluno</h3><p className="mb-5 mt-1 text-sm text-muted-foreground">Consulte as fichas ou crie uma nova.</p><div className="flex justify-center gap-2"><Button variant="outline" onClick={() => router.push('/workouts')}>Ver fichas</Button><Button onClick={() => router.push('/exercises')}>Criar ficha</Button></div></CardContent></Card></TabsContent>
+        <TabsContent value="progress"><Card><CardContent className="space-y-5 p-6">{performance ? <><div><div className="flex justify-between text-sm"><span>Constância calculada</span><strong>{performance.consistencyScore}%</strong></div><Progress value={performance.consistencyScore} className="mt-2" /></div><p className="text-sm text-muted-foreground">{performance.recommendation}</p><div className="grid grid-cols-2 gap-3"><div className="rounded-lg bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Variação de peso</p><p className="font-bold">{performance.weightChange === null ? 'Sem dados' : `${performance.weightChange > 0 ? '+' : ''}${performance.weightChange} kg`}</p></div><div className="rounded-lg bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Variação de gordura</p><p className="font-bold">{performance.bodyFatChange === null ? 'Sem dados' : `${performance.bodyFatChange > 0 ? '+' : ''}${performance.bodyFatChange}%`}</p></div></div></> : <p className="text-center text-sm text-muted-foreground">Registre treinos e avaliações para calcular a evolução.</p>}</CardContent></Card></TabsContent>
+        <TabsContent value="assessments"><Card className="py-12 text-center"><CardContent><ClipboardList className="mx-auto mb-4 size-12 text-muted-foreground/40" /><p className="mb-5 text-sm text-muted-foreground">Consulte ou registre avaliações físicas.</p><div className="flex justify-center gap-2"><Button variant="outline" onClick={() => router.push('/assessments')}>Ver avaliações</Button><Button onClick={() => router.push('/assessments/new')}>Nova avaliação</Button></div></CardContent></Card></TabsContent>
       </Tabs>
+
+      <Dialog open={editOpen} onOpenChange={setEditOpen}><DialogContent className="max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>Editar aluno</DialogTitle></DialogHeader>{draft && <div className="space-y-4"><div className="space-y-2"><Label>Nome</Label><Input value={draft.full_name} onChange={(event) => setDraft({ ...draft, full_name: event.target.value })} /></div><div className="space-y-2"><Label>Status</Label><Select value={draft.status} onValueChange={(value) => setDraft({ ...draft, status: value as StudentDetails['status'] })}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="active">Ativo</SelectItem><SelectItem value="inactive">Arquivado</SelectItem></SelectContent></Select></div><div className="space-y-2"><Label>Objetivo</Label><Input value={draft.goal} onChange={(event) => setDraft({ ...draft, goal: event.target.value })} /></div><div className="space-y-2"><Label>Nível</Label><Select value={draft.experience_level} onValueChange={(value) => setDraft({ ...draft, experience_level: value as StudentDetails['experience_level'] })}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="beginner">Iniciante</SelectItem><SelectItem value="intermediate">Intermediário</SelectItem><SelectItem value="advanced">Avançado</SelectItem></SelectContent></Select></div><div className="grid grid-cols-2 gap-3"><div className="space-y-2"><Label>Peso (kg)</Label><Input type="number" step="0.1" value={draft.current_weight || ''} onChange={(event) => setDraft({ ...draft, current_weight: Number(event.target.value) })} /></div><div className="space-y-2"><Label>Altura (cm)</Label><Input type="number" value={draft.height || ''} onChange={(event) => setDraft({ ...draft, height: Number(event.target.value) })} /></div></div><div className="space-y-2"><Label>Lesões</Label><Textarea value={draft.injuries} onChange={(event) => setDraft({ ...draft, injuries: event.target.value })} /></div><div className="space-y-2"><Label>Restrições</Label><Textarea value={draft.restrictions} onChange={(event) => setDraft({ ...draft, restrictions: event.target.value })} /></div><div className="space-y-2"><Label>Observações internas</Label><Textarea value={draft.notes} onChange={(event) => setDraft({ ...draft, notes: event.target.value })} /></div><div className="flex justify-end gap-2"><Button variant="outline" onClick={() => setEditOpen(false)}>Cancelar</Button><Button onClick={() => void saveStudent()} disabled={saving || draft.full_name.trim().length < 2}>{saving && <Loader2 className="mr-2 size-4 animate-spin" />} Salvar</Button></div></div>}</DialogContent></Dialog>
     </div>
   );
 }

@@ -303,6 +303,25 @@ create table public.appointments (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create index messages_sender_created_idx
+    on public.messages (sender_id, sender_type, created_at desc);
+create index messages_recipient_created_idx
+    on public.messages (recipient_id, recipient_type, created_at desc);
+create index notifications_user_created_idx
+    on public.notifications (user_id, user_type, created_at desc);
+create unique index notifications_deduplication_idx
+    on public.notifications (user_id, user_type, ((metadata->>'key')))
+    where metadata ? 'key';
+create index appointments_trainer_start_idx
+    on public.appointments (trainer_id, start_time);
+create index appointments_student_start_idx
+    on public.appointments (student_id, start_time);
+create index workout_sessions_student_completed_idx
+    on public.workout_sessions (student_id, completed_at desc)
+    where status = 'completed';
+create index assessments_student_date_idx
+    on public.physical_assessments (student_id, assessment_date desc);
+
 -- 2. Row Level Security (RLS)
 -- Garante que um personal só veja seus próprios alunos, e um aluno só veja a si mesmo.
 
@@ -317,9 +336,18 @@ alter table public.physical_assessments enable row level security;
 alter table public.workout_sessions enable row level security;
 alter table public.exercise_sessions enable row level security;
 alter table public.set_records enable row level security;
+alter table public.messages enable row level security;
+alter table public.notifications enable row level security;
+alter table public.appointments enable row level security;
 
 revoke all on table public.student_access_codes from anon, authenticated;
 grant all on table public.student_access_codes to service_role;
+revoke all on table public.messages from anon, authenticated;
+revoke all on table public.notifications from anon, authenticated;
+revoke all on table public.appointments from anon, authenticated;
+grant all on table public.messages to service_role;
+grant all on table public.notifications to service_role;
+grant all on table public.appointments to service_role;
 
 -- Trainers Policy
 create policy "Trainers can read their own profile"

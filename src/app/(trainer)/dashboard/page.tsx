@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, TrendingUp, AlertTriangle,
+  Users, TrendingUp, AlertTriangle, CalendarDays, BrainCircuit,
   ChevronRight, Activity, Target,
   ArrowUpRight, ArrowDownRight, ArrowRight
 } from 'lucide-react';
@@ -23,6 +23,8 @@ interface RankingStudent {
   lastWorkout: string;
   completion: number;
   workouts: number;
+  consistency: number;
+  risk: 'low' | 'medium' | 'high';
   trend: 'up' | 'down' | 'stable';
 }
 
@@ -44,6 +46,9 @@ export default function DashboardPage() {
     trainedToday: 0,
     completionRate: 0,
     alerts: 0,
+    averageConsistency: 0,
+    atRisk: 0,
+    appointmentsToday: 0,
   });
   const [ranking, setRanking] = useState<RankingStudent[]>([]);
   const [goalDist, setGoalDist] = useState<GoalDistribution[]>([]);
@@ -82,12 +87,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {[
           { label: 'Alunos Ativos', value: stats.activeStudents.toString(), icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10', change: '' },
           { label: 'Treinaram Hoje', value: stats.trainedToday.toString(), icon: Activity, color: 'text-blue-500', bg: 'bg-blue-500/10', change: '' },
+          { label: 'Constância Média', value: `${stats.averageConsistency}%`, icon: BrainCircuit, color: 'text-violet-500', bg: 'bg-violet-500/10', change: '' },
           { label: 'Taxa de Conclusão', value: `${stats.completionRate}%`, icon: Target, color: 'text-amber-500', bg: 'bg-amber-500/10', change: '' },
-          { label: 'Alertas', value: stats.alerts.toString(), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '' },
+          { label: 'Risco Alto', value: stats.atRisk.toString(), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '' },
+          { label: 'Agenda Hoje', value: stats.appointmentsToday.toString(), icon: CalendarDays, color: 'text-cyan-500', bg: 'bg-cyan-500/10', change: '' },
         ].map((stat, i) => (
           <Card key={i} className="border-border/50 hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: `${0.05 * i}s` }}>
             <CardContent className="p-4 sm:p-5">
@@ -203,12 +210,12 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <div className="flex items-center gap-1 justify-end">
-                        <span className="text-sm font-semibold">{student.completion}%</span>
+                        <span className="text-sm font-semibold">{student.consistency}%</span>
                         {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
                         {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />}
                         {student.trend === 'stable' && <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       </div>
-                      <Progress value={student.completion} className="w-16 h-1.5 mt-1" />
+                      <Progress value={student.consistency} className="w-16 h-1.5 mt-1" />
                     </div>
                   </div>
                 </div>

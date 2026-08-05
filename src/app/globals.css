@@ -48,6 +48,29 @@
   --radius-4xl: calc(var(--radius) * 3);
 }
 
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .print-report,
+  .print-report * {
+    visibility: visible !important;
+  }
+
+  .print-report {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+
 /* ---- Light Mode (Ultra Minimalist Monochrome) ---- */
 :root {
   --background: oklch(1 0 0);

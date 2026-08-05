@@ -10,6 +10,7 @@ import {
   PlayCircle,
   RefreshCw,
   RotateCcw,
+  Star,
   Target,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -18,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
+import { Textarea } from '@/components/ui/textarea';
 
 interface StudentExercise {
   id: string;
@@ -79,6 +81,10 @@ function progressStorageKey(planId: string) {
   return `fitcontrol-workout-progress:${planId}`;
 }
 
+function currentTimestamp() {
+  return Date.now();
+}
+
 export default function StudentWorkoutPage() {
   const [plan, setPlan] = useState<WorkoutPlan | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,7 +96,10 @@ export default function StudentWorkoutPage() {
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [completingWorkout, setCompletingWorkout] = useState(false);
   const [recordedDays, setRecordedDays] = useState<Set<string>>(new Set());
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState('');
   const currentPlanId = useRef('');
+  const workoutStartedAt = useRef<number | null>(null);
 
   const loadPlan = useCallback(async (silent = false) => {
     if (silent) setRefreshing(true);
@@ -105,6 +114,9 @@ export default function StudentWorkoutPage() {
       if (nextPlan && currentPlanId.current !== nextPlan.id) {
         currentPlanId.current = nextPlan.id;
         setSelectedDayId(nextPlan.days[0]?.id ?? '');
+        workoutStartedAt.current = currentTimestamp();
+        setRating(0);
+        setFeedback('');
         try {
           const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id));
           setCompletedSets(new Set(saved ? JSON.parse(saved) as string[] : []));
@@ -167,6 +179,13 @@ export default function StudentWorkoutPage() {
   }, [activeDay, completedSets]);
   const progress = totalSets > 0 ? Math.round((completedInDay / totalSets) * 100) : 0;
 
+  function selectWorkoutDay(dayId: string) {
+    setSelectedDayId(dayId);
+    workoutStartedAt.current = currentTimestamp();
+    setRating(0);
+    setFeedback('');
+  }
+
   function toggleSet(exerciseId: string, setIndex: number) {
     const key = `${exerciseId}:${setIndex}`;
     setCompletedSets((current) => {
@@ -189,10 +208,18 @@ export default function StudentWorkoutPage() {
     if (!activeDay || progress < 100) return;
     setCompletingWorkout(true);
     try {
+      const completedAt = currentTimestamp();
+      const startedAt = workoutStartedAt.current ?? completedAt;
       const response = await fetch('/api/workout-sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ workoutDayId: activeDay.id, completionPercentage: progress }),
+        body: JSON.stringify({
+          workoutDayId: activeDay.id,
+          completionPercentage: progress,
+          durationSeconds: Math.max(0, Math.round((completedAt - startedAt) / 1000)),
+          ...(rating > 0 ? { rating } : {}),
+          feedback,
+        }),
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || 'Não foi possível concluir o treino.');
@@ -292,7 +319,7 @@ export default function StudentWorkoutPage() {
           <button
             type="button"
             key={day.id}
-            onClick={() => setSelectedDayId(day.id)}
+            onClick={() => selectWorkoutDay(day.id)}
             className={`min-w-[120px] rounded-xl border px-4 py-3 text-left transition-colors ${
               activeDay?.id === day.id
                 ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
@@ -400,6 +427,10 @@ export default function StudentWorkoutPage() {
                 <CheckCircle2 className="mx-auto mb-2 size-9 text-emerald-500" />
                 <h2 className="font-bold">Todas as séries foram marcadas</h2>
                 <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
+                <div className="mx-auto mt-4 max-w-sm space-y-3">
+                  <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} /></button>)}</div>
+                  <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
+                </div>
                 <Button
                   className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700"
                   onClick={() => void completeWorkout()}

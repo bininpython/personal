@@ -26,13 +26,47 @@ npm run dev
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ou `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SECRET_KEY` ou `SUPABASE_SERVICE_ROLE_KEY` — somente no servidor
+- `CRON_SECRET` — texto aleatório longo que protege a geração diária de alertas no Vercel
 
 Nunca exponha a chave secreta em variáveis que começam com `NEXT_PUBLIC_`.
+
+## Módulos operacionais
+
+- Mensagens diretas entre personal e aluno, com atualização automática e confirmação de leitura.
+- Agenda com verificação de conflito, conclusão e cancelamento de compromissos.
+- Alertas automáticos de inatividade, baixa constância e feedback de treino preocupante.
+- Edição, arquivamento e reativação de alunos.
+- Indicadores de constância, adesão, risco, evolução de peso e percentual de gordura.
+- Relatório detalhado com exportação pelo comando de impressão do navegador em PDF.
+
+Em um banco que já está em produção, aplique também a migração
+`supabase/migrations/20260805_zz_intelligent_features.sql`. Ela ativa a proteção das tabelas
+de mensagens, notificações e agenda, além de criar os índices usados pelos painéis.
+O arquivo `vercel.json` agenda a análise diária às 10h UTC. O Vercel envia automaticamente
+o `CRON_SECRET` configurado nas variáveis do projeto para autorizar essa tarefa.
+
+## Análise inteligente opcional
+
+O motor local funciona sem serviço externo e calcula constância, risco e prioridades com
+regras auditáveis. Para aprimorar somente o texto do relatório com o Gemini, adicione no
+ambiente do Vercel:
+
+```env
+GEMINI_API_KEY=sua_chave
+GEMINI_MODEL=gemini-3.5-flash-lite
+```
+
+A chave nunca deve ser adicionada ao GitHub. Apenas totais agregados e anônimos são enviados
+ao Gemini; nomes, observações, lesões e outros dados pessoais permanecem no sistema.
 
 ## Verificação
 
 ```bash
 npm run test:auth
+npm run test:catalog
+npm run test:analytics
+npm run test:routes
+npm run lint
 npx tsc --noEmit --incremental false
 npm run build
 ```

@@ -86,6 +86,8 @@ export const studentProfileUpdateSchema = z.object({
   gender: z.enum(['male', 'female', 'other']).optional(),
   notes: z.string().trim().max(5000).optional(),
   restrictions: z.string().trim().max(5000).optional(),
+  injuries: z.string().trim().max(5000).optional(),
+  medical_notes: z.string().trim().max(5000).optional(),
 }).strict();
 
 export type StudentProfileUpdateInput = z.infer<typeof studentProfileUpdateSchema>;

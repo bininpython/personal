@@ -136,6 +136,8 @@ export async function PATCH(
       if (data.full_name !== undefined) updates.name = data.full_name;
       if (data.status !== undefined) updates.status = data.status;
       if (data.notes !== undefined) updates.notes = data.notes;
+      if (data.injuries !== undefined) updates.injuries = data.injuries;
+      if (data.medical_notes !== undefined) updates.medical_notes = data.medical_notes;
     }
 
     if (Object.keys(updates).length > 0) {

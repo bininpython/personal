@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -45,6 +45,23 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   const { setTheme, resolvedTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadAlerts, setUnreadAlerts] = useState(0);
+
+  useEffect(() => {
+    const loadUnread = async () => {
+      try {
+        const response = await fetch('/api/notifications', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json() as { unread?: number };
+        setUnreadAlerts(data.unread ?? 0);
+      } catch {
+        // O indicador não deve bloquear a navegação.
+      }
+    };
+    void loadUnread();
+    const interval = window.setInterval(loadUnread, 60_000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -95,6 +112,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 {(!collapsed || mobile) && (
                   <>
                     <span className="truncate">{item.label}</span>
+                    {item.href === '/alerts' && unreadAlerts > 0 && <span className="ml-auto rounded-full bg-destructive px-1.5 py-0.5 text-[10px] text-white">{unreadAlerts}</span>}
                   </>
                 )}
               </Link>
@@ -197,6 +215,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-9 w-9 relative" onClick={() => router.push('/alerts')}>
             <Bell className="w-4.5 h-4.5" />
+            {unreadAlerts > 0 && <span className="absolute right-1 top-1 size-2 rounded-full bg-destructive" />}
           </Button>
           <Avatar className="w-8 h-8">
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
