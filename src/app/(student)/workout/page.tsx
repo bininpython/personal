@@ -19,8 +19,8 @@ import {
 } from '@/components/ui/dialog';
 import { DIFFICULTY_LABELS, TRAINING_METHODS, MUSCLE_GROUPS } from '@/constants';
 
-// Demo exercises for the workout
 const workoutExercises = [
+  {
     id: '1', name: 'Supino Reto com Barra', category: 'Peitoral', method: 'standard',
     primaryMuscle: 'chest', secondaryMuscles: ['triceps', 'shoulders'],
     video_url: 'https://ozhcruzkrfldqylitgbr.supabase.co/storage/v1/object/public/exercises/SUPINO%20RETO.mp4',
