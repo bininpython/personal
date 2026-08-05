@@ -45,9 +45,16 @@ export default function RegisterPage() {
         return;
       }
 
+      if (result.requires_login || !result.user) {
+        toast.success(result.message || 'Conta criada. Faça login para continuar.');
+        router.replace('/login/trainer');
+        return;
+      }
+
       login(result.user);
       toast.success(`Conta criada! Bem-vindo(a), ${result.user.name}!`);
-      router.push('/dashboard');
+      router.replace('/dashboard');
+      router.refresh();
     } catch {
       toast.error('Erro de conexão. Tente novamente.');
     } finally {
@@ -98,7 +105,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="trainer_code">Código Exclusivo (Sua "Agência")</Label>
+                <Label htmlFor="trainer_code">Código exclusivo para login</Label>
                 <Input
                   id="trainer_code"
                   placeholder="Ex: #PRO-ABNER"
@@ -131,6 +138,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

@@ -1,123 +1,163 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { studentProfileUpdateSchema } from '@/lib/validators';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseConfigurationError } from '@/lib/supabase/config';
+
+function json(body: Record<string, unknown>, status: number) {
+  return NextResponse.json(body, {
+    status,
+    headers: { 'Cache-Control': 'no-store' },
+  });
+}
 
 export async function GET(
-  request: Request,
-  props: { params: Promise<{ id: string }> }
+  _request: Request,
+  context: RouteContext<'/api/students/[id]'>,
 ) {
-  const params = await props.params;
+  const { id } = await context.params;
   const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-  }
 
-  // Se for aluno, só pode ver a si mesmo
-  if (session.role === 'student' && session.sub !== params.id) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+  if (!session) return json({ error: 'Não autorizado.' }, 401);
+  if (session.role === 'student' && session.sub !== id) {
+    return json({ error: 'Não autorizado.' }, 403);
   }
 
   const supabase = await createClient();
-
   const { data: student, error } = await supabase
     .from('students')
-    .select('*')
-    .eq('id', params.id)
-    .single();
+    .select(`
+      id,
+      trainer_id,
+      name,
+      nickname,
+      birth_date,
+      status,
+      goal,
+      level,
+      weight,
+      height,
+      gender,
+      restrictions,
+      injuries,
+      medical_notes,
+      available_days,
+      start_date,
+      notes,
+      created_at
+    `)
+    .eq('id', id)
+    .maybeSingle();
 
   if (error || !student) {
-    return NextResponse.json({ error: 'Aluno não encontrado' }, { status: 404 });
+    return json({ error: 'Aluno não encontrado.' }, 404);
   }
 
-  // Se for personal, só pode ver seus alunos
   if (session.role === 'trainer' && student.trainer_id !== session.trainer_id) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+    return json({ error: 'Não autorizado.' }, 403);
   }
 
-  // Transform output to match expected frontend interface
-  const frontendStudent = {
-    ...student,
-    full_name: student.name,
-    experience_level: student.level,
-    avatar_url: '',
-    birth_date: '',
-    gender: student.gender || 'other',
-    height: student.height || 0,
-    current_weight: student.weight || 0,
-    restrictions: student.restrictions || '',
-    injuries: '',
-    medical_notes: '',
-    available_days: [],
-    start_date: student.created_at,
-    notes: student.notes || '',
-  };
-
-  return NextResponse.json({ student: frontendStudent });
+  return json({
+    student: {
+      id: student.id,
+      trainer_id: student.trainer_id,
+      full_name: student.name,
+      nickname: student.nickname || '',
+      avatar_url: '',
+      birth_date: student.birth_date || '',
+      gender: student.gender || 'other',
+      height: student.height || 0,
+      current_weight: student.weight || 0,
+      goal: student.goal || '',
+      experience_level: student.level || 'beginner',
+      restrictions: student.restrictions || '',
+      injuries: student.injuries || '',
+      medical_notes: student.medical_notes || '',
+      available_days: student.available_days || [],
+      start_date: student.start_date || student.created_at,
+      status: student.status,
+      notes: session.role === 'trainer' ? student.notes || '' : '',
+      created_at: student.created_at,
+    },
+  }, 200);
 }
 
 export async function PATCH(
   request: Request,
-  props: { params: Promise<{ id: string }> }
+  context: RouteContext<'/api/students/[id]'>,
 ) {
-  const params = await props.params;
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-  }
-
-  // Aluno pode editar a si mesmo (onboarding). Personal pode editar seus alunos.
-  const isStudent = session.role === 'student' && session.sub === params.id;
-  const isTrainer = session.role === 'trainer';
-
-  if (!isStudent && !isTrainer) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-  }
-
-  const supabase = await createClient();
-
-  const { data: student, error: fetchError } = await supabase
-    .from('students')
-    .select('trainer_id')
-    .eq('id', params.id)
-    .single();
-
-  if (fetchError || !student) {
-    return NextResponse.json({ error: 'Aluno não encontrado' }, { status: 404 });
-  }
-
-  if (isTrainer && student.trainer_id !== session.trainer_id) {
-    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
-  }
-
   try {
-    const body = await request.json();
-    
-    const dbUpdates: Record<string, any> = {};
-    if (body.experience_level !== undefined) dbUpdates.level = body.experience_level;
-    if (body.goal !== undefined) dbUpdates.goal = body.goal;
-    if (body.full_name !== undefined) dbUpdates.name = body.full_name;
-    if (body.status !== undefined) dbUpdates.status = body.status;
-    if (body.height !== undefined) dbUpdates.height = Number(body.height);
-    if (body.current_weight !== undefined) dbUpdates.weight = Number(body.current_weight);
-    if (body.weight !== undefined) dbUpdates.weight = Number(body.weight);
-    if (body.gender !== undefined) dbUpdates.gender = body.gender;
-    if (body.notes !== undefined) dbUpdates.notes = body.notes;
-    if (body.restrictions !== undefined) dbUpdates.restrictions = body.restrictions;
+    const { id } = await context.params;
+    const session = await getSession();
+    if (!session) return json({ error: 'Não autorizado.' }, 401);
 
-    if (Object.keys(dbUpdates).length > 0) {
-      const { error: updateError } = await supabase
+    const isStudent = session.role === 'student' && session.sub === id;
+    const isTrainer = session.role === 'trainer';
+    if (!isStudent && !isTrainer) {
+      return json({ error: 'Não autorizado.' }, 403);
+    }
+
+    const result = studentProfileUpdateSchema.safeParse(await request.json());
+    if (!result.success) {
+      return json({
+        error: 'Revise os dados informados.',
+        details: result.error.flatten(),
+      }, 400);
+    }
+
+    const admin = createAdminClient();
+    const { data: student, error: fetchError } = await admin
+      .from('students')
+      .select('id, trainer_id')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (fetchError || !student) {
+      return json({ error: 'Aluno não encontrado.' }, 404);
+    }
+
+    if (isTrainer && student.trainer_id !== session.trainer_id) {
+      return json({ error: 'Não autorizado.' }, 403);
+    }
+
+    const data = result.data;
+    const updates: Record<string, string | number> = {};
+
+    if (data.experience_level !== undefined) updates.level = data.experience_level;
+    if (data.goal !== undefined) updates.goal = data.goal;
+    if (data.height !== undefined) updates.height = data.height;
+    if (data.current_weight !== undefined) updates.weight = data.current_weight;
+    if (data.weight !== undefined) updates.weight = data.weight;
+    if (data.gender !== undefined) updates.gender = data.gender;
+    if (data.restrictions !== undefined) updates.restrictions = data.restrictions;
+
+    if (isTrainer) {
+      if (data.full_name !== undefined) updates.name = data.full_name;
+      if (data.status !== undefined) updates.status = data.status;
+      if (data.notes !== undefined) updates.notes = data.notes;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      const { error: updateError } = await admin
         .from('students')
-        .update(dbUpdates)
-        .eq('id', params.id);
-      
+        .update(updates)
+        .eq('id', id);
+
       if (updateError) {
-        console.error('[Patch Student] Error:', updateError);
-        return NextResponse.json({ error: 'Erro ao atualizar aluno' }, { status: 500 });
+        console.error('[Patch Student] Update error:', updateError);
+        return json({ error: 'Não foi possível atualizar o aluno.' }, 500);
       }
     }
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    return NextResponse.json({ error: 'Erro ao processar dados' }, { status: 400 });
+    return json({ success: true }, 200);
+  } catch (error) {
+    if (error instanceof SupabaseConfigurationError) {
+      console.error('[Patch Student] Configuration error:', error.message);
+      return json({ error: 'O serviço de cadastro ainda não está configurado.' }, 503);
+    }
+
+    console.error('[Patch Student] Unexpected error:', error);
+    return json({ error: 'Erro interno do servidor.' }, 500);
   }
 }

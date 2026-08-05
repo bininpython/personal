@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/hooks/use-auth';
 import { trainerLoginSchema, type TrainerLoginInput } from '@/lib/validators';
 import { toast } from 'sonner';
@@ -25,15 +24,11 @@ export default function TrainerLoginPage() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<TrainerLoginInput>({
     resolver: zodResolver(trainerLoginSchema),
-    defaultValues: { trainer_code: '', password: '', remember_me: false },
+    defaultValues: { trainer_code: '', password: '' },
   });
-
-  const rememberMe = watch('remember_me');
 
   const onSubmit = async (data: TrainerLoginInput) => {
     setIsLoading(true);
@@ -53,7 +48,8 @@ export default function TrainerLoginPage() {
 
       login(result.user);
       toast.success(`Bem-vindo, ${result.user.name}!`);
-      router.push('/dashboard');
+      router.replace('/dashboard');
+      router.refresh();
     } catch {
       toast.error('Erro de conexão. Tente novamente.');
     } finally {
@@ -117,6 +113,7 @@ export default function TrainerLoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -125,17 +122,6 @@ export default function TrainerLoginPage() {
                 {errors.password && (
                   <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="remember_me"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setValue('remember_me', !!checked)}
-                />
-                <Label htmlFor="remember_me" className="text-sm text-muted-foreground cursor-pointer">
-                  Manter meu acesso
-                </Label>
               </div>
 
               <Button

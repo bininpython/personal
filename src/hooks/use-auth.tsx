@@ -18,19 +18,24 @@ const AuthContext = createContext<AuthContextType>({
   refreshUser: async () => {},
 });
 
+async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser | null> {
+  const response = await fetch('/api/auth/me', {
+    cache: 'no-store',
+    signal,
+  });
+
+  if (!response.ok) return null;
+  const data = await response.json();
+  return data.user;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      } else {
-        setUser(null);
-      }
+      setUser(await fetchCurrentUser());
     } catch {
       setUser(null);
     } finally {
@@ -39,8 +44,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshUser();
-  }, [refreshUser]);
+    const controller = new AbortController();
+    let active = true;
+
+    fetchCurrentUser(controller.signal)
+      .then((currentUser) => {
+        if (active) setUser(currentUser);
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        if (active) setUser(null);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
 
   const login = useCallback((user: AuthUser) => {
     setUser(user);
@@ -48,14 +71,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      const role = user?.role;
-      await fetch(`/api/auth/${role}/logout`, { method: 'POST' });
+      await fetch('/api/auth/logout', { method: 'POST' });
     } catch {
       // ignore
     } finally {
       setUser(null);
     }
-  }, [user?.role]);
+  }, []);
 
   return (
     <AuthContext.Provider

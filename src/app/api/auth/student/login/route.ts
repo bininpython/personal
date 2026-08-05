@@ -1,66 +1,78 @@
-// ============================================
-// POST /api/auth/student/login
-// ============================================
-
 import { NextResponse } from 'next/server';
 import { studentLoginSchema } from '@/lib/validators';
 import { normalizeName } from '@/lib/auth/hash';
+import {
+  buildSyntheticEmail,
+  canonicalizeStudentAccessCode,
+} from '@/lib/auth/credentials';
 import { createClient } from '@/lib/supabase/server';
+
+const GENERIC_LOGIN_ERROR = 'Nome ou código de acesso inválido.';
+
+function json(body: Record<string, unknown>, status: number) {
+  return NextResponse.json(body, {
+    status,
+    headers: { 'Cache-Control': 'no-store' },
+  });
+}
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const result = studentLoginSchema.safeParse(body);
+    const result = studentLoginSchema.safeParse(await request.json());
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Dados inválidos' },
-        { status: 400 }
-      );
+      return json({ error: 'Revise o nome e o código informados.' }, 400);
     }
 
     const { name, access_code } = result.data;
-
-    // Generic error message — never reveal if name or code is wrong
-    const genericError = 'Nome ou código de acesso inválido.';
-
+    const canonicalCode = canonicalizeStudentAccessCode(access_code);
+    const email = buildSyntheticEmail('student', canonicalCode);
     const supabase = await createClient();
-    
-    const safeCode = access_code.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const mockEmail = `student_${safeCode}@example.com`;
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: mockEmail,
-      password: access_code,
-    });
+    const submittedCode = access_code.trim();
+    const candidatePasswords = submittedCode === canonicalCode
+      ? [canonicalCode]
+      : [submittedCode, canonicalCode];
+    let authenticatedUserId = '';
 
-    if (error) {
-      return NextResponse.json({ error: genericError }, { status: 401 });
+    for (const password of candidatePasswords) {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (!error && data.user) {
+        authenticatedUserId = data.user.id;
+        break;
+      }
     }
 
-    const studentName = data.user.user_metadata?.name || '';
-    
-    if (normalizeName(studentName) !== normalizeName(name)) {
-       await supabase.auth.signOut();
-       return NextResponse.json({ error: genericError }, { status: 401 });
+    if (!authenticatedUserId) {
+      return json({ error: GENERIC_LOGIN_ERROR }, 401);
     }
 
-    // Supabase auto-sets session cookies via createServerClient setAll()
-    return NextResponse.json({
+    const { data: student, error: profileError } = await supabase
+      .from('students')
+      .select('id, trainer_id, name, status')
+      .eq('id', authenticatedUserId)
+      .maybeSingle();
+
+    if (
+      profileError
+      || !student
+      || student.status !== 'active'
+      || normalizeName(student.name) !== normalizeName(name)
+    ) {
+      await supabase.auth.signOut();
+      return json({ error: GENERIC_LOGIN_ERROR }, 401);
+    }
+
+    return json({
       success: true,
       user: {
-        id: data.user.id,
+        id: student.id,
         role: 'student',
-        name: studentName,
-        trainer_id: data.user.user_metadata?.trainer_id || data.user.id, // Fallback, session.ts fixes this
+        name: student.name,
+        trainer_id: student.trainer_id,
       },
-    });
-
+    }, 200);
   } catch (error) {
-    console.error('[Student Login] Error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error('[Student Login] Unexpected error:', error);
+    return json({ error: 'Erro interno do servidor.' }, 500);
   }
 }

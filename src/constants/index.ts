@@ -24,6 +24,7 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+
 // ---- Access Code ----
 
 export const ACCESS_CODE_MIN_LENGTH = 4;
+export const NEW_ACCESS_CODE_MIN_LENGTH = 6;
 
 // ---- Muscle Groups ----
 

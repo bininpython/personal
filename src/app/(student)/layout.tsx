@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  Home, Dumbbell, History, TrendingUp, Trophy,
-  MessageSquare, User, LogOut, Moon, Sun, ArrowLeft
+  Home, Dumbbell, History, TrendingUp,
+  User, LogOut, Moon, Sun
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -27,14 +27,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const { user, logout } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
-  const [checking, setChecking] = useState(true);
+  const isOnboarding = pathname === '/onboarding';
+  const [checking, setChecking] = useState(!isOnboarding);
 
   useEffect(() => {
-    if (!user?.id) return;
-    if (pathname === '/onboarding') {
-      setChecking(false);
-      return;
-    }
+    if (!user?.id || isOnboarding) return;
+    let active = true;
 
     const checkProfile = async () => {
       try {
@@ -49,12 +47,15 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       } catch (err) {
         console.error('Error checking profile', err);
       } finally {
-        setChecking(false);
+        if (active) setChecking(false);
       }
     };
 
-    checkProfile();
-  }, [user, pathname, router]);
+    void checkProfile();
+    return () => {
+      active = false;
+    };
+  }, [user?.id, isOnboarding, router]);
 
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home';
@@ -63,10 +64,11 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
+    router.replace('/login');
+    router.refresh();
   };
 
-  if (checking && pathname !== '/onboarding') {
+  if (checking && !isOnboarding) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -75,7 +77,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }
 
   // If we are on onboarding page, we don't need the header and bottom nav
-  if (pathname === '/onboarding') {
+  if (isOnboarding) {
     return <>{children}</>;
   }
 

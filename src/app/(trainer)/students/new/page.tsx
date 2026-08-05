@@ -25,7 +25,6 @@ export default function NewStudentPage() {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<StudentCreateInput>({
     resolver: zodResolver(studentCreateSchema),
@@ -36,11 +35,9 @@ export default function NewStudentPage() {
   });
 
   const generateCode = () => {
-    const chars = '0123456789';
-    let code = '';
-    for (let i = 0; i < 4; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const randomValues = crypto.getRandomValues(new Uint32Array(6));
+    const code = Array.from(randomValues, (value) => chars[value % chars.length]).join('');
     setGeneratedCode(code);
     setValue('access_code', code, { shouldValidate: true });
   };
@@ -159,6 +156,7 @@ export default function NewStudentPage() {
                 <CardDescription>Gere o código que o aluno usará para acessar o app.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6 pt-6">
+                <input type="hidden" {...register('access_code')} />
                 <div className="space-y-3">
                   <Label>Código de Acesso *</Label>
                   <div className="flex gap-2">

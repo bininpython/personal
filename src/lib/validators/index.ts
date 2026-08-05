@@ -3,16 +3,26 @@
 // ============================================
 
 import { z } from 'zod';
-import { PASSWORD_MIN_LENGTH, ACCESS_CODE_MIN_LENGTH } from '@/constants';
+import {
+  ACCESS_CODE_MIN_LENGTH,
+  NEW_ACCESS_CODE_MIN_LENGTH,
+  PASSWORD_MIN_LENGTH,
+} from '@/constants';
+import { normalizeAuthCode } from '@/lib/auth/credentials';
 
 // ---- Trainer Registration ----
 
 export const trainerRegisterSchema = z.object({
-  full_name: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
+  full_name: z.string().trim().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   trainer_code: z
     .string()
+    .trim()
     .min(4, 'Código deve ter no mínimo 4 caracteres')
-    .regex(/^[A-Za-z0-9\-#\s]+$/, 'Código deve conter apenas letras, números, hífens, espaços e hashtag'),
+    .regex(/^[A-Za-z0-9\-#\s]+$/, 'Código deve conter apenas letras, números, hífens, espaços e hashtag')
+    .refine(
+      (code) => normalizeAuthCode(code).length >= 4,
+      'O código deve conter pelo menos 4 letras ou números',
+    ),
   password: z
     .string()
     .min(PASSWORD_MIN_LENGTH, `Senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres`),
@@ -34,9 +44,8 @@ export type TrainerRegisterInput = z.infer<typeof trainerRegisterSchema>;
 // ---- Trainer Login ----
 
 export const trainerLoginSchema = z.object({
-  trainer_code: z.string().min(1, 'Informe seu código de personal'),
+  trainer_code: z.string().trim().min(1, 'Informe seu código de personal'),
   password: z.string().min(1, 'Informe sua senha'),
-  remember_me: z.boolean().optional(),
 });
 
 export type TrainerLoginInput = z.infer<typeof trainerLoginSchema>;
@@ -44,9 +53,15 @@ export type TrainerLoginInput = z.infer<typeof trainerLoginSchema>;
 // ---- Student Login ----
 
 export const studentLoginSchema = z.object({
-  name: z.string().min(2, 'Informe seu nome'),
-  access_code: z.string().min(ACCESS_CODE_MIN_LENGTH, `Código deve ter no mínimo ${ACCESS_CODE_MIN_LENGTH} caracteres`),
-  remember_me: z.boolean().optional(),
+  name: z.string().trim().min(2, 'Informe seu nome'),
+  access_code: z
+    .string()
+    .trim()
+    .min(ACCESS_CODE_MIN_LENGTH, `Código deve ter no mínimo ${ACCESS_CODE_MIN_LENGTH} caracteres`)
+    .refine(
+      (code) => normalizeAuthCode(code).length >= ACCESS_CODE_MIN_LENGTH,
+      'Código de acesso inválido',
+    ),
 });
 
 export type StudentLoginInput = z.infer<typeof studentLoginSchema>;
@@ -54,24 +69,45 @@ export type StudentLoginInput = z.infer<typeof studentLoginSchema>;
 // ---- Student Registration (by trainer) ----
 
 export const studentCreateSchema = z.object({
-  full_name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
-  access_code: z.string().min(ACCESS_CODE_MIN_LENGTH, `Código deve ter no mínimo ${ACCESS_CODE_MIN_LENGTH} caracteres`),
-  nickname: z.string().optional(),
+  full_name: z.string().trim().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+  access_code: z
+    .string()
+    .trim()
+    .refine(
+      (code) => normalizeAuthCode(code).length >= NEW_ACCESS_CODE_MIN_LENGTH,
+      `Novos códigos devem ter pelo menos ${NEW_ACCESS_CODE_MIN_LENGTH} letras ou números`,
+    ),
+  nickname: z.string().trim().optional(),
   birth_date: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
   height: z.number().positive('Altura deve ser positiva').optional(),
   current_weight: z.number().positive('Peso deve ser positivo').optional(),
-  goal: z.string().optional(),
+  goal: z.string().trim().optional(),
   experience_level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
-  restrictions: z.string().optional(),
-  injuries: z.string().optional(),
-  medical_notes: z.string().optional(),
+  restrictions: z.string().trim().optional(),
+  injuries: z.string().trim().optional(),
+  medical_notes: z.string().trim().optional(),
   available_days: z.array(z.string()).optional(),
   start_date: z.string().optional(),
-  notes: z.string().optional(),
+  notes: z.string().trim().optional(),
 });
 
 export type StudentCreateInput = z.infer<typeof studentCreateSchema>;
+
+export const studentProfileUpdateSchema = z.object({
+  full_name: z.string().trim().min(2).optional(),
+  status: z.enum(['active', 'inactive']).optional(),
+  experience_level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  goal: z.string().trim().max(200).optional(),
+  height: z.number().positive().max(300).optional(),
+  current_weight: z.number().positive().max(1000).optional(),
+  weight: z.number().positive().max(1000).optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  notes: z.string().trim().max(5000).optional(),
+  restrictions: z.string().trim().max(5000).optional(),
+}).strict();
+
+export type StudentProfileUpdateInput = z.infer<typeof studentProfileUpdateSchema>;
 
 // ---- Workout Plan ----
 

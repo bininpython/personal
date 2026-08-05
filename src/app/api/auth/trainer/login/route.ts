@@ -1,51 +1,54 @@
 import { NextResponse } from 'next/server';
 import { trainerLoginSchema } from '@/lib/validators';
+import { buildSyntheticEmail } from '@/lib/auth/credentials';
 import { createClient } from '@/lib/supabase/server';
+
+function json(body: Record<string, unknown>, status: number) {
+  return NextResponse.json(body, {
+    status,
+    headers: { 'Cache-Control': 'no-store' },
+  });
+}
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const result = trainerLoginSchema.safeParse(body);
+    const result = trainerLoginSchema.safeParse(await request.json());
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Dados inválidos' },
-        { status: 400 }
-      );
+      return json({ error: 'Revise o código e a senha informados.' }, 400);
     }
 
-    const { trainer_code, password, remember_me } = result.data;
-
+    const { trainer_code, password } = result.data;
+    const email = buildSyntheticEmail('trainer', trainer_code);
     const supabase = await createClient();
-    const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const mockEmail = `trainer_${safeCode}@example.com`;
-    
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: mockEmail,
-      password: password,
-    });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      return NextResponse.json(
-        { error: 'Código ou senha inválidos.' },
-        { status: 401 }
-      );
+    if (error || !data.user) {
+      return json({ error: 'Código ou senha inválidos.' }, 401);
     }
 
-    return NextResponse.json({
+    const { data: trainer, error: profileError } = await supabase
+      .from('trainers')
+      .select('id, name')
+      .eq('auth_user_id', data.user.id)
+      .maybeSingle();
+
+    if (profileError || !trainer) {
+      await supabase.auth.signOut();
+      return json({ error: 'Esta conta não possui um perfil de personal válido.' }, 403);
+    }
+
+    return json({
       success: true,
       user: {
         id: data.user.id,
         role: 'trainer',
-        name: data.user.user_metadata?.name || 'Personal',
-        trainer_id: data.user.id,
+        name: trainer.name,
+        trainer_id: trainer.id,
       },
-    });
+    }, 200);
   } catch (error) {
-    console.error('[Login] Error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    console.error('[Trainer Login] Unexpected error:', error);
+    return json({ error: 'Erro interno do servidor.' }, 500);
   }
 }

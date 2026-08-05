@@ -1,90 +1,147 @@
-// ============================================
-// POST /api/auth/trainer/register
-// ============================================
-
 import { NextResponse } from 'next/server';
 import { trainerRegisterSchema } from '@/lib/validators';
-import { hashPassword, generateTrainerCode } from '@/lib/auth/hash';
-import { createTrainerToken } from '@/lib/auth/jwt';
-import { setSessionCookie } from '@/lib/auth/session';
-
+import {
+  buildSyntheticEmail,
+  isDuplicateAccountError,
+} from '@/lib/auth/credentials';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseConfigurationError } from '@/lib/supabase/config';
+
+function json(body: Record<string, unknown>, status: number) {
+  return NextResponse.json(body, {
+    status,
+    headers: { 'Cache-Control': 'no-store' },
+  });
+}
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const result = trainerRegisterSchema.safeParse(body);
+    const result = trainerRegisterSchema.safeParse(await request.json());
 
     if (!result.success) {
-      return NextResponse.json(
-        { error: 'Dados inválidos', details: result.error.flatten() },
-        { status: 400 }
-      );
+      return json({
+        error: 'Revise os dados informados.',
+        details: result.error.flatten(),
+      }, 400);
     }
 
-    const { full_name, trainer_code, password, professional_name, cref, gym_name, city, state, phone, specialties } = result.data;
+    const {
+      full_name,
+      trainer_code,
+      password,
+      professional_name,
+      cref,
+      gym_name,
+      city,
+      state,
+      phone,
+      specialties,
+    } = result.data;
+    const normalizedTrainerCode = trainer_code.trim().toUpperCase();
+    const email = buildSyntheticEmail('trainer', normalizedTrainerCode);
+    const admin = createAdminClient();
 
-    // Supabase will handle unique code constraints via database logic if necessary,
-    // or we could check existing here if we queried Supabase first.
-    // For now, Supabase Auth handles unique emails.
+    const { data: existingTrainer } = await admin
+      .from('trainers')
+      .select('id')
+      .eq('code', normalizedTrainerCode)
+      .maybeSingle();
+
+    if (existingTrainer) {
+      return json({ error: 'Este código de personal já está em uso.' }, 409);
+    }
 
     const supabase = await createClient();
-      const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const mockEmail = `trainer_${safeCode}@example.com`;
-      
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: mockEmail,
-        password: password,
-        options: {
-          data: {
-            name: full_name,
-            code: trainer_code.toUpperCase(),
-            role: 'trainer'
-          }
-        }
-      });
-
-      if (authError || !authData.user) {
-        return NextResponse.json(
-          { error: authError?.message || 'Erro ao registrar no Supabase' },
-          { status: 400 }
-        );
-      }
-
-      // Insert into public.trainers table
-      const { data: trainerRow, error: insertError } = await supabase.from('trainers').insert({
-        auth_user_id: authData.user.id,
-        name: full_name,
-        code: trainer_code.toUpperCase(),
-      }).select('id').single();
-
-      if (insertError) {
-        return NextResponse.json(
-          { error: 'Erro ao criar perfil de personal no banco.' },
-          { status: 500 }
-        );
-      }
-
-      // Sign in to set the Supabase session cookie (signUp alone doesn't authenticate)
-      await supabase.auth.signInWithPassword({
-        email: mockEmail,
-        password: password,
-      });
-
-      return NextResponse.json({
-        success: true,
-        user: {
-          id: authData.user.id,
-          role: 'trainer',
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
           name: full_name,
-          trainer_id: trainerRow.id,
+          code: normalizedTrainerCode,
+          role: 'trainer',
         },
-      });
+      },
+    });
+
+    if (
+      authError
+      || !authData.user
+      || authData.user.identities?.length === 0
+    ) {
+      if (isDuplicateAccountError(authError) || authData.user?.identities?.length === 0) {
+        return json({ error: 'Este código de personal já está em uso.' }, 409);
+      }
+      return json({ error: 'Não foi possível criar a conta do personal.' }, 400);
+    }
+
+    const userId = authData.user.id;
+    const { error: metadataError } = await admin.auth.admin.updateUserById(userId, {
+      app_metadata: { role: 'trainer' },
+      email_confirm: true,
+    });
+
+    if (metadataError) {
+      await admin.auth.admin.deleteUser(userId);
+      await supabase.auth.signOut();
+      console.error('[Trainer Register] Metadata error:', metadataError);
+      return json({ error: 'Não foi possível finalizar a conta do personal.' }, 500);
+    }
+
+    const { data: trainer, error: profileError } = await admin
+      .from('trainers')
+      .insert({
+        auth_user_id: userId,
+        name: full_name,
+        code: normalizedTrainerCode,
+        professional_name: professional_name || null,
+        cref: cref || null,
+        gym_name: gym_name || null,
+        city: city || null,
+        state: state || null,
+        phone: phone || null,
+        specialties: specialties || [],
+      })
+      .select('id, name')
+      .single();
+
+    if (profileError || !trainer) {
+      await admin.auth.admin.deleteUser(userId);
+      await supabase.auth.signOut();
+      console.error('[Trainer Register] Profile error:', profileError);
+      return json({ error: 'Não foi possível criar o perfil do personal.' }, 500);
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      return json({
+        success: true,
+        requires_login: true,
+        message: 'Conta criada. Faça login para continuar.',
+      }, 201);
+    }
+
+    return json({
+      success: true,
+      user: {
+        id: userId,
+        role: 'trainer',
+        name: trainer.name,
+        trainer_id: trainer.id,
+      },
+    }, 201);
   } catch (error) {
-    console.error('[Register] Error:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    if (error instanceof SupabaseConfigurationError) {
+      console.error('[Trainer Register] Configuration error:', error.message);
+      return json({ error: 'O serviço de cadastro ainda não está configurado.' }, 503);
+    }
+
+    console.error('[Trainer Register] Unexpected error:', error);
+    return json({ error: 'Erro interno do servidor.' }, 500);
   }
 }

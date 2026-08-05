@@ -10,17 +10,26 @@ create extension if not exists "uuid-ossp";
 -- Trainers (Personal Trainers)
 create table public.trainers (
     id uuid default uuid_generate_v4() primary key,
-    auth_user_id uuid references auth.users(id) on delete cascade,
+    auth_user_id uuid unique not null references auth.users(id) on delete cascade,
     name text not null,
     code text unique not null,
+    professional_name text,
+    cref text,
+    gym_name text,
+    city text,
+    state text,
+    phone text,
+    specialties text[] default '{}',
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- Students (Alunos)
 create table public.students (
-    id uuid default uuid_generate_v4() primary key,
+    id uuid primary key references auth.users(id) on delete cascade,
     trainer_id uuid references public.trainers(id) on delete cascade not null,
     name text not null,
+    nickname text,
+    birth_date date,
     access_code text unique not null,
     mock_email text unique not null, -- Usado para gerenciar Auth sem o aluno precisar digitar e-mail
     status text default 'active' check (status in ('active', 'inactive')),
@@ -28,6 +37,12 @@ create table public.students (
     level text,
     weight numeric,
     height numeric,
+    gender text default 'other' check (gender in ('male', 'female', 'other')),
+    restrictions text,
+    injuries text,
+    medical_notes text,
+    available_days text[] default '{}',
+    start_date date,
     notes text,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -246,9 +261,10 @@ using (auth.uid() = auth_user_id);
 create policy "Trainers can manage their own students"
 on public.students for all
 to authenticated
-using (trainer_id = (select id from public.trainers where auth_user_id = auth.uid()));
+using (trainer_id = (select id from public.trainers where auth_user_id = (select auth.uid())))
+with check (trainer_id = (select id from public.trainers where auth_user_id = (select auth.uid())));
 
 create policy "Students can read their own profile"
 on public.students for select
 to authenticated
-using (mock_email = (select email from auth.users where id = auth.uid()));
+using (id = (select auth.uid()));

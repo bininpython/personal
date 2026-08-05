@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
@@ -20,8 +20,8 @@ import { useAuth } from '@/hooks/use-auth';
 interface OnboardingData {
   height: string;
   current_weight: string;
-  gender: string;
-  experience_level: string;
+  gender: 'male' | 'female' | 'other';
+  experience_level: 'beginner' | 'intermediate' | 'advanced';
   goal: string;
   restrictions: string;
 }
@@ -31,7 +31,7 @@ export default function OnboardingPage() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<OnboardingData>({
+  const { register, handleSubmit, setValue } = useForm<OnboardingData>({
     defaultValues: {
       experience_level: 'beginner',
       gender: 'other',
@@ -127,7 +127,7 @@ export default function OnboardingPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Gênero</Label>
-                  <Select onValueChange={(val) => setValue('gender', val as any)} defaultValue="other">
+                  <Select onValueChange={(value) => setValue('gender', value as OnboardingData['gender'])} defaultValue="other">
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
@@ -140,7 +140,7 @@ export default function OnboardingPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Nível de Experiência</Label>
-                  <Select onValueChange={(val) => setValue('experience_level', val as any)} defaultValue="beginner">
+                  <Select onValueChange={(value) => setValue('experience_level', value as OnboardingData['experience_level'])} defaultValue="beginner">
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
@@ -158,7 +158,7 @@ export default function OnboardingPage() {
                   <Target className="w-4 h-4 text-muted-foreground" />
                   Qual seu objetivo principal?
                 </Label>
-                <Select onValueChange={(val) => setValue('goal', val as any)}>
+                <Select onValueChange={(value) => setValue('goal', String(value))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Ex: Hipertrofia, Emagrecimento..." />
                   </SelectTrigger>
