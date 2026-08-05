@@ -10,11 +10,11 @@ export default function AlertsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Alertas do Sistema</h1>
-          <p className="text-muted-foreground mt-1">Notificações sobre seus alunos e atividades</p>
+          <p className="text-muted-foreground mt-1">Central de notificações em desenvolvimento</p>
         </div>
-        <Button variant="outline" className="h-10">
+        <Button variant="outline" className="h-10" disabled>
           <CheckCircle2 className="w-4 h-4 mr-2" />
-          Marcar todos como lidos
+          Nenhum alerta pendente
         </Button>
       </div>
 
@@ -23,9 +23,9 @@ export default function AlertsPage() {
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
             <Bell className="w-8 h-8 text-primary" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Você não tem novos alertas</h2>
+          <h2 className="text-xl font-semibold mb-2">Alertas automáticos ainda não estão ativos</h2>
           <p className="text-muted-foreground max-w-sm mb-6">
-            Avisos de dores relatadas, inatividade de alunos ou recordes alcançados aparecerão aqui.
+            Esta tela está preparada para uma futura atualização. Nenhum aviso automático é gerado na versão atual.
           </p>
         </div>
       </Card>

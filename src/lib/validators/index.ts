@@ -163,30 +163,45 @@ export type SetRecordInput = z.infer<typeof setRecordSchema>;
 
 // ---- Physical Assessment ----
 
+const emptyNumberToUndefined = (value: unknown) => (
+  value === '' || (typeof value === 'number' && Number.isNaN(value)) ? undefined : value
+);
+
+const optionalPositiveNumber = z.preprocess(
+  emptyNumberToUndefined,
+  z.number().positive().optional(),
+);
+
+const optionalPercentage = z.preprocess(
+  emptyNumberToUndefined,
+  z.number().min(0).max(100).optional(),
+);
+
 export const physicalAssessmentSchema = z.object({
   student_id: z.string().uuid(),
-  assessment_date: z.string(),
-  weight: z.number().positive().optional(),
-  height: z.number().positive().optional(),
-  body_fat_percentage: z.number().min(0).max(100).optional(),
-  muscle_mass: z.number().positive().optional(),
-  chest: z.number().positive().optional(),
-  waist: z.number().positive().optional(),
-  abdomen: z.number().positive().optional(),
-  hips: z.number().positive().optional(),
-  right_arm: z.number().positive().optional(),
-  left_arm: z.number().positive().optional(),
-  right_forearm: z.number().positive().optional(),
-  left_forearm: z.number().positive().optional(),
-  right_thigh: z.number().positive().optional(),
-  left_thigh: z.number().positive().optional(),
-  right_calf: z.number().positive().optional(),
-  left_calf: z.number().positive().optional(),
-  skinfold_sum: z.number().positive().optional(),
-  blood_pressure_systolic: z.number().positive().optional(),
-  blood_pressure_diastolic: z.number().positive().optional(),
-  resting_heart_rate: z.number().positive().optional(),
+  assessment_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Informe a data da avaliação'),
+  weight: optionalPositiveNumber,
+  height: optionalPositiveNumber,
+  body_fat_percentage: optionalPercentage,
+  muscle_mass: optionalPositiveNumber,
+  chest: optionalPositiveNumber,
+  waist: optionalPositiveNumber,
+  abdomen: optionalPositiveNumber,
+  hips: optionalPositiveNumber,
+  right_arm: optionalPositiveNumber,
+  left_arm: optionalPositiveNumber,
+  right_forearm: optionalPositiveNumber,
+  left_forearm: optionalPositiveNumber,
+  right_thigh: optionalPositiveNumber,
+  left_thigh: optionalPositiveNumber,
+  right_calf: optionalPositiveNumber,
+  left_calf: optionalPositiveNumber,
+  skinfold_sum: optionalPositiveNumber,
+  blood_pressure_systolic: optionalPositiveNumber,
+  blood_pressure_diastolic: optionalPositiveNumber,
+  resting_heart_rate: optionalPositiveNumber,
   notes: z.string().optional(),
 });
 
 export type PhysicalAssessmentInput = z.infer<typeof physicalAssessmentSchema>;
+export type PhysicalAssessmentFormInput = z.input<typeof physicalAssessmentSchema>;

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:auth": "node --test --test-isolation=none tests/auth-credentials.test.mjs",
-    "test:catalog": "node --experimental-strip-types --test --test-isolation=none tests/exercise-catalog.test.mjs"
+    "test:catalog": "node --experimental-strip-types --test --test-isolation=none tests/exercise-catalog.test.mjs",
+    "test:routes": "node --test --test-isolation=none tests/routes.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

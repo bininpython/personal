@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Users, BarChart3, Shield, ChevronRight, Zap, Target, TrendingUp, Award, Clock, Star } from 'lucide-react';
+import { Dumbbell, Users, BarChart3, Shield, Target, TrendingUp, Award, Clock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { APP_NAME, APP_SUBTITLE } from '@/constants';
@@ -56,8 +56,8 @@ export default function LandingPage() {
               {APP_SUBTITLE}
             </p>
             <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.15s' }}>
-              Cadastre alunos, crie fichas personalizadas, acompanhe cada série em tempo real,
-              analise evolução com gráficos detalhados e transforme resultados com dados precisos.
+              Cadastre alunos, crie fichas personalizadas, registre avaliações e entregue os treinos
+              diretamente na conta de cada aluno.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <Button
@@ -85,8 +85,8 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
           {[
             { value: '100%', label: 'Gratuito para testar', icon: Star },
-            { value: '∞', label: 'Exercícios na biblioteca', icon: Dumbbell },
-            { value: 'Real-time', label: 'Acompanhamento ao vivo', icon: Clock },
+            { value: '254', label: 'Exercícios na biblioteca', icon: Dumbbell },
+            { value: '10 s', label: 'Atualização das fichas', icon: Clock },
             { value: 'Seguro', label: 'Dados protegidos', icon: Shield },
           ].map((stat, i) => (
             <div key={i} className="text-center animate-fade-in" style={{ animationDelay: `${0.1 * i}s` }}>
@@ -129,28 +129,28 @@ export default function LandingPage() {
               {
                 icon: TrendingUp,
                 title: 'Evolução em Gráficos',
-                description: 'Visualize a progressão de carga, peso, medidas e desempenho com gráficos interativos.',
+                description: 'Registre avaliações físicas e acompanhe peso e frequência com dados do próprio aluno.',
                 color: 'text-amber-500',
                 bg: 'bg-amber-500/10',
               },
               {
                 icon: Dumbbell,
                 title: 'Checklist de Séries',
-                description: 'O aluno marca cada série realizada, registra carga e repetições em tempo real.',
+                description: 'O aluno marca cada série realizada e conclui o treino para salvar no histórico.',
                 color: 'text-emerald-500',
                 bg: 'bg-emerald-500/10',
               },
               {
                 icon: BarChart3,
-                title: 'Relatórios Completos',
-                description: 'Relatórios detalhados de frequência, desempenho e evolução exportáveis em PDF.',
+                title: 'Histórico de Treinos',
+                description: 'Treinos concluídos pelo aluno são salvos e aparecem no histórico e na evolução.',
                 color: 'text-blue-500',
                 bg: 'bg-blue-500/10',
               },
               {
                 icon: Award,
-                title: 'Gamificação',
-                description: 'Conquistas, recordes e sequências para manter seus alunos motivados e engajados.',
+                title: 'Acesso sem E-mail',
+                description: 'Personal e aluno entram com os códigos gerados pelo sistema, sem expor e-mails internos.',
                 color: 'text-amber-500',
                 bg: 'bg-amber-500/10',
               },
@@ -199,7 +199,7 @@ export default function LandingPage() {
                   'Cadastre-se com um código exclusivo e senha segura',
                   'Adicione seus alunos e gere códigos de acesso',
                   'Crie fichas de treino personalizadas',
-                  'Acompanhe treinos e evolução em tempo real',
+                  'Acompanhe fichas, avaliações e histórico',
                 ].map((step, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
@@ -248,7 +248,7 @@ export default function LandingPage() {
               Comece a usar agora
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-              Acesse o sistema demo com dados de demonstração ou crie sua conta de personal trainer.
+              Crie sua conta de personal trainer e comece a organizar seus alunos.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button

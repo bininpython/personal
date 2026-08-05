@@ -1,117 +1,53 @@
 'use client';
 
-import { TrendingUp, Activity } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Activity, Dumbbell, Loader2, TrendingUp } from 'lucide-react';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart
-} from 'recharts';
 
-const weightData = [
-  { date: 'Mai', peso: 80 }, { date: 'Jun', peso: 79 },
-  { date: 'Jul', peso: 78.5 }, { date: 'Ago', peso: 78 },
-];
-
-const loadData = [
-  { date: 'Sem 1', supino: 30, agachamento: 60 },
-  { date: 'Sem 2', supino: 32, agachamento: 65 },
-  { date: 'Sem 3', supino: 35, agachamento: 70 },
-  { date: 'Sem 4', supino: 38, agachamento: 75 },
-];
-
-const frequencyData = [
-  { week: 'Sem 1', treinos: 4 }, { week: 'Sem 2', treinos: 3 },
-  { week: 'Sem 3', treinos: 5 }, { week: 'Sem 4', treinos: 4 },
-];
+interface StudentProgress {
+  completedWorkouts: number;
+  frequency: Array<{ label: string; workouts: number }>;
+  weight: Array<{ date: string; weight: number }>;
+  bodyFat: Array<{ date: string; value: number }>;
+}
 
 export default function ProgressPage() {
+  const [progress, setProgress] = useState<StudentProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      try {
+        const response = await fetch('/api/workout-sessions', { cache: 'no-store' });
+        const data = await response.json() as { progress?: StudentProgress; error?: string };
+        if (!response.ok) throw new Error(data.error || 'Não foi possível carregar sua evolução.');
+        setProgress(data.progress ?? null);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'Não foi possível carregar sua evolução.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    void loadProgress();
+  }, []);
+
+  if (loading) return <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Carregando evolução...</div>;
+  if (error || !progress) return <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error || 'Dados indisponíveis.'}</div>;
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <TrendingUp className="w-6 h-6 text-blue-500" />
-          Evolução
-        </h1>
-        <p className="text-muted-foreground mt-1">Acompanhe seu progresso ao longo do tempo</p>
-      </div>
+      <div><h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><TrendingUp className="size-6 text-blue-500" /> Evolução</h1><p className="mt-1 text-muted-foreground">Dados reais dos treinos concluídos e avaliações.</p></div>
+      <Card className="border-border/60"><CardContent className="flex items-center gap-4 p-5"><div className="flex size-12 items-center justify-center rounded-xl bg-blue-500/10"><Dumbbell className="size-6 text-blue-500" /></div><div><p className="text-3xl font-bold">{progress.completedWorkouts}</p><p className="text-sm text-muted-foreground">treino(s) concluído(s)</p></div></CardContent></Card>
 
-      {/* Consistency Score */}
-      <Card className="border-border/50 bg-gradient-to-br from-blue-500/5 to-emerald-500/5">
-        <CardContent className="p-5 text-center">
-          <div className="text-5xl font-bold gradient-text mb-1">78</div>
-          <p className="text-sm text-muted-foreground">Pontuação de Consistência</p>
-          <div className="flex justify-center gap-2 mt-2">
-            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">+5 esta semana</Badge>
-          </div>
-        </CardContent>
-      </Card>
+      <Card className="border-border/60"><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Activity className="size-4 text-emerald-500" /> Frequência nas últimas semanas</CardTitle></CardHeader><CardContent><div className="grid grid-cols-4 gap-2">{progress.frequency.map((week) => <div key={week.label} className="rounded-lg bg-muted/50 p-3 text-center"><p className="text-xl font-bold">{week.workouts}</p><p className="text-[10px] text-muted-foreground">{week.label}</p></div>)}</div></CardContent></Card>
 
-      {/* Weight Evolution */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Evolução de Peso</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={weightData}>
-                <defs>
-                  <linearGradient id="weightGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" domain={['auto', 'auto']} />
-                <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }} />
-                <Area type="monotone" dataKey="peso" stroke="#3b82f6" strokeWidth={2} fill="url(#weightGrad)" name="Peso (kg)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Load Evolution */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Evolução de Carga</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={loadData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px', fontSize: '12px' }} />
-                <Line type="monotone" dataKey="supino" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} name="Supino (kg)" />
-                <Line type="monotone" dataKey="agachamento" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} name="Agachamento (kg)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Frequency */}
-      <Card className="border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <Activity className="w-4 h-4 text-primary" />
-            Frequência Semanal
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-3">
-            {frequencyData.map((w, i) => (
-              <div key={i} className="text-center p-3 rounded-lg bg-muted/50">
-                <div className="text-xl font-bold">{w.treinos}</div>
-                <p className="text-[10px] text-muted-foreground">{w.week}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {progress.weight.length > 0 ? (
+        <Card className="border-border/60"><CardHeader><CardTitle className="text-base">Evolução de peso</CardTitle></CardHeader><CardContent><div className="h-56"><ResponsiveContainer width="100%" height="100%"><AreaChart data={progress.weight}><defs><linearGradient id="weightGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#2563eb" stopOpacity={0.3} /><stop offset="95%" stopColor="#2563eb" stopOpacity={0} /></linearGradient></defs><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="date" /><YAxis domain={['auto', 'auto']} /><Tooltip /><Area type="monotone" dataKey="weight" name="Peso (kg)" stroke="#2563eb" fill="url(#weightGradient)" /></AreaChart></ResponsiveContainer></div></CardContent></Card>
+      ) : (
+        <Card className="border-dashed"><CardContent className="p-8 text-center"><p className="font-medium">Sem medidas para o gráfico de peso</p><p className="mt-1 text-sm text-muted-foreground">O gráfico aparecerá após o personal registrar uma avaliação com seu peso.</p></CardContent></Card>
+      )}
     </div>
   );
 }

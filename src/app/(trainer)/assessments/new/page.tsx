@@ -1,43 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronLeft, ClipboardList, Scale, Ruler, HeartPulse, Save, Loader2, Info } from 'lucide-react';
+import { ChevronLeft, Scale, Ruler, HeartPulse, Save, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { physicalAssessmentSchema, type PhysicalAssessmentInput } from '@/lib/validators';
+import {
+  physicalAssessmentSchema,
+  type PhysicalAssessmentFormInput,
+  type PhysicalAssessmentInput,
+} from '@/lib/validators';
 
 export default function NewAssessmentPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [students, setStudents] = useState<Array<{ id: string; name: string }>>([]);
+  const [loadingStudents, setLoadingStudents] = useState(true);
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<PhysicalAssessmentInput>({
+  } = useForm<PhysicalAssessmentFormInput, unknown, PhysicalAssessmentInput>({
     resolver: zodResolver(physicalAssessmentSchema),
     defaultValues: {
       assessment_date: new Date().toISOString().split('T')[0],
     },
   });
 
+  useEffect(() => {
+    const loadStudents = async () => {
+      try {
+        const response = await fetch('/api/students', { cache: 'no-store' });
+        const data = await response.json() as { students?: Array<{ id: string; name: string; status: string }> };
+        if (response.ok) {
+          setStudents((data.students ?? []).filter((student) => student.status === 'active'));
+        }
+      } catch (error) {
+        console.error('[New Assessment] Student list error:', error);
+      } finally {
+        setLoadingStudents(false);
+      }
+    };
+
+    void loadStudents();
+  }, []);
+
   const onSubmit = async (data: PhysicalAssessmentInput) => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const response = await fetch('/api/assessments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || 'Não foi possível salvar a avaliação.');
+
       toast.success('Avaliação salva com sucesso!');
       router.push('/assessments');
-    }, 1000);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível salvar a avaliação.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,14 +92,14 @@ export default function NewAssessmentPage() {
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Aluno *</Label>
-                <Select onValueChange={(val) => setValue('student_id', val as string)}>
+                <Select onValueChange={(val) => setValue('student_id', val as string, { shouldValidate: true })} disabled={loadingStudents || students.length === 0}>
                   <SelectTrigger className="bg-background">
-                    <SelectValue placeholder="Selecione o aluno" />
+                    <SelectValue placeholder={loadingStudents ? 'Carregando alunos...' : students.length === 0 ? 'Nenhum aluno ativo' : 'Selecione o aluno'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="s1">João Pedro Silva</SelectItem>
-                    <SelectItem value="s2">Maria Oliveira</SelectItem>
-                    <SelectItem value="s3">Carlos Santos</SelectItem>
+                    {students.map((student) => (
+                      <SelectItem key={student.id} value={student.id}>{student.name}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 {errors.student_id && <p className="text-xs text-destructive">{errors.student_id.message}</p>}
@@ -75,8 +109,10 @@ export default function NewAssessmentPage() {
                 <Input 
                   type="date"
                   className="bg-background"
+                  required
                   {...register('assessment_date')}
                 />
+                {errors.assessment_date && <p className="text-xs text-destructive">{errors.assessment_date.message}</p>}
               </div>
             </div>
           </CardContent>

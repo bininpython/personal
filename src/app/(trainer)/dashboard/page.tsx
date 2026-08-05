@@ -3,60 +3,52 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, TrendingUp, Dumbbell, AlertTriangle, Calendar,
-  MessageSquare, ChevronRight, Activity, Target, Clock,
+  Users, TrendingUp, AlertTriangle,
+  ChevronRight, Activity, Target,
   ArrowUpRight, ArrowDownRight, ArrowRight
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
 import {
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart
+  PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
 
-// Demo data for charts
-const weeklyFrequency = [
-  { day: 'Seg', treinos: 4 }, { day: 'Ter', treinos: 3 },
-  { day: 'Qua', treinos: 5 }, { day: 'Qui', treinos: 4 },
-  { day: 'Sex', treinos: 5 }, { day: 'Sáb', treinos: 2 },
-  { day: 'Dom', treinos: 1 },
-];
+interface RankingStudent {
+  id: string;
+  name: string;
+  goal: string;
+  lastWorkout: string;
+  completion: number;
+  workouts: number;
+  trend: 'up' | 'down' | 'stable';
+}
 
-const monthlyCompletion = [
-  { semana: 'Sem 1', taxa: 82 }, { semana: 'Sem 2', taxa: 78 },
-  { semana: 'Sem 3', taxa: 85 }, { semana: 'Sem 4', taxa: 88 },
-];
-
-const alerts = [
-  { type: 'pain', message: 'João Pedro relatou desconforto no ombro', time: '2h atrás', severity: 'high' },
-  { type: 'absence', message: 'Ana Beatriz não treina há 4 dias', time: '12h atrás', severity: 'medium' },
-  { type: 'record', message: 'Carlos Santos: novo recorde no Agachamento (120kg)', time: '1 dia', severity: 'success' },
-];
+interface GoalDistribution {
+  name: string;
+  value: number;
+  color: string;
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
-  const [greeting, setGreeting] = useState('');
+  const [greeting] = useState(() => {
+    const hour = new Date().getHours();
+    return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+  });
   const [stats, setStats] = useState({
     activeStudents: 0,
     trainedToday: 0,
     completionRate: 0,
     alerts: 0,
   });
-  const [ranking, setRanking] = useState<any[]>([]);
-  const [goalDist, setGoalDist] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [ranking, setRanking] = useState<RankingStudent[]>([]);
+  const [goalDist, setGoalDist] = useState<GoalDistribution[]>([]);
 
   useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Bom dia');
-    else if (hour < 18) setGreeting('Boa tarde');
-    else setGreeting('Boa noite');
-
     const fetchData = async () => {
       try {
         const res = await fetch('/api/dashboard');
@@ -66,8 +58,6 @@ export default function DashboardPage() {
         if (data.goalDistribution) setGoalDist(data.goalDistribution);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();

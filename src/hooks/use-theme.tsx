@@ -21,10 +21,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
-    const saved = localStorage.getItem('fitcontrol-theme') as Theme | null;
-    if (saved) {
-      setThemeState(saved);
-    }
+    const timer = window.setTimeout(() => {
+      const saved = localStorage.getItem('fitcontrol-theme') as Theme | null;
+      if (saved) setThemeState(saved);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {

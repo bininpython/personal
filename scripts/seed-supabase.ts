@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
-import { randomUUID } from 'crypto';
 
 dotenv.config({ path: '.env.local' });
 

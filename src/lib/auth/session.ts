@@ -7,6 +7,7 @@ export interface AuthSession {
   role: SessionRole;
   name: string;
   trainer_id: string;
+  trainer_code?: string;
   avatar_url?: string;
 }
 
@@ -22,7 +23,7 @@ export async function getSession(): Promise<AuthSession | null> {
 
     const { data: trainer } = await supabase
       .from('trainers')
-      .select('id, name')
+      .select('id, name, code')
       .eq('auth_user_id', user.id)
       .maybeSingle();
 
@@ -32,6 +33,7 @@ export async function getSession(): Promise<AuthSession | null> {
         role: 'trainer',
         name: trainer.name,
         trainer_id: trainer.id,
+        trainer_code: trainer.code,
       };
     }
 

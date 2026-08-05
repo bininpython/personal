@@ -6,11 +6,10 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Users, Dumbbell, BookOpen, ClipboardList,
   Calendar, MessageSquare, BarChart3, Bell, Settings,
-  LogOut, Menu, X, Moon, Sun, ChevronLeft
+  LogOut, Menu, Moon, Sun, ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -43,7 +42,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -57,7 +56,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     return pathname.startsWith(href);
   };
 
-  const NavContent = ({ mobile = false }: { mobile?: boolean }) => (
+  const renderNavContent = (mobile = false) => (
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
@@ -104,7 +103,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             if (collapsed && !mobile) {
               return (
                 <Tooltip key={item.href}>
-                  <TooltipTrigger>{link}</TooltipTrigger>
+                  <TooltipTrigger render={link} />
                   <TooltipContent side="right">{item.label}</TooltipContent>
                 </Tooltip>
               );
@@ -152,10 +151,8 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           )}
           {(!collapsed || mobile) && (
             <Tooltip>
-              <TooltipTrigger>
-                <button onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors">
-                  <LogOut className="w-4 h-4" />
-                </button>
+              <TooltipTrigger render={<button onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors" />}>
+                <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
             </Tooltip>
@@ -171,7 +168,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       <aside className={`hidden lg:flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}
       >
-        <NavContent />
+        {renderNavContent()}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="absolute top-20 -right-3 w-6 h-6 rounded-full border bg-background shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground z-50 hidden lg:flex transition-colors"
@@ -185,13 +182,11 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-background/80 backdrop-blur-lg border-b border-border flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Menu className="w-5 h-5" />
-              </Button>
+            <SheetTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" />}>
+              <Menu className="w-5 h-5" />
             </SheetTrigger>
             <SheetContent side="left" className="w-[280px] p-0">
-              <NavContent mobile />
+              {renderNavContent(true)}
             </SheetContent>
           </Sheet>
           <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
@@ -202,7 +197,6 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-9 w-9 relative" onClick={() => router.push('/alerts')}>
             <Bell className="w-4.5 h-4.5" />
-            <div className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
           </Button>
           <Avatar className="w-8 h-8">
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">

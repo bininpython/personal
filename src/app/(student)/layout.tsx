@@ -94,18 +94,14 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           </div>
           <div className="flex items-center gap-2">
             <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
-                  {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </Button>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} />}>
+                {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </TooltipTrigger>
               <TooltipContent>{resolvedTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger>
-                <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleLogout}>
-                  <LogOut className="w-4 h-4" />
-                </Button>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleLogout} />}>
+                <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
             </Tooltip>

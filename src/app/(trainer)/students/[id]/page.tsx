@@ -10,18 +10,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
+interface StudentDetails {
+  full_name: string;
+  status: string;
+  goal: string;
+  current_weight: number;
+  height: number;
+  experience_level: string;
+  start_date: string;
+  injuries: string;
+  restrictions: string;
+  notes: string;
+}
+
 export default function StudentProfilePage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
-  const [student, setStudent] = useState<any>(null);
+  const [student, setStudent] = useState<StudentDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStudent = async () => {
       try {
         const res = await fetch(`/api/students/${params.id}`);
-        const data = await res.json();
+        const data = await res.json() as { student?: StudentDetails; error?: string };
         
         if (!res.ok) {
           toast.error(data.error || 'Erro ao carregar aluno');
@@ -29,8 +42,8 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
           return;
         }
 
-        setStudent(data.student);
-      } catch (err) {
+        setStudent(data.student ?? null);
+      } catch {
         toast.error('Erro de conexão ao carregar aluno');
       } finally {
         setLoading(false);
@@ -85,17 +98,16 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
               </div>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5"><Activity className="w-3.5 h-3.5" /> {student.goal || 'Sem objetivo'}</span>
-                {student.phone && <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> {student.phone}</span>}
               </div>
             </div>
           </div>
           
           <div className="flex gap-2 w-full sm:w-auto">
-            <Button variant="outline" className="flex-1 sm:flex-none">
+            <Button variant="outline" className="flex-1 sm:flex-none" disabled title="Mensagens diretas ainda não disponíveis">
               <Mail className="w-4 h-4 mr-2" />
               Mensagem
             </Button>
-            <Button variant="secondary" className="flex-1 sm:flex-none">
+            <Button variant="secondary" className="flex-1 sm:flex-none" disabled title="Edição será adicionada em uma próxima atualização">
               <Edit3 className="w-4 h-4 mr-2" />
               Editar Perfil
             </Button>
@@ -141,7 +153,7 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
                   </div>
                   <div className="p-4 rounded-xl bg-muted/40">
                     <p className="text-sm text-muted-foreground mb-1">Início</p>
-                    <p className="text-xl font-bold">{student.start_date ? new Date(student.start_date).toLocaleDateString('pt-BR') : '--'}</p>
+                    <p className="text-xl font-bold">{student.start_date ? new Date(`${student.start_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR') : '--'}</p>
                   </div>
                 </div>
               </CardContent>
@@ -167,11 +179,11 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
           <Card className="border-border/50 text-center py-12">
             <CardContent>
               <Dumbbell className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-bold mb-2">Nenhuma ficha ativa</h3>
+              <h3 className="text-lg font-bold mb-2">Fichas do aluno</h3>
               <p className="text-muted-foreground text-sm mb-6 max-w-sm mx-auto">
-                Este aluno ainda não possui uma ficha de treino ativa.
+                Consulte as fichas publicadas ou abra o montador para criar uma nova.
               </p>
-              <Button onClick={() => router.push('/workouts/new')}>Criar Nova Ficha</Button>
+              <div className="flex justify-center gap-2"><Button variant="outline" onClick={() => router.push('/workouts')}>Ver fichas</Button><Button onClick={() => router.push('/exercises')}>Criar nova ficha</Button></div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -180,9 +192,9 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
           <Card className="border-border/50 text-center py-12">
             <CardContent>
               <TrendingUp className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <h3 className="text-lg font-bold mb-2">Dados insuficientes</h3>
+              <h3 className="text-lg font-bold mb-2">Evolução na conta do aluno</h3>
               <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                O aluno precisa realizar mais treinos para gerarmos os gráficos de evolução de carga e frequência.
+                A frequência, o histórico e as medidas registradas aparecem na área do aluno. O painel individual do personal será ampliado em uma próxima atualização.
               </p>
             </CardContent>
           </Card>
@@ -191,14 +203,13 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
         <TabsContent value="assessments" className="focus-visible:outline-none focus-visible:ring-0">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold">Histórico de Avaliações Físicas</h3>
-            <Button variant="outline">Nova Avaliação</Button>
+            <Button variant="outline" onClick={() => router.push('/assessments/new')}>Nova Avaliação</Button>
           </div>
           <Card className="border-border/50 text-center py-12">
             <CardContent>
               <ClipboardList className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-              <p className="text-muted-foreground text-sm">
-                Nenhuma avaliação física registrada.
-              </p>
+              <p className="text-muted-foreground text-sm mb-5">Consulte o histórico real na página de avaliações.</p>
+              <Button variant="outline" onClick={() => router.push('/assessments')}>Ver avaliações</Button>
             </CardContent>
           </Card>
         </TabsContent>

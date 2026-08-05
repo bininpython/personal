@@ -2,27 +2,41 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ClipboardList, Plus, Search, Calendar, User, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { ClipboardList, Plus, Search, Calendar, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { useEffect } from 'react';
 
+interface AssessmentSummary {
+  id: string;
+  student: string;
+  date: string;
+  type: string;
+  weight: number;
+  weightDiff: number;
+  bf: number;
+  bfDiff: number;
+}
+
 export default function AssessmentsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
-  const [assessments, setAssessments] = useState<any[]>([]);
+  const [assessments, setAssessments] = useState<AssessmentSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchAssessments = async () => {
       try {
         const res = await fetch('/api/assessments');
-        const data = await res.json();
+        const data = await res.json() as { assessments?: AssessmentSummary[]; error?: string };
+        if (!res.ok) throw new Error(data.error || 'Não foi possível carregar as avaliações.');
         if (data.assessments) setAssessments(data.assessments);
       } catch (err) {
         console.error('Error fetching assessments:', err);
+        setError(err instanceof Error ? err.message : 'Não foi possível carregar as avaliações.');
       } finally {
         setLoading(false);
       }
@@ -30,7 +44,7 @@ export default function AssessmentsPage() {
     fetchAssessments();
   }, []);
 
-  const filtered = assessments.filter(a => a.student.toLowerCase().includes(search.toLowerCase()));
+  const filtered = assessments.filter((assessment) => assessment.student.toLowerCase().includes(search.toLowerCase()));
 
   const getDiffIcon = (diff: number) => {
     if (diff > 0) return <TrendingUp className="w-4 h-4 text-amber-500" />;
@@ -70,6 +84,10 @@ export default function AssessmentsPage() {
         {loading ? (
           <div className="col-span-full py-12 text-center text-muted-foreground">
             Carregando avaliações...
+          </div>
+        ) : error ? (
+          <div className="col-span-full rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">
+            {error}
           </div>
         ) : filtered.length === 0 ? (
           <div className="col-span-full py-12 text-center text-muted-foreground">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
   CheckCircle2,
@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Target,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -87,6 +88,9 @@ export default function StudentWorkoutPage() {
   const [completedSets, setCompletedSets] = useState<Set<string>>(new Set());
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [completingWorkout, setCompletingWorkout] = useState(false);
+  const [recordedDays, setRecordedDays] = useState<Set<string>>(new Set());
+  const currentPlanId = useRef('');
 
   const loadPlan = useCallback(async (silent = false) => {
     if (silent) setRefreshing(true);
@@ -98,22 +102,25 @@ export default function StudentWorkoutPage() {
       if (!response.ok) throw new Error(data.error || 'Não foi possível carregar sua ficha.');
 
       const nextPlan = data.plan ?? null;
-      setPlan((current) => {
-        if (nextPlan && current?.id !== nextPlan.id) {
-          setSelectedDayId(nextPlan.days[0]?.id ?? '');
-          try {
-            const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id));
-            setCompletedSets(new Set(saved ? JSON.parse(saved) as string[] : []));
-          } catch {
-            setCompletedSets(new Set());
-          }
-        }
-        if (!nextPlan) {
-          setSelectedDayId('');
+      if (nextPlan && currentPlanId.current !== nextPlan.id) {
+        currentPlanId.current = nextPlan.id;
+        setSelectedDayId(nextPlan.days[0]?.id ?? '');
+        try {
+          const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id));
+          setCompletedSets(new Set(saved ? JSON.parse(saved) as string[] : []));
+        } catch {
           setCompletedSets(new Set());
         }
-        return nextPlan;
-      });
+      } else if (!nextPlan) {
+        currentPlanId.current = '';
+        setSelectedDayId('');
+        setCompletedSets(new Set());
+      } else {
+        setSelectedDayId((current) => (
+          nextPlan.days.some((day) => day.id === current) ? current : (nextPlan.days[0]?.id ?? '')
+        ));
+      }
+      setPlan(nextPlan);
       setError('');
       setLastSync(new Date());
     } catch (loadError) {
@@ -176,6 +183,26 @@ export default function StudentWorkoutPage() {
     setCompletedSets((current) => new Set(
       [...current].filter((key) => !exerciseIds.has(key.split(':')[0])),
     ));
+  }
+
+  async function completeWorkout() {
+    if (!activeDay || progress < 100) return;
+    setCompletingWorkout(true);
+    try {
+      const response = await fetch('/api/workout-sessions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ workoutDayId: activeDay.id, completionPercentage: progress }),
+      });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível concluir o treino.');
+      setRecordedDays((current) => new Set(current).add(activeDay.id));
+      toast.success('Treino concluído e salvo no histórico!');
+    } catch (completeError) {
+      toast.error(completeError instanceof Error ? completeError.message : 'Não foi possível concluir o treino.');
+    } finally {
+      setCompletingWorkout(false);
+    }
   }
 
   if (loading) {
@@ -366,6 +393,24 @@ export default function StudentWorkoutPage() {
               );
             })}
           </div>
+
+          {progress === 100 && (
+            <Card className="border-emerald-500/30 bg-emerald-500/[0.05]">
+              <CardContent className="p-5 text-center">
+                <CheckCircle2 className="mx-auto mb-2 size-9 text-emerald-500" />
+                <h2 className="font-bold">Todas as séries foram marcadas</h2>
+                <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
+                <Button
+                  className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700"
+                  onClick={() => void completeWorkout()}
+                  disabled={completingWorkout || recordedDays.has(activeDay.id)}
+                >
+                  {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
+                  {recordedDays.has(activeDay.id) ? 'Treino salvo' : 'Concluir e salvar treino'}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
 

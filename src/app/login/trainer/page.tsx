@@ -91,14 +91,14 @@ export default function TrainerLoginPage() {
                   id="trainer_code"
                   placeholder="Ex: 482915"
                   autoComplete="username"
-                  inputMode="numeric"
+                  inputMode="text"
                   className="h-11 font-mono tracking-wider placeholder:tracking-normal"
                   {...register('trainer_code')}
                 />
                 {errors.trainer_code && (
                   <p className="text-sm text-destructive">{errors.trainer_code.message}</p>
                 )}
-                <p className="text-xs text-muted-foreground">Use o código de 6 dígitos gerado no cadastro.</p>
+                <p className="text-xs text-muted-foreground">Contas novas recebem 6 números. Códigos antigos com letras também continuam válidos.</p>
               </div>
 
               <div className="space-y-2">

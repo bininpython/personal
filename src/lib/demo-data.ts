@@ -7,7 +7,7 @@ import type {
   Trainer, Student, WorkoutPlan, WorkoutDay, Exercise,
   WorkoutExercise, WorkoutSession, ExerciseSession, SetRecord,
   PhysicalAssessment, Message, Notification, Achievement,
-  StudentAchievement, Appointment,
+  StudentAchievement,
 } from '@/types';
 import { hashPassword, normalizeName, getCodeHint } from '@/lib/auth/hash';
 import fs from 'fs';
@@ -70,7 +70,6 @@ const messages: Map<string, Message> = new Map();
 const notifications: Map<string, Notification> = new Map();
 const achievements: Map<string, Achievement> = new Map();
 const studentAchievements: Map<string, StudentAchievement> = new Map();
-const appointments: Map<string, Appointment> = new Map();
 
 function uuid(): string {
   return crypto.randomUUID();
@@ -1016,7 +1015,7 @@ export function getAchievementsByStudent(studentId: string) {
 
 export function getAllAchievements() { return Array.from(achievements.values()); }
 export function getAllExercises() { return Array.from(exercises.values()); }
-export function createWorkoutPlan(data: any) { 
+export function createWorkoutPlan(data: { name?: string }) {
   // Dummy to satisfy API
   console.log('Created workout plan in demo data:', data.name);
 }

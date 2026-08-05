@@ -1,57 +1,68 @@
 'use client';
 
-import { History, Calendar, Dumbbell, Clock, Target } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { Calendar, CheckCircle2, Clock, Dumbbell, History, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
-const workoutHistory = [
-  { date: '02/08/2026', name: 'Treino A — Peito/Tríceps', duration: '52 min', completion: 100, volume: '8,450 kg', exercises: 5 },
-  { date: '31/07/2026', name: 'Treino C — Pernas', duration: '65 min', completion: 90, volume: '12,300 kg', exercises: 5 },
-  { date: '30/07/2026', name: 'Treino B — Costas/Bíceps', duration: '48 min', completion: 85, volume: '7,200 kg', exercises: 5 },
-  { date: '28/07/2026', name: 'Treino A — Peito/Tríceps', duration: '55 min', completion: 95, volume: '8,900 kg', exercises: 5 },
-  { date: '26/07/2026', name: 'Treino C — Pernas', duration: '60 min', completion: 80, volume: '11,500 kg', exercises: 5 },
-  { date: '25/07/2026', name: 'Treino B — Costas/Bíceps', duration: '50 min', completion: 92, volume: '7,800 kg', exercises: 5 },
-];
+interface WorkoutHistoryItem {
+  id: string;
+  date: string;
+  name: string;
+  dayLabel: string;
+  durationSeconds: number | null;
+  completion: number;
+  volume: number;
+  status: string;
+}
+
+function formatDuration(seconds: number | null) {
+  if (!seconds) return 'Duração não registrada';
+  return `${Math.max(1, Math.round(seconds / 60))} min`;
+}
 
 export default function HistoryPage() {
+  const [history, setHistory] = useState<WorkoutHistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const response = await fetch('/api/workout-sessions', { cache: 'no-store' });
+        const data = await response.json() as { history?: WorkoutHistoryItem[]; error?: string };
+        if (!response.ok) throw new Error(data.error || 'Não foi possível carregar o histórico.');
+        setHistory(data.history ?? []);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'Não foi possível carregar o histórico.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    void loadHistory();
+  }, []);
+
+  if (loading) return <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Carregando histórico...</div>;
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-          <History className="w-6 h-6 text-blue-500" />
-          Histórico de Treinos
-        </h1>
-        <p className="text-muted-foreground mt-1">{workoutHistory.length} treinos realizados</p>
-      </div>
-
-      <div className="space-y-3">
-        {workoutHistory.map((workout, i) => (
-          <Card key={i} className="border-border/50 hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: `${0.05 * i}s` }}>
-            <CardContent className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="text-sm font-semibold">{workout.name}</p>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    <span>{workout.date}</span>
-                    <Clock className="w-3 h-3 ml-1" />
-                    <span>{workout.duration}</span>
-                  </div>
-                </div>
-                <Badge className={workout.completion === 100 ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border-amber-500/20'}>
-                  {workout.completion}%
-                </Badge>
-              </div>
-              <Progress value={workout.completion} className="h-1.5 mb-2" />
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span><Dumbbell className="w-3 h-3 inline mr-1" />{workout.exercises} exercícios</span>
-                <span><Target className="w-3 h-3 inline mr-1" />{workout.volume}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <div><h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><History className="size-6 text-blue-500" /> Histórico de Treinos</h1><p className="mt-1 text-muted-foreground">{history.length} treino(s) registrado(s)</p></div>
+      {error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
+      ) : history.length === 0 ? (
+        <Card className="border-dashed"><CardContent className="flex flex-col items-center p-10 text-center"><Dumbbell className="mb-3 size-10 text-muted-foreground/30" /><h2 className="font-bold">Nenhum treino concluído ainda</h2><p className="mt-1 max-w-sm text-sm text-muted-foreground">Marque todas as séries na aba Treino e use “Concluir e salvar treino”. O registro aparecerá aqui.</p></CardContent></Card>
+      ) : (
+        <div className="space-y-3">
+          {history.map((workout) => (
+            <Card key={workout.id} className="border-border/60"><CardContent className="p-4">
+              <div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-semibold">{workout.name}</p><div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Calendar className="size-3" />{new Date(workout.date).toLocaleDateString('pt-BR')}</span><span className="flex items-center gap-1"><Clock className="size-3" />{formatDuration(workout.durationSeconds)}</span></div></div><Badge className="bg-emerald-500/10 text-emerald-600"><CheckCircle2 className="mr-1 size-3" /> {workout.completion}%</Badge></div>
+              <Progress value={workout.completion} className="h-1.5" />
+              {workout.volume > 0 && <p className="mt-2 text-xs text-muted-foreground">Volume: {workout.volume.toLocaleString('pt-BR')} kg</p>}
+            </CardContent></Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -12,7 +12,6 @@ import {
   isDuplicateAccountError,
 } from '@/lib/auth/credentials';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 
 const CODE_GENERATION_ATTEMPTS = 100;
@@ -189,8 +188,8 @@ export async function GET() {
       return json({ error: 'Não autorizado.' }, 401);
     }
 
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const admin = createAdminClient();
+    const { data, error } = await admin
       .from('students')
       .select('id, name, access_code, goal, level, status, created_at')
       .eq('trainer_id', session.trainer_id)
@@ -198,22 +197,58 @@ export async function GET() {
 
     if (error) throw error;
 
-    const students = data.map((student) => ({
-      id: student.id,
-      name: student.name,
-      access_code: student.access_code,
-      goal: student.goal || 'Não definido',
-      level: student.level === 'beginner'
-        ? 'Iniciante'
-        : student.level === 'intermediate'
-          ? 'Intermediário'
-          : 'Avançado',
-      lastWorkout: 'Sem dados',
-      frequency: '0x/sem',
-      completion: 0,
-      status: student.status,
-      trend: 'stable',
-    }));
+    const studentIds = data.map((student) => student.id);
+    const { data: sessionRows, error: sessionError } = studentIds.length > 0
+      ? await admin
+        .from('workout_sessions')
+        .select('student_id, started_at, completed_at, completion_percentage, status')
+        .in('student_id', studentIds)
+        .order('started_at', { ascending: false })
+      : { data: [], error: null };
+
+    if (sessionError) throw sessionError;
+
+    const now = new Date();
+    const recentStart = new Date(now);
+    recentStart.setDate(recentStart.getDate() - 7);
+    const previousStart = new Date(now);
+    previousStart.setDate(previousStart.getDate() - 14);
+
+    const students = data.map((student) => {
+      const studentSessions = (sessionRows ?? []).filter((item) => item.student_id === student.id);
+      const completedSessions = studentSessions.filter((item) => item.status === 'completed');
+      const recentCount = completedSessions.filter((item) => new Date(item.completed_at || item.started_at) >= recentStart).length;
+      const previousCount = completedSessions.filter((item) => {
+        const date = new Date(item.completed_at || item.started_at);
+        return date >= previousStart && date < recentStart;
+      }).length;
+      const lastWorkoutDate = studentSessions[0]?.completed_at || studentSessions[0]?.started_at;
+      const completion = completedSessions.length > 0
+        ? Math.round(completedSessions.reduce(
+          (total, item) => total + Number(item.completion_percentage ?? 0),
+          0,
+        ) / completedSessions.length)
+        : 0;
+
+      return {
+        id: student.id,
+        name: student.name,
+        access_code: student.access_code,
+        goal: student.goal || 'Não definido',
+        level: student.level === 'beginner'
+          ? 'Iniciante'
+          : student.level === 'intermediate'
+            ? 'Intermediário'
+            : 'Avançado',
+        lastWorkout: lastWorkoutDate
+          ? new Date(lastWorkoutDate).toLocaleDateString('pt-BR')
+          : 'Sem treino registrado',
+        frequency: `${recentCount}x/sem`,
+        completion,
+        status: student.status,
+        trend: recentCount > previousCount ? 'up' : recentCount < previousCount ? 'down' : 'stable',
+      };
+    });
 
     return json({
       students,

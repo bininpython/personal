@@ -15,20 +15,20 @@ export default function SchedulePage() {
           <h1 className="text-2xl font-bold tracking-tight">Agenda</h1>
           <p className="text-muted-foreground mt-1">Gerencie seus treinos e avaliações</p>
         </div>
-        <Button className="h-10">
+        <Button className="h-10" disabled title="Agendamento ainda não disponível">
           <Plus className="w-4 h-4 mr-2" />
-          Novo Agendamento
+          Agendamento em breve
         </Button>
       </div>
 
       <div className="flex items-center justify-between bg-card p-4 rounded-lg border border-border/50">
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={() => setCurrentDate((date) => new Date(date.getFullYear(), date.getMonth() - 1, 1))} aria-label="Mês anterior">
           <ChevronLeft className="w-4 h-4" />
         </Button>
         <h2 className="text-lg font-medium">
           {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }).replace(/^\w/, (c) => c.toUpperCase())}
         </h2>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" onClick={() => setCurrentDate((date) => new Date(date.getFullYear(), date.getMonth() + 1, 1))} aria-label="Próximo mês">
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
@@ -42,7 +42,7 @@ export default function SchedulePage() {
           <p className="text-muted-foreground max-w-sm mb-6">
             Você não tem nenhum compromisso marcado para este mês. Que tal agendar a avaliação de um aluno?
           </p>
-          <Button variant="outline">Marcar compromisso</Button>
+          <Button variant="outline" disabled>Agendamento em desenvolvimento</Button>
         </div>
       </Card>
     </div>

@@ -394,6 +394,7 @@ export interface AuthUser {
   role: UserRole;
   name: string;
   trainer_id: string;
+  trainer_code?: string;
   avatar_url?: string;
 }
 
