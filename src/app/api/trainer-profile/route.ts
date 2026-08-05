@@ -30,7 +30,7 @@ export async function GET() {
     if (error) throw error;
     if (!data) return json({ error: 'Perfil não encontrado.' }, 404);
 
-    return json({ profile: { name: data.name, trainer_code: data.code } });
+    return json({ profile: { name: data.name, trainer_code: data.code, avatar_url: session.avatar_url || '' } });
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O banco de dados ainda não está configurado.' }, 503);

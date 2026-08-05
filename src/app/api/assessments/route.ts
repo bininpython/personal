@@ -43,6 +43,7 @@ export async function GET() {
 
       return {
         id: assessment.id,
+        studentId: assessment.student_id,
         student: student?.name ?? 'Aluno',
         date: new Date(`${assessment.assessment_date}T12:00:00`).toLocaleDateString('pt-BR'),
         type: 'Avaliação física',

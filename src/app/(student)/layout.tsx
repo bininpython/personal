@@ -7,7 +7,7 @@ import {
   User, LogOut, MessageSquare, Moon, Sun
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
@@ -107,6 +107,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               <TooltipContent>Sair</TooltipContent>
             </Tooltip>
             <Avatar className="w-8 h-8">
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
               <AvatarFallback className="bg-blue-500/10 text-blue-500 text-xs font-bold">
                 {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AL'}
               </AvatarFallback>

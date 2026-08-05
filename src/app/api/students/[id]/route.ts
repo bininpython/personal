@@ -58,13 +58,19 @@ export async function GET(
     return json({ error: 'Não autorizado.' }, 403);
   }
 
+  const admin = createAdminClient();
+  const { data: authData } = await admin.auth.admin.getUserById(student.id);
+  const avatarUrl = typeof authData.user?.user_metadata?.avatar_url === 'string'
+    ? authData.user.user_metadata.avatar_url
+    : '';
+
   return json({
     student: {
       id: student.id,
       trainer_id: student.trainer_id,
       full_name: student.name,
       nickname: student.nickname || '',
-      avatar_url: '',
+      avatar_url: avatarUrl,
       birth_date: student.birth_date || '',
       gender: student.gender || 'other',
       height: student.height || 0,

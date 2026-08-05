@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 
 interface AssessmentSummary {
   id: string;
+  studentId: string;
   student: string;
   date: string;
   type: string;
@@ -95,7 +96,7 @@ export default function AssessmentsPage() {
           </div>
         ) : (
           filtered.map((assessment, i) => (
-            <Card key={assessment.id} className="border-border/50 hover:shadow-md transition-all animate-slide-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
+            <Card key={assessment.id} role="button" tabIndex={0} onClick={() => router.push(`/students/${assessment.studentId}#assessments`)} onKeyDown={(event) => { if (event.key === 'Enter') router.push(`/students/${assessment.studentId}#assessments`); }} className="border-border/50 hover:shadow-md transition-all animate-slide-up cursor-pointer" style={{ animationDelay: `${i * 0.05}s` }}>
               <CardHeader className="pb-3 border-b border-border/30">
                 <div className="flex justify-between items-start">
                   <div>

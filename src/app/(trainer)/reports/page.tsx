@@ -1,85 +1,113 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Activity, AlertTriangle, BarChart3, Download, Loader2, RefreshCw, Users } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Calendar, Download, FileText, Loader2, RefreshCw, Target, UserRound } from 'lucide-react';
 import { toast } from 'sonner';
+import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import type { StudentProgressData } from '@/types/student-progress';
 
-interface AnalyticsStudent {
+interface StudentOption {
   id: string;
   name: string;
-  goal: string;
-  workouts7d: number;
-  workouts30d: number;
-  plannedFrequency: number;
-  completionAverage: number;
-  consistencyScore: number;
-  daysSinceLastWorkout: number | null;
-  risk: 'low' | 'medium' | 'high';
-  recommendation: string;
+  status: string;
 }
 
-interface AnalyticsData {
-  generatedAt: string;
-  summary: {
-    activeStudents: number;
-    atRisk: number;
-    attention: number;
-    averageConsistency: number;
-    workouts7d: number;
-    workouts30d: number;
-  };
-  students: AnalyticsStudent[];
-  weeklyWorkouts: Array<{ label: string; workouts: number }>;
+function initials(name: string) {
+  return name.split(' ').filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase();
 }
 
 export default function ReportsPage() {
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [students, setStudents] = useState<StudentOption[]>([]);
+  const [studentId, setStudentId] = useState('');
+  const [report, setReport] = useState<StudentProgressData | null>(null);
+  const [loadingStudents, setLoadingStudents] = useState(true);
+  const [loadingReport, setLoadingReport] = useState(false);
 
-  const loadReport = useCallback(async () => {
-    setLoading(true);
+  const loadStudents = useCallback(async () => {
+    setLoadingStudents(true);
     try {
-      const analyticsResponse = await fetch('/api/analytics', { cache: 'no-store' });
-      const analyticsData = await analyticsResponse.json() as AnalyticsData & { error?: string };
-      if (!analyticsResponse.ok) throw new Error(analyticsData.error || 'Não foi possível gerar o relatório.');
-      setAnalytics(analyticsData);
+      const response = await fetch('/api/students', { cache: 'no-store' });
+      const data = await response.json() as { students?: StudentOption[]; error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível carregar os alunos.');
+      const available = data.students ?? [];
+      setStudents(available);
+      setStudentId((current) => current || available.find((student) => student.status === 'active')?.id || available[0]?.id || '');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Não foi possível gerar o relatório.');
+      toast.error(error instanceof Error ? error.message : 'Não foi possível carregar os alunos.');
     } finally {
-      setLoading(false);
+      setLoadingStudents(false);
+    }
+  }, []);
+
+  const loadReport = useCallback(async (id: string) => {
+    if (!id) {
+      setReport(null);
+      return;
+    }
+    setLoadingReport(true);
+    try {
+      const response = await fetch(`/api/student-progress/${id}`, { cache: 'no-store' });
+      const data = await response.json() as { progress?: StudentProgressData; error?: string };
+      if (!response.ok || !data.progress) throw new Error(data.error || 'Não foi possível gerar o relatório individual.');
+      setReport(data.progress);
+    } catch (error) {
+      setReport(null);
+      toast.error(error instanceof Error ? error.message : 'Não foi possível gerar o relatório individual.');
+    } finally {
+      setLoadingReport(false);
     }
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => void loadReport(), 0);
+    const initialLoad = window.setTimeout(() => void loadStudents(), 0);
     return () => window.clearTimeout(initialLoad);
-  }, [loadReport]);
+  }, [loadStudents]);
+  useEffect(() => {
+    const reportLoad = window.setTimeout(() => void loadReport(studentId), 0);
+    return () => window.clearTimeout(reportLoad);
+  }, [loadReport, studentId]);
 
-  if (loading) return <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-6 animate-spin" /> Analisando desempenho...</div>;
-  if (!analytics) return <div className="rounded-xl border border-destructive/30 p-8 text-center text-destructive">Relatório indisponível.</div>;
+  if (loadingStudents) return <div className="flex min-h-[60vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-6 animate-spin" /> Carregando alunos...</div>;
 
   return (
     <div className="print-report space-y-6 pb-10 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h1 className="text-2xl font-bold tracking-tight">Relatório de desempenho</h1><p className="mt-1 text-muted-foreground">Constância, risco, adesão e evolução da carteira.</p></div><div className="no-print flex gap-2"><Button variant="outline" onClick={() => void loadReport()}><RefreshCw className="mr-2 size-4" /> Atualizar</Button><Button onClick={() => window.print()}><Download className="mr-2 size-4" /> Salvar em PDF</Button></div></div>
-      <p className="text-xs text-muted-foreground">Gerado em {new Date(analytics.generatedAt).toLocaleString('pt-BR')}</p>
+      <div className="no-print flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+        <div><h1 className="text-2xl font-bold tracking-tight">Relatório individual de evolução</h1><p className="mt-1 text-muted-foreground">Acompanhamento de treinos, avaliações físicas e progresso de cada aluno.</p></div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Select value={studentId} onValueChange={(value) => setStudentId(value ?? '')}>
+            <SelectTrigger className="w-full min-w-64 sm:w-72"><SelectValue placeholder="Selecione um aluno" /></SelectTrigger>
+            <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}{student.status !== 'active' ? ' (arquivado)' : ''}</SelectItem>)}</SelectContent>
+          </Select>
+          <Button variant="outline" disabled={!studentId || loadingReport} onClick={() => void loadReport(studentId)}><RefreshCw className={`mr-2 size-4 ${loadingReport ? 'animate-spin' : ''}`} /> Atualizar</Button>
+          <Button disabled={!report || loadingReport} onClick={() => window.print()}><Download className="mr-2 size-4" /> Salvar relatório em PDF</Button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[
-        { label: 'Alunos ativos', value: analytics.summary.activeStudents, icon: Users },
-        { label: 'Constância média', value: `${analytics.summary.averageConsistency}%`, icon: BarChart3 },
-        { label: 'Treinos em 7 dias', value: analytics.summary.workouts7d, icon: BarChart3 },
-        { label: 'Treinos em 30 dias', value: analytics.summary.workouts30d, icon: BarChart3 },
-        { label: 'Risco alto', value: analytics.summary.atRisk, icon: AlertTriangle },
-      ].map((item) => <Card key={item.label}><CardContent className="p-4"><item.icon className="mb-2 size-4 text-primary" /><p className="text-2xl font-bold">{item.value}</p><p className="text-xs text-muted-foreground">{item.label}</p></CardContent></Card>)}</div>
-
-      <div className="grid gap-6 lg:grid-cols-2"><Card><CardHeader><CardTitle className="text-base">Treinos concluídos por semana</CardTitle></CardHeader><CardContent><div className="h-64"><ResponsiveContainer width="100%" height="100%"><BarChart data={analytics.weeklyWorkouts}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 11 }} /><YAxis allowDecimals={false} /><Tooltip /><Bar dataKey="workouts" name="Treinos" fill="#2563eb" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></CardContent></Card>
-        <Card><CardHeader><CardTitle className="flex items-center gap-2 text-base"><Activity className="size-5 text-primary" /> Situação da carteira</CardTitle></CardHeader><CardContent className="space-y-5"><div><div className="mb-2 flex items-center justify-between text-sm"><span>Alunos em bom ritmo</span><strong>{Math.max(0, analytics.summary.activeStudents - analytics.summary.attention - analytics.summary.atRisk)}</strong></div><Progress value={analytics.summary.activeStudents > 0 ? ((analytics.summary.activeStudents - analytics.summary.attention - analytics.summary.atRisk) / analytics.summary.activeStudents) * 100 : 0} /></div><div className="grid grid-cols-2 gap-3"><div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-4"><p className="text-2xl font-bold text-amber-600">{analytics.summary.attention}</p><p className="text-xs text-muted-foreground">precisam de atenção</p></div><div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-4"><p className="text-2xl font-bold text-red-600">{analytics.summary.atRisk}</p><p className="text-xs text-muted-foreground">com risco alto</p></div></div><p className="text-xs text-muted-foreground">Classificação calculada diretamente pela frequência, conclusão dos treinos e tempo sem atividade.</p></CardContent></Card></div>
-
-      <Card><CardHeader><CardTitle className="text-base">Desempenho por aluno</CardTitle></CardHeader><CardContent className="space-y-4">{analytics.students.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">Nenhum aluno para analisar.</p> : analytics.students.map((student) => <div key={student.id} className="rounded-xl border p-4"><div className="mb-3 flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold">{student.name}</p><p className="text-xs text-muted-foreground">{student.goal} · {student.workouts7d}/{student.plannedFrequency} treino(s) nesta semana</p></div><Badge variant="outline" className={student.risk === 'high' ? 'border-red-500/30 text-red-600' : student.risk === 'medium' ? 'border-amber-500/30 text-amber-600' : 'border-emerald-500/30 text-emerald-600'}>{student.risk === 'high' ? 'Risco alto' : student.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge></div><div className="flex items-center gap-3"><Progress value={student.consistencyScore} className="flex-1" /><strong className="text-sm">{student.consistencyScore}%</strong></div><p className="mt-3 text-xs text-muted-foreground">{student.recommendation}</p></div>)}</CardContent></Card>
+      {students.length === 0 ? <Card><CardContent className="py-16 text-center text-sm text-muted-foreground"><UserRound className="mx-auto mb-3 size-12 opacity-40" />Cadastre um aluno para gerar o primeiro relatório.</CardContent></Card> : loadingReport ? <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-6 animate-spin" /> Montando relatório detalhado...</div> : report ? <>
+        <header className="rounded-2xl border bg-card p-6 print:border-black">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-4">
+              <Avatar className="size-20">
+                {report.student.avatarUrl && <AvatarImage src={report.student.avatarUrl} alt={`Avatar de ${report.student.name}`} />}
+                <AvatarFallback className="bg-primary/10 text-xl font-bold text-primary">{initials(report.student.name)}</AvatarFallback>
+              </Avatar>
+              <div><div className="mb-1 flex flex-wrap items-center gap-2"><h2 className="text-2xl font-bold">{report.student.name}</h2><Badge variant="outline">{report.student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="text-sm text-muted-foreground">Acompanhado por {report.trainer.name}</p></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm sm:text-right">
+              <div><p className="flex items-center gap-1 text-xs text-muted-foreground sm:justify-end"><Target className="size-3" /> Objetivo</p><strong>{report.student.goal}</strong></div>
+              <div><p className="flex items-center gap-1 text-xs text-muted-foreground sm:justify-end"><Calendar className="size-3" /> Início</p><strong>{new Date(report.student.startDate).toLocaleDateString('pt-BR')}</strong></div>
+            </div>
+          </div>
+          <div className="mt-5 flex items-center justify-between border-t pt-4 text-xs text-muted-foreground"><span className="flex items-center gap-1"><FileText className="size-3.5" /> Relatório individual de evolução</span><span>Gerado em {new Date(report.generatedAt).toLocaleString('pt-BR')}</span></div>
+        </header>
+        <StudentProgressDashboard data={report} />
+        <footer className="hidden border-t pt-4 text-center text-xs text-muted-foreground print:block">Relatório gerado pelo FitControl Pro em {new Date(report.generatedAt).toLocaleString('pt-BR')}.</footer>
+      </> : <Card><CardContent className="py-16 text-center text-sm text-muted-foreground">Selecione um aluno para visualizar o relatório.</CardContent></Card>}
     </div>
   );
 }

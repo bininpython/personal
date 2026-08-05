@@ -22,6 +22,7 @@ export default function NewAssessmentPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [students, setStudents] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState('');
   const [loadingStudents, setLoadingStudents] = useState(true);
 
   const {
@@ -42,7 +43,13 @@ export default function NewAssessmentPage() {
         const response = await fetch('/api/students', { cache: 'no-store' });
         const data = await response.json() as { students?: Array<{ id: string; name: string; status: string }> };
         if (response.ok) {
-          setStudents((data.students ?? []).filter((student) => student.status === 'active'));
+          const activeStudents = (data.students ?? []).filter((student) => student.status === 'active');
+          setStudents(activeStudents);
+          const requestedStudent = new URLSearchParams(window.location.search).get('studentId');
+          if (requestedStudent && activeStudents.some((student) => student.id === requestedStudent)) {
+            setSelectedStudentId(requestedStudent);
+            setValue('student_id', requestedStudent, { shouldValidate: true });
+          }
         }
       } catch (error) {
         console.error('[New Assessment] Student list error:', error);
@@ -52,7 +59,7 @@ export default function NewAssessmentPage() {
     };
 
     void loadStudents();
-  }, []);
+  }, [setValue]);
 
   const onSubmit = async (data: PhysicalAssessmentInput) => {
     setIsLoading(true);
@@ -92,7 +99,7 @@ export default function NewAssessmentPage() {
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Aluno *</Label>
-                <Select onValueChange={(val) => setValue('student_id', val as string, { shouldValidate: true })} disabled={loadingStudents || students.length === 0}>
+                <Select value={selectedStudentId} onValueChange={(val) => { const value = val ?? ''; setSelectedStudentId(value); setValue('student_id', value, { shouldValidate: true }); }} disabled={loadingStudents || students.length === 0}>
                   <SelectTrigger className="bg-background">
                     <SelectValue placeholder={loadingStudents ? 'Carregando alunos...' : students.length === 0 ? 'Nenhum aluno ativo' : 'Selecione o aluno'} />
                   </SelectTrigger>

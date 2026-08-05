@@ -9,7 +9,7 @@ import {
   LogOut, Menu, Moon, Sun, ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -157,6 +157,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
         <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-3 py-2`}>
           <Avatar className="w-8 h-8 flex-shrink-0">
+            {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>
@@ -218,6 +219,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             {unreadAlerts > 0 && <span className="absolute right-1 top-1 size-2 rounded-full bg-destructive" />}
           </Button>
           <Avatar className="w-8 h-8">
+            {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
             <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>

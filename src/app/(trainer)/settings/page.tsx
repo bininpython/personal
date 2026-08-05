@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Check, Copy, Loader2, Paintbrush, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { AvatarPicker } from '@/components/profile/avatar-picker';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,6 +14,7 @@ import { useTheme } from '@/hooks/use-theme';
 interface TrainerProfile {
   name: string;
   trainer_code: string;
+  avatar_url: string;
 }
 
 export default function TrainerSettingsPage() {
@@ -20,6 +22,7 @@ export default function TrainerSettingsPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const [name, setName] = useState(user?.name || '');
   const [trainerCode, setTrainerCode] = useState(user?.trainer_code || '');
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -33,6 +36,7 @@ export default function TrainerSettingsPage() {
         if (data.profile) {
           setName(data.profile.name);
           setTrainerCode(data.profile.trainer_code);
+          setAvatarUrl(data.profile.avatar_url || '');
         }
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Não foi possível carregar o perfil.');
@@ -99,6 +103,17 @@ export default function TrainerSettingsPage() {
                 <div className="flex py-8 text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Carregando perfil...</div>
               ) : (
                 <>
+                  <div className="flex items-center gap-4 rounded-xl border bg-muted/20 p-4">
+                    <AvatarPicker
+                      name={name || 'Personal'}
+                      avatarUrl={avatarUrl}
+                      onChange={async (value) => {
+                        setAvatarUrl(value);
+                        await refreshUser();
+                      }}
+                    />
+                    <div><p className="font-medium">Foto ou avatar</p><p className="text-xs text-muted-foreground">Envie uma foto ou escolha entre 50 opções.</p></div>
+                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="trainer-name">Nome</Label>
                     <Input id="trainer-name" value={name} onChange={(event) => setName(event.target.value)} maxLength={100} />

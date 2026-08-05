@@ -50,6 +50,10 @@ export async function proxy(request: NextRequest) {
   const userMetadata = claims?.user_metadata as { role?: string } | undefined;
   const role = appMetadata?.role || userMetadata?.role;
 
+  if (pathname.startsWith('/avatars/')) {
+    return response;
+  }
+
   if (PUBLIC_PATHS.has(pathname)) {
     if (claims?.sub && pathname !== '/') {
       const destination = role === 'trainer' ? '/dashboard' : '/home';
