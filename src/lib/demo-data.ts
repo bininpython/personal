@@ -556,6 +556,52 @@ export function getDashboardStats(trainerId: string) {
   const painAlerts = Array.from(exerciseSessions.values()).filter(es => es.pain_reported).length;
   const unreadMessages = Array.from(notifications.values()).filter(n => !n.read && n.user_id === trainerId).length;
 
+  // Goal Distribution
+  const goalCounts = activeStudents.reduce((acc, student) => {
+    acc[student.goal] = (acc[student.goal] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'];
+  const goalDistribution = Object.entries(goalCounts).map(([name, value], idx) => ({
+    name,
+    value,
+    color: colors[idx % colors.length]
+  }));
+
+  // Student Ranking
+  const studentRanking = activeStudents.map(student => {
+    const studentSessions = allSessions.filter(s => s.student_id === student.id);
+    const avg = studentSessions.length > 0 
+      ? Math.round(studentSessions.reduce((sum, s) => sum + s.completion_percentage, 0) / studentSessions.length)
+      : 0;
+    
+    const sortedSessions = [...studentSessions].sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime());
+    
+    let lastWorkout = 'Nenhum';
+    if (sortedSessions.length > 0) {
+      const daysDiff = Math.floor((new Date().getTime() - new Date(sortedSessions[0].started_at).getTime()) / (1000 * 3600 * 24));
+      if (daysDiff === 0) lastWorkout = 'Hoje';
+      else if (daysDiff === 1) lastWorkout = 'Ontem';
+      else lastWorkout = `Há ${daysDiff} dias`;
+    }
+    
+    let trend = 'stable';
+    if (sortedSessions.length >= 2) {
+       if (sortedSessions[0].completion_percentage > sortedSessions[1].completion_percentage) trend = 'up';
+       else if (sortedSessions[0].completion_percentage < sortedSessions[1].completion_percentage) trend = 'down';
+    }
+    
+    return {
+      id: student.id,
+      name: student.full_name,
+      goal: student.goal,
+      completion: avg,
+      lastWorkout,
+      trend
+    };
+  }).sort((a, b) => b.completion - a.completion);
+
   return {
     total_active_students: activeStudents.length,
     total_inactive_students: inactiveStudents.length,
@@ -567,5 +613,7 @@ export function getDashboardStats(trainerId: string) {
     expiring_plans: 0,
     pending_assessments: 0,
     unread_messages: unreadMessages,
+    goalDistribution,
+    studentRanking,
   };
 }

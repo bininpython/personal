@@ -35,47 +35,29 @@ export async function GET(request: Request) {
         alerts: 0,
       };
 
-      const recentStudents = students
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 5)
-        .map(s => ({
-          name: s.name,
-          goal: s.goal || 'Não definido',
-          lastWorkout: 'Sem dados',
-          completion: 0,
-          trend: 'stable'
-        }));
+      const goalDistribution = [] as any[];
+      const studentRanking = [] as any[];
 
-      return NextResponse.json({ stats, recentStudents });
+      return NextResponse.json({ stats, goalDistribution, studentRanking });
     }
     // -----------------------
 
     // Demo Data
-    const { getStudentsByTrainerId } = await import('@/lib/demo-data');
-    const demoStudents = getStudentsByTrainerId(trainerId);
+    const { getDashboardStats } = await import('@/lib/demo-data');
+    const demoStats = getDashboardStats(trainerId);
 
-    const activeStudents = demoStudents.filter(s => s.status === 'active').length;
-    
-    // For Chris (or any trainer with 0 students), this will naturally be 0
     const stats = {
-      activeStudents: activeStudents,
-      trainedToday: activeStudents > 0 ? 3 : 0,
-      completionRate: activeStudents > 0 ? 83 : 0,
-      alerts: activeStudents > 0 ? 3 : 0,
+      activeStudents: demoStats.total_active_students,
+      trainedToday: demoStats.trained_today,
+      completionRate: demoStats.avg_completion_rate,
+      alerts: demoStats.pain_alerts + demoStats.unread_messages,
     };
 
-    const recentStudents = demoStudents
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5)
-      .map(s => ({
-        name: s.full_name,
-        goal: s.goal || 'Não definido',
-        lastWorkout: 'Sem dados',
-        completion: 0,
-        trend: 'stable'
-      }));
-
-    return NextResponse.json({ stats, recentStudents });
+    return NextResponse.json({ 
+      stats, 
+      goalDistribution: demoStats.goalDistribution, 
+      studentRanking: demoStats.studentRanking 
+    });
   } catch (error) {
     console.error('[Get Dashboard] Error:', error);
     return NextResponse.json(
