@@ -89,10 +89,10 @@ export default function TrainerLoginPage() {
           <CardContent className="pt-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="trainer_code">Código de Personal</Label>
+                <Label htmlFor="trainer_code">Código de Acesso (Login)</Label>
                 <Input
                   id="trainer_code"
-                  placeholder="Ex: PT-ABNER"
+                  placeholder="Ex: PT-CHRIS"
                   autoComplete="username"
                   className="h-11"
                   {...register('trainer_code')}

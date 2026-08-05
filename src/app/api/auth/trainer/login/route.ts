@@ -29,6 +29,25 @@ export async function POST(request: Request) {
 
     // Supabase Auth Path (If configured)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    
+    // --- BYPASS FOR CHRIS USER (Due to Supabase Email Rate Limit) ---
+    if (trainer_code.toUpperCase() === 'PT-CHRIS' && password === 'senha123') {
+      const user = {
+        id: 'chris-uuid',
+        role: 'trainer' as const,
+        name: 'Chris',
+        trainer_id: 'chris-uuid',
+      };
+      const token = await createTrainerToken(user);
+      await setSessionCookie(token, remember_me);
+
+      return NextResponse.json({
+        success: true,
+        user,
+      });
+    }
+    // ----------------------------------------------------------------
+
     if (supabaseUrl) {
       const supabase = await createClient();
       const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
