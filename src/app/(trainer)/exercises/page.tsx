@@ -76,7 +76,7 @@ export default function ExercisesPage() {
     setLoading(true);
 
     // Mapear o nome do músculo SVG para a categoria de exercícios da nossa API
-    let category = muscle;
+    let category: string = muscle;
     if (muscle === 'front-deltoids' || muscle === 'back-deltoids') category = 'shoulders';
     if (muscle === 'upper-back' || muscle === 'lower-back' || muscle === 'trapezius') category = 'back';
     if (muscle === 'gluteal') category = 'glutes';
