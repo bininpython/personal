@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import AnatomyImage from '@/components/AnatomyImage';
+import Model, { IMuscleStats } from '@phelian/react-body-highlighter';
 import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User, RotateCcw, PlayCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,17 +71,18 @@ export default function ExercisesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
 
-  // When a muscle is clicked in the Custom AnatomyImage
-  const handleMuscleClick = useCallback(async (muscleId: string) => {
-    setActiveMuscle(muscleId);
+  // When a muscle is clicked in the SVG Model
+  const handleMuscleClick = useCallback(async (stats: IMuscleStats) => {
+    const muscle = stats.muscle;
+    setActiveMuscle(muscle);
     setLoading(true);
 
     // Mapear o nome do músculo SVG para a categoria de exercícios da nossa API
-    let category: string = muscleId;
-    if (muscleId === 'front-deltoids' || muscleId === 'back-deltoids') category = 'shoulders';
-    if (muscleId === 'upper-back' || muscleId === 'lower-back' || muscleId === 'trapezius') category = 'back';
-    if (muscleId === 'gluteal') category = 'glutes';
-    if (muscleId === 'hamstring') category = 'hamstrings';
+    let category: string = muscle;
+    if (muscle === 'front-deltoids' || muscle === 'back-deltoids') category = 'shoulders';
+    if (muscle === 'upper-back' || muscle === 'lower-back' || muscle === 'trapezius') category = 'back';
+    if (muscle === 'gluteal') category = 'glutes';
+    if (muscle === 'hamstring') category = 'hamstrings';
 
     try {
       const res = await fetch(`/api/exercises?category=${category}`);
@@ -209,12 +210,18 @@ export default function ExercisesPage() {
             </div>
           </CardHeader>
           <CardContent className="p-4 flex flex-col items-center justify-center min-h-[400px]">
-            <AnatomyImage 
-              gender={gender}
-              viewType={viewType as 'anterior' | 'posterior'}
-              onMuscleSelect={handleMuscleClick}
-              activeMuscle={activeMuscle}
-            />
+            <div className="anatomy-wrapper relative drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+              <Model
+                data={modelData}
+                type={viewType}
+                bodyType={gender}
+                style={{ width: '100%', maxWidth: '280px' }}
+                svgStyle={{ height: 'auto' }}
+                bodyColor="#cbd5e1" // Slate 300 to give more depth
+                highlightedColors={['#3b82f6']} // Blue 500
+                onClick={handleMuscleClick}
+              />
+            </div>
           </CardContent>
         </Card>
 
