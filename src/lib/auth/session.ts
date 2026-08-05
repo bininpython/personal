@@ -19,24 +19,32 @@ export async function getSession(): Promise<TokenPayload | null> {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        let trainerId = user.id;
-        
-        // For students, fetch the trainer_id from the students table
-        if (user.user_metadata?.role === 'student') {
-           const { data: studentData } = await supabase
-             .from('students')
-             .select('trainer_id')
-             .eq('mock_email', user.email)
-             .single();
-             
-           if (studentData) {
-             trainerId = studentData.trainer_id;
-           }
+        const role = (user.user_metadata?.role as 'trainer' | 'student') || 'trainer';
+        let trainerId = '';
+
+        if (role === 'trainer') {
+          // Look up the real trainers.id (PK) from the trainers table
+          const { data: trainerData } = await supabase
+            .from('trainers')
+            .select('id')
+            .eq('auth_user_id', user.id)
+            .single();
+
+          trainerId = trainerData?.id || user.id;
+        } else {
+          // For students, fetch the trainer_id from the students table
+          const { data: studentData } = await supabase
+            .from('students')
+            .select('trainer_id')
+            .eq('mock_email', user.email)
+            .single();
+
+          trainerId = studentData?.trainer_id || '';
         }
 
         return {
           sub: user.id,
-          role: (user.user_metadata?.role as 'trainer' | 'student') || 'trainer',
+          role,
           name: user.user_metadata?.name || '',
           trainer_id: trainerId,
         };

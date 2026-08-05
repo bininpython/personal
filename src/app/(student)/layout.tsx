@@ -117,14 +117,14 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 pb-20">
+      <main className="flex-1 pb-24">
         <div className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
           {children}
         </div>
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-lg border-t border-border">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-lg border-t border-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex items-center justify-around h-16 max-w-2xl mx-auto px-2">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.href);

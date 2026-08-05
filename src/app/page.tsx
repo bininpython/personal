@@ -49,13 +49,13 @@ export default function LandingPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border/50 bg-muted/30 text-muted-foreground text-sm font-medium mb-6 animate-fade-in">
               Gestão Profissional de Alunos
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up">
               {APP_NAME}
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <p className="text-base sm:text-xl text-muted-foreground mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
               {APP_SUBTITLE}
             </p>
-            <p className="text-base text-muted-foreground mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.15s' }}>
+            <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.15s' }}>
               Cadastre alunos, crie fichas personalizadas, acompanhe cada série em tempo real,
               analise evolução com gráficos detalhados e transforme resultados com dados precisos.
             </p>
@@ -242,7 +242,7 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="py-20 sm:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="rounded-2xl bg-card border border-border/50 p-10 sm:p-14">
+          <div className="rounded-2xl bg-card border border-border/50 p-6 sm:p-14">
             <Dumbbell className="w-12 h-12 text-primary mx-auto mb-6" />
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               Comece a usar agora

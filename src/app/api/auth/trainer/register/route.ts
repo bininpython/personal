@@ -52,11 +52,11 @@ export async function POST(request: Request) {
       }
 
       // Insert into public.trainers table
-      const { error: insertError } = await supabase.from('trainers').insert({
+      const { data: trainerRow, error: insertError } = await supabase.from('trainers').insert({
         auth_user_id: authData.user.id,
         name: full_name,
         code: trainer_code.toUpperCase(),
-      });
+      }).select('id').single();
 
       if (insertError) {
         return NextResponse.json(
@@ -65,13 +65,19 @@ export async function POST(request: Request) {
         );
       }
 
+      // Sign in to set the Supabase session cookie (signUp alone doesn't authenticate)
+      await supabase.auth.signInWithPassword({
+        email: mockEmail,
+        password: password,
+      });
+
       return NextResponse.json({
         success: true,
         user: {
           id: authData.user.id,
           role: 'trainer',
           name: full_name,
-          trainer_id: authData.user.id,
+          trainer_id: trainerRow.id,
         },
       });
   } catch (error) {

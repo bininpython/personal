@@ -34,24 +34,22 @@ export async function GET(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  // Transform output to match expected frontend interface if needed, or return directly
-  // Adjusting simple things for compatibility:
+  // Transform output to match expected frontend interface
   const frontendStudent = {
     ...student,
     full_name: student.name,
     experience_level: student.level,
-    // Provide other defaults to not break frontend typing from demo-data
     avatar_url: '',
     birth_date: '',
-    gender: 'other',
-    height: 0,
-    current_weight: 0,
-    restrictions: '',
+    gender: student.gender || 'other',
+    height: student.height || 0,
+    current_weight: student.weight || 0,
+    restrictions: student.restrictions || '',
     injuries: '',
     medical_notes: '',
     available_days: [],
     start_date: student.created_at,
-    notes: '',
+    notes: student.notes || '',
   };
 
   return NextResponse.json({ student: frontendStudent });
@@ -94,24 +92,28 @@ export async function PATCH(
   try {
     const body = await request.json();
     
-    // Filtra apenas campos permitidos
-    const allowedUpdates = [
-       'goal', 'experience_level', 'status' // These are the only ones present in Supabase table "students" for now. 
-       // For a full app, the rest (height, weight, etc) should be in physical_assessments or a student_details table.
-       // However, we can map 'experience_level' to 'level', and 'full_name' to 'name'.
-    ];
-
     const dbUpdates: Record<string, any> = {};
     if (body.experience_level !== undefined) dbUpdates.level = body.experience_level;
     if (body.goal !== undefined) dbUpdates.goal = body.goal;
     if (body.full_name !== undefined) dbUpdates.name = body.full_name;
     if (body.status !== undefined) dbUpdates.status = body.status;
+    if (body.height !== undefined) dbUpdates.height = Number(body.height);
+    if (body.current_weight !== undefined) dbUpdates.weight = Number(body.current_weight);
+    if (body.weight !== undefined) dbUpdates.weight = Number(body.weight);
+    if (body.gender !== undefined) dbUpdates.gender = body.gender;
+    if (body.notes !== undefined) dbUpdates.notes = body.notes;
+    if (body.restrictions !== undefined) dbUpdates.restrictions = body.restrictions;
 
     if (Object.keys(dbUpdates).length > 0) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('students')
         .update(dbUpdates)
         .eq('id', params.id);
+      
+      if (updateError) {
+        console.error('[Patch Student] Error:', updateError);
+        return NextResponse.json({ error: 'Erro ao atualizar aluno' }, { status: 500 });
+      }
     }
 
     return NextResponse.json({ success: true });

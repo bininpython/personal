@@ -5,7 +5,6 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from '@/lib/auth/jwt';
 import { updateSession } from '@/lib/supabase/middleware';
 
 const PUBLIC_PATHS = [
@@ -20,7 +19,7 @@ const PUBLIC_PATHS = [
 ];
 
 const TRAINER_PATHS = ['/dashboard', '/students', '/workouts', '/exercises', '/assessments', '/schedule', '/messages', '/reports', '/alerts', '/settings', '/subscription'];
-const STUDENT_PATHS = ['/home', '/workout', '/history', '/progress', '/student-assessments', '/anatomy', '/achievements', '/student-messages', '/profile'];
+const STUDENT_PATHS = ['/home', '/workout', '/history', '/progress', '/student-assessments', '/anatomy', '/achievements', '/student-messages', '/profile', '/onboarding'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
