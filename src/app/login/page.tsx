@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Dumbbell, Shield, User, ChevronRight, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { APP_NAME } from '@/constants';
 
@@ -17,10 +17,10 @@ export default function LoginPage() {
 
       {/* Back button */}
       <div className="relative z-10 p-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/')} className="text-muted-foreground">
+        <Link href="/" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground">
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
-        </Button>
+        </Link>
       </div>
 
       {/* Content */}
@@ -79,18 +79,6 @@ export default function LoginPage() {
           </Card>
         </div>
 
-        {/* Demo Credentials */}
-        <div className="mt-8 text-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <p className="text-sm text-muted-foreground mb-1">Demonstração</p>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs text-muted-foreground">
-            <span>
-              Personal: <code className="bg-muted px-1.5 py-0.5 rounded font-mono">#001-CHRIS</code> / <code className="bg-muted px-1.5 py-0.5 rounded font-mono">senha123</code>
-            </span>
-            <span>
-              Aluno: <code className="bg-muted px-1.5 py-0.5 rounded font-mono">João Pedro Silva</code> / <code className="bg-muted px-1.5 py-0.5 rounded font-mono">JP8X41</code>
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

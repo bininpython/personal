@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dumbbell, Shield, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -67,10 +68,10 @@ export default function TrainerLoginPage() {
 
       {/* Back */}
       <div className="relative z-10 p-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/login')} className="text-muted-foreground">
+        <Link href="/login" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground">
           <ArrowLeft className="w-4 h-4 mr-1" />
           Voltar
-        </Button>
+        </Link>
       </div>
 
       {/* Form */}
@@ -92,7 +93,7 @@ export default function TrainerLoginPage() {
                 <Label htmlFor="trainer_code">Código de Acesso (Login)</Label>
                 <Input
                   id="trainer_code"
-                  placeholder="Ex: #001-CHRIS"
+                  placeholder="Ex: #xxx-nome"
                   autoComplete="username"
                   className="h-11"
                   {...register('trainer_code')}
