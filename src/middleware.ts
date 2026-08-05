@@ -36,36 +36,44 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Get session token
-  const token = request.cookies.get('fitcontrol-session')?.value;
+  // Execute Supabase middleware to refresh tokens and get response
+  const response = await updateSession(request);
+  
+  // Get the user from Supabase to check role access
+  const { createServerClient } = await import('@supabase/ssr');
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set() {},
+        remove() {},
+      },
+    }
+  );
+  
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!token) {
+  if (!user) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Verify token
-  const payload = await verifyToken(token);
-  if (!payload) {
-    // Invalid/expired token, redirect to login
-    const response = NextResponse.redirect(new URL('/login', request.url));
-    response.cookies.delete('fitcontrol-session');
-    return response;
-  }
+  const role = user.user_metadata?.role || 'student';
 
   // Check access based on role
   const isTrainerPath = TRAINER_PATHS.some(p => pathname.startsWith(p));
   const isStudentPath = STUDENT_PATHS.some(p => pathname.startsWith(p));
 
-  if (isTrainerPath && payload.role !== 'trainer') {
+  if (isTrainerPath && role !== 'trainer') {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-  if (isStudentPath && payload.role !== 'student') {
+  if (isStudentPath && role !== 'student') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
-
-  // Execute Supabase middleware to refresh tokens
-  const response = await updateSession(request);
 
   return response;
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
-import { getStudentById, updateStudent } from '@/lib/demo-data';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(
   request: Request,
@@ -17,8 +17,17 @@ export async function GET(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const student = await getStudentById(params.id);
-  if (!student) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
+  const supabase = await createClient();
+
+  const { data: student, error } = await supabase
+    .from('students')
+    .select('*')
+    .eq('id', params.id)
+    .single();
+
+  if (error || !student) {
     return NextResponse.json({ error: 'Aluno não encontrado' }, { status: 404 });
   }
 
@@ -27,7 +36,27 @@ export async function GET(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  return NextResponse.json({ student });
+  // Transform output to match expected frontend interface if needed, or return directly
+  // Adjusting simple things for compatibility:
+  const frontendStudent = {
+    ...student,
+    full_name: student.name,
+    experience_level: student.level,
+    // Provide other defaults to not break frontend typing from demo-data
+    avatar_url: '',
+    birth_date: '',
+    gender: 'other',
+    height: 0,
+    current_weight: 0,
+    restrictions: '',
+    injuries: '',
+    medical_notes: '',
+    available_days: [],
+    start_date: student.created_at,
+    notes: '',
+  };
+
+  return NextResponse.json({ student: frontendStudent });
 }
 
 export async function PATCH(
@@ -48,8 +77,17 @@ export async function PATCH(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const student = await getStudentById(params.id);
-  if (!student) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
+  const supabase = await createClient();
+
+  const { data: student, error: fetchError } = await supabase
+    .from('students')
+    .select('trainer_id')
+    .eq('id', params.id)
+    .single();
+
+  if (fetchError || !student) {
     return NextResponse.json({ error: 'Aluno não encontrado' }, { status: 404 });
   }
 
@@ -62,25 +100,23 @@ export async function PATCH(
     
     // Filtra apenas campos permitidos
     const allowedUpdates = [
-      'height', 'current_weight', 'goal', 'experience_level',
-      'restrictions', 'injuries', 'medical_notes', 'gender', 'birth_date',
-      'full_name', 'nickname', 'available_days'
+       'goal', 'experience_level', 'status' // These are the only ones present in Supabase table "students" for now. 
+       // For a full app, the rest (height, weight, etc) should be in physical_assessments or a student_details table.
+       // However, we can map 'experience_level' to 'level', and 'full_name' to 'name'.
     ];
 
-    const updates: Record<string, any> = {};
-    for (const key of allowedUpdates) {
-      if (body[key] !== undefined) {
-        if (key === 'height' || key === 'current_weight') {
-           updates[key] = Number(body[key]);
-        } else {
-           updates[key] = body[key];
-        }
-      }
+    const dbUpdates: Record<string, any> = {};
+    if (body.experience_level !== undefined) dbUpdates.level = body.experience_level;
+    if (body.goal !== undefined) dbUpdates.goal = body.goal;
+    if (body.full_name !== undefined) dbUpdates.name = body.full_name;
+    if (body.status !== undefined) dbUpdates.status = body.status;
+
+    if (Object.keys(dbUpdates).length > 0) {
+      await supabase
+        .from('students')
+        .update(dbUpdates)
+        .eq('id', params.id);
     }
-
-    updates.updated_at = new Date().toISOString();
-
-    await updateStudent(params.id, updates);
 
     return NextResponse.json({ success: true });
   } catch (err) {

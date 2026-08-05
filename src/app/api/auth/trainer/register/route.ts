@@ -7,13 +7,11 @@ import { trainerRegisterSchema } from '@/lib/validators';
 import { hashPassword, generateTrainerCode } from '@/lib/auth/hash';
 import { createTrainerToken } from '@/lib/auth/jwt';
 import { setSessionCookie } from '@/lib/auth/session';
-import { initDemoData, getTrainerByCode } from '@/lib/demo-data';
+
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
-    await initDemoData();
-
     const body = await request.json();
     const result = trainerRegisterSchema.safeParse(body);
 
@@ -26,14 +24,9 @@ export async function POST(request: Request) {
 
     const { full_name, trainer_code, password, professional_name, cref, gym_name, city, state, phone, specialties } = result.data;
 
-    // Check if code is already taken
-    const existingTrainer = getTrainerByCode(trainer_code);
-    if (existingTrainer) {
-      return NextResponse.json(
-        { error: 'Este código de personal já está em uso. Escolha outro.' },
-        { status: 409 }
-      );
-    }
+    // Supabase will handle unique code constraints via database logic if necessary,
+    // or we could check existing here if we queried Supabase first.
+    // For now, Supabase Auth handles unique emails.
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     if (supabaseUrl) {
@@ -48,6 +41,7 @@ export async function POST(request: Request) {
           data: {
             name: full_name,
             code: trainer_code.toUpperCase(),
+            role: 'trainer'
           }
         }
       });
@@ -84,54 +78,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // For demo mode, we just create a new trainer in memory
-    const { addTrainer } = await import('@/lib/demo-data');
-    const id = crypto.randomUUID();
-    const passwordHash = await hashPassword(password);
-
-    const trainer = {
-      id,
-      full_name,
-      trainer_code: trainer_code.toUpperCase(),
-      professional_name: professional_name || full_name,
-      password_hash: passwordHash,
-      cref: cref || '',
-      avatar_url: '',
-      biography: '',
-      specialties: specialties || [],
-      gym_name: gym_name || '',
-      city: city || '',
-      state: state || '',
-      phone: phone || '',
-      social_links: {},
-      status: 'active' as const,
-      failed_login_attempts: 0,
-      last_login_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    // Add to memory
-    await addTrainer(trainer);
-
-    // Create session
-    const token = await createTrainerToken({
-      id,
-      full_name,
-      avatar_url: '',
-    });
-
-    await setSessionCookie(token, false);
-
-    return NextResponse.json({
-      success: true,
-      user: {
-        id,
-        role: 'trainer',
-        name: full_name,
-        trainer_id: id,
-      },
-    });
+    return NextResponse.json({ error: 'Supabase URL missing' }, { status: 500 });
   } catch (error) {
     console.error('[Register] Error:', error);
     return NextResponse.json(

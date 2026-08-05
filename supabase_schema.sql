@@ -107,6 +107,121 @@ create table public.physical_assessments (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- Workout Sessions (Treinos Executados)
+create table public.workout_sessions (
+    id uuid default uuid_generate_v4() primary key,
+    student_id uuid references public.students(id) on delete cascade not null,
+    workout_day_id uuid references public.workout_days(id) on delete restrict not null,
+    workout_plan_id uuid references public.workout_plans(id) on delete restrict not null,
+    started_at timestamp with time zone not null,
+    completed_at timestamp with time zone,
+    duration_seconds integer,
+    completion_percentage numeric,
+    total_volume numeric,
+    status text default 'in_progress' check (status in ('in_progress', 'completed', 'incomplete', 'cancelled')),
+    feedback text,
+    rating integer,
+    notes text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Exercise Sessions (Exercícios do Treino Executado)
+create table public.exercise_sessions (
+    id uuid default uuid_generate_v4() primary key,
+    workout_session_id uuid references public.workout_sessions(id) on delete cascade not null,
+    workout_exercise_id uuid references public.workout_exercises(id) on delete restrict not null,
+    exercise_id uuid references public.exercises(id) on delete restrict not null,
+    completed boolean default false,
+    skipped boolean default false,
+    skip_reason text,
+    pain_reported boolean default false,
+    pain_notes text,
+    perceived_difficulty text,
+    rpe integer,
+    notes text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Set Records (Séries do Exercício Executado)
+create table public.set_records (
+    id uuid default uuid_generate_v4() primary key,
+    exercise_session_id uuid references public.exercise_sessions(id) on delete cascade not null,
+    set_number integer not null,
+    completed boolean default false,
+    planned_repetitions integer,
+    performed_repetitions integer,
+    planned_load numeric,
+    performed_load numeric,
+    perceived_difficulty text,
+    rpe integer,
+    completed_at timestamp with time zone,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Messages (Mensagens)
+create table public.messages (
+    id uuid default uuid_generate_v4() primary key,
+    sender_id text not null,
+    sender_type text not null,
+    recipient_id text not null,
+    recipient_type text not null,
+    content text not null,
+    attachment_url text,
+    attachment_type text,
+    is_automated boolean default false,
+    read_at timestamp with time zone,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Notifications (Notificações)
+create table public.notifications (
+    id uuid default uuid_generate_v4() primary key,
+    user_id text not null,
+    user_type text not null,
+    type text not null,
+    title text not null,
+    message text not null,
+    read boolean default false,
+    action_url text,
+    metadata jsonb,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Achievements (Conquistas)
+create table public.achievements (
+    id uuid default uuid_generate_v4() primary key,
+    name text not null,
+    description text not null,
+    icon text not null,
+    criteria_type text not null,
+    criteria_value numeric,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Student Achievements
+create table public.student_achievements (
+    id uuid default uuid_generate_v4() primary key,
+    student_id uuid references public.students(id) on delete cascade not null,
+    achievement_id uuid references public.achievements(id) on delete cascade not null,
+    earned_at timestamp with time zone not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Appointments (Agendamentos)
+create table public.appointments (
+    id uuid default uuid_generate_v4() primary key,
+    trainer_id uuid references public.trainers(id) on delete cascade not null,
+    student_id uuid references public.students(id) on delete cascade not null,
+    appointment_type text not null,
+    start_time timestamp with time zone not null,
+    end_time timestamp with time zone not null,
+    status text not null,
+    notes text,
+    is_recurring boolean default false,
+    recurrence_rule text,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- 2. Row Level Security (RLS)
 -- Garante que um personal só veja seus próprios alunos, e um aluno só veja a si mesmo.
 
@@ -117,6 +232,9 @@ alter table public.workout_days enable row level security;
 alter table public.workout_exercises enable row level security;
 alter table public.exercises enable row level security;
 alter table public.physical_assessments enable row level security;
+alter table public.workout_sessions enable row level security;
+alter table public.exercise_sessions enable row level security;
+alter table public.set_records enable row level security;
 
 -- Trainers Policy
 create policy "Trainers can read their own profile"
@@ -133,9 +251,4 @@ using (trainer_id = (select id from public.trainers where auth_user_id = auth.ui
 create policy "Students can read their own profile"
 on public.students for select
 to authenticated
--- We assume the student logs in via auth.users and we have a map.
--- Since students have mock emails in auth.users, we can match via email.
 using (mock_email = (select email from auth.users where id = auth.uid()));
-
--- O RLS completo pode ser expandido conforme necessidade. Para facilitar o desenvolvimento inicial, 
--- podemos criar políticas mais brandas para authenticated users.
