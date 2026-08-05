@@ -5,17 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  User, Dumbbell, Shield, ChevronLeft, Loader2, Target, Calendar, Activity,
-  Info, RefreshCw, Copy, Check
+  User, Shield, ChevronLeft, Loader2, Copy, Check, FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
 import { studentCreateSchema, type StudentCreateInput } from '@/lib/validators';
 import { toast } from 'sonner';
 
@@ -40,9 +36,9 @@ export default function NewStudentPage() {
   });
 
   const generateCode = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const chars = '0123456789';
     let code = '';
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     setGeneratedCode(code);
@@ -59,6 +55,10 @@ export default function NewStudentPage() {
   };
 
   const onSubmit = async (data: StudentCreateInput) => {
+    if (!data.access_code) {
+      toast.error('Gere um código de acesso para o aluno.');
+      return;
+    }
     setIsLoading(true);
     try {
       const res = await fetch('/api/students', {
@@ -91,7 +91,7 @@ export default function NewStudentPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Novo Aluno</h1>
-          <p className="text-muted-foreground mt-1">Cadastre um novo aluno no sistema</p>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base">Crie o acesso para o seu novo aluno.</p>
         </div>
       </div>
 
@@ -105,7 +105,7 @@ export default function NewStudentPage() {
                   <User className="w-5 h-5 text-primary" />
                   Informações Básicas
                 </CardTitle>
-                <CardDescription>Dados pessoais e de contato do aluno.</CardDescription>
+                <CardDescription>Dados pessoais do aluno.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -126,27 +126,6 @@ export default function NewStudentPage() {
                       {...register('nickname')}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="birth_date">Data de Nascimento</Label>
-                    <Input
-                      id="birth_date"
-                      type="date"
-                      {...register('birth_date')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Gênero</Label>
-                    <Select onValueChange={(val) => setValue('gender', val as any)} defaultValue="other">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Masculino</SelectItem>
-                        <SelectItem value="female">Feminino</SelectItem>
-                        <SelectItem value="other">Outro / Prefiro não informar</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -154,163 +133,86 @@ export default function NewStudentPage() {
             <Card className="border-border/50">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-primary" />
-                  Dados Físicos & Objetivos
+                  <FileText className="w-5 h-5 text-primary" />
+                  Anotações Internas
                 </CardTitle>
+                <CardDescription>O aluno não verá estas anotações.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="current_weight">Peso Atual (kg)</Label>
-                    <Input
-                      id="current_weight"
-                      type="number"
-                      step="0.1"
-                      placeholder="Ex: 75.5"
-                      {...register('current_weight', { valueAsNumber: true })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="height">Altura (cm)</Label>
-                    <Input
-                      id="height"
-                      type="number"
-                      placeholder="Ex: 175"
-                      {...register('height', { valueAsNumber: true })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Objetivo Principal</Label>
-                    <Select onValueChange={(val) => setValue('goal', val as any)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Hipertrofia">Hipertrofia</SelectItem>
-                        <SelectItem value="Emagrecimento">Emagrecimento</SelectItem>
-                        <SelectItem value="Força">Força</SelectItem>
-                        <SelectItem value="Condicionamento">Condicionamento Físico</SelectItem>
-                        <SelectItem value="Saúde e Qualidade de Vida">Saúde e Qualidade de Vida</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Nível de Experiência</Label>
-                    <Select onValueChange={(val) => setValue('experience_level', val as any)} defaultValue="beginner">
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Iniciante</SelectItem>
-                        <SelectItem value="intermediate">Intermediário</SelectItem>
-                        <SelectItem value="advanced">Avançado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2 mt-4">
-                  <Label htmlFor="restrictions">Restrições ou Lesões</Label>
-                  <Textarea
-                    id="restrictions"
-                    placeholder="Descreva se o aluno possui alguma lesão, dor crônica ou restrição médica..."
-                    rows={3}
-                    {...register('restrictions')}
-                  />
-                </div>
+              <CardContent>
+                <Textarea
+                  placeholder="Anotações internas que o aluno não verá..."
+                  className="resize-none min-h-[100px]"
+                  {...register('notes')}
+                />
               </CardContent>
             </Card>
           </div>
 
-          {/* Sidebar Info */}
+          {/* Access Code */}
           <div className="space-y-6">
-            <Card className="border-primary/30 bg-primary/5 shadow-md shadow-primary/5">
-              <CardHeader className="pb-3">
+            <Card className="border-border/50 border-primary/20 shadow-md shadow-primary/5">
+              <CardHeader className="bg-primary/5 pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Shield className="w-5 h-5 text-primary" />
                   Acesso do Aluno
                 </CardTitle>
-                <CardDescription>
-                  Gere o código que o aluno usará para acessar o app.
-                </CardDescription>
+                <CardDescription>Gere o código que o aluno usará para acessar o app.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
+              <CardContent className="space-y-6 pt-6">
+                <div className="space-y-3">
                   <Label>Código de Acesso *</Label>
                   <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Input
-                        value={watch('access_code') || ''}
-                        readOnly
-                        placeholder="Clique em Gerar"
-                        className="font-mono text-center tracking-widest text-lg bg-background"
-                      />
-                      {errors.access_code && <p className="text-xs text-destructive absolute -bottom-5">{errors.access_code.message}</p>}
-                    </div>
-                    <Button type="button" variant="outline" size="icon" onClick={handleCopyCode} disabled={!watch('access_code')}>
-                      {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    <Input
+                      readOnly
+                      placeholder="Clique em gerar"
+                      value={generatedCode}
+                      className="font-mono text-center tracking-widest text-lg font-bold bg-muted/50"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCopyCode}
+                      disabled={!generatedCode}
+                      className="shrink-0"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                     </Button>
                   </div>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-full"
+                    onClick={generateCode}
+                  >
+                    Gerar Novo Código
+                  </Button>
                 </div>
-                <Button type="button" variant="secondary" className="w-full" onClick={generateCode}>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Gerar Novo Código
-                </Button>
 
-                <div className="bg-background rounded-lg p-3 text-sm text-muted-foreground border border-border/50 flex items-start gap-2 mt-4">
-                  <Info className="w-4 h-4 shrink-0 text-primary mt-0.5" />
-                  <p>O aluno não precisa de e-mail ou senha. Ele acessará usando apenas o <strong>Nome</strong> e este <strong>Código</strong>.</p>
+                <div className="bg-muted/50 p-4 rounded-lg text-sm flex gap-3 text-muted-foreground">
+                  <div className="shrink-0 mt-0.5">
+                    <Shield className="w-4 h-4 text-primary" />
+                  </div>
+                  <p>
+                    O aluno não precisa de e-mail ou senha. Ele acessará usando apenas o <strong>Nome</strong> e este <strong>Código</strong>.
+                    No primeiro acesso, ele mesmo preencherá seus dados físicos.
+                  </p>
                 </div>
               </CardContent>
             </Card>
-
-            <Card className="border-border/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" />
-                  Informações Internas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="start_date">Data de Início</Label>
-                  <Input
-                    id="start_date"
-                    type="date"
-                    defaultValue={new Date().toISOString().split('T')[0]}
-                    {...register('start_date')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Anotações do Personal (Ocultas)</Label>
-                  <Textarea
-                    id="notes"
-                    placeholder="Anotações internas que o aluno não verá..."
-                    rows={4}
-                    {...register('notes')}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Button
-              type="submit"
-              className="w-full h-12 text-base shadow-lg"
-              disabled={isLoading || !watch('access_code')}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                <>
-                  <Dumbbell className="w-5 h-5 mr-2" />
-                  Cadastrar Aluno
-                </>
-              )}
-            </Button>
           </div>
+        </div>
+
+        <div className="flex justify-end gap-4 pt-4 border-t">
+          <Button type="button" variant="outline" onClick={() => router.back()}>
+            Cancelar
+          </Button>
+          <Button type="submit" disabled={isLoading} className="min-w-[150px]">
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : null}
+            Cadastrar Aluno
+          </Button>
         </div>
       </form>
     </div>

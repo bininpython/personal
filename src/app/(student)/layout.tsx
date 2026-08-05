@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { APP_NAME } from '@/constants';
+import { useEffect, useState } from 'react';
 
 const BOTTOM_NAV = [
   { href: '/home', label: 'Início', icon: Home },
@@ -26,6 +27,34 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const { user, logout } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    if (pathname === '/onboarding') {
+      setChecking(false);
+      return;
+    }
+
+    const checkProfile = async () => {
+      try {
+        const res = await fetch(`/api/students/${user.id}`);
+        if (res.ok) {
+          const { student } = await res.json();
+          if (!student.height || !student.current_weight || student.height === 0 || student.current_weight === 0) {
+            router.push('/onboarding');
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Error checking profile', err);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    checkProfile();
+  }, [user, pathname, router]);
 
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home';
@@ -36,6 +65,19 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     await logout();
     router.push('/login');
   };
+
+  if (checking && pathname !== '/onboarding') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // If we are on onboarding page, we don't need the header and bottom nav
+  if (pathname === '/onboarding') {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
