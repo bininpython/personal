@@ -26,9 +26,9 @@ const NAV_ITEMS = [
   { href: '/exercises', label: 'Exercícios', icon: BookOpen },
   { href: '/assessments', label: 'Avaliações', icon: ClipboardList },
   { href: '/schedule', label: 'Agenda', icon: Calendar },
-  { href: '/messages', label: 'Mensagens', icon: MessageSquare, badge: 2 },
+  { href: '/messages', label: 'Mensagens', icon: MessageSquare },
   { href: '/reports', label: 'Relatórios', icon: BarChart3 },
-  { href: '/alerts', label: 'Alertas', icon: Bell, badge: 3 },
+  { href: '/alerts', label: 'Alertas', icon: Bell },
 ];
 
 const BOTTOM_NAV = [

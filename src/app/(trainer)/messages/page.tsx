@@ -11,12 +11,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 export default function MessagesPage() {
   const [activeChat, setActiveChat] = useState<number | null>(null);
 
-  // Mock data for UI demonstration
-  const chats = [
-    { id: 1, name: 'João Pedro', lastMessage: 'Valeu, mestre! Treino top.', time: '10:42', unread: 2 },
-    { id: 2, name: 'Ana Beatriz', lastMessage: 'Amanhã não vou poder ir.', time: 'Ontem', unread: 0 },
-    { id: 3, name: 'Carlos Santos', lastMessage: 'A dor no ombro melhorou.', time: 'Segunda', unread: 0 },
-  ];
+  // TODO: Fetch from actual DB
+  const chats: any[] = [];
 
   return (
     <div className="h-[calc(100vh-8rem)] flex gap-6 animate-fade-in">
@@ -30,34 +26,41 @@ export default function MessagesPage() {
           </div>
         </div>
         <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
-            {chats.map(chat => (
-              <button
-                key={chat.id}
-                onClick={() => setActiveChat(chat.id)}
-                className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors
-                  ${activeChat === chat.id ? 'bg-accent' : 'hover:bg-accent/50'}`}
-              >
-                <Avatar>
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {chat.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline">
-                    <p className="font-medium text-sm truncate">{chat.name}</p>
-                    <span className="text-xs text-muted-foreground shrink-0">{chat.time}</span>
+          {chats.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full p-6 text-center text-muted-foreground">
+              <MessageSquare className="w-8 h-8 mb-2 opacity-20" />
+              <p className="text-sm">Nenhum aluno com mensagens no momento.</p>
+            </div>
+          ) : (
+            <div className="p-2 space-y-1">
+              {chats.map(chat => (
+                <button
+                  key={chat.id}
+                  onClick={() => setActiveChat(chat.id)}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors
+                    ${activeChat === chat.id ? 'bg-accent' : 'hover:bg-accent/50'}`}
+                >
+                  <Avatar>
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {chat.name.split(' ').map((n: string) => n[0]).join('')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline">
+                      <p className="font-medium text-sm truncate">{chat.name}</p>
+                      <span className="text-xs text-muted-foreground shrink-0">{chat.time}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">{chat.lastMessage}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground truncate">{chat.lastMessage}</p>
-                </div>
-                {chat.unread > 0 && (
-                  <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-medium shrink-0">
-                    {chat.unread}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+                  {chat.unread > 0 && (
+                    <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-medium shrink-0">
+                      {chat.unread}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </ScrollArea>
       </Card>
 
