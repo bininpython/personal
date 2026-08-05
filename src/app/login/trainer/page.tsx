@@ -166,11 +166,7 @@ export default function TrainerLoginPage() {
               </button>
             </div>
 
-            <div className="mt-4 p-3 rounded-lg bg-muted/50 text-center">
-              <p className="text-xs text-muted-foreground">
-                Demo: <code className="font-mono">#001-CHRIS</code> / <code className="font-mono">senha123</code>
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </div>

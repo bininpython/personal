@@ -163,11 +163,7 @@ export default function StudentLoginPage() {
               </p>
             </div>
 
-            <div className="mt-4 p-3 rounded-lg bg-muted/50 text-center">
-              <p className="text-xs text-muted-foreground">
-                Demo: <code className="font-mono">João Pedro Silva</code> / <code className="font-mono">JP8X41</code>
-              </p>
-            </div>
+
           </CardContent>
         </Card>
       </div>
