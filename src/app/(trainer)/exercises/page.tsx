@@ -102,7 +102,18 @@ interface EditablePlanResponse {
   error?: string;
 }
 
-const DAY_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+const MAX_WORKOUT_DAYS = 30;
+
+function workoutDayLabel(index: number) {
+  let value = index + 1;
+  let label = '';
+  while (value > 0) {
+    value -= 1;
+    label = String.fromCharCode(65 + (value % 26)) + label;
+    value = Math.floor(value / 26);
+  }
+  return label;
+}
 const CATALOG_BY_KEY = new Map(EXERCISE_CATALOG.map((exercise) => [exercise.key, exercise]));
 const CATALOG_BY_NAME = new Map(EXERCISE_CATALOG.map((exercise) => [
   exercise.name.toLocaleLowerCase('pt-BR'),
@@ -115,7 +126,7 @@ const DIFFICULTY_LABELS = {
 } as const;
 
 function createDay(index: number): BuilderDay {
-  const label = DAY_LABELS[index];
+  const label = workoutDayLabel(index);
   return {
     id: `${label}-${Date.now()}-${index}`,
     label,
@@ -188,7 +199,7 @@ export default function ExercisesPage() {
       let missingExerciseCount = 0;
       const loadedDays: BuilderDay[] = data.plan.days.map((day, dayIndex) => ({
         id: day.id || createDay(dayIndex).id,
-        label: day.label || DAY_LABELS[dayIndex],
+        label: day.label || workoutDayLabel(dayIndex),
         name: day.name,
         exercises: day.exercises.flatMap((savedExercise) => {
           const catalogExercise = CATALOG_BY_KEY.get(savedExercise.exerciseKey)
@@ -321,7 +332,7 @@ export default function ExercisesPage() {
   }
 
   function addDay() {
-    if (days.length >= 7) return;
+    if (days.length >= MAX_WORKOUT_DAYS) return;
     const nextDay = createDay(days.length);
     setDays((current) => [...current, nextDay]);
     setActiveDayId(nextDay.id);
@@ -332,8 +343,8 @@ export default function ExercisesPage() {
     if (days.length === 1) return;
     const remaining = days.filter((day) => day.id !== dayId).map((day, index) => ({
       ...day,
-      label: DAY_LABELS[index],
-      name: day.name === `Treino ${day.label}` ? `Treino ${DAY_LABELS[index]}` : day.name,
+      label: workoutDayLabel(index),
+      name: day.name === `Treino ${day.label}` ? `Treino ${workoutDayLabel(index)}` : day.name,
     }));
     setDays(remaining);
     setActiveDayId(remaining[0].id);
@@ -583,8 +594,8 @@ export default function ExercisesPage() {
                 <CardTitle className="text-base">Ficha em construção</CardTitle>
                 <p className="mt-1 text-xs text-muted-foreground">Configure séries, repetições, descanso e método.</p>
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={addDay} disabled={days.length >= 7}>
-                <Plus className="mr-1 size-3.5" /> Dia
+              <Button type="button" variant="outline" size="sm" onClick={addDay} disabled={days.length >= MAX_WORKOUT_DAYS}>
+                <Plus className="mr-1 size-3.5" /> Treino
               </Button>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -672,7 +683,7 @@ export default function ExercisesPage() {
                           />
                         </div>
                         <div>
-                          <Label className="text-[10px]">Descanso (s)</Label>
+                          <Label className="text-[10px]">Descanso automático (s)</Label>
                           <Input
                             type="number"
                             min={0}
@@ -752,11 +763,11 @@ export default function ExercisesPage() {
                 id="frequency"
                 type="number"
                 min={days.length}
-                max={7}
+                max={MAX_WORKOUT_DAYS}
                 value={daysPerWeek}
                 onChange={(event) => setDaysPerWeek(Number(event.target.value))}
               />
-              <p className="text-xs text-muted-foreground">A ficha contém {days.length} treino(s) e {totalSelected} exercício(s).</p>
+              <p className="text-xs text-muted-foreground">A ficha contém {days.length} treino(s) e {totalSelected} exercício(s). Se a frequência for maior que a quantidade de treinos, o sistema alterna e repete a sequência em dias diferentes.</p>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="validity-amount">Prazo da ficha</Label>

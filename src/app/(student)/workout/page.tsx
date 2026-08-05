@@ -9,10 +9,13 @@ import {
   Dumbbell,
   Loader2,
   PlayCircle,
+  Plus,
   RefreshCw,
   RotateCcw,
+  SkipForward,
   Star,
   Target,
+  Timer,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +42,11 @@ interface WorkoutDay {
   id: string;
   label: string;
   name: string;
+  weeklyAllowance: number;
+  weeklyCompletions: number;
+  completedThisWeek: boolean;
+  completedToday: boolean;
+  lastCompletedAt: string | null;
   exercises: StudentExercise[];
 }
 
@@ -51,7 +59,25 @@ interface WorkoutPlan {
   endDate: string | null;
   isExpired: boolean;
   updatedAt: string;
+  week: {
+    currentDate: string;
+    startDate: string;
+    endDate: string;
+    target: number;
+    completed: number;
+    isComplete: boolean;
+    nextWorkoutDayId: string | null;
+  };
   days: WorkoutDay[];
+}
+
+interface RestTimerState {
+  exerciseId: string;
+  exerciseName: string;
+  nextSet: number;
+  totalSeconds: number;
+  remainingSeconds: number;
+  endsAt: number;
 }
 
 interface WorkoutResponse {
@@ -80,12 +106,23 @@ const MUSCLE_LABELS: Record<string, string> = {
   calves: 'Panturrilhas',
 };
 
-function progressStorageKey(planId: string) {
-  return `fitcontrol-workout-progress:${planId}`;
+function progressStorageKey(planId: string, weekStart: string, currentDate: string) {
+  return `fitcontrol-workout-progress:${planId}:${weekStart}:${currentDate}`;
 }
 
 function currentTimestamp() {
   return Date.now();
+}
+
+function formatCountdown(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remaining = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
+}
+
+function notifyRestFinished(exerciseName: string) {
+  if ('vibrate' in navigator) navigator.vibrate([180, 100, 180]);
+  toast.success(`Descanso finalizado para ${exerciseName}. Próxima série liberada!`);
 }
 
 export default function StudentWorkoutPage() {
@@ -101,7 +138,8 @@ export default function StudentWorkoutPage() {
   const [recordedDays, setRecordedDays] = useState<Set<string>>(new Set());
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
-  const currentPlanId = useRef('');
+  const [restTimer, setRestTimer] = useState<RestTimerState | null>(null);
+  const currentPlanCycleId = useRef('');
   const workoutStartedAt = useRef<number | null>(null);
 
   const loadPlan = useCallback(async (silent = false) => {
@@ -114,26 +152,51 @@ export default function StudentWorkoutPage() {
       if (!response.ok) throw new Error(data.error || 'Não foi possível carregar sua ficha.');
 
       const nextPlan = data.plan ?? null;
-      if (nextPlan && currentPlanId.current !== nextPlan.id) {
-        currentPlanId.current = nextPlan.id;
-        setSelectedDayId(nextPlan.days[0]?.id ?? '');
+      if (nextPlan) {
+        const nextCycleId = `${nextPlan.id}:${nextPlan.week.startDate}:${nextPlan.week.currentDate}`;
+        const recorded = new Set(
+          nextPlan.days.filter((day) => day.completedThisWeek || day.completedToday).map((day) => day.id),
+        );
+        const serverCompletedSets = nextPlan.days.flatMap((day) => (
+          day.completedThisWeek || day.completedToday
+            ? day.exercises.flatMap((exercise) => (
+              Array.from({ length: exercise.sets }, (_, setIndex) => `${exercise.id}:${setIndex}`)
+            ))
+            : []
+        ));
+        setRecordedDays(recorded);
+
+        if (currentPlanCycleId.current !== nextCycleId) {
+          currentPlanCycleId.current = nextCycleId;
+          const requestedDayId = new URLSearchParams(window.location.search).get('day');
+          setSelectedDayId(
+            requestedDayId && nextPlan.days.some((day) => day.id === requestedDayId)
+              ? requestedDayId
+              : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? ''),
+          );
+          try {
+            const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id, nextPlan.week.startDate, nextPlan.week.currentDate));
+            const savedSets = saved ? JSON.parse(saved) as string[] : [];
+            setCompletedSets(new Set([...savedSets, ...serverCompletedSets]));
+          } catch {
+            setCompletedSets(new Set(serverCompletedSets));
+          }
+        } else {
+          setCompletedSets((current) => new Set([...current, ...serverCompletedSets]));
+          setSelectedDayId((current) => (
+            nextPlan.days.some((day) => day.id === current)
+              ? current
+              : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '')
+          ));
+        }
         workoutStartedAt.current = currentTimestamp();
         setRating(0);
         setFeedback('');
-        try {
-          const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id));
-          setCompletedSets(new Set(saved ? JSON.parse(saved) as string[] : []));
-        } catch {
-          setCompletedSets(new Set());
-        }
       } else if (!nextPlan) {
-        currentPlanId.current = '';
+        currentPlanCycleId.current = '';
         setSelectedDayId('');
         setCompletedSets(new Set());
-      } else {
-        setSelectedDayId((current) => (
-          nextPlan.days.some((day) => day.id === current) ? current : (nextPlan.days[0]?.id ?? '')
-        ));
+        setRecordedDays(new Set());
       }
       setPlan(nextPlan);
       setError('');
@@ -165,10 +228,36 @@ export default function StudentWorkoutPage() {
 
   useEffect(() => {
     if (!plan) return;
-    window.localStorage.setItem(progressStorageKey(plan.id), JSON.stringify([...completedSets]));
+    window.localStorage.setItem(
+      progressStorageKey(plan.id, plan.week.startDate, plan.week.currentDate),
+      JSON.stringify([...completedSets]),
+    );
   }, [completedSets, plan]);
 
+  const restTimerActive = restTimer !== null;
+  useEffect(() => {
+    if (!restTimerActive) return;
+    const interval = window.setInterval(() => {
+      setRestTimer((current) => current ? {
+        ...current,
+        remainingSeconds: Math.max(0, Math.ceil((current.endsAt - Date.now()) / 1000)),
+      } : null);
+    }, 250);
+    return () => window.clearInterval(interval);
+  }, [restTimerActive]);
+
+  useEffect(() => {
+    if (!restTimer || restTimer.remainingSeconds > 0) return;
+    const exerciseName = restTimer.exerciseName;
+    const timeout = window.setTimeout(() => {
+      setRestTimer(null);
+      notifyRestFinished(exerciseName);
+    }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [restTimer]);
+
   const activeDay = plan?.days.find((day) => day.id === selectedDayId) ?? plan?.days[0] ?? null;
+  const suggestedDay = plan?.days.find((day) => day.id === plan.week.nextWorkoutDayId) ?? null;
   const totalSets = activeDay?.exercises.reduce((total, exercise) => total + exercise.sets, 0) ?? 0;
   const completedInDay = useMemo(() => {
     if (!activeDay) return 0;
@@ -181,6 +270,7 @@ export default function StudentWorkoutPage() {
     }, 0);
   }, [activeDay, completedSets]);
   const progress = totalSets > 0 ? Math.round((completedInDay / totalSets) * 100) : 0;
+  const activeDayCompleted = Boolean(activeDay && recordedDays.has(activeDay.id));
 
   function selectWorkoutDay(dayId: string) {
     setSelectedDayId(dayId);
@@ -190,21 +280,47 @@ export default function StudentWorkoutPage() {
   }
 
   function toggleSet(exerciseId: string, setIndex: number) {
+    if (activeDayCompleted) return;
     const key = `${exerciseId}:${setIndex}`;
+    const wasChecked = completedSets.has(key);
     setCompletedSets((current) => {
       const next = new Set(current);
       if (next.has(key)) next.delete(key);
       else next.add(key);
       return next;
     });
+
+    if (!wasChecked) {
+      const exercise = activeDay?.exercises.find((item) => item.id === exerciseId);
+      if (exercise && setIndex < exercise.sets - 1 && exercise.restTime > 0) {
+        setRestTimer({
+          exerciseId: exercise.id,
+          exerciseName: exercise.name,
+          nextSet: setIndex + 2,
+          totalSeconds: exercise.restTime,
+          remainingSeconds: exercise.restTime,
+          endsAt: currentTimestamp() + exercise.restTime * 1000,
+        });
+      }
+    }
   }
 
   function resetDay() {
-    if (!activeDay) return;
+    if (!activeDay || activeDayCompleted) return;
     const exerciseIds = new Set(activeDay.exercises.map((exercise) => exercise.id));
     setCompletedSets((current) => new Set(
       [...current].filter((key) => !exerciseIds.has(key.split(':')[0])),
     ));
+    if (restTimer && exerciseIds.has(restTimer.exerciseId)) setRestTimer(null);
+  }
+
+  function addRestTime() {
+    setRestTimer((current) => current ? {
+      ...current,
+      totalSeconds: current.totalSeconds + 15,
+      remainingSeconds: current.remainingSeconds + 15,
+      endsAt: current.endsAt + 15_000,
+    } : null);
   }
 
   async function completeWorkout() {
@@ -224,10 +340,18 @@ export default function StudentWorkoutPage() {
           feedback,
         }),
       });
-      const data = await response.json() as { error?: string };
+      const data = await response.json() as {
+        error?: string;
+        alreadyCompletedToday?: boolean;
+        alreadyCompletedThisWeek?: boolean;
+      };
       if (!response.ok) throw new Error(data.error || 'Não foi possível concluir o treino.');
       setRecordedDays((current) => new Set(current).add(activeDay.id));
-      toast.success('Treino concluído e salvo no histórico!');
+      setRestTimer(null);
+      if (data.alreadyCompletedToday) toast.info('Este treino já foi registrado hoje.');
+      else if (data.alreadyCompletedThisWeek) toast.info('Este treino já atingiu a meta desta semana.');
+      else toast.success('Treino concluído e salvo no histórico!');
+      await loadPlan(true);
     } catch (completeError) {
       toast.error(completeError instanceof Error ? completeError.message : 'Não foi possível concluir o treino.');
     } finally {
@@ -308,10 +432,10 @@ export default function StudentWorkoutPage() {
             <p className="text-[11px] text-blue-100">treinos diferentes</p>
           </div>
           <div className="col-span-2 rounded-xl bg-white/10 p-3 sm:col-span-1">
-            <RefreshCw className="mb-1 size-4 text-blue-200" />
-            <p className="text-sm font-bold">Automático</p>
+            <CheckCircle2 className="mb-1 size-4 text-blue-200" />
+            <p className="text-sm font-bold">{plan.week.completed}/{plan.week.target} na semana</p>
             <p className="text-[11px] text-blue-100">
-              {lastSync ? `Atualizado às ${lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronização ativa'}
+              {plan.week.isComplete ? 'Ciclo semanal concluído' : lastSync ? `Atualizado às ${lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronização ativa'}
             </p>
           </div>
         </div>
@@ -329,20 +453,41 @@ export default function StudentWorkoutPage() {
         </div>
       )}
 
+      <Card className={plan.week.isComplete ? 'border-emerald-500/30 bg-emerald-500/[0.05]' : 'border-blue-500/20'}>
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold">{plan.week.isComplete ? 'Semana concluída!' : 'Seu ciclo desta semana'}</p>
+              <p className="text-xs text-muted-foreground">
+                {plan.week.isComplete
+                  ? 'Os treinos serão liberados novamente na próxima segunda-feira.'
+                  : `${plan.week.completed} de ${plan.week.target} treino(s) concluído(s). Continue pelo treino destacado.`}
+              </p>
+            </div>
+            <span className="text-2xl font-bold text-blue-600">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</span>
+          </div>
+          <Progress value={(plan.week.completed / Math.max(1, plan.week.target)) * 100} className="mt-3" />
+        </CardContent>
+      </Card>
+
       <div className="flex gap-2 overflow-x-auto pb-1">
         {plan.days.map((day) => (
           <button
             type="button"
             key={day.id}
             onClick={() => selectWorkoutDay(day.id)}
-            className={`min-w-[120px] rounded-xl border px-4 py-3 text-left transition-colors ${
+            className={`relative min-w-[130px] rounded-xl border px-4 py-3 text-left transition-colors ${
               activeDay?.id === day.id
                 ? 'border-blue-500 bg-blue-500 text-white shadow-sm'
+                : day.completedThisWeek
+                  ? 'border-emerald-500/40 bg-emerald-500/[0.06]'
                 : 'border-border bg-card hover:border-blue-400'
             }`}
           >
+            {day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-emerald-500'}`} />}
             <span className="block text-[10px] font-bold uppercase opacity-75">Treino {day.label}</span>
             <span className="mt-0.5 block truncate text-sm font-semibold">{day.name}</span>
+            <span className="mt-1 block text-[10px] opacity-70">{day.weeklyCompletions}/{day.weeklyAllowance} nesta semana</span>
           </button>
         ))}
       </div>
@@ -354,12 +499,12 @@ export default function StudentWorkoutPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold">Progresso de hoje</p>
-                  <p className="text-xs text-muted-foreground">{completedInDay} de {totalSets} séries concluídas neste aparelho</p>
+                  <p className="text-xs text-muted-foreground">{activeDayCompleted ? activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje; a próxima repetição será em outro dia' : `${completedInDay} de ${totalSets} séries concluídas neste treino`}</p>
                 </div>
                 <span className="text-2xl font-bold text-blue-600">{progress}%</span>
               </div>
               <Progress value={progress} className="mt-3" />
-              {progress > 0 && (
+              {progress > 0 && !activeDayCompleted && (
                 <Button variant="ghost" size="sm" onClick={resetDay} className="mt-2 h-7 px-2 text-xs text-muted-foreground">
                   <RotateCcw className="mr-1.5 size-3" /> Reiniciar marcações
                 </Button>
@@ -373,9 +518,12 @@ export default function StudentWorkoutPage() {
                 completedSets.has(`${exercise.id}:${setIndex}`)
               )).length;
               const isComplete = completedCount === exercise.sets;
+              const nextSetIndex = Array.from({ length: exercise.sets }).findIndex((_, setIndex) => (
+                !completedSets.has(`${exercise.id}:${setIndex}`)
+              ));
 
               return (
-                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : ''}`}>
+                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : ''} ${activeDayCompleted ? 'opacity-80' : ''}`}>
                   <CardHeader className="border-b border-border/40 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex min-w-0 gap-3">
@@ -408,7 +556,11 @@ export default function StudentWorkoutPage() {
                       </div>
                     )}
                     <div>
-                      <p className="mb-2 text-xs font-medium text-muted-foreground">Toque para marcar cada série</p>
+                      <p className="mb-2 text-xs font-medium text-muted-foreground">
+                        {activeDayCompleted
+                          ? 'Séries registradas no histórico desta semana'
+                          : `Marque ao terminar cada série${exercise.restTime > 0 ? ` — descanso automático de ${exercise.restTime}s` : ''}`}
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         {Array.from({ length: exercise.sets }).map((_, setIndex) => {
                           const checked = completedSets.has(`${exercise.id}:${setIndex}`);
@@ -416,15 +568,18 @@ export default function StudentWorkoutPage() {
                             <button
                               type="button"
                               key={setIndex}
+                              disabled={activeDayCompleted}
                               onClick={() => toggleSet(exercise.id, setIndex)}
                               className={`flex h-10 min-w-20 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors ${
                                 checked
                                   ? 'border-emerald-500 bg-emerald-500 text-white'
+                                  : setIndex === nextSetIndex
+                                    ? 'border-blue-500 bg-blue-500/[0.08] text-blue-700 dark:text-blue-300'
                                   : 'border-border bg-background hover:border-blue-400'
                               }`}
                             >
                               {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
-                              {exercise.reps} reps
+                              Série {setIndex + 1} · {exercise.reps}
                             </button>
                           );
                         })}
@@ -440,24 +595,40 @@ export default function StudentWorkoutPage() {
             <Card className="border-emerald-500/30 bg-emerald-500/[0.05]">
               <CardContent className="p-5 text-center">
                 <CheckCircle2 className="mx-auto mb-2 size-9 text-emerald-500" />
-                <h2 className="font-bold">Todas as séries foram marcadas</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
-                <div className="mx-auto mt-4 max-w-sm space-y-3">
-                  <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} /></button>)}</div>
-                  <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
-                </div>
-                <Button
-                  className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700"
-                  onClick={() => void completeWorkout()}
-                  disabled={completingWorkout || recordedDays.has(activeDay.id)}
-                >
-                  {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
-                  {recordedDays.has(activeDay.id) ? 'Treino salvo' : 'Concluir e salvar treino'}
-                </Button>
+                {activeDayCompleted ? <>
+                  <h2 className="font-bold">{activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje'}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">O resultado está salvo no histórico e na evolução.</p>
+                  {suggestedDay && suggestedDay.id !== activeDay.id && <Button className="mt-4" onClick={() => selectWorkoutDay(suggestedDay.id)}><Dumbbell className="mr-2 size-4" /> Ir para {suggestedDay.name}</Button>}
+                  {!suggestedDay && <Badge className="mt-4 bg-emerald-500/10 text-emerald-600">Ciclo semanal completo</Badge>}
+                </> : <>
+                  <h2 className="font-bold">Todas as séries foram marcadas</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
+                  <div className="mx-auto mt-4 max-w-sm space-y-3">
+                    <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} /></button>)}</div>
+                    <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
+                  </div>
+                  <Button className="mt-4 bg-emerald-600 text-white hover:bg-emerald-700" onClick={() => void completeWorkout()} disabled={completingWorkout}>
+                    {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
+                    Concluir e salvar treino
+                  </Button>
+                </>}
               </CardContent>
             </Card>
           )}
         </>
+      )}
+
+      {restTimer && (
+        <div className="fixed bottom-20 left-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-2xl border border-blue-400/40 bg-background/95 p-4 shadow-2xl backdrop-blur lg:bottom-6">
+          <div className="flex items-center gap-4">
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white"><Timer className="size-6" /></div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-wide text-blue-600">Tempo de descanso</p><p className="truncate font-semibold">{restTimer.exerciseName} · próxima série {restTimer.nextSet}</p></div><strong className="font-mono text-2xl text-blue-600">{formatCountdown(restTimer.remainingSeconds)}</strong></div>
+              <Progress value={((restTimer.totalSeconds - restTimer.remainingSeconds) / Math.max(1, restTimer.totalSeconds)) * 100} className="mt-2 h-2" />
+              <div className="mt-3 flex gap-2"><Button type="button" size="sm" variant="outline" onClick={addRestTime}><Plus className="mr-1 size-3.5" /> 15s</Button><Button type="button" size="sm" variant="ghost" onClick={() => setRestTimer(null)}><SkipForward className="mr-1 size-3.5" /> Pular descanso</Button></div>
+            </div>
+          </div>
+        </div>
       )}
 
       <Dialog open={Boolean(playingVideo)} onOpenChange={(open) => !open && setPlayingVideo(null)}>

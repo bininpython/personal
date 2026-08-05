@@ -3,6 +3,11 @@ import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import {
+  getWorkoutDayRange,
+  getWorkoutWeekRange,
+  weeklyWorkoutAllowance,
+} from '@/lib/workouts/week-cycle';
 
 type Related<T> = T | T[] | null;
 
@@ -17,6 +22,7 @@ interface RelatedPlan {
   student_id: string;
   trainer_id: string;
   status: string;
+  days_per_week: number | null;
 }
 
 const completeWorkoutSchema = z.object({
@@ -130,7 +136,7 @@ export async function POST(request: Request) {
     const admin = createAdminClient();
     const { data: day, error: dayError } = await admin
       .from('workout_days')
-      .select('id, plan_id, workout_plans!inner (id, name, student_id, trainer_id, status)')
+      .select('id, plan_id, order_index, workout_plans!inner (id, name, student_id, trainer_id, status, days_per_week)')
       .eq('id', parsed.data.workoutDayId)
       .maybeSingle();
 
@@ -140,20 +146,47 @@ export async function POST(request: Request) {
       return json({ error: 'Este treino não pertence à sua ficha ativa.' }, 403);
     }
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    const { data: existing, error: existingError } = await admin
+    const { count: totalDays, error: dayCountError } = await admin
+      .from('workout_days')
+      .select('id', { count: 'exact', head: true })
+      .eq('plan_id', plan.id);
+    if (dayCountError) throw dayCountError;
+
+    const weekRange = getWorkoutWeekRange();
+    const dayRange = getWorkoutDayRange();
+    const { data: existingSessions, error: existingError } = await admin
       .from('workout_sessions')
-      .select('id')
+      .select('id, completed_at')
       .eq('student_id', session.sub)
       .eq('workout_day_id', day.id)
+      .eq('workout_plan_id', plan.id)
       .eq('status', 'completed')
-      .gte('completed_at', startOfDay.toISOString())
-      .limit(1)
-      .maybeSingle();
+      .gte('completed_at', weekRange.startIso)
+      .lt('completed_at', weekRange.nextStartIso)
+      .order('completed_at', { ascending: true });
 
     if (existingError) throw existingError;
-    if (existing) return json({ success: true, session: existing, alreadyCompleted: true });
+    const completedToday = (existingSessions ?? []).find((item) => (
+      item.completed_at
+      && item.completed_at >= dayRange.startIso
+      && item.completed_at < dayRange.nextStartIso
+    ));
+    if (completedToday) {
+      return json({ success: true, session: completedToday, alreadyCompletedToday: true });
+    }
+
+    const allowance = weeklyWorkoutAllowance(
+      totalDays ?? 0,
+      plan.days_per_week || totalDays || 1,
+      day.order_index,
+    );
+    if ((existingSessions ?? []).length >= allowance) {
+      return json({
+        success: true,
+        session: (existingSessions ?? []).at(-1),
+        alreadyCompletedThisWeek: true,
+      });
+    }
 
     const now = new Date().toISOString();
     const { data: workoutSession, error } = await admin

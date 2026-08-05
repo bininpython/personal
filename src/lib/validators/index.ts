@@ -103,7 +103,7 @@ export const workoutPlanSchema = z.object({
   level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
   notes: z.string().optional(),
   estimated_duration_minutes: z.number().positive().optional(),
-  days_per_week: z.number().min(1).max(7).optional(),
+  days_per_week: z.number().min(1).max(30).optional(),
 });
 
 export type WorkoutPlanInput = z.infer<typeof workoutPlanSchema>;
@@ -127,9 +127,9 @@ export const workoutBuilderDaySchema = z.object({
 const workoutPlanBuilderFields = {
   name: z.string().trim().min(2, 'Informe o nome da ficha').max(120),
   goal: z.string().trim().max(200).optional(),
-  daysPerWeek: z.number().int().min(1).max(7),
+  daysPerWeek: z.number().int().min(1).max(30),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Prazo inválido'),
-  days: z.array(workoutBuilderDaySchema).min(1, 'Adicione pelo menos um treino').max(7),
+  days: z.array(workoutBuilderDaySchema).min(1, 'Adicione pelo menos um treino').max(30),
 };
 
 export const workoutPlanCreateSchema = z.object({

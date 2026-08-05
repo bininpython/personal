@@ -13,10 +13,20 @@ interface HomePlan {
   name: string;
   goal: string;
   daysPerWeek: number;
+  week: {
+    target: number;
+    completed: number;
+    isComplete: boolean;
+    nextWorkoutDayId: string | null;
+  };
   days: Array<{
     id: string;
     label: string;
     name: string;
+    completedThisWeek: boolean;
+    completedToday: boolean;
+    weeklyCompletions: number;
+    weeklyAllowance: number;
     exercises: Array<{ id: string; name: string }>;
   }>;
 }
@@ -64,7 +74,7 @@ export default function StudentHomePage() {
     return () => window.clearInterval(interval);
   }, []);
 
-  const nextWorkout = plan?.days[0] ?? null;
+  const nextWorkout = plan?.days.find((day) => day.id === plan.week.nextWorkoutDayId) ?? plan?.days[0] ?? null;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -84,8 +94,8 @@ export default function StudentHomePage() {
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <Badge className="mb-2 bg-emerald-500/10 text-emerald-600">Ficha ativa e sincronizada</Badge>
-                <h2 className="text-xl font-bold">{nextWorkout.name}</h2>
+                <Badge className="mb-2 bg-emerald-500/10 text-emerald-600">{plan.week.isComplete ? 'Semana concluída' : 'Próximo treino recomendado'}</Badge>
+                <h2 className="text-xl font-bold">{plan.week.isComplete ? 'Parabéns, ciclo finalizado!' : nextWorkout.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.name} · {plan.goal}</p>
               </div>
               <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-blue-500 text-white">
@@ -104,8 +114,8 @@ export default function StudentHomePage() {
                 <p className="text-[11px] text-muted-foreground">frequência prescrita</p>
               </div>
             </div>
-            <Button className="mt-5 h-12 w-full text-base" onClick={() => router.push('/workout')}>
-              <Zap className="mr-2 size-5" /> Abrir meu treino
+            <Button className="mt-5 h-12 w-full text-base" onClick={() => router.push(`/workout?day=${nextWorkout.id}`)}>
+              <Zap className="mr-2 size-5" /> {plan.week.isComplete ? 'Consultar minha ficha' : 'Começar próximo treino'}
             </Button>
           </CardContent>
         </Card>
@@ -134,15 +144,15 @@ export default function StudentHomePage() {
               <button
                 type="button"
                 key={day.id}
-                onClick={() => router.push('/workout')}
-                className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition-colors hover:border-blue-400 hover:bg-blue-500/[0.03]"
+                onClick={() => router.push(`/workout?day=${day.id}`)}
+                className={`flex w-full items-center justify-between rounded-xl border p-3 text-left transition-colors hover:border-blue-400 hover:bg-blue-500/[0.03] ${day.completedThisWeek ? 'border-emerald-500/30 bg-emerald-500/[0.04]' : ''}`}
               >
                 <div>
                   <p className="text-xs font-bold uppercase text-blue-500">Treino {day.label}</p>
                   <p className="font-medium">{day.name}</p>
                   <p className="text-xs text-muted-foreground">{day.exercises.length} exercícios</p>
                 </div>
-                <ChevronRight className="size-4 text-muted-foreground" />
+                <div className="flex items-center gap-2">{day.completedThisWeek && <Badge className="bg-emerald-500/10 text-emerald-600">Concluído</Badge>}<ChevronRight className="size-4 text-muted-foreground" /></div>
               </button>
             ))}
           </CardContent>

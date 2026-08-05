@@ -5,6 +5,12 @@ import { workoutPlanCreateSchema } from '@/lib/validators';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import { isPlanExpired } from '@/lib/workouts/plan-validity';
 import {
+  getWorkoutDayRange,
+  getWorkoutWeekRange,
+  nextWorkoutDayId,
+  weeklyWorkoutAllowance,
+} from '@/lib/workouts/week-cycle';
+import {
   publishWorkoutPlanRevision,
   WorkoutPlanPublishError,
 } from '@/lib/workouts/plan-service';
@@ -124,30 +130,72 @@ export async function GET() {
     if (error) throw error;
     if (!data) return json({ plan: null });
 
+    const weekRange = getWorkoutWeekRange();
+    const dayRange = getWorkoutDayRange();
+    const { data: completedSessions, error: completedError } = await admin
+      .from('workout_sessions')
+      .select('workout_day_id, completed_at')
+      .eq('student_id', session.sub)
+      .eq('workout_plan_id', data.id)
+      .eq('status', 'completed')
+      .gte('completed_at', weekRange.startIso)
+      .lt('completed_at', weekRange.nextStartIso)
+      .order('completed_at', { ascending: true });
+    if (completedError) throw completedError;
+
+    const completedByDay = new Map<string, number>();
+    const lastCompletedByDay = new Map<string, string>();
+    for (const completed of completedSessions ?? []) {
+      completedByDay.set(completed.workout_day_id, (completedByDay.get(completed.workout_day_id) ?? 0) + 1);
+      if (completed.completed_at) lastCompletedByDay.set(completed.workout_day_id, completed.completed_at);
+    }
+
     const days = ((data.workout_days ?? []) as RelatedWorkoutDay[])
       .sort((a, b) => a.order_index - b.order_index)
-      .map((day) => ({
-        id: day.id,
-        label: day.day_label || '',
-        name: day.name,
-        exercises: (day.workout_exercises ?? [])
-          .sort((a, b) => a.order_index - b.order_index)
-          .map((item) => {
-            const exercise = one(item.exercises);
-            return {
-              id: item.id,
-              exerciseId: exercise?.id ?? '',
-              name: exercise?.name ?? 'Exercício',
-              muscle: exercise?.target_muscle?.split(':')[0] ?? '',
-              instructions: exercise?.instructions ?? '',
-              videoUrl: exercise?.video_url ?? null,
-              sets: item.sets,
-              reps: item.reps,
-              restTime: item.rest_time,
-              method: item.method || '',
-            };
-          }),
-      }));
+      .map((day, dayIndex, allDays) => {
+        const weeklyAllowance = weeklyWorkoutAllowance(
+          allDays.length,
+          data.days_per_week || allDays.length,
+          dayIndex,
+        );
+        const weeklyCompletions = completedByDay.get(day.id) ?? 0;
+        const completedToday = (completedSessions ?? []).some((session) => (
+          session.workout_day_id === day.id
+          && session.completed_at
+          && session.completed_at >= dayRange.startIso
+          && session.completed_at < dayRange.nextStartIso
+        ));
+        return {
+          id: day.id,
+          label: day.day_label || '',
+          name: day.name,
+          weeklyAllowance,
+          weeklyCompletions,
+          completedThisWeek: weeklyCompletions >= weeklyAllowance,
+          completedToday,
+          lastCompletedAt: lastCompletedByDay.get(day.id) ?? null,
+          exercises: (day.workout_exercises ?? [])
+            .sort((a, b) => a.order_index - b.order_index)
+            .map((item) => {
+              const exercise = one(item.exercises);
+              return {
+                id: item.id,
+                exerciseId: exercise?.id ?? '',
+                name: exercise?.name ?? 'Exercício',
+                muscle: exercise?.target_muscle?.split(':')[0] ?? '',
+                instructions: exercise?.instructions ?? '',
+                videoUrl: exercise?.video_url ?? null,
+                sets: item.sets,
+                reps: item.reps,
+                restTime: item.rest_time,
+                method: item.method || '',
+              };
+            }),
+        };
+      });
+
+    const weeklyTarget = Math.max(days.length, data.days_per_week || days.length);
+    const completedThisWeek = (completedSessions ?? []).length;
 
     return json({
       plan: {
@@ -159,6 +207,19 @@ export async function GET() {
         endDate: data.end_date,
         isExpired: isPlanExpired(data.end_date),
         updatedAt: data.created_at,
+        week: {
+          currentDate: dayRange.date,
+          startDate: weekRange.startDate,
+          endDate: weekRange.endDate,
+          target: weeklyTarget,
+          completed: completedThisWeek,
+          isComplete: completedThisWeek >= weeklyTarget,
+          nextWorkoutDayId: nextWorkoutDayId(
+            days.map((day) => day.id),
+            weeklyTarget,
+            completedByDay,
+          ),
+        },
         days,
       },
     });
