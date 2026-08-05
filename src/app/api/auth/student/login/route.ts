@@ -24,10 +24,6 @@ export async function POST(request: Request) {
     // Generic error message — never reveal if name or code is wrong
     const genericError = 'Nome ou código de acesso inválido.';
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    
-    if (!supabaseUrl) return NextResponse.json({ error: 'Supabase URL missing' }, { status: 500 });
-
     const supabase = await createClient();
     
     const safeCode = access_code.toLowerCase().replace(/[^a-z0-9]/g, '');

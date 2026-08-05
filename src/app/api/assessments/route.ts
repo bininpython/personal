@@ -10,10 +10,7 @@ export async function GET(request: Request) {
     }
 
     const trainerId = session.trainer_id;
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    
-    if (supabaseUrl) {
-      const supabase = await createClient();
+    const supabase = await createClient();
       
       const { data: assessments, error } = await supabase
         .from('physical_assessments')
@@ -27,9 +24,6 @@ export async function GET(request: Request) {
       }
 
       return NextResponse.json({ assessments: assessments || [] });
-    }
-
-    return NextResponse.json({ assessments: [] });
   } catch (error) {
     console.error('[Get Assessments] Error:', error);
     return NextResponse.json(

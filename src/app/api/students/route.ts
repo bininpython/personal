@@ -27,11 +27,6 @@ export async function POST(request: Request) {
 
     const data = result.data;
     
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) {
-      return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
-    }
-    
     const supabase = await createClient();
     
     const safeCode = data.access_code.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -90,12 +85,6 @@ export async function GET(request: Request) {
     }
 
     const trainerId = session.trainer_id;
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    
-    if (!supabaseUrl) {
-      return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
-    }
-
     const supabase = await createClient();
     
     const { data, error } = await supabase

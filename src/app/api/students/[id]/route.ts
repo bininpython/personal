@@ -17,8 +17,6 @@ export async function GET(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
   const supabase = await createClient();
 
   const { data: student, error } = await supabase
@@ -77,8 +75,6 @@ export async function PATCH(
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
   const supabase = await createClient();
 
   const { data: student, error: fetchError } = await supabase

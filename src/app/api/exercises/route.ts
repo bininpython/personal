@@ -12,9 +12,6 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
-    
     const supabase = await createClient();
     let query = supabase.from('exercises').select('*');
     

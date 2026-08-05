@@ -28,9 +28,7 @@ export async function POST(request: Request) {
     // or we could check existing here if we queried Supabase first.
     // For now, Supabase Auth handles unique emails.
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (supabaseUrl) {
-      const supabase = await createClient();
+    const supabase = await createClient();
       const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
       const mockEmail = `trainer_${safeCode}@example.com`;
       
@@ -76,9 +74,6 @@ export async function POST(request: Request) {
           trainer_id: authData.user.id,
         },
       });
-    }
-
-    return NextResponse.json({ error: 'Supabase URL missing' }, { status: 500 });
   } catch (error) {
     console.error('[Register] Error:', error);
     return NextResponse.json(

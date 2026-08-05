@@ -16,10 +16,6 @@ export async function POST(request: Request) {
 
     const { trainer_code, password, remember_me } = result.data;
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    
-    if (!supabaseUrl) return NextResponse.json({ error: 'Supabase URL missing' }, { status: 500 });
-
     const supabase = await createClient();
     const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
     const mockEmail = `trainer_${safeCode}@example.com`;

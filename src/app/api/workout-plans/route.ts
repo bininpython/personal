@@ -17,9 +17,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) return NextResponse.json({ error: 'Supabase não configurado' }, { status: 500 });
-    
     const supabase = await createClient();
     
     // 1. Create Workout Plan
