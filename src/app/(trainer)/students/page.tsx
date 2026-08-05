@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Users, Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
@@ -280,7 +280,7 @@ export default function StudentsPage() {
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9">
                           <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                            {student.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                            {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
                         <div>

@@ -446,6 +446,9 @@ export function getExercisesByCategory(category: string) {
 export function getWorkoutPlansByStudent(studentId: string) {
   return Array.from(workoutPlans.values()).filter(p => p.student_id === studentId);
 }
+export function getWorkoutPlansByTrainerId(trainerId: string) {
+  return Array.from(workoutPlans.values()).filter(p => p.trainer_id === trainerId);
+}
 export function getWorkoutPlanById(id: string) { return workoutPlans.get(id); }
 export function addWorkoutPlan(plan: WorkoutPlan) { workoutPlans.set(plan.id, plan); }
 

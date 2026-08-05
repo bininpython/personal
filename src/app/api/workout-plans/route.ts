@@ -49,7 +49,7 @@ export async function GET(request: Request) {
     const { getWorkoutPlansByTrainerId } = await import('@/lib/demo-data');
     const demoPlans = getWorkoutPlansByTrainerId(trainerId);
 
-    const formattedPlans = demoPlans.map(p => ({
+    const formattedPlans = demoPlans.map((p: any) => ({
       id: p.id,
       name: p.name,
       student: p.student_name || 'Desconhecido',

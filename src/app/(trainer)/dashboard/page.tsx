@@ -55,6 +55,7 @@ const alerts = [
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const [greeting, setGreeting] = useState('');
   const [stats, setStats] = useState({
     activeStudents: 0,
     trainedToday: 0,
