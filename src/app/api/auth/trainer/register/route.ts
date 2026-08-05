@@ -8,6 +8,7 @@ import { hashPassword, generateTrainerCode } from '@/lib/auth/hash';
 import { createTrainerToken } from '@/lib/auth/jwt';
 import { setSessionCookie } from '@/lib/auth/session';
 import { initDemoData, getTrainerByCode } from '@/lib/demo-data';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,55 @@ export async function POST(request: Request) {
         { error: 'Este código de personal já está em uso. Escolha outro.' },
         { status: 409 }
       );
+    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const mockEmail = `trainer_${safeCode}@example.com`;
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: mockEmail,
+        password: password,
+        options: {
+          data: {
+            name: full_name,
+            code: trainer_code.toUpperCase(),
+          }
+        }
+      });
+
+      if (authError || !authData.user) {
+        return NextResponse.json(
+          { error: authError?.message || 'Erro ao registrar no Supabase' },
+          { status: 400 }
+        );
+      }
+
+      // Insert into public.trainers table
+      const { error: insertError } = await supabase.from('trainers').insert({
+        auth_user_id: authData.user.id,
+        name: full_name,
+        code: trainer_code.toUpperCase(),
+      });
+
+      if (insertError) {
+        return NextResponse.json(
+          { error: 'Erro ao criar perfil de personal no banco.' },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: authData.user.id,
+          role: 'trainer',
+          name: full_name,
+          trainer_id: authData.user.id,
+        },
+      });
     }
 
     // For demo mode, we just create a new trainer in memory
@@ -61,8 +111,8 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString(),
     };
 
-    // Note: In demo mode, we rely on existing data. In production, this would INSERT into Supabase.
-    // For now, the demo data already has a trainer.
+    // Add to memory
+    await addTrainer(trainer);
 
     // Create session
     const token = await createTrainerToken({

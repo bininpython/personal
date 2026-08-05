@@ -12,7 +12,7 @@ export const trainerRegisterSchema = z.object({
   trainer_code: z
     .string()
     .min(4, 'Código deve ter no mínimo 4 caracteres')
-    .regex(/^[A-Za-z0-9\-]+$/, 'Código deve conter apenas letras, números e hífens'),
+    .regex(/^[A-Za-z0-9\-#\s]+$/, 'Código deve conter apenas letras, números, hífens, espaços e hashtag'),
   password: z
     .string()
     .min(PASSWORD_MIN_LENGTH, `Senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres`)

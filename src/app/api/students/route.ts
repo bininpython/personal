@@ -3,6 +3,7 @@ import { studentCreateSchema } from '@/lib/validators';
 import { hashPassword, normalizeName } from '@/lib/auth/hash';
 import { initDemoData, addStudent } from '@/lib/demo-data';
 import { getSession } from '@/lib/auth/session';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -62,7 +63,39 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString(),
     };
 
-    addStudent(newStudent);
+    // --- Supabase Path ---
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      
+      const mockEmail = `student_${data.access_code.toLowerCase().replace(/[^a-z0-9]/g, '')}@example.com`;
+      const ghostPassword = data.access_code; 
+      
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: mockEmail,
+        password: ghostPassword,
+        options: {
+          data: {
+            name: data.full_name,
+            role: 'student',
+          }
+        }
+      });
+
+      if (!authError && authData.user) {
+        await supabase.from('students').insert({
+          id: id,
+          trainer_id: trainerId,
+          name: data.full_name,
+          status: 'active',
+          goal: data.goal || '',
+          level: data.experience_level || 'beginner',
+        });
+      }
+    }
+    // -----------------------
+
+    await addStudent(newStudent);
 
     return NextResponse.json({
       success: true,

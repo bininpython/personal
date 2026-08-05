@@ -9,6 +9,7 @@ import { createTrainerToken } from '@/lib/auth/jwt';
 import { setSessionCookie } from '@/lib/auth/session';
 import { initDemoData, getTrainerByCode } from '@/lib/demo-data';
 import { MAX_LOGIN_ATTEMPTS, TRAINER_LOCKOUT_MINUTES } from '@/constants';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   try {
@@ -26,7 +27,38 @@ export async function POST(request: Request) {
 
     const { trainer_code, password, remember_me } = result.data;
 
-    // Find trainer by code
+    // Supabase Auth Path (If configured)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (supabaseUrl) {
+      const supabase = await createClient();
+      const safeCode = trainer_code.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const mockEmail = `trainer_${safeCode}@example.com`;
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: mockEmail,
+        password: password,
+      });
+
+      if (error) {
+        return NextResponse.json(
+          { error: 'Código ou senha inválidos no Supabase.' },
+          { status: 401 }
+        );
+      }
+
+      // Supabase automatically sets the cookies in createServerClient setAll()
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: data.user.id,
+          role: 'trainer',
+          name: data.user.user_metadata?.name || 'Personal',
+          trainer_id: data.user.id,
+        },
+      });
+    }
+
+    // Demo Data Path (Fallback)
     const trainer = getTrainerByCode(trainer_code);
 
     if (!trainer) {
