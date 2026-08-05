@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
+  CalendarClock,
   CheckCircle2,
   Clock3,
   Dumbbell,
@@ -47,6 +48,8 @@ interface WorkoutPlan {
   goal: string;
   daysPerWeek: number;
   startDate: string | null;
+  endDate: string | null;
+  isExpired: boolean;
   updatedAt: string;
   days: WorkoutDay[];
 }
@@ -313,6 +316,18 @@ export default function StudentWorkoutPage() {
           </div>
         </div>
       </div>
+
+      {plan.isExpired && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+          <CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" />
+          <div>
+            <p className="font-semibold text-amber-800 dark:text-amber-300">O prazo desta ficha terminou</p>
+            <p className="mt-1 text-muted-foreground">
+              Ela continua disponível para consulta e execução. Seu personal recebeu um alerta para revisar ou renovar o treino.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="flex gap-2 overflow-x-auto pb-1">
         {plan.days.map((day) => (

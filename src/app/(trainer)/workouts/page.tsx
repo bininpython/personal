@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Dumbbell, Loader2, Plus, Search, User } from 'lucide-react';
+import { Calendar, ClockAlert, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +18,8 @@ interface WorkoutPlanSummary {
   exerciseCount: number;
   status: 'active' | 'draft' | 'archived';
   startDate: string | null;
+  endDate: string | null;
+  isExpired: boolean;
 }
 
 export default function WorkoutsPage() {
@@ -91,15 +93,17 @@ export default function WorkoutsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredPlans.map((plan) => (
-            <Card key={plan.id} className="border-border/60">
+            <Card key={plan.id} className={plan.isExpired ? 'border-red-500/40' : 'border-border/60'}>
               <CardHeader className="border-b border-border/40 pb-4">
                 <Badge
                   variant="outline"
-                  className={plan.status === 'active'
+                  className={plan.isExpired
+                    ? 'border-red-500/30 bg-red-500/5 text-red-600'
+                    : plan.status === 'active'
                     ? 'border-emerald-500/30 text-emerald-600'
                     : 'border-muted-foreground/30 text-muted-foreground'}
                 >
-                  {plan.status === 'active' ? 'Ativa' : plan.status === 'archived' ? 'Arquivada' : 'Rascunho'}
+                  {plan.isExpired ? 'Prazo encerrado' : plan.status === 'active' ? 'Ativa' : plan.status === 'archived' ? 'Arquivada' : 'Rascunho'}
                 </Badge>
                 <CardTitle className="mt-2 text-lg">{plan.name}</CardTitle>
                 <CardDescription className="flex items-center gap-1.5">
@@ -125,6 +129,19 @@ export default function WorkoutsPage() {
                     {plan.startDate ? new Date(`${plan.startDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Não informado'}
                   </span>
                 </div>
+                <div className={`flex items-center justify-between rounded-lg p-2 text-xs ${plan.isExpired ? 'bg-red-500/10 text-red-700' : 'bg-muted/50'}`}>
+                  <span className="flex items-center gap-1.5"><ClockAlert className="size-3.5" /> {plan.isExpired ? 'Expirou em' : 'Válida até'}</span>
+                  <span className="font-medium">
+                    {plan.endDate ? new Date(`${plan.endDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Sem prazo'}
+                  </span>
+                </div>
+                <Button
+                  variant={plan.isExpired ? 'default' : 'outline'}
+                  className="w-full"
+                  onClick={() => router.push(`/exercises?planId=${plan.id}`)}
+                >
+                  <Pencil className="mr-2 size-4" /> Editar e personalizar
+                </Button>
               </CardContent>
             </Card>
           ))}

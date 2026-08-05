@@ -35,6 +35,8 @@ Nunca exponha a chave secreta em variáveis que começam com `NEXT_PUBLIC_`.
 - Mensagens diretas entre personal e aluno, com atualização automática e confirmação de leitura.
 - Agenda com verificação de conflito, conclusão e cancelamento de compromissos.
 - Alertas automáticos de inatividade, baixa constância e feedback de treino preocupante.
+- Prazo configurável para cada ficha, com alerta de vencimento sem retirar o treino do aluno.
+- Edição de fichas com publicação de uma nova versão e preservação do histórico anterior.
 - Edição, arquivamento e reativação de alunos.
 - Indicadores de constância, adesão, risco, evolução de peso e percentual de gordura.
 - Relatório detalhado com exportação pelo comando de impressão do navegador em PDF.
@@ -51,6 +53,7 @@ o `CRON_SECRET` configurado nas variáveis do projeto para autorizar essa tarefa
 npm run test:auth
 npm run test:catalog
 npm run test:analytics
+npm run test:plans
 npm run test:routes
 npm run lint
 npx tsc --noEmit --incremental false

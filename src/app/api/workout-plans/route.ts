@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { getCatalogExercises } from '@/lib/exercises/catalog';
 import { workoutPlanCreateSchema } from '@/lib/validators';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import { isPlanExpired } from '@/lib/workouts/plan-validity';
+import {
+  publishWorkoutPlanRevision,
+  WorkoutPlanPublishError,
+} from '@/lib/workouts/plan-service';
 
 type Related<T> = T | T[] | null;
 
@@ -59,7 +63,7 @@ export async function GET() {
       const { data, error } = await admin
         .from('workout_plans')
         .select(`
-          id, name, goal, days_per_week, status, start_date, created_at,
+          id, name, goal, days_per_week, status, start_date, end_date, created_at,
           students (name),
           workout_days (id, workout_exercises (id))
         `)
@@ -89,6 +93,8 @@ export async function GET() {
           exerciseCount,
           status: plan.status,
           startDate: plan.start_date,
+          endDate: plan.end_date,
+          isExpired: plan.status === 'active' && isPlanExpired(plan.end_date),
           createdAt: plan.created_at,
         };
       });
@@ -99,7 +105,7 @@ export async function GET() {
     const { data, error } = await admin
       .from('workout_plans')
       .select(`
-        id, name, goal, days_per_week, status, start_date, created_at,
+        id, name, goal, days_per_week, status, start_date, end_date, created_at,
         workout_days (
           id, name, day_label, order_index,
           workout_exercises (
@@ -150,6 +156,8 @@ export async function GET() {
         goal: data.goal || 'Geral',
         daysPerWeek: data.days_per_week || days.length,
         startDate: data.start_date,
+        endDate: data.end_date,
+        isExpired: isPlanExpired(data.end_date),
         updatedAt: data.created_at,
         days,
       },
@@ -165,8 +173,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  let createdPlanId = '';
-
   try {
     const session = await getSession();
     if (!session || session.role !== 'trainer') {
@@ -181,141 +187,17 @@ export async function POST(request: Request) {
       }, 400);
     }
 
-    const input = parsed.data;
-    const admin = createAdminClient();
-    const { data: student, error: studentError } = await admin
-      .from('students')
-      .select('id, status')
-      .eq('id', input.studentId)
-      .eq('trainer_id', session.trainer_id)
-      .maybeSingle();
-
-    if (studentError) throw studentError;
-    if (!student || student.status !== 'active') {
-      return json({ error: 'Aluno ativo não encontrado.' }, 404);
-    }
-
-    const requestedKeys = [...new Set(
-      input.days.flatMap((day) => day.exercises.map((exercise) => exercise.exerciseKey)),
-    )];
-    const catalogExercises = getCatalogExercises(requestedKeys);
-    if (catalogExercises.length !== requestedKeys.length) {
-      return json({ error: 'A ficha contém um exercício inválido.' }, 400);
-    }
-
-    const { data: existingExercises, error: existingError } = await admin
-      .from('exercises')
-      .select('id, target_muscle')
-      .in('target_muscle', requestedKeys);
-
-    if (existingError) throw existingError;
-
-    const exerciseIdByKey = new Map(
-      (existingExercises ?? []).map((exercise) => [exercise.target_muscle, exercise.id]),
-    );
-    const missingExercises = catalogExercises.filter(
-      (exercise) => !exerciseIdByKey.has(exercise.key),
-    );
-
-    if (missingExercises.length > 0) {
-      const { data: insertedExercises, error: insertExerciseError } = await admin
-        .from('exercises')
-        .insert(missingExercises.map((exercise) => ({
-          name: exercise.name,
-          target_muscle: exercise.key,
-          video_url: exercise.videoUrl,
-          instructions: exercise.instructions,
-        })))
-        .select('id, target_muscle');
-
-      if (insertExerciseError) throw insertExerciseError;
-      for (const exercise of insertedExercises ?? []) {
-        exerciseIdByKey.set(exercise.target_muscle, exercise.id);
-      }
-    }
-
-    const today = new Date().toISOString().slice(0, 10);
-    const { data: plan, error: planError } = await admin
-      .from('workout_plans')
-      .insert({
-        student_id: input.studentId,
-        trainer_id: session.trainer_id,
-        name: input.name,
-        goal: input.goal || 'Geral',
-        days_per_week: input.daysPerWeek,
-        status: 'draft',
-        start_date: today,
-      })
-      .select('id, name')
-      .single();
-
-    if (planError) throw planError;
-    createdPlanId = plan.id;
-
-    const { data: insertedDays, error: dayError } = await admin
-      .from('workout_days')
-      .insert(input.days.map((day, index) => ({
-        plan_id: plan.id,
-        name: day.name,
-        day_label: day.label,
-        order_index: index,
-      })))
-      .select('id, order_index');
-
-    if (dayError) throw dayError;
-    const dayIdByIndex = new Map(
-      (insertedDays ?? []).map((day) => [day.order_index, day.id]),
-    );
-
-    const workoutExercises = input.days.flatMap((day, dayIndex) => (
-      day.exercises.map((exercise, exerciseIndex) => ({
-        workout_day_id: dayIdByIndex.get(dayIndex),
-        exercise_id: exerciseIdByKey.get(exercise.exerciseKey),
-        sets: exercise.sets,
-        reps: exercise.reps,
-        rest_time: exercise.restTime,
-        method: exercise.method || null,
-        order_index: exerciseIndex,
-      }))
-    ));
-
-    if (workoutExercises.some((exercise) => !exercise.workout_day_id || !exercise.exercise_id)) {
-      throw new Error('Could not resolve workout relationships.');
-    }
-
-    const { error: workoutExerciseError } = await admin
-      .from('workout_exercises')
-      .insert(workoutExercises);
-    if (workoutExerciseError) throw workoutExerciseError;
-
-    const { error: activateError } = await admin
-      .from('workout_plans')
-      .update({ status: 'active' })
-      .eq('id', plan.id);
-    if (activateError) throw activateError;
-
-    const { error: archiveError } = await admin
-      .from('workout_plans')
-      .update({ status: 'archived' })
-      .eq('student_id', input.studentId)
-      .eq('trainer_id', session.trainer_id)
-      .eq('status', 'active')
-      .neq('id', plan.id);
-    if (archiveError) throw archiveError;
-
-    return json({ success: true, plan: { id: plan.id, name: plan.name } }, 201);
+    const plan = await publishWorkoutPlanRevision({
+      trainerId: session.trainer_id,
+      input: parsed.data,
+    });
+    return json({ success: true, plan }, 201);
   } catch (error) {
-    if (createdPlanId) {
-      try {
-        const admin = createAdminClient();
-        await admin.from('workout_plans').delete().eq('id', createdPlanId);
-      } catch (cleanupError) {
-        console.error('[Create Workout Plan] Cleanup error:', cleanupError);
-      }
-    }
-
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O banco de dados ainda não está configurado.' }, 503);
+    }
+    if (error instanceof WorkoutPlanPublishError) {
+      return json({ error: error.message }, error.status);
     }
 
     console.error('[Create Workout Plan] Error:', error);

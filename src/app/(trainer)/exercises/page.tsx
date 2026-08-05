@@ -1,12 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Model, {
   type IExerciseData,
   type IMuscleStats,
 } from '@phelian/react-body-highlighter';
 import {
   Check,
+  CalendarClock,
   Dumbbell,
   Info,
   Loader2,
@@ -40,6 +42,13 @@ import {
   type ExerciseCatalogItem,
   type MuscleRegion,
 } from '@/lib/exercises/catalog';
+import {
+  addPlanValidity,
+  brazilToday,
+  formatPlanDate,
+  inferPlanValidity,
+  type PlanValidityUnit,
+} from '@/lib/workouts/plan-validity';
 
 interface StudentOption {
   id: string;
@@ -66,7 +75,39 @@ interface ExerciseResponse {
   error?: string;
 }
 
+interface EditablePlanResponse {
+  plan?: {
+    id: string;
+    studentId: string;
+    studentName: string;
+    name: string;
+    goal: string;
+    daysPerWeek: number;
+    startDate: string | null;
+    endDate: string | null;
+    days: Array<{
+      id: string;
+      label: string;
+      name: string;
+      exercises: Array<{
+        exerciseKey: string;
+        name: string;
+        sets: number;
+        reps: string;
+        restTime: number;
+        method: string;
+      }>;
+    }>;
+  };
+  error?: string;
+}
+
 const DAY_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+const CATALOG_BY_KEY = new Map(EXERCISE_CATALOG.map((exercise) => [exercise.key, exercise]));
+const CATALOG_BY_NAME = new Map(EXERCISE_CATALOG.map((exercise) => [
+  exercise.name.toLocaleLowerCase('pt-BR'),
+  exercise,
+]));
 const DIFFICULTY_LABELS = {
   beginner: 'Iniciante',
   intermediate: 'Intermediário',
@@ -84,6 +125,7 @@ function createDay(index: number): BuilderDay {
 }
 
 export default function ExercisesPage() {
+  const router = useRouter();
   const [activeMuscle, setActiveMuscle] = useState<MuscleRegion>('chest');
   const [exercises, setExercises] = useState<ExerciseCatalogItem[]>([]);
   const [search, setSearch] = useState('');
@@ -100,9 +142,18 @@ export default function ExercisesPage() {
   const [daysPerWeek, setDaysPerWeek] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
+  const [editingPlanId, setEditingPlanId] = useState('');
+  const [editingPlanLoading, setEditingPlanLoading] = useState(false);
+  const [startDate, setStartDate] = useState(() => brazilToday());
+  const [validityAmount, setValidityAmount] = useState(4);
+  const [validityUnit, setValidityUnit] = useState<PlanValidityUnit>('weeks');
 
   const activeDay = days.find((day) => day.id === activeDayId) ?? days[0];
   const totalSelected = days.reduce((total, day) => total + day.exercises.length, 0);
+  const endDate = useMemo(
+    () => addPlanValidity(startDate, validityAmount, validityUnit),
+    [startDate, validityAmount, validityUnit],
+  );
 
   const loadMuscle = useCallback(async (muscle: MuscleRegion) => {
     setActiveMuscle(muscle);
@@ -125,8 +176,67 @@ export default function ExercisesPage() {
     }
   }, []);
 
+  const loadEditablePlan = useCallback(async (planId: string) => {
+    setEditingPlanLoading(true);
+    try {
+      const response = await fetch(`/api/workout-plans/${planId}`, { cache: 'no-store' });
+      const data = await response.json() as EditablePlanResponse;
+      if (!response.ok || !data.plan) {
+        throw new Error(data.error || 'Não foi possível carregar a ficha para edição.');
+      }
+
+      let missingExerciseCount = 0;
+      const loadedDays: BuilderDay[] = data.plan.days.map((day, dayIndex) => ({
+        id: day.id || createDay(dayIndex).id,
+        label: day.label || DAY_LABELS[dayIndex],
+        name: day.name,
+        exercises: day.exercises.flatMap((savedExercise) => {
+          const catalogExercise = CATALOG_BY_KEY.get(savedExercise.exerciseKey)
+            ?? CATALOG_BY_NAME.get(savedExercise.name.toLocaleLowerCase('pt-BR'));
+          if (!catalogExercise) {
+            missingExerciseCount += 1;
+            return [];
+          }
+          return [{
+            ...catalogExercise,
+            sets: savedExercise.sets,
+            reps: savedExercise.reps,
+            restTime: savedExercise.restTime,
+            method: savedExercise.method,
+          }];
+        }),
+      }));
+      const normalizedDays = loadedDays.length > 0 ? loadedDays : [createDay(0)];
+      const today = brazilToday();
+      const validity = inferPlanValidity(data.plan.startDate || today, data.plan.endDate);
+      if (missingExerciseCount > 0) {
+        toast.warning(`${missingExerciseCount} exercício(s) antigo(s) não existem mais no catálogo. Revise a ficha antes de salvar.`);
+      }
+
+      setEditingPlanId(data.plan.id);
+      setSelectedStudentId(data.plan.studentId);
+      setPlanName(data.plan.name);
+      setGoal(data.plan.goal);
+      setDaysPerWeek(Math.max(data.plan.daysPerWeek, normalizedDays.length));
+      setDays(normalizedDays);
+      setActiveDayId(normalizedDays[0].id);
+      setStartDate(today);
+      setValidityAmount(validity.amount);
+      setValidityUnit(validity.unit);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível carregar a ficha.');
+      router.push('/workouts');
+    } finally {
+      setEditingPlanLoading(false);
+    }
+  }, [router]);
+
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => void loadMuscle('chest'), 0);
+    const planId = new URLSearchParams(window.location.search).get('planId');
+    const initialLoad = window.setTimeout(() => {
+      void loadMuscle('chest');
+      if (planId) void loadEditablePlan(planId);
+    }, 0);
 
     const loadStudents = async () => {
       try {
@@ -140,7 +250,7 @@ export default function ExercisesPage() {
 
     void loadStudents();
     return () => window.clearTimeout(initialLoad);
-  }, [loadMuscle]);
+  }, [loadEditablePlan, loadMuscle]);
 
   const handleMuscleClick = useCallback((stats: IMuscleStats) => {
     if (isMuscleRegion(stats.muscle)) {
@@ -246,17 +356,23 @@ export default function ExercisesPage() {
       toast.error('Selecione o aluno e informe o nome da ficha.');
       return;
     }
+    if (!Number.isInteger(validityAmount) || validityAmount < 1) {
+      toast.error('Informe um prazo válido para a ficha.');
+      return;
+    }
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/workout-plans', {
-        method: 'POST',
+      const endpoint = editingPlanId ? `/api/workout-plans/${editingPlanId}` : '/api/workout-plans';
+      const response = await fetch(endpoint, {
+        method: editingPlanId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          studentId: selectedStudentId,
+          ...(!editingPlanId ? { studentId: selectedStudentId } : {}),
           name: planName,
           goal,
           daysPerWeek,
+          endDate,
           days: days.map((day) => ({
             label: day.label,
             name: day.name,
@@ -273,15 +389,9 @@ export default function ExercisesPage() {
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || 'Não foi possível salvar a ficha.');
 
-      toast.success('Ficha publicada para o aluno.');
-      const firstDay = createDay(0);
-      setDays([firstDay]);
-      setActiveDayId(firstDay.id);
-      setSelectedStudentId('');
-      setPlanName('');
-      setGoal('');
-      setDaysPerWeek(1);
+      toast.success(editingPlanId ? 'Ficha atualizada e publicada.' : 'Ficha publicada para o aluno.');
       setIsSaveOpen(false);
+      router.push('/workouts');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Não foi possível salvar a ficha.');
     } finally {
@@ -289,18 +399,28 @@ export default function ExercisesPage() {
     }
   }
 
+  if (editingPlanLoading) {
+    return (
+      <div className="flex min-h-[65vh] items-center justify-center text-muted-foreground">
+        <Loader2 className="mr-2 size-6 animate-spin" /> Carregando ficha para edição...
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Montador de Fichas</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{editingPlanId ? 'Editar Ficha de Treino' : 'Montador de Fichas'}</h1>
           <p className="mt-1 text-muted-foreground">
-            Clique em um músculo, escolha os exercícios e publique para o aluno.
+            {editingPlanId
+              ? 'Personalize a ficha existente e publique uma nova versão para o aluno.'
+              : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
           </p>
         </div>
         <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-10">
           <Save className="mr-2 size-4" />
-          Publicar ficha ({totalSelected})
+          {editingPlanId ? 'Salvar alterações' : 'Publicar ficha'} ({totalSelected})
         </Button>
       </div>
 
@@ -584,9 +704,11 @@ export default function ExercisesPage() {
       <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Publicar ficha para o aluno</DialogTitle>
+            <DialogTitle>{editingPlanId ? 'Salvar nova versão da ficha' : 'Publicar ficha para o aluno'}</DialogTitle>
             <DialogDescription>
-              Ao publicar, esta ficha passa a ser o treino ativo do aluno e a anterior é arquivada.
+              {editingPlanId
+                ? 'A versão atual permanece no histórico e a nova passa a ser exibida para o aluno.'
+                : 'Ao publicar, esta ficha passa a ser o treino ativo do aluno e a anterior é arquivada.'}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -596,6 +718,7 @@ export default function ExercisesPage() {
                 id="student"
                 value={selectedStudentId}
                 onChange={(event) => setSelectedStudentId(event.target.value)}
+                disabled={Boolean(editingPlanId)}
                 className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
               >
                 <option value="">Selecione um aluno</option>
@@ -635,12 +758,39 @@ export default function ExercisesPage() {
               />
               <p className="text-xs text-muted-foreground">A ficha contém {days.length} treino(s) e {totalSelected} exercício(s).</p>
             </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="validity-amount">Prazo da ficha</Label>
+              <div className="grid grid-cols-[1fr_1.4fr] gap-2">
+                <Input
+                  id="validity-amount"
+                  type="number"
+                  min={1}
+                  max={365}
+                  value={validityAmount}
+                  onChange={(event) => setValidityAmount(Number(event.target.value))}
+                />
+                <select
+                  aria-label="Unidade do prazo"
+                  value={validityUnit}
+                  onChange={(event) => setValidityUnit(event.target.value as PlanValidityUnit)}
+                  className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
+                >
+                  <option value="days">dia(s)</option>
+                  <option value="weeks">semana(s)</option>
+                  <option value="months">mês(es)</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-2.5 text-xs">
+                <CalendarClock className="size-4 text-primary" />
+                <span>Nova versão válida de <strong>{formatPlanDate(startDate)}</strong> até <strong>{formatPlanDate(endDate)}</strong>.</span>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsSaveOpen(false)}>Cancelar</Button>
             <Button onClick={() => void submitPlan()} disabled={submitting || students.length === 0}>
               {submitting && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Publicar agora
+              {editingPlanId ? 'Salvar e publicar' : 'Publicar agora'}
             </Button>
           </DialogFooter>
         </DialogContent>

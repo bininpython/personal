@@ -1,11 +1,12 @@
 import 'server-only';
 import { getTrainerAnalytics } from '@/lib/analytics/trainer-analytics';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { brazilToday, formatPlanDate } from '@/lib/workouts/plan-validity';
 
 export async function generateTrainerNotifications(trainerId: string) {
   const admin = createAdminClient();
   const analytics = await getTrainerAnalytics(trainerId);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = brazilToday();
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -21,6 +22,18 @@ export async function generateTrainerNotifications(trainerId: string) {
     const metadata = item.metadata as { key?: string } | null;
     return metadata?.key;
   }).filter((key): key is string => Boolean(key)));
+
+  const { data: previousExpirationAlerts, error: expirationAlertError } = await admin
+    .from('notifications')
+    .select('metadata')
+    .eq('user_id', trainerId)
+    .eq('user_type', 'trainer')
+    .eq('type', 'plan_expired');
+  if (expirationAlertError) throw expirationAlertError;
+  for (const item of previousExpirationAlerts ?? []) {
+    const metadata = item.metadata as { key?: string } | null;
+    if (metadata?.key) existingKeys.add(metadata.key);
+  }
 
   const riskNotifications = analytics.students.flatMap((student) => {
     if (student.status !== 'active' || student.risk === 'low') return [];
@@ -68,7 +81,31 @@ export async function generateTrainerNotifications(trainerId: string) {
     }];
   });
 
-  const generated = [...riskNotifications, ...feedbackNotifications];
+  const { data: expiredPlans, error: expiredPlanError } = await admin
+    .from('workout_plans')
+    .select('id, student_id, name, end_date')
+    .eq('trainer_id', trainerId)
+    .eq('status', 'active')
+    .lt('end_date', today);
+  if (expiredPlanError) throw expiredPlanError;
+
+  const expirationNotifications = (expiredPlans ?? []).flatMap((plan) => {
+    const key = `plan-expired:${plan.id}:${plan.end_date}`;
+    if (existingKeys.has(key)) return [];
+    const student = analytics.students.find((item) => item.id === plan.student_id);
+    return [{
+      user_id: trainerId,
+      user_type: 'trainer',
+      type: 'plan_expired',
+      title: 'Ficha de treino com prazo encerrado',
+      message: `A ficha “${plan.name}” de ${student?.name || 'Aluno'} venceu em ${formatPlanDate(plan.end_date)}. Ela continua visível para o aluno até ser revisada ou substituída.`,
+      read: false,
+      action_url: `/exercises?planId=${plan.id}`,
+      metadata: { key, studentId: plan.student_id, workoutPlanId: plan.id, endDate: plan.end_date },
+    }];
+  });
+
+  const generated = [...riskNotifications, ...feedbackNotifications, ...expirationNotifications];
   if (generated.length === 0) return 0;
 
   const { error } = await admin.from('notifications').insert(generated);

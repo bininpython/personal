@@ -1,5 +1,8 @@
 begin;
 
+alter table public.workout_plans
+    add column if not exists end_date date;
+
 -- Estes módulos são acessados somente pelas rotas seguras do servidor.
 alter table public.messages enable row level security;
 alter table public.notifications enable row level security;
@@ -31,6 +34,9 @@ create index if not exists workout_sessions_student_completed_idx
     where status = 'completed';
 create index if not exists assessments_student_date_idx
     on public.physical_assessments (student_id, assessment_date desc);
+create index if not exists workout_plans_active_expiration_idx
+    on public.workout_plans (trainer_id, end_date)
+    where status = 'active' and end_date is not null;
 
 do $$
 begin

@@ -124,15 +124,25 @@ export const workoutBuilderDaySchema = z.object({
   exercises: z.array(workoutBuilderExerciseSchema).min(1, 'Adicione pelo menos um exercício').max(100),
 }).strict();
 
-export const workoutPlanCreateSchema = z.object({
-  studentId: z.string().uuid('Aluno inválido'),
+const workoutPlanBuilderFields = {
   name: z.string().trim().min(2, 'Informe o nome da ficha').max(120),
   goal: z.string().trim().max(200).optional(),
   daysPerWeek: z.number().int().min(1).max(7),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Prazo inválido'),
   days: z.array(workoutBuilderDaySchema).min(1, 'Adicione pelo menos um treino').max(7),
+};
+
+export const workoutPlanCreateSchema = z.object({
+  studentId: z.string().uuid('Aluno inválido'),
+  ...workoutPlanBuilderFields,
+}).strict();
+
+export const workoutPlanUpdateSchema = z.object({
+  ...workoutPlanBuilderFields,
 }).strict();
 
 export type WorkoutPlanCreateInput = z.infer<typeof workoutPlanCreateSchema>;
+export type WorkoutPlanUpdateInput = z.infer<typeof workoutPlanUpdateSchema>;
 
 // ---- Workout Exercise ----
 

@@ -321,6 +321,9 @@ create index workout_sessions_student_completed_idx
     where status = 'completed';
 create index assessments_student_date_idx
     on public.physical_assessments (student_id, assessment_date desc);
+create index workout_plans_active_expiration_idx
+    on public.workout_plans (trainer_id, end_date)
+    where status = 'active' and end_date is not null;
 
 -- 2. Row Level Security (RLS)
 -- Garante que um personal só veja seus próprios alunos, e um aluno só veja a si mesmo.
