@@ -45,5 +45,5 @@ export async function updateSession(request: NextRequest) {
   // Basic route protection can be added here, but since the app relies on Custom JWT in parallel 
   // for demo mode, we handle the redirects strictly within the old custom middleware logic if Supabase is missing.
   
-  return supabaseResponse;
+  return { response: supabaseResponse, user };
 }
