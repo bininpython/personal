@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { studentId, name, goal, daysPerWeek, exercises } = body;
+    const { studentId, name, goal, daysPerWeek, dayLabel, exercises } = body;
     // exercises array format: { exerciseId, sets, reps, restTime }
 
     if (!studentId || !name || !exercises || exercises.length === 0) {
@@ -48,8 +48,8 @@ export async function POST(request: Request) {
         .from('workout_days')
         .insert({
           plan_id: plan.id,
-          name: 'Treino A',
-          day_label: 'A',
+          name: name, // Usando o nome da ficha aqui
+          day_label: dayLabel || 'A',
           order_index: 0
         })
         .select()
@@ -87,6 +87,7 @@ export async function POST(request: Request) {
          student_id: studentId,
          trainer_id: session.trainer_id,
          name,
+         day_label: dayLabel || 'A',
          goal: goal || 'Geral',
          days_per_week: daysPerWeek || 3,
          exercises

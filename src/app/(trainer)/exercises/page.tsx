@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,11 +36,13 @@ export default function ExercisesPage() {
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
+  const [gender, setGender] = useState<'male' | 'female'>('male');
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [planName, setPlanName] = useState('');
+  const [dayLabel, setDayLabel] = useState('A');
   const [submitting, setSubmitting] = useState(false);
 
   // Fetch exercises when muscle is clicked
@@ -88,6 +91,7 @@ export default function ExercisesPage() {
       const payload = {
         studentId: selectedStudentId,
         name: planName,
+        dayLabel: dayLabel,
         exercises: cart.map(item => ({
           exerciseId: item.id,
           sets: item.sets,
@@ -135,104 +139,130 @@ export default function ExercisesPage() {
         
         {/* DIAGRAMA DO CORPO HUMANO (Left Column) */}
         <Card className="lg:col-span-4 border-border/50 bg-card/50 overflow-hidden">
-          <CardHeader className="pb-0 text-center">
-            <CardTitle className="text-base font-semibold">Anatomia</CardTitle>
+          <CardHeader className="pb-3 text-center border-b border-border/30">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-semibold">Anatomia</CardTitle>
+              <div className="flex bg-muted rounded-md p-0.5">
+                <button 
+                  onClick={() => setGender('male')}
+                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-colors ${gender === 'male' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
+                >
+                  Masc
+                </button>
+                <button 
+                  onClick={() => setGender('female')}
+                  className={`px-3 py-1 text-xs font-medium rounded-sm transition-colors ${gender === 'female' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground'}`}
+                >
+                  Fem
+                </button>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="p-6 relative">
-            <div className="relative w-full max-w-[280px] h-[520px] mx-auto">
-              
-              {/* Head */}
-              <div 
-                className="absolute top-[5%] left-1/2 -translate-x-1/2 w-14 h-16 rounded-[40%] bg-muted cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30" 
-                title="Pescoço/Trapézio"
+          <CardContent className="p-4 relative flex justify-center">
+            <div className="relative w-full max-w-[400px] aspect-[4/3] sm:aspect-auto sm:h-[500px]">
+              <Image 
+                src={gender === 'male' ? '/anatomy-male.png' : '/anatomy-female.png'} 
+                alt="Corpo Humano" 
+                fill
+                className="object-contain"
+                priority
               />
               
-              {/* Shoulders */}
+              {/* === ZONAS DE CLIQUE (FRONTAL - Esquerda da imagem) === */}
+              {/* Ombro Frontal Esq/Dir */}
               <div 
-                className={`absolute top-[20%] left-1/2 -translate-x-1/2 w-32 h-10 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 z-10
-                  ${activeMuscle === 'shoulders' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('shoulders')}
-                title="Ombros"
+                className={`absolute top-[16%] left-[23%] w-[7%] h-[8%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors z-10 ${activeMuscle === 'shoulders' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('shoulders')} title="Ombros"
+              />
+              <div 
+                className={`absolute top-[16%] left-[37%] w-[7%] h-[8%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors z-10 ${activeMuscle === 'shoulders' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('shoulders')} title="Ombros"
               />
               
-              {/* Chest */}
+              {/* Peito */}
               <div 
-                className={`absolute top-[26%] left-1/2 -translate-x-1/2 w-24 h-16 rounded-xl cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 z-20
-                  ${activeMuscle === 'chest' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('chest')}
-                title="Peito"
+                className={`absolute top-[19%] left-[29%] w-[12%] h-[9%] rounded-xl cursor-pointer hover:bg-primary/40 transition-colors z-20 ${activeMuscle === 'chest' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('chest')} title="Peito"
               />
               
-              {/* Abs */}
+              {/* Abdômen */}
               <div 
-                className={`absolute top-[39%] left-1/2 -translate-x-1/2 w-20 h-24 rounded-lg cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 z-20
-                  ${activeMuscle === 'abs' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('abs')}
-                title="Abdômen"
+                className={`absolute top-[28%] left-[30%] w-[10%] h-[12%] rounded-lg cursor-pointer hover:bg-primary/40 transition-colors z-20 ${activeMuscle === 'abs' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('abs')} title="Abdômen"
+              />
+              
+              {/* Braço Frontal Esq/Dir (Bíceps) */}
+              <div 
+                className={`absolute top-[25%] left-[19%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'biceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('biceps')} title="Bíceps"
+              />
+              <div 
+                className={`absolute top-[25%] left-[43%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'biceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('biceps')} title="Bíceps"
               />
 
-              {/* Back (Hint: Since it's 2D, we can put Back in the center, or have a toggle for front/back. Let's make the trapz/lats clickable edges) */}
+              {/* Quadríceps Esq/Dir */}
               <div 
-                className={`absolute top-[26%] left-[10%] w-8 h-28 rounded-l-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'back' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('back')}
-                title="Costas"
+                className={`absolute top-[48%] left-[26%] w-[7%] h-[18%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'quadriceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('quadriceps')} title="Quadríceps"
               />
               <div 
-                className={`absolute top-[26%] right-[10%] w-8 h-28 rounded-r-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'back' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('back')}
-                title="Costas"
-              />
-              
-              {/* Left Arm (Biceps) */}
-              <div 
-                className={`absolute top-[25%] -left-[5%] w-10 h-20 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 -rotate-12
-                  ${activeMuscle === 'biceps' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('biceps')}
-                title="Bíceps (Braço Esquerdo)"
-              />
-              {/* Right Arm (Triceps) */}
-              <div 
-                className={`absolute top-[25%] -right-[5%] w-10 h-20 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 rotate-12
-                  ${activeMuscle === 'triceps' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('triceps')}
-                title="Tríceps (Braço Direito)"
+                className={`absolute top-[48%] left-[36%] w-[7%] h-[18%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'quadriceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('quadriceps')} title="Quadríceps"
               />
 
-              {/* Left Forearm */}
-              <div className="absolute top-[41%] -left-[10%] w-8 h-20 rounded-full bg-muted cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 -rotate-12" />
-              {/* Right Forearm */}
-              <div className="absolute top-[41%] -right-[10%] w-8 h-20 rounded-full bg-muted cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30 rotate-12" />
-              
-              {/* Left Quad */}
+              {/* Panturrilha Frontal Esq/Dir */}
               <div 
-                className={`absolute top-[59%] left-[22%] w-14 h-32 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'quadriceps' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('quadriceps')}
-                title="Quadríceps"
+                className={`absolute top-[72%] left-[27%] w-[5%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('calves')} title="Panturrilha"
               />
-              {/* Right Hamstring/Glute */}
               <div 
-                className={`absolute top-[59%] right-[22%] w-14 h-32 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'hamstrings' || activeMuscle === 'glutes' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('glutes')}
-                title="Posterior e Glúteos"
+                className={`absolute top-[72%] left-[37%] w-[5%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('calves')} title="Panturrilha"
               />
 
-              {/* Left Calf */}
+
+              {/* === ZONAS DE CLIQUE (TRASEIRA - Direita da imagem) === */}
+              {/* Costas */}
               <div 
-                className={`absolute top-[82%] left-[24%] w-10 h-24 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'calves' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('calves')}
-                title="Panturrilha"
+                className={`absolute top-[18%] left-[72%] w-[16%] h-[18%] rounded-xl cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'back' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('back')} title="Costas"
               />
-              {/* Right Calf */}
+
+              {/* Tríceps Esq/Dir */}
               <div 
-                className={`absolute top-[82%] right-[24%] w-10 h-24 rounded-full cursor-pointer hover:bg-primary hover:scale-105 transition-all shadow-sm border border-border/30
-                  ${activeMuscle === 'calves' ? 'bg-primary scale-105 shadow-primary/50 shadow-lg' : 'bg-muted'}`}
-                onClick={() => fetchExercises('calves')}
-                title="Panturrilha"
+                className={`absolute top-[24%] left-[67%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'triceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('triceps')} title="Tríceps"
+              />
+              <div 
+                className={`absolute top-[24%] left-[89%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'triceps' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('triceps')} title="Tríceps"
+              />
+
+              {/* Glúteos */}
+              <div 
+                className={`absolute top-[40%] left-[73%] w-[14%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'glutes' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('glutes')} title="Glúteos"
+              />
+
+              {/* Posterior de Coxa (Hamstrings) */}
+              <div 
+                className={`absolute top-[52%] left-[74%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'hamstrings' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('hamstrings')} title="Posterior de Coxa"
+              />
+              <div 
+                className={`absolute top-[52%] left-[81%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'hamstrings' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('hamstrings')} title="Posterior de Coxa"
+              />
+
+              {/* Panturrilha Traseira Esq/Dir */}
+              <div 
+                className={`absolute top-[72%] left-[73%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('calves')} title="Panturrilha"
+              />
+              <div 
+                className={`absolute top-[72%] left-[81%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
+                onClick={() => fetchExercises('calves')} title="Panturrilha"
               />
 
             </div>
@@ -363,13 +393,30 @@ export default function ExercisesPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Nome da Ficha</label>
-              <Input 
-                placeholder="Ex: Treino A - Hipertrofia Peito" 
-                value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
-              />
+            <div className="grid grid-cols-4 gap-4">
+              <div className="space-y-2 col-span-3">
+                <label className="text-sm font-medium">Nome da Ficha</label>
+                <Input 
+                  placeholder="Ex: Treino - Hipertrofia Peito" 
+                  value={planName}
+                  onChange={(e) => setPlanName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2 col-span-1">
+                <label className="text-sm font-medium">Tipo</label>
+                <select 
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  value={dayLabel}
+                  onChange={(e) => setDayLabel(e.target.value)}
+                >
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                </select>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Selecionar Aluno</label>
