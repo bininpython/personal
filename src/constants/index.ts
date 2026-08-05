@@ -5,7 +5,7 @@
 // ---- App Config ----
 
 export const APP_NAME = 'FitControl Pro';
-export const APP_SUBTITLE = 'Gestão inteligente de treinos, alunos e evolução física.';
+export const APP_SUBTITLE = 'Gestão de treinos, alunos e evolução física.';
 export const APP_VERSION = '1.0.0';
 
 // ---- Auth ----

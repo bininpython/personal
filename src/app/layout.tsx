@@ -19,8 +19,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "FitControl Pro — Gestão Inteligente de Treinos",
-  description: "Sistema profissional para personal trainers gerenciarem alunos, fichas de treino, evolução física e desempenho. Gestão inteligente de treinos, alunos e evolução física.",
+  title: "FitControl Pro — Gestão de Treinos",
+  description: "Sistema profissional para personal trainers gerenciarem alunos, fichas de treino, evolução física e desempenho.",
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
 };
 

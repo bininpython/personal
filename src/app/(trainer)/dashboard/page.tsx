@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, TrendingUp, AlertTriangle, CalendarDays, BrainCircuit,
+  Users, TrendingUp, AlertTriangle, CalendarDays,
   ChevronRight, Activity, Target,
   ArrowUpRight, ArrowDownRight, ArrowRight
 } from 'lucide-react';
@@ -91,7 +91,7 @@ export default function DashboardPage() {
         {[
           { label: 'Alunos Ativos', value: stats.activeStudents.toString(), icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10', change: '' },
           { label: 'Treinaram Hoje', value: stats.trainedToday.toString(), icon: Activity, color: 'text-blue-500', bg: 'bg-blue-500/10', change: '' },
-          { label: 'Constância Média', value: `${stats.averageConsistency}%`, icon: BrainCircuit, color: 'text-violet-500', bg: 'bg-violet-500/10', change: '' },
+          { label: 'Constância Média', value: `${stats.averageConsistency}%`, icon: TrendingUp, color: 'text-violet-500', bg: 'bg-violet-500/10', change: '' },
           { label: 'Taxa de Conclusão', value: `${stats.completionRate}%`, icon: Target, color: 'text-amber-500', bg: 'bg-amber-500/10', change: '' },
           { label: 'Risco Alto', value: stats.atRisk.toString(), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '' },
           { label: 'Agenda Hoje', value: stats.appointmentsToday.toString(), icon: CalendarDays, color: 'text-cyan-500', bg: 'bg-cyan-500/10', change: '' },

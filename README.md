@@ -40,24 +40,10 @@ Nunca exponha a chave secreta em variáveis que começam com `NEXT_PUBLIC_`.
 - Relatório detalhado com exportação pelo comando de impressão do navegador em PDF.
 
 Em um banco que já está em produção, aplique também a migração
-`supabase/migrations/20260805_zz_intelligent_features.sql`. Ela ativa a proteção das tabelas
+`supabase/migrations/20260805_zz_operational_features.sql`. Ela ativa a proteção das tabelas
 de mensagens, notificações e agenda, além de criar os índices usados pelos painéis.
 O arquivo `vercel.json` agenda a análise diária às 10h UTC. O Vercel envia automaticamente
 o `CRON_SECRET` configurado nas variáveis do projeto para autorizar essa tarefa.
-
-## Análise inteligente opcional
-
-O motor local funciona sem serviço externo e calcula constância, risco e prioridades com
-regras auditáveis. Para aprimorar somente o texto do relatório com o Gemini, adicione no
-ambiente do Vercel:
-
-```env
-GEMINI_API_KEY=sua_chave
-GEMINI_MODEL=gemini-3.5-flash-lite
-```
-
-A chave nunca deve ser adicionada ao GitHub. Apenas totais agregados e anônimos são enviados
-ao Gemini; nomes, observações, lesões e outros dados pessoais permanecem no sistema.
 
 ## Verificação
 
