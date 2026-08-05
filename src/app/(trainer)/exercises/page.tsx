@@ -161,7 +161,7 @@ export default function ExercisesPage() {
           <CardContent className="p-4 relative flex justify-center">
             <div className="relative w-full max-w-[400px] aspect-[4/3] sm:aspect-auto sm:h-[500px]">
               <Image 
-                src={gender === 'male' ? '/anatomy-male.png' : '/anatomy-female.png'} 
+                src={gender === 'male' ? '/anatomy-male.jpg' : '/anatomy-female.jpg'} 
                 alt="Corpo Humano" 
                 fill
                 className="object-contain"
