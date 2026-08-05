@@ -558,7 +558,8 @@ export function getDashboardStats(trainerId: string) {
 
   // Goal Distribution
   const goalCounts = activeStudents.reduce((acc, student) => {
-    acc[student.goal] = (acc[student.goal] || 0) + 1;
+    const goal = student.goal || 'Não definido';
+    acc[goal] = (acc[goal] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
   
