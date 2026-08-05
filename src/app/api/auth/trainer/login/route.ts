@@ -38,7 +38,10 @@ export async function POST(request: Request) {
         name: 'Chris',
         trainer_id: 'chris-uuid',
       };
-      const token = await createTrainerToken(user);
+      const token = await createTrainerToken({
+        id: 'chris-uuid',
+        full_name: 'Chris'
+      });
       await setSessionCookie(token, remember_me);
 
       return NextResponse.json({
