@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import Model, { IMuscleStats } from '@phelian/react-body-highlighter';
+import { Search, Plus, X, Save, CheckCircle2, Dumbbell, User, RotateCcw } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -16,18 +15,42 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 
-// Map of categories to nice names
+// Map of categories from the demo data to the muscles in react-body-highlighter
+const MUSCLE_MAP: Record<string, string> = {
+  chest: 'chest',
+  back: 'upper-back',
+  'lower-back': 'lower-back',
+  shoulders: 'front-deltoids',
+  'back-deltoids': 'back-deltoids',
+  biceps: 'biceps',
+  triceps: 'triceps',
+  abs: 'abs',
+  quadriceps: 'quadriceps',
+  hamstrings: 'hamstring',
+  calves: 'calves',
+  glutes: 'gluteal'
+};
+
+// Reverse map for translations
 const MUSCLE_NAMES: Record<string, string> = {
   chest: 'Peito',
-  back: 'Costas',
-  shoulders: 'Ombros',
+  'upper-back': 'Costas Superior',
+  'lower-back': 'Lombar',
+  'front-deltoids': 'Ombros (Frente)',
+  'back-deltoids': 'Ombros (Trás)',
   biceps: 'Bíceps',
   triceps: 'Tríceps',
   abs: 'Abdômen',
+  obliques: 'Oblíquos',
   quadriceps: 'Quadríceps',
-  hamstrings: 'Posterior',
+  hamstring: 'Posterior de Coxa',
   calves: 'Panturrilha',
-  glutes: 'Glúteos'
+  gluteal: 'Glúteos',
+  trapezius: 'Trapézio',
+  forearm: 'Antebraço',
+  adductor: 'Adutores',
+  abductors: 'Abdutores',
+  neck: 'Pescoço'
 };
 
 export default function ExercisesPage() {
@@ -37,6 +60,7 @@ export default function ExercisesPage() {
   const [cart, setCart] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [viewType, setViewType] = useState<'anterior' | 'posterior'>('anterior');
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,12 +69,21 @@ export default function ExercisesPage() {
   const [dayLabel, setDayLabel] = useState('A');
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch exercises when muscle is clicked
-  const fetchExercises = async (muscle: string) => {
+  // When a muscle is clicked in the SVG Model
+  const handleMuscleClick = useCallback(async (stats: IMuscleStats) => {
+    const muscle = stats.muscle;
     setActiveMuscle(muscle);
     setLoading(true);
+
+    // Mapear o nome do músculo SVG para a categoria de exercícios da nossa API
+    let category = muscle;
+    if (muscle === 'front-deltoids' || muscle === 'back-deltoids') category = 'shoulders';
+    if (muscle === 'upper-back' || muscle === 'lower-back' || muscle === 'trapezius') category = 'back';
+    if (muscle === 'gluteal') category = 'glutes';
+    if (muscle === 'hamstring') category = 'hamstrings';
+
     try {
-      const res = await fetch(`/api/exercises?category=${muscle}`);
+      const res = await fetch(`/api/exercises?category=${category}`);
       const data = await res.json();
       if (data.exercises) setExercises(data.exercises);
     } catch (err) {
@@ -58,9 +91,9 @@ export default function ExercisesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Fetch students for the dropdown/modal
+  // Fetch students for the dropdown
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -120,6 +153,9 @@ export default function ExercisesPage() {
     }
   };
 
+  // Build data prop to highlight the active muscle
+  const modelData = activeMuscle ? [{ name: 'Selected', muscles: [activeMuscle as any] }] : [];
+
   return (
     <div className="space-y-6 animate-fade-in pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -137,11 +173,11 @@ export default function ExercisesPage() {
 
       <div className="grid lg:grid-cols-12 gap-6">
         
-        {/* DIAGRAMA DO CORPO HUMANO (Left Column) */}
+        {/* DIAGRAMA DO CORPO HUMANO SVG (Left Column) */}
         <Card className="lg:col-span-4 border-border/50 bg-card/50 overflow-hidden">
           <CardHeader className="pb-3 text-center border-b border-border/30">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold">Anatomia</CardTitle>
+              <CardTitle className="text-base font-semibold">Anatomia 3D</CardTitle>
               <div className="flex bg-muted rounded-md p-0.5">
                 <button 
                   onClick={() => setGender('male')}
@@ -157,115 +193,29 @@ export default function ExercisesPage() {
                 </button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="p-4 relative flex justify-center">
-            <div className="relative w-full max-w-[400px] aspect-[4/3] sm:aspect-auto sm:h-[500px]">
-              <Image 
-                src={gender === 'male' ? '/anatomy-male.jpg' : '/anatomy-female.jpg'} 
-                alt="Corpo Humano" 
-                fill
-                className="object-contain"
-                priority
-              />
-              
-              {/* === ZONAS DE CLIQUE (FRONTAL - Esquerda da imagem) === */}
-              {/* Ombro Frontal Esq/Dir */}
-              <div 
-                className={`absolute top-[16%] left-[23%] w-[7%] h-[8%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors z-10 ${activeMuscle === 'shoulders' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('shoulders')} title="Ombros"
-              />
-              <div 
-                className={`absolute top-[16%] left-[37%] w-[7%] h-[8%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors z-10 ${activeMuscle === 'shoulders' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('shoulders')} title="Ombros"
-              />
-              
-              {/* Peito */}
-              <div 
-                className={`absolute top-[19%] left-[29%] w-[12%] h-[9%] rounded-xl cursor-pointer hover:bg-primary/40 transition-colors z-20 ${activeMuscle === 'chest' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('chest')} title="Peito"
-              />
-              
-              {/* Abdômen */}
-              <div 
-                className={`absolute top-[28%] left-[30%] w-[10%] h-[12%] rounded-lg cursor-pointer hover:bg-primary/40 transition-colors z-20 ${activeMuscle === 'abs' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('abs')} title="Abdômen"
-              />
-              
-              {/* Braço Frontal Esq/Dir (Bíceps) */}
-              <div 
-                className={`absolute top-[25%] left-[19%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'biceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('biceps')} title="Bíceps"
-              />
-              <div 
-                className={`absolute top-[25%] left-[43%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'biceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('biceps')} title="Bíceps"
-              />
-
-              {/* Quadríceps Esq/Dir */}
-              <div 
-                className={`absolute top-[48%] left-[26%] w-[7%] h-[18%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'quadriceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('quadriceps')} title="Quadríceps"
-              />
-              <div 
-                className={`absolute top-[48%] left-[36%] w-[7%] h-[18%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'quadriceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('quadriceps')} title="Quadríceps"
-              />
-
-              {/* Panturrilha Frontal Esq/Dir */}
-              <div 
-                className={`absolute top-[72%] left-[27%] w-[5%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('calves')} title="Panturrilha"
-              />
-              <div 
-                className={`absolute top-[72%] left-[37%] w-[5%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('calves')} title="Panturrilha"
-              />
-
-
-              {/* === ZONAS DE CLIQUE (TRASEIRA - Direita da imagem) === */}
-              {/* Costas */}
-              <div 
-                className={`absolute top-[18%] left-[72%] w-[16%] h-[18%] rounded-xl cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'back' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('back')} title="Costas"
-              />
-
-              {/* Tríceps Esq/Dir */}
-              <div 
-                className={`absolute top-[24%] left-[67%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'triceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('triceps')} title="Tríceps"
-              />
-              <div 
-                className={`absolute top-[24%] left-[89%] w-[5%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'triceps' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('triceps')} title="Tríceps"
-              />
-
-              {/* Glúteos */}
-              <div 
-                className={`absolute top-[40%] left-[73%] w-[14%] h-[10%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'glutes' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('glutes')} title="Glúteos"
-              />
-
-              {/* Posterior de Coxa (Hamstrings) */}
-              <div 
-                className={`absolute top-[52%] left-[74%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'hamstrings' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('hamstrings')} title="Posterior de Coxa"
-              />
-              <div 
-                className={`absolute top-[52%] left-[81%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'hamstrings' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('hamstrings')} title="Posterior de Coxa"
-              />
-
-              {/* Panturrilha Traseira Esq/Dir */}
-              <div 
-                className={`absolute top-[72%] left-[73%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('calves')} title="Panturrilha"
-              />
-              <div 
-                className={`absolute top-[72%] left-[81%] w-[6%] h-[15%] rounded-full cursor-pointer hover:bg-primary/40 transition-colors ${activeMuscle === 'calves' ? 'bg-primary/40' : ''}`}
-                onClick={() => fetchExercises('calves')} title="Panturrilha"
-              />
-
+            <div className="flex justify-center mt-3">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setViewType(viewType === 'anterior' ? 'posterior' : 'anterior')}
+                className="text-xs h-7"
+              >
+                <RotateCcw className="w-3 h-3 mr-2" />
+                Girar ({viewType === 'anterior' ? 'Frente' : 'Costas'})
+              </Button>
             </div>
+          </CardHeader>
+          <CardContent className="p-4 flex flex-col items-center justify-center min-h-[400px]">
+            <Model
+              data={modelData}
+              type={viewType}
+              bodyType={gender}
+              style={{ width: '100%', maxWidth: '280px' }}
+              svgStyle={{ height: 'auto' }}
+              bodyColor="#e2e8f0" // Slate 200
+              highlightedColors={['#3b82f6']} // Blue 500
+              onClick={handleMuscleClick}
+            />
           </CardContent>
         </Card>
 
@@ -283,7 +233,7 @@ export default function ExercisesPage() {
                 <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-3">
                   <User className="w-6 h-6 text-muted-foreground/50" />
                 </div>
-                Clique em uma região do diagrama ao lado para ver os exercícios correspondentes.
+                Clique em uma região do diagrama SVG ao lado para ver os exercícios correspondentes.
               </div>
             ) : loading ? (
               <div className="p-8 text-center text-muted-foreground text-sm">Carregando...</div>
