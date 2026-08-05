@@ -16,7 +16,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category');
 
     // --- Supabase Path ---
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ozhcruzkrfldqylitgbr.supabase.co';
     if (supabaseUrl) {
       const supabase = await createClient();
       let query = supabase.from('exercises').select('*');
