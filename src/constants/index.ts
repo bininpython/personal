@@ -185,7 +185,7 @@ export const ACHIEVEMENT_DEFINITIONS = [
 
 // ---- Trainer Code Prefix ----
 
-export const TRAINER_CODE_PREFIX = 'PT-';
+export const TRAINER_CODE_PREFIX = '#PRO-';
 export const STUDENT_CODE_PREFIX = 'AL-';
 
 // ---- RPE Scale ----

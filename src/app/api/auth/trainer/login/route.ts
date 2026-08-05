@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     
     // --- BYPASS FOR CHRIS USER (Due to Supabase Email Rate Limit) ---
-    if (trainer_code.toUpperCase() === 'PT-CHRIS' && password === 'senha123') {
+    if (trainer_code.toUpperCase() === '#001-CHRIS' && password === 'senha123') {
       const user = {
         id: 'chris-uuid',
         role: 'trainer' as const,

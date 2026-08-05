@@ -35,10 +35,10 @@ export function generateAccessCode(prefix: string = 'AL-'): string {
 
 /**
  * Generate a trainer code
- * Format: PT-XXXXXX (6 alphanumeric characters)
+ * Format: #PRO-XXXXXX (6 alphanumeric characters)
  */
 export function generateTrainerCode(): string {
-  return generateAccessCode('PT-');
+  return generateAccessCode('#PRO-');
 }
 
 /**

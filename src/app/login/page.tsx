@@ -84,7 +84,7 @@ export default function LoginPage() {
           <p className="text-sm text-muted-foreground mb-1">Demonstração</p>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs text-muted-foreground">
             <span>
-              Personal: <code className="bg-muted px-1.5 py-0.5 rounded font-mono">PT-CHRIS</code> / <code className="bg-muted px-1.5 py-0.5 rounded font-mono">senha123</code>
+              Personal: <code className="bg-muted px-1.5 py-0.5 rounded font-mono">#001-CHRIS</code> / <code className="bg-muted px-1.5 py-0.5 rounded font-mono">senha123</code>
             </span>
             <span>
               Aluno: <code className="bg-muted px-1.5 py-0.5 rounded font-mono">João Pedro Silva</code> / <code className="bg-muted px-1.5 py-0.5 rounded font-mono">JP8X41</code>

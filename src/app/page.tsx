@@ -260,7 +260,7 @@ export default function LandingPage() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
-              Demo: Código <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">PT-ABNER</code> — Senha <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">Treino@2026Forte</code>
+              Demo: Código <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">#PRO-ABNER</code> — Senha <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">Treino@2026Forte</code>
             </p>
           </div>
         </div>

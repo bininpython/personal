@@ -12,7 +12,7 @@ import type {
 import { hashPassword, normalizeName, getCodeHint } from '@/lib/auth/hash';
 
 // ---- Demo trainer password: Treino@2026Forte ----
-// ---- Demo trainer code: PT-ABNER ----
+// ---- Demo trainer code: #PRO-ABNER ----
 
 let demoInitialized = false;
 
@@ -60,7 +60,7 @@ export async function initDemoData() {
   trainers.set(trainerId, {
     id: trainerId,
     full_name: 'Abner Lucas',
-    trainer_code: 'PT-ABNER',
+    trainer_code: '#PRO-ABNER',
     professional_name: 'Abner Lucas Personal',
     password_hash: trainerPasswordHash,
     cref: '012345-G/SP',

@@ -101,7 +101,7 @@ export default function RegisterPage() {
                 <Label htmlFor="trainer_code">Código Exclusivo (Sua "Agência")</Label>
                 <Input
                   id="trainer_code"
-                  placeholder="Ex: PT-ABNER"
+                  placeholder="Ex: #PRO-ABNER"
                   autoComplete="username"
                   className="h-11 uppercase"
                   {...register('trainer_code', {
