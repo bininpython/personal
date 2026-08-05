@@ -210,16 +210,18 @@ export default function ExercisesPage() {
             </div>
           </CardHeader>
           <CardContent className="p-4 flex flex-col items-center justify-center min-h-[400px]">
-            <Model
-              data={modelData}
-              type={viewType}
-              bodyType={gender}
-              style={{ width: '100%', maxWidth: '280px' }}
-              svgStyle={{ height: 'auto' }}
-              bodyColor="#e2e8f0" // Slate 200
-              highlightedColors={['#3b82f6']} // Blue 500
-              onClick={handleMuscleClick}
-            />
+            <div className="anatomy-wrapper relative drop-shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+              <Model
+                data={modelData}
+                type={viewType}
+                bodyType={gender}
+                style={{ width: '100%', maxWidth: '280px' }}
+                svgStyle={{ height: 'auto' }}
+                bodyColor="#cbd5e1" // Slate 300 to give more depth
+                highlightedColors={['#3b82f6']} // Blue 500
+                onClick={handleMuscleClick}
+              />
+            </div>
           </CardContent>
         </Card>
 
