@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Dumbbell, Shield, User, ChevronRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { APP_NAME } from '@/constants';
 

@@ -96,15 +96,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 {(!collapsed || mobile) && (
                   <>
                     <span className="truncate">{item.label}</span>
-                    {item.badge && (
-                      <Badge variant="destructive" className="ml-auto text-[10px] px-1.5 h-5 min-w-5 flex items-center justify-center">
-                        {item.badge}
-                      </Badge>
-                    )}
                   </>
-                )}
-                {collapsed && !mobile && item.badge && (
-                  <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full" />
                 )}
               </Link>
             );
