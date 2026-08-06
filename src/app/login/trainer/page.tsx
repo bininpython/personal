@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dumbbell, Shield, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Dumbbell, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { PublicBackLink } from '@/components/navigation/public-back-link';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
@@ -62,13 +62,7 @@ export default function TrainerLoginPage() {
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 dark:from-emerald-600/15 dark:via-background dark:to-blue-600/10 pointer-events-none" />
 
-      {/* Back */}
-      <div className="relative z-10 p-4">
-        <Link href="/login" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground">
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Voltar
-        </Link>
-      </div>
+      <PublicBackLink href="/login" />
 
       {/* Form */}
       <div className="relative z-10 flex-1 flex items-center justify-center px-4 -mt-10">

@@ -14,6 +14,7 @@
     "test:avatars": "node --experimental-strip-types --test --test-isolation=none tests/avatars.test.mjs",
     "test:avatar-persistence": "node --experimental-strip-types --test --test-isolation=none tests/avatar-persistence.test.mjs",
     "test:week-cycle": "node --experimental-strip-types --test --test-isolation=none tests/week-cycle.test.mjs",
+    "test:navigation": "node --test --test-isolation=none tests/navigation.test.mjs",
     "test:routes": "node --test --test-isolation=none tests/routes.test.mjs"
   },
   "dependencies": {

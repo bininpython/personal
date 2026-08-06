@@ -1,10 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Shield, User, ChevronRight, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Dumbbell, Shield, User, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PublicBackLink } from '@/components/navigation/public-back-link';
 import { APP_NAME } from '@/constants';
 
 export default function LoginPage() {
@@ -16,13 +16,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 dark:from-emerald-600/15 dark:via-background dark:to-blue-600/10 pointer-events-none" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/3 translate-x-1/4 pointer-events-none" />
 
-      {/* Back button */}
-      <div className="relative z-10 p-4">
-        <Link href="/" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 px-3 text-muted-foreground">
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Voltar
-        </Link>
-      </div>
+      <PublicBackLink href="/" />
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 -mt-10">

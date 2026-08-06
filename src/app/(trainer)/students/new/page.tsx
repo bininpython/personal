@@ -254,7 +254,7 @@ export default function NewStudentPage() {
           </div>
 
           <div className="flex justify-end gap-4 border-t pt-4">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
+            <Button type="button" variant="outline" onClick={() => router.push('/students')}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading} className="min-w-[170px]">

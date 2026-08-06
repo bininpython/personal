@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  ArrowLeft,
   Check,
   CheckCircle2,
   Copy,
@@ -23,6 +22,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { trainerRegisterSchema, type TrainerRegisterInput } from '@/lib/validators';
 import { toast } from 'sonner';
 import { TRAINER_ACCESS_CODE_LENGTH } from '@/constants';
+import { PublicBackLink } from '@/components/navigation/public-back-link';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -90,12 +90,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex flex-col bg-background">
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 dark:from-emerald-600/15 dark:via-background dark:to-blue-600/10 pointer-events-none" />
 
-      <div className="relative z-10 p-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push('/login')} className="text-muted-foreground">
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Voltar
-        </Button>
-      </div>
+      <PublicBackLink href="/login" />
 
       <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-8">
         <Card className="w-full max-w-lg border-border/50 shadow-xl animate-slide-up">
