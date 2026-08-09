@@ -51,7 +51,7 @@ export default function RecoverPage() {
         <CardContent>
           {newCodes ? (
             <div className="space-y-4">
-              <div className="rounded-lg border p-4"><p className="text-xs text-muted-foreground">NOVO CÓDIGO SECRETO</p><code className="mt-2 block break-all text-lg font-bold">{newCodes.access}</code></div>
+              <div className="rounded-lg border p-4"><p className="text-xs text-muted-foreground">NOVO CÓDIGO DE ACESSO (8 CARACTERES)</p><code className="mt-2 block break-all text-lg font-bold">{newCodes.access}</code></div>
               <div className="rounded-lg border p-4"><p className="text-xs text-muted-foreground">NOVA CHAVE DE RECUPERAÇÃO</p><code className="mt-2 block break-all text-lg font-bold">{newCodes.recovery}</code></div>
               <p className="text-sm text-amber-700 dark:text-amber-300">Salve os dois agora. Eles não serão exibidos novamente.</p>
               <Button className="w-full" onClick={() => { router.replace('/dashboard'); router.refresh(); }}>Ir para o painel</Button>

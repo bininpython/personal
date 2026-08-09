@@ -34,6 +34,14 @@ test('credenciais não têm fallback secreto fixo', () => {
   assert.match(jwt, /algorithms: \['HS256'\]/);
 });
 
+test('falha de migração recebe resposta operacional sem expor detalhes internos', () => {
+  const register = read('src/app/api/auth/trainer/register/route.ts');
+  const errors = read('src/lib/supabase/errors.ts');
+  assert.match(register, /DATABASE_UPDATE_REQUIRED/);
+  assert.match(errors, /PGRST202/);
+  assert.match(errors, /Atualização segura do sistema pendente/);
+});
+
 test('cabeçalhos impedem framing e sniffing', () => {
   const config = read('next.config.ts');
   assert.match(config, /frame-ancestors 'none'/);

@@ -56,13 +56,13 @@ export function AccountControls({ name, trainer = false }: { name: string; train
           <Download className="mr-2 size-4" /> Exportar meus dados
         </Button>
         {trainer && <Button variant="outline" onClick={() => void rotateCodes()} disabled={rotating}>
-          {rotating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Trocar códigos secretos
+          {rotating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Trocar código de acesso
         </Button>}
       </div>
       {codes && (
         <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
           <p className="font-medium">Salve agora. Estes códigos aparecem uma única vez.</p>
-          <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO DE ENTRADA</span><code className="block break-all font-bold">{codes.access}</code></div>
+          <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO DE ACESSO (8 CARACTERES)</span><code className="block break-all font-bold">{codes.access}</code></div>
           <div><span className="text-xs text-muted-foreground">NOVA CHAVE DE RECUPERAÇÃO</span><code className="block break-all font-bold">{codes.recovery}</code></div>
         </div>
       )}

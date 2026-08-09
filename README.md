@@ -5,9 +5,9 @@ Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanh
 ## Acesso
 
 - A autenticação não coleta e-mail nem telefone e não cria contas sintéticas.
-- O personal entra com nome e código secreto. Um código público separado identifica sua carteira para os alunos.
+- O personal entra com nome e um código diário de 8 caracteres (`XXXX-XXXX`). Um código público separado identifica sua carteira para os alunos.
 - Cada aluno entra com nome, código público do personal e código individual.
-- Códigos secretos são aleatórios, armazenados apenas como hash bcrypt e exibidos uma única vez.
+- Códigos de acesso são aleatórios, têm 40 bits de entropia, são armazenados apenas como hash bcrypt e exibidos uma única vez. Rate limit e bloqueio protegem contra tentativas automatizadas.
 - O personal recebe uma chave de recuperação de uso controlado; o código do aluno pode ser redefinido pelo personal.
 - Sessões são assinadas, registradas no banco, revogáveis e protegidas por cookie HttpOnly.
 - Cada personal pode manter até 10 alunos **ativos**; alunos arquivados não consomem o limite.

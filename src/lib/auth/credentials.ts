@@ -1,5 +1,11 @@
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
+// Eight characters over a 32-character alphabet provide 40 bits of entropy.
+// Combined with per-account lockout and per-origin rate limiting, this keeps
+// the everyday code practical to type without making online guessing viable.
+export const ACCESS_CODE_LENGTH = 8;
+export const RECOVERY_CODE_LENGTH = 24;
+
 export function normalizeAuthCode(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
@@ -26,7 +32,7 @@ function groupCode(value: string, groupSize = 4) {
 }
 
 export function generateTrainerPrivateCode() {
-  return groupCode(randomCharacters(16));
+  return groupCode(randomCharacters(ACCESS_CODE_LENGTH));
 }
 
 export function generateTrainerPublicCode() {
@@ -34,16 +40,16 @@ export function generateTrainerPublicCode() {
 }
 
 export function generateStudentPrivateCode() {
-  return groupCode(randomCharacters(12));
+  return groupCode(randomCharacters(ACCESS_CODE_LENGTH));
 }
 
 export function generateRecoveryCode() {
-  return groupCode(randomCharacters(24));
+  return groupCode(randomCharacters(RECOVERY_CODE_LENGTH));
 }
 
 export function getCodeHint(code: string) {
   const normalized = normalizeAuthCode(code).toUpperCase();
-  return normalized.length <= 4
+  return normalized.length <= 2
     ? '•'.repeat(normalized.length)
-    : `${'•'.repeat(normalized.length - 4)}${normalized.slice(-4)}`;
+    : `${'•'.repeat(normalized.length - 2)}${normalized.slice(-2)}`;
 }

@@ -10,6 +10,7 @@ import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession, revokeActorSessions } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { DATABASE_UPDATE_REQUIRED, isCommercialSchemaMissing } from '@/lib/supabase/errors';
 
 function json(body: Record<string, unknown>, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
@@ -94,6 +95,10 @@ export async function POST(request: Request) {
       },
     }, 200);
   } catch (error) {
+    if (isCommercialSchemaMissing(error)) {
+      console.error('[Trainer Recovery] Database migration required:', error);
+      return json({ error: DATABASE_UPDATE_REQUIRED, code: 'DATABASE_UPDATE_REQUIRED' }, 503);
+    }
     console.error('[Trainer Recovery] Unexpected error:', error);
     return json({ error: 'Não foi possível recuperar o acesso.' }, 500);
   }

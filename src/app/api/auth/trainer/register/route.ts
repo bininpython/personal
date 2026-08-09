@@ -12,6 +12,7 @@ import { consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import { DATABASE_UPDATE_REQUIRED, isCommercialSchemaMissing } from '@/lib/supabase/errors';
 
 function json(body: Record<string, unknown>, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
@@ -108,6 +109,10 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O serviço de cadastro ainda não está configurado.' }, 503);
+    }
+    if (isCommercialSchemaMissing(error)) {
+      console.error('[Trainer Register] Database migration required:', error);
+      return json({ error: DATABASE_UPDATE_REQUIRED, code: 'DATABASE_UPDATE_REQUIRED' }, 503);
     }
     console.error('[Trainer Register] Unexpected error:', error);
     return json({ error: 'Erro interno do servidor.' }, 500);

@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-test('login do personal usa somente nome e código secreto', async ({ page }) => {
+test('login do personal usa somente nome e código de acesso', async ({ page }) => {
   await page.goto('/login/trainer');
   await expect(page.getByRole('heading', { name: 'Acesso do Personal' })).toBeVisible();
   await expect(page.getByLabel('Seu nome profissional')).toBeVisible();
-  await expect(page.getByLabel('Código secreto')).toBeVisible();
+  await expect(page.getByLabel('Código de acesso')).toBeVisible();
+  await expect(page.getByPlaceholder('XXXX-XXXX')).toBeVisible();
   await expect(page.locator('input[type="email"], input[type="tel"]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Recuperar acesso' })).toHaveAttribute('href', '/recover');
 });
