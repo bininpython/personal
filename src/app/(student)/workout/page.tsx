@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 
 interface StudentExercise {
   id: string;
@@ -80,6 +81,19 @@ interface RestTimerState {
   endsAt: number;
 }
 
+interface SetPerformance {
+  repetitions: string;
+  load: string;
+  rpe: string;
+}
+
+interface SavedWorkoutProgress {
+  completedSets: string[];
+  setDetails: Record<string, SetPerformance>;
+  startedAtByDay: Record<string, number>;
+  clientSessionByDay: Record<string, string>;
+}
+
 interface WorkoutResponse {
   plan?: WorkoutPlan | null;
   error?: string;
@@ -132,6 +146,7 @@ export default function StudentWorkoutPage() {
   const [error, setError] = useState('');
   const [selectedDayId, setSelectedDayId] = useState('');
   const [completedSets, setCompletedSets] = useState<Set<string>>(new Set());
+  const [setDetails, setSetDetails] = useState<Record<string, SetPerformance>>({});
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<Date | null>(null);
   const [completingWorkout, setCompletingWorkout] = useState(false);
@@ -140,7 +155,8 @@ export default function StudentWorkoutPage() {
   const [feedback, setFeedback] = useState('');
   const [restTimer, setRestTimer] = useState<RestTimerState | null>(null);
   const currentPlanCycleId = useRef('');
-  const workoutStartedAt = useRef<number | null>(null);
+  const workoutStartedAtByDay = useRef<Record<string, number>>({});
+  const clientSessionByDay = useRef<Record<string, string>>({});
 
   const loadPlan = useCallback(async (silent = false) => {
     if (silent) setRefreshing(true);
@@ -169,17 +185,27 @@ export default function StudentWorkoutPage() {
         if (currentPlanCycleId.current !== nextCycleId) {
           currentPlanCycleId.current = nextCycleId;
           const requestedDayId = new URLSearchParams(window.location.search).get('day');
-          setSelectedDayId(
+          const initialDayId =
             requestedDayId && nextPlan.days.some((day) => day.id === requestedDayId)
               ? requestedDayId
-              : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? ''),
-          );
+              : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '');
+          setSelectedDayId(initialDayId);
           try {
             const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id, nextPlan.week.startDate, nextPlan.week.currentDate));
-            const savedSets = saved ? JSON.parse(saved) as string[] : [];
+            const decoded = saved ? JSON.parse(saved) as SavedWorkoutProgress | string[] : [];
+            const savedSets = Array.isArray(decoded) ? decoded : decoded.completedSets;
+            if (!Array.isArray(decoded)) {
+              setSetDetails(decoded.setDetails || {});
+              workoutStartedAtByDay.current = decoded.startedAtByDay || {};
+              clientSessionByDay.current = decoded.clientSessionByDay || {};
+            }
             setCompletedSets(new Set([...savedSets, ...serverCompletedSets]));
           } catch {
             setCompletedSets(new Set(serverCompletedSets));
+          }
+          if (initialDayId && !workoutStartedAtByDay.current[initialDayId]) {
+            workoutStartedAtByDay.current[initialDayId] = currentTimestamp();
+            clientSessionByDay.current[initialDayId] = crypto.randomUUID();
           }
         } else {
           setCompletedSets((current) => new Set([...current, ...serverCompletedSets]));
@@ -189,13 +215,11 @@ export default function StudentWorkoutPage() {
               : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '')
           ));
         }
-        workoutStartedAt.current = currentTimestamp();
-        setRating(0);
-        setFeedback('');
       } else if (!nextPlan) {
         currentPlanCycleId.current = '';
         setSelectedDayId('');
         setCompletedSets(new Set());
+        setSetDetails({});
         setRecordedDays(new Set());
       }
       setPlan(nextPlan);
@@ -230,9 +254,14 @@ export default function StudentWorkoutPage() {
     if (!plan) return;
     window.localStorage.setItem(
       progressStorageKey(plan.id, plan.week.startDate, plan.week.currentDate),
-      JSON.stringify([...completedSets]),
+      JSON.stringify({
+        completedSets: [...completedSets],
+        setDetails,
+        startedAtByDay: workoutStartedAtByDay.current,
+        clientSessionByDay: clientSessionByDay.current,
+      } satisfies SavedWorkoutProgress),
     );
-  }, [completedSets, plan]);
+  }, [completedSets, setDetails, plan]);
 
   const restTimerActive = restTimer !== null;
   useEffect(() => {
@@ -274,7 +303,10 @@ export default function StudentWorkoutPage() {
 
   function selectWorkoutDay(dayId: string) {
     setSelectedDayId(dayId);
-    workoutStartedAt.current = currentTimestamp();
+    if (!workoutStartedAtByDay.current[dayId]) {
+      workoutStartedAtByDay.current[dayId] = currentTimestamp();
+      clientSessionByDay.current[dayId] = crypto.randomUUID();
+    }
     setRating(0);
     setFeedback('');
   }
@@ -283,6 +315,17 @@ export default function StudentWorkoutPage() {
     if (activeDayCompleted) return;
     const key = `${exerciseId}:${setIndex}`;
     const wasChecked = completedSets.has(key);
+    if (!wasChecked) {
+      const exercise = activeDay?.exercises.find((item) => item.id === exerciseId);
+      setSetDetails((current) => ({
+        ...current,
+        [key]: current[key] || {
+          repetitions: exercise && /^\d+$/.test(exercise.reps) ? exercise.reps : '',
+          load: '',
+          rpe: '',
+        },
+      }));
+    }
     setCompletedSets((current) => {
       const next = new Set(current);
       if (next.has(key)) next.delete(key);
@@ -305,11 +348,29 @@ export default function StudentWorkoutPage() {
     }
   }
 
+  function updateSetDetail(key: string, field: keyof SetPerformance, value: string) {
+    const sanitized = field === 'load'
+      ? value.replace(',', '.').replace(/[^0-9.]/g, '')
+      : value.replace(/\D/g, '');
+    setSetDetails((current) => ({
+      ...current,
+      [key]: {
+        repetitions: current[key]?.repetitions || '',
+        load: current[key]?.load || '',
+        rpe: current[key]?.rpe || '',
+        [field]: sanitized,
+      },
+    }));
+  }
+
   function resetDay() {
     if (!activeDay || activeDayCompleted) return;
     const exerciseIds = new Set(activeDay.exercises.map((exercise) => exercise.id));
     setCompletedSets((current) => new Set(
       [...current].filter((key) => !exerciseIds.has(key.split(':')[0])),
+    ));
+    setSetDetails((current) => Object.fromEntries(
+      Object.entries(current).filter(([key]) => !exerciseIds.has(key.split(':')[0])),
     ));
     if (restTimer && exerciseIds.has(restTimer.exerciseId)) setRestTimer(null);
   }
@@ -328,14 +389,31 @@ export default function StudentWorkoutPage() {
     setCompletingWorkout(true);
     try {
       const completedAt = currentTimestamp();
-      const startedAt = workoutStartedAt.current ?? completedAt;
+      const startedAt = workoutStartedAtByDay.current[activeDay.id] ?? completedAt;
+      const clientSessionId = clientSessionByDay.current[activeDay.id] || crypto.randomUUID();
+      clientSessionByDay.current[activeDay.id] = clientSessionId;
       const response = await fetch('/api/workout-sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           workoutDayId: activeDay.id,
-          completionPercentage: progress,
-          durationSeconds: Math.max(0, Math.round((completedAt - startedAt) / 1000)),
+          clientSessionId,
+          startedAt: new Date(startedAt).toISOString(),
+          durationSeconds: Math.min(21_600, Math.max(0, Math.round((completedAt - startedAt) / 1000))),
+          exercises: activeDay.exercises.map((exercise) => ({
+            workoutExerciseId: exercise.id,
+            sets: Array.from({ length: exercise.sets }, (_, setIndex) => {
+              const key = `${exercise.id}:${setIndex}`;
+              const details = setDetails[key];
+              return {
+                setNumber: setIndex + 1,
+                completed: completedSets.has(key),
+                ...(details?.repetitions !== '' ? { performedRepetitions: Math.floor(Number(details.repetitions)) } : {}),
+                ...(details?.load !== '' ? { performedLoad: Number(details.load) } : {}),
+                ...(details?.rpe !== '' ? { rpe: Math.min(10, Math.max(1, Math.floor(Number(details.rpe)))) } : {}),
+              };
+            }),
+          })),
           ...(rating > 0 ? { rating } : {}),
           feedback,
         }),
@@ -347,6 +425,8 @@ export default function StudentWorkoutPage() {
       };
       if (!response.ok) throw new Error(data.error || 'Não foi possível concluir o treino.');
       setRecordedDays((current) => new Set(current).add(activeDay.id));
+      delete workoutStartedAtByDay.current[activeDay.id];
+      delete clientSessionByDay.current[activeDay.id];
       setRestTimer(null);
       if (data.alreadyCompletedToday) toast.info('Este treino já foi registrado hoje.');
       else if (data.alreadyCompletedThisWeek) toast.info('Este treino já atingiu a meta desta semana.');
@@ -561,26 +641,32 @@ export default function StudentWorkoutPage() {
                           ? 'Séries registradas no histórico desta semana'
                           : `Marque ao terminar cada série${exercise.restTime > 0 ? ` — descanso automático de ${exercise.restTime}s` : ''}`}
                       </p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
                         {Array.from({ length: exercise.sets }).map((_, setIndex) => {
-                          const checked = completedSets.has(`${exercise.id}:${setIndex}`);
+                          const key = `${exercise.id}:${setIndex}`;
+                          const checked = completedSets.has(key);
+                          const details = setDetails[key] || { repetitions: '', load: '', rpe: '' };
                           return (
-                            <button
-                              type="button"
-                              key={setIndex}
-                              disabled={activeDayCompleted}
-                              onClick={() => toggleSet(exercise.id, setIndex)}
-                              className={`flex h-10 min-w-20 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-medium transition-colors ${
-                                checked
-                                  ? 'border-emerald-500 bg-emerald-500 text-white'
-                                  : setIndex === nextSetIndex
-                                    ? 'border-blue-500 bg-blue-500/[0.08] text-blue-700 dark:text-blue-300'
-                                  : 'border-border bg-background hover:border-blue-400'
-                              }`}
-                            >
-                              {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
-                              Série {setIndex + 1} · {exercise.reps}
-                            </button>
+                            <div key={setIndex} className="grid grid-cols-[minmax(110px,1fr)_78px_78px_64px] items-end gap-2 rounded-lg border border-border/60 p-2">
+                              <button
+                                type="button"
+                                disabled={activeDayCompleted}
+                                onClick={() => toggleSet(exercise.id, setIndex)}
+                                className={`flex h-10 items-center justify-center gap-2 rounded-md border px-2 text-sm font-medium transition-colors ${checked ? 'border-emerald-500 bg-emerald-500 text-white' : setIndex === nextSetIndex ? 'border-blue-500 bg-blue-500/[0.08] text-blue-700 dark:text-blue-300' : 'border-border bg-background hover:border-blue-400'}`}
+                              >
+                                {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
+                                Série {setIndex + 1}
+                              </button>
+                              <label className="text-[10px] text-muted-foreground">Reps
+                                <Input aria-label={`Repetições da série ${setIndex + 1}`} inputMode="numeric" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder={exercise.reps} value={details.repetitions} onChange={(event) => updateSetDetail(key, 'repetitions', event.target.value)} />
+                              </label>
+                              <label className="text-[10px] text-muted-foreground">Carga kg
+                                <Input aria-label={`Carga da série ${setIndex + 1}`} inputMode="decimal" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder="0" value={details.load} onChange={(event) => updateSetDetail(key, 'load', event.target.value)} />
+                              </label>
+                              <label className="text-[10px] text-muted-foreground">RPE
+                                <Input aria-label={`RPE da série ${setIndex + 1}`} inputMode="numeric" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder="1-10" value={details.rpe} onChange={(event) => updateSetDetail(key, 'rpe', event.target.value)} />
+                              </label>
+                            </div>
                           );
                         })}
                       </div>

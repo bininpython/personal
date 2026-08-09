@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { AVATAR_COUNT } from '@/lib/profile/avatars';
+import { AccountControls } from '@/components/privacy/account-controls';
 
 interface TrainerProfile {
   name: string;
@@ -91,13 +92,16 @@ export default function TrainerSettingsPage() {
           <a href="#aparencia" className="flex items-center rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-accent">
             <Paintbrush className="mr-2 size-4" /> Aparência
           </a>
+          <a href="#privacidade" className="flex items-center rounded-lg px-4 py-2.5 text-sm text-muted-foreground hover:bg-accent">
+            <User className="mr-2 size-4" /> Segurança e privacidade
+          </a>
         </nav>
 
         <div className="space-y-6">
           <Card id="perfil" className="scroll-mt-20 border-border/60">
             <CardHeader>
               <CardTitle>Perfil profissional</CardTitle>
-              <CardDescription>Nome exibido no painel e código usado para entrar.</CardDescription>
+              <CardDescription>Nome exibido no painel e código público compartilhado com alunos.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {loading ? (
@@ -120,14 +124,14 @@ export default function TrainerSettingsPage() {
                     <Input id="trainer-name" value={name} onChange={(event) => setName(event.target.value)} maxLength={100} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="trainer-code">Código de acesso do personal</Label>
+                    <Label htmlFor="trainer-code">Código público do personal</Label>
                     <div className="flex gap-2">
                       <Input id="trainer-code" readOnly value={trainerCode} className="bg-muted font-mono tracking-[0.2em]" />
                       <Button type="button" variant="outline" size="icon" onClick={() => void copyCode()} aria-label="Copiar código">
                         {copied ? <Check className="size-4 text-emerald-500" /> : <Copy className="size-4" />}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">Este é o código gerado no cadastro. Contas novas recebem 6 números, e códigos antigos continuam válidos.</p>
+                    <p className="text-xs text-muted-foreground">Compartilhe este código com seus alunos. Ele identifica sua carteira, mas não permite entrar na sua conta.</p>
                   </div>
                   <Button onClick={() => void saveProfile()} disabled={saving || name.trim().length < 2}>
                     {saving && <Loader2 className="mr-2 size-4 animate-spin" />} Salvar alterações
@@ -146,6 +150,14 @@ export default function TrainerSettingsPage() {
               <Button variant={resolvedTheme === 'light' ? 'default' : 'outline'} onClick={() => setTheme('light')}>Claro</Button>
               <Button variant={resolvedTheme === 'dark' ? 'default' : 'outline'} onClick={() => setTheme('dark')}>Escuro</Button>
             </CardContent>
+          </Card>
+
+          <Card id="privacidade" className="scroll-mt-20 border-border/60">
+            <CardHeader>
+              <CardTitle>Segurança e privacidade</CardTitle>
+              <CardDescription>Troque seus segredos, baixe uma cópia ou exclua seus dados.</CardDescription>
+            </CardHeader>
+            <CardContent><AccountControls name={name} trainer /></CardContent>
           </Card>
         </div>
       </div>

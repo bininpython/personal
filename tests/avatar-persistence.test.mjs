@@ -1,34 +1,23 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { mergeUserMetadata, storedAvatarUrl } from '../src/lib/profile/avatar-metadata.ts';
+import { isPrivateAvatar, parsePrivateAvatar } from '../src/lib/profile/private-avatar.ts';
 
-test('reads the avatar stored in authentication metadata', () => {
-  assert.equal(storedAvatarUrl({ avatar_url: '/avatars/71' }), '/avatars/71');
-  assert.equal(storedAvatarUrl({ avatar_url: 'https://storage.example/photo.webp' }), 'https://storage.example/photo.webp');
-  assert.equal(storedAvatarUrl({ avatar_url: 71 }), '');
-  assert.equal(storedAvatarUrl(null), '');
-});
-
-test('keeps the avatar when another profile field changes', () => {
-  const metadata = mergeUserMetadata(
-    { avatar_url: '/avatars/71', city: 'Timóteo' },
-    { name: 'Novo nome' },
-  );
-  assert.deepEqual(metadata, {
-    avatar_url: '/avatars/71',
-    city: 'Timóteo',
-    name: 'Novo nome',
+test('resolve fotos novas no bucket privado', () => {
+  assert.deepEqual(parsePrivateAvatar('private:student/id/photo.webp'), {
+    bucket: 'profile-images-private',
+    path: 'student/id/photo.webp',
   });
 });
 
-test('changes the avatar without discarding the remaining profile metadata', () => {
-  const metadata = mergeUserMetadata(
-    { name: 'Abner', city: 'Timóteo' },
-    { avatar_url: '/avatars/100' },
-  );
-  assert.deepEqual(metadata, {
-    name: 'Abner',
-    city: 'Timóteo',
-    avatar_url: '/avatars/100',
+test('mantém fotos legadas privadas sem mover o objeto', () => {
+  assert.deepEqual(parsePrivateAvatar('private-legacy:trainer/id/photo.jpg'), {
+    bucket: 'profile-images',
+    path: 'trainer/id/photo.jpg',
   });
+});
+
+test('não trata avatares embutidos ou URLs externas como fotos privadas', () => {
+  assert.equal(isPrivateAvatar('/avatars/71'), false);
+  assert.equal(parsePrivateAvatar('https://example.com/photo.webp'), null);
+  assert.equal(parsePrivateAvatar(null), null);
 });

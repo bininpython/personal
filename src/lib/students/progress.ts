@@ -2,7 +2,7 @@ import 'server-only';
 import { buildWeeklyWorkoutSeries, calculateStudentPerformance } from '@/lib/analytics/performance';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { StudentProgressData } from '@/types/student-progress';
-import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
+import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 
 type Related<T> = T | T[] | null;
 
@@ -35,8 +35,8 @@ function dateLabel(date: string) {
 
 export async function getStudentProgress(studentId: string): Promise<StudentProgressData | null> {
   const admin = createAdminClient();
-  const [studentResult, sessionResult, assessmentResult, planResult, authResult] = await Promise.all([
-    admin.from('students').select('id, trainer_id, name, goal, status, weight, height, start_date, created_at').eq('id', studentId).maybeSingle(),
+  const [studentResult, sessionResult, assessmentResult, planResult] = await Promise.all([
+    admin.from('students').select('id, trainer_id, name, goal, status, weight, height, avatar_url, start_date, created_at').eq('id', studentId).maybeSingle(),
     admin.from('workout_sessions').select(`
       id, student_id, started_at, completed_at, duration_seconds, completion_percentage,
       status, rating, feedback, workout_days (name, day_label), workout_plans (name)
@@ -48,7 +48,6 @@ export async function getStudentProgress(studentId: string): Promise<StudentProg
       right_calf, left_calf, notes, created_at
     `).eq('student_id', studentId).order('assessment_date', { ascending: true }),
     admin.from('workout_plans').select('student_id, days_per_week, status').eq('student_id', studentId).eq('status', 'active').order('created_at', { ascending: false }).limit(1).maybeSingle(),
-    admin.auth.admin.getUserById(studentId),
   ]);
 
   if (studentResult.error) throw studentResult.error;
@@ -157,7 +156,9 @@ export async function getStudentProgress(studentId: string): Promise<StudentProg
       name: student.name,
       goal: student.goal || 'Objetivo geral',
       status: student.status,
-      avatarUrl: storedAvatarUrl(authResult.data.user?.user_metadata),
+      avatarUrl: isPrivateAvatar(student.avatar_url)
+        ? `/api/profile/avatar/image?user=${encodeURIComponent(student.id)}`
+        : (student.avatar_url || ''),
       startDate: student.start_date || student.created_at,
       currentWeight: numeric(student.weight),
       height: numeric(student.height),

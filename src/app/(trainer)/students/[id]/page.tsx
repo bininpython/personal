@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, Loader2, Mail, TrendingUp, User } from 'lucide-react';
+import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, KeyRound, Loader2, Mail, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -59,6 +59,8 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [rotatingCode, setRotatingCode] = useState(false);
+  const [newAccessCode, setNewAccessCode] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,13 +133,30 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
     }
   }
 
+  async function rotateStudentCode() {
+    setRotatingCode(true);
+    try {
+      const response = await fetch(`/api/students/${params.id}/access-code`, { method: 'POST' });
+      const data = await response.json() as { access_code?: string; error?: string };
+      if (!response.ok || !data.access_code) throw new Error(data.error || 'Não foi possível gerar o código.');
+      setNewAccessCode(data.access_code);
+      toast.success('Novo código gerado. O anterior e as sessões do aluno foram invalidados.');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível gerar o código.');
+    } finally {
+      setRotatingCode(false);
+    }
+  }
+
   if (loading) return <div className="flex min-h-[400px] items-center justify-center"><Loader2 className="size-8 animate-spin text-primary" /></div>;
   if (!student) return <div className="py-12 text-center text-muted-foreground">Aluno não encontrado.</div>;
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
       <div className="flex items-center gap-4"><Button variant="ghost" size="icon" onClick={() => router.push('/students')}><ChevronLeft /></Button><div><h1 className="text-2xl font-bold tracking-tight">Perfil do Aluno</h1><p className="mt-1 text-muted-foreground">Dados, constância e acompanhamento individual.</p></div></div>
-      <Card className="border-border/60 bg-gradient-to-r from-background to-muted/20"><CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center"><div className="flex items-center gap-4"><Avatar className="size-20 border-2 border-primary/20">{student.avatar_url && <AvatarImage src={student.avatar_url} alt={`Avatar de ${student.full_name}`} />}<AvatarFallback className="bg-primary/10 text-2xl font-bold text-primary">{student.full_name.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><h2 className="text-2xl font-bold">{student.full_name}</h2><Badge className={student.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' : ''}>{student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground"><Activity className="size-3.5" /> {student.goal || 'Sem objetivo'}</p></div></div><div className="flex w-full gap-2 sm:w-auto"><Button variant="outline" className="flex-1" onClick={() => router.push(`/messages?contactId=${params.id}`)}><Mail className="mr-2 size-4" /> Mensagem</Button><Button variant="secondary" className="flex-1" onClick={openEdit}><Edit3 className="mr-2 size-4" /> Editar</Button></div></CardContent></Card>
+      <Card className="border-border/60 bg-gradient-to-r from-background to-muted/20"><CardContent className="flex flex-col items-start justify-between gap-6 p-6 sm:flex-row sm:items-center"><div className="flex items-center gap-4"><Avatar className="size-20 border-2 border-primary/20">{student.avatar_url && <AvatarImage src={student.avatar_url} alt={`Avatar de ${student.full_name}`} />}<AvatarFallback className="bg-primary/10 text-2xl font-bold text-primary">{student.full_name.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback></Avatar><div><div className="flex items-center gap-2"><h2 className="text-2xl font-bold">{student.full_name}</h2><Badge className={student.status === 'active' ? 'bg-emerald-500/10 text-emerald-600' : ''}>{student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground"><Activity className="size-3.5" /> {student.goal || 'Sem objetivo'}</p></div></div><div className="flex w-full flex-wrap gap-2 sm:w-auto"><Button variant="outline" className="flex-1" onClick={() => router.push(`/messages?contactId=${params.id}`)}><Mail className="mr-2 size-4" /> Mensagem</Button><Button variant="outline" className="flex-1" onClick={() => void rotateStudentCode()} disabled={rotatingCode}>{rotatingCode ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Novo código</Button><Button variant="secondary" className="flex-1" onClick={openEdit}><Edit3 className="mr-2 size-4" /> Editar</Button></div></CardContent></Card>
+
+      {newAccessCode && <Card className="border-amber-500/30 bg-amber-500/5"><CardContent className="p-5"><p className="font-semibold">Entregue este código ao aluno agora. Ele aparece uma única vez.</p><code className="mt-3 block break-all text-xl font-bold tracking-wider">{newAccessCode}</code><Button variant="ghost" size="sm" className="mt-2" onClick={() => setNewAccessCode('')}>Já salvei</Button></CardContent></Card>}
 
       {performance && <div className="grid grid-cols-2 gap-3 lg:grid-cols-5"><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.consistencyScore}%</p><p className="text-xs text-muted-foreground">constância</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.workouts7d}/{performance.plannedFrequency}</p><p className="text-xs text-muted-foreground">meta semanal</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.completionAverage}%</p><p className="text-xs text-muted-foreground">conclusão média</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{performance.workouts30d}</p><p className="text-xs text-muted-foreground">treinos em 30 dias</p></CardContent></Card><Card><CardContent className="p-4"><Badge variant="outline" className={performance.risk === 'high' ? 'text-red-600' : performance.risk === 'medium' ? 'text-amber-600' : 'text-emerald-600'}>{performance.risk === 'high' ? 'Risco alto' : performance.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge><p className="mt-2 text-xs text-muted-foreground">{performance.daysSinceLastWorkout === null ? 'Sem treino' : `${performance.daysSinceLastWorkout} dia(s) desde o último`}</p></CardContent></Card></div>}
 

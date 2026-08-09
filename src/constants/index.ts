@@ -17,16 +17,6 @@ export const SESSION_EXPIRY_DAYS = 7;
 export const REMEMBER_ME_EXPIRY_DAYS = 30;
 export const MAX_STUDENTS_PER_TRAINER = 10;
 
-// ---- Password Requirements ----
-
-export const PASSWORD_MIN_LENGTH = 8;
-export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-
-// ---- Access Code ----
-
-export const TRAINER_ACCESS_CODE_LENGTH = 6;
-export const STUDENT_ACCESS_CODE_LENGTH = 4;
-
 // ---- Muscle Groups ----
 
 export const MUSCLE_GROUPS = {

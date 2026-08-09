@@ -24,6 +24,8 @@ interface OnboardingData {
   experience_level: 'beginner' | 'intermediate' | 'advanced';
   goal: string;
   restrictions: string;
+  privacy_consent: boolean;
+  terms_accepted: boolean;
 }
 
 export default function OnboardingPage() {
@@ -35,11 +37,21 @@ export default function OnboardingPage() {
     defaultValues: {
       experience_level: 'beginner',
       gender: 'other',
+      privacy_consent: false,
+      terms_accepted: false,
     }
   });
 
   const onSubmit = async (data: OnboardingData) => {
     if (!user?.id) return;
+    if (!data.privacy_consent) {
+      toast.error('Confirme a autorização para salvar dados de saúde.');
+      return;
+    }
+    if (!data.terms_accepted) {
+      toast.error('Aceite os Termos de Uso para continuar.');
+      return;
+    }
     
     setIsLoading(true);
     try {
@@ -47,12 +59,14 @@ export default function OnboardingPage() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          height: parseFloat(data.height),
-          current_weight: parseFloat(data.current_weight),
+          ...(data.height ? { height: parseFloat(data.height) } : {}),
+          ...(data.current_weight ? { current_weight: parseFloat(data.current_weight) } : {}),
           gender: data.gender,
           experience_level: data.experience_level,
           goal: data.goal,
-          restrictions: data.restrictions
+          restrictions: data.restrictions,
+          privacy_consent: true,
+          terms_accepted: true,
         }),
       });
 
@@ -98,27 +112,25 @@ export default function OnboardingPage() {
                 <div className="space-y-2">
                   <Label htmlFor="current_weight" className="flex items-center gap-2">
                     <Scale className="w-4 h-4 text-muted-foreground" />
-                    Peso (kg) *
+                    Peso (kg) · opcional
                   </Label>
                   <Input
                     id="current_weight"
                     type="number"
                     step="0.1"
                     placeholder="Ex: 75.5"
-                    required
                     {...register('current_weight')}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="height" className="flex items-center gap-2">
                     <Ruler className="w-4 h-4 text-muted-foreground" />
-                    Altura (cm) *
+                    Altura (cm) · opcional
                   </Label>
                   <Input
                     id="height"
                     type="number"
                     placeholder="Ex: 175"
-                    required
                     {...register('height')}
                   />
                 </div>
@@ -184,6 +196,15 @@ export default function OnboardingPage() {
                   {...register('restrictions')}
                 />
               </div>
+
+              <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
+                <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('privacy_consent')} />
+                <span>Autorizo o uso destes dados para acompanhamento de treino pelo meu personal. Sei que posso exportar ou excluir meus dados no perfil. <a href="/privacy" target="_blank" className="text-primary underline">Política de Privacidade</a>.</span>
+              </label>
+              <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
+                <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('terms_accepted')} />
+                <span>Li e aceito os <a href="/terms" target="_blank" className="text-primary underline">Termos de Uso</a>.</span>
+              </label>
 
             </CardContent>
             <CardFooter className="bg-muted/30 pt-6">

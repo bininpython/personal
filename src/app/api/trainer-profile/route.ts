@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
-import { mergeUserMetadata, storedAvatarUrl } from '@/lib/profile/avatar-metadata';
+import { normalizeName } from '@/lib/auth/hash';
+import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 
 const updateProfileSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome').max(100, 'Nome muito longo'),
@@ -24,18 +25,18 @@ export async function GET() {
     const admin = createAdminClient();
     const { data, error } = await admin
       .from('trainers')
-      .select('id, name, code')
+      .select('id, name, public_code, avatar_url')
       .eq('id', session.trainer_id)
       .maybeSingle();
 
     if (error) throw error;
     if (!data) return json({ error: 'Perfil não encontrado.' }, 404);
 
-    const { data: authData, error: authError } = await admin.auth.admin.getUserById(session.sub);
-    if (authError) throw authError;
-    const avatarUrl = storedAvatarUrl(authData.user?.user_metadata);
+    const avatarUrl = isPrivateAvatar(data.avatar_url)
+      ? `/api/profile/avatar/image?user=${encodeURIComponent(data.id)}`
+      : (data.avatar_url || '');
 
-    return json({ profile: { name: data.name, trainer_code: data.code, avatar_url: avatarUrl } });
+    return json({ profile: { name: data.name, trainer_code: data.public_code, avatar_url: avatarUrl } });
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O banco de dados ainda não está configurado.' }, 503);
@@ -58,16 +59,9 @@ export async function PATCH(request: Request) {
     const admin = createAdminClient();
     const { error } = await admin
       .from('trainers')
-      .update({ name: parsed.data.name })
+      .update({ name: parsed.data.name, login_name_normalized: normalizeName(parsed.data.name) })
       .eq('id', session.trainer_id);
     if (error) throw error;
-
-    const { data: authData, error: getAuthError } = await admin.auth.admin.getUserById(session.sub);
-    if (getAuthError) console.error('[Trainer Profile] Metadata read error:', getAuthError);
-    const { error: authError } = await admin.auth.admin.updateUserById(session.sub, {
-      user_metadata: mergeUserMetadata(authData.user?.user_metadata, { name: parsed.data.name }),
-    });
-    if (authError) console.error('[Trainer Profile] Metadata update error:', authError);
 
     return json({ success: true, name: parsed.data.name });
   } catch (error) {

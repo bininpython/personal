@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { updateSession } from '@/lib/supabase/proxy';
+import { verifyToken } from '@/lib/auth/jwt';
+import { SESSION_COOKIE_NAME } from '@/lib/auth/session-types';
 
 const PUBLIC_PATHS = new Set([
   '/',
@@ -10,6 +11,8 @@ const PUBLIC_PATHS = new Set([
   '/plans',
   '/terms',
   '/privacy',
+  '/recover',
+  '/help',
 ]);
 
 const TRAINER_PATHS = [
@@ -45,24 +48,23 @@ function matchesRoute(pathname: string, route: string) {
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const { response, claims } = await updateSession(request);
-  const appMetadata = claims?.app_metadata as { role?: string } | undefined;
-  const userMetadata = claims?.user_metadata as { role?: string } | undefined;
-  const role = appMetadata?.role || userMetadata?.role;
+  const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const session = token ? await verifyToken(token) : null;
+  const role = session?.role;
 
   if (pathname.startsWith('/avatars/')) {
-    return response;
+    return NextResponse.next();
   }
 
   if (PUBLIC_PATHS.has(pathname)) {
-    if (claims?.sub && pathname !== '/') {
+    if (session?.sub && pathname !== '/' && pathname !== '/help') {
       const destination = role === 'trainer' ? '/dashboard' : '/home';
       return NextResponse.redirect(new URL(destination, request.url));
     }
-    return response;
+    return NextResponse.next();
   }
 
-  if (!claims?.sub) {
+  if (!session?.sub) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
@@ -77,7 +79,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -18,36 +19,29 @@ import { APP_NAME } from '@/constants';
 export default function TrainerLoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCode, setShowCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<TrainerLoginInput>({
+  const { register, handleSubmit, formState: { errors } } = useForm<TrainerLoginInput>({
     resolver: zodResolver(trainerLoginSchema),
-    defaultValues: { trainer_code: '', password: '' },
+    defaultValues: { name: '', access_code: '', remember: false },
   });
 
   const onSubmit = async (data: TrainerLoginInput) => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/trainer/login', {
+      const response = await fetch('/api/auth/trainer/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        toast.error(result.error || 'Erro ao fazer login');
-        return;
-      }
-
+      const result = await response.json();
+      if (!response.ok) return toast.error(result.error || 'Não foi possível entrar.');
       login(result.user);
-      toast.success(`Bem-vindo, ${result.user.name}!`);
+      if (result.credential_upgrade) {
+        toast.info('Sua conta antiga foi atualizada. Troque os códigos em Configurações.');
+      } else {
+        toast.success(`Bem-vindo, ${result.user.name}!`);
+      }
       router.replace('/dashboard');
       router.refresh();
     } catch {
@@ -59,96 +53,54 @@ export default function TrainerLoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 dark:from-emerald-600/15 dark:via-background dark:to-blue-600/10 pointer-events-none" />
-
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 pointer-events-none" />
       <PublicBackLink href="/login" />
-
-      {/* Form */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 -mt-10">
-        <Card className="w-full max-w-md border-border/50 shadow-xl animate-slide-up">
+      <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-10">
+        <Card className="w-full max-w-md border-border/50 shadow-xl">
           <CardHeader className="text-center pb-2">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
-                <Shield className="w-6 h-6 text-primary-foreground" />
-              </div>
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md">
+              <Shield className="h-6 w-6 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-bold">Acesso do Personal</h1>
-            <p className="text-sm text-muted-foreground">{APP_NAME}</p>
+            <p className="text-sm text-muted-foreground">{APP_NAME} · sem e-mail ou telefone</p>
           </CardHeader>
-
           <CardContent className="pt-4">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="trainer_code">Código do Personal</Label>
-                <Input
-                  id="trainer_code"
-                  placeholder="Ex: 482915"
-                  autoComplete="username"
-                  inputMode="text"
-                  className="h-11 font-mono tracking-wider placeholder:tracking-normal"
-                  {...register('trainer_code')}
-                />
-                {errors.trainer_code && (
-                  <p className="text-sm text-destructive">{errors.trainer_code.message}</p>
-                )}
-                <p className="text-xs text-muted-foreground">Contas novas recebem 6 números. Códigos antigos com letras também continuam válidos.</p>
+                <Label htmlFor="name">Seu nome profissional</Label>
+                <Input id="name" autoComplete="name" placeholder="Ex: Abner Pereira" {...register('name')} />
+                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="access_code">Código secreto</Label>
                 <div className="relative">
                   <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Sua senha"
+                    id="access_code"
+                    type={showCode ? 'text' : 'password'}
                     autoComplete="current-password"
-                    className="h-11 pr-10"
-                    {...register('password')}
+                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                    className="pr-10 font-mono uppercase tracking-wider"
+                    {...register('access_code')}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <button type="button" onClick={() => setShowCode((value) => !value)} aria-label={showCode ? 'Ocultar código' : 'Mostrar código'} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {showCode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
-                )}
+                {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
               </div>
-
-              <Button
-                type="submit"
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-base"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Entrando...
-                  </>
-                ) : (
-                  <>
-                    <Dumbbell className="w-4 h-4 mr-2" />
-                    Entrar como Personal
-                  </>
-                )}
+              <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <input type="checkbox" className="h-4 w-4 accent-primary" {...register('remember')} />
+                Manter conectado neste dispositivo por 30 dias
+              </label>
+              <Button type="submit" className="w-full h-11" disabled={isLoading}>
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Dumbbell className="mr-2 h-4 w-4" />}
+                Entrar como Personal
               </Button>
             </form>
-
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => router.push('/register')}
-                className="text-sm text-primary hover:underline"
-              >
-                Não tem conta? Cadastre-se
-              </button>
+            <div className="mt-6 flex items-center justify-between text-sm">
+              <Link href="/recover" className="text-primary hover:underline">Recuperar acesso</Link>
+              <Link href="/register" className="text-primary hover:underline">Criar conta</Link>
             </div>
-
-
           </CardContent>
         </Card>
       </div>
