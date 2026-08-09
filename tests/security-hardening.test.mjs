@@ -25,6 +25,8 @@ test('migração inclui sessões revogáveis, bloqueio, consentimento e idempot�
     'profile-images-private',
     "status = 'active'",
   ]) assert.match(migration, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.match(migration, /v_now timestamp with time zone := now\(\)/);
+  assert.doesNotMatch(migration, /current_time timestamp with time zone/);
 });
 
 test('credenciais não têm fallback secreto fixo', () => {
