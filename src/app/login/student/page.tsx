@@ -72,7 +72,8 @@ export default function StudentLoginPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="access_code">Seu código individual</Label>
-                <Input id="access_code" type="password" autoComplete="current-password" placeholder="XXXX-XXXX-XXXX" className="font-mono uppercase tracking-wider" {...register('access_code')} />
+                <Input id="access_code" type="password" autoComplete="current-password" placeholder="XXXX-XXXX" className="font-mono uppercase tracking-wider" {...register('access_code')} />
+                <p className="text-xs text-muted-foreground">8 caracteres. Maiúsculas, minúsculas e hífen não fazem diferença.</p>
                 {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
               </div>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">

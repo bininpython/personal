@@ -81,7 +81,7 @@ export default function RegisterPage() {
               </CardHeader>
               <CardContent className="space-y-4 pt-5">
                 {[
-                  { key: 'access', title: 'Código secreto de entrada', value: codes.access, help: 'Use com seu nome para entrar.' },
+                  { key: 'access', title: 'Código de acesso', value: codes.access, help: 'Código curto de 8 caracteres. Use com seu nome para entrar.' },
                   { key: 'public', title: 'Código público do personal', value: codes.public, help: 'Compartilhe com seus alunos.' },
                   { key: 'recovery', title: 'Chave de recuperação', value: codes.recovery, help: 'Não compartilhe. Ela recupera sua conta.' },
                 ].map((item) => (
@@ -108,7 +108,7 @@ export default function RegisterPage() {
                   <Shield className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <h1 className="text-2xl font-bold">Cadastro de Personal</h1>
-                <p className="text-sm text-muted-foreground">Sem e-mail, telefone ou senha. O sistema gerará códigos seguros.</p>
+                <p className="text-sm text-muted-foreground">Sem e-mail, telefone ou senha. Você receberá um código curto e seguro.</p>
               </CardHeader>
               <CardContent className="pt-4">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                     </div>
                   </div>
                   <div className="rounded-lg border bg-muted/20 p-3 text-sm text-muted-foreground">
-                    Seus códigos serão protegidos por hash e nunca poderão ser consultados pelo suporte. Guarde a chave de recuperação.
+                    O código diário terá apenas 8 caracteres. Ele será protegido por hash, tentativas limitadas e bloqueio automático. Guarde a chave de recuperação separadamente.
                   </div>
                   <label className="flex items-start gap-3 text-sm">
                     <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('terms_accepted')} />

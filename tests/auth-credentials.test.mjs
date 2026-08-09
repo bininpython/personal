@@ -20,8 +20,8 @@ test('gera códigos criptograficamente aleatórios nos formatos comerciais', () 
     const student = generateStudentPrivateCode();
     const publicCode = generateTrainerPublicCode();
     const recovery = generateRecoveryCode();
-    assert.match(trainer, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){3}$/);
-    assert.match(student, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){2}$/);
+    assert.match(trainer, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/);
+    assert.match(student, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/);
     assert.match(publicCode, /^FC-[A-HJ-NP-Z2-9]{8}$/);
     assert.match(recovery, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){5}$/);
     generated.add(`${trainer}|${student}|${publicCode}|${recovery}`);
@@ -38,9 +38,10 @@ test('não usa caracteres visualmente ambíguos', () => {
   assert.equal(values.some((value) => /[01IO]/.test(value)), false);
 });
 
-test('a dica revela somente os quatro caracteres finais', () => {
+test('a dica revela somente os dois caracteres finais', () => {
   const code = 'ABCD-EFGH-JKLM';
   const hint = getCodeHint(code);
-  assert.equal(hint.endsWith('JKLM'), true);
+  assert.equal(hint.endsWith('LM'), true);
   assert.equal(hint.includes('ABCD'), false);
+  assert.equal(hint.includes('JK'), false);
 });

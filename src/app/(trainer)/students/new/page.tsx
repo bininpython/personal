@@ -247,7 +247,7 @@ export default function NewStudentPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6 text-sm text-muted-foreground">
-                <p>O sistema criará um código individual forte, exibido uma única vez.</p>
+                <p>O sistema criará um código individual de 8 caracteres, fácil de digitar e exibido uma única vez.</p>
                 <p>No banco ele fica somente em formato irreversível. Se for perdido, gere outro.</p>
                 <p>Entregue ao aluno: nome, seu código público e o código individual.</p>
               </CardContent>

@@ -72,13 +72,13 @@ export default function TrainerLoginPage() {
                 {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="access_code">Código secreto</Label>
+                <Label htmlFor="access_code">Código de acesso</Label>
                 <div className="relative">
                   <Input
                     id="access_code"
                     type={showCode ? 'text' : 'password'}
                     autoComplete="current-password"
-                    placeholder="XXXX-XXXX-XXXX-XXXX"
+                    placeholder="XXXX-XXXX"
                     className="pr-10 font-mono uppercase tracking-wider"
                     {...register('access_code')}
                   />
@@ -86,6 +86,7 @@ export default function TrainerLoginPage() {
                     {showCode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+                <p className="text-xs text-muted-foreground">8 caracteres, sem diferenciar maiúsculas e minúsculas. O hífen é opcional.</p>
                 {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
               </div>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">

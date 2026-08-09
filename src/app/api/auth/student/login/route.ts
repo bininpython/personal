@@ -6,6 +6,7 @@ import { clearRateLimit, consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isPrivateAvatar } from '@/lib/profile/private-avatar';
+import { DATABASE_UPDATE_REQUIRED, isCommercialSchemaMissing } from '@/lib/supabase/errors';
 
 const GENERIC_ERROR = 'Nome, código do personal ou código individual inválido.';
 
@@ -121,6 +122,10 @@ export async function POST(request: Request) {
       },
     }, 200);
   } catch (error) {
+    if (isCommercialSchemaMissing(error)) {
+      console.error('[Student Login] Database migration required:', error);
+      return json({ error: DATABASE_UPDATE_REQUIRED, code: 'DATABASE_UPDATE_REQUIRED' }, 503);
+    }
     console.error('[Student Login] Unexpected error:', error);
     return json({ error: 'Erro interno do servidor.' }, 500);
   }
