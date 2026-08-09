@@ -48,6 +48,7 @@ export default function NewStudentPage() {
       notes: '',
       experience_level: 'beginner',
       gender: 'other',
+      privacy_consent: false,
     },
   });
 
@@ -133,7 +134,7 @@ export default function NewStudentPage() {
                 Código de acesso do aluno
               </p>
               <div className="flex items-center justify-center gap-3">
-                <span className="font-mono text-5xl font-bold tracking-[0.25em]">
+                <span className="break-all font-mono text-2xl font-bold tracking-wider sm:text-3xl">
                   {createdStudent.accessCode}
                 </span>
                 <Button type="button" variant="outline" size="icon" onClick={copyCode} aria-label="Copiar código">
@@ -143,7 +144,7 @@ export default function NewStudentPage() {
             </div>
 
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-              O aluno entrará na área de aluno usando o nome <strong>{createdStudent.name}</strong> e o código <strong>{createdStudent.accessCode}</strong>. Não precisa de e-mail nem senha.
+              O aluno entrará usando o nome <strong>{createdStudent.name}</strong>, seu código público de personal e este código individual. Não precisa de e-mail nem telefone.
             </div>
 
             <p className="text-center text-sm text-muted-foreground">
@@ -246,12 +247,18 @@ export default function NewStudentPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6 text-sm text-muted-foreground">
-                <p>Ao cadastrar, o sistema criará automaticamente um código aleatório com exatamente 4 números.</p>
-                <p>O código é exclusivo, fica reservado e nunca será entregue a outro aluno.</p>
-                <p>Depois, basta passar ao aluno o nome cadastrado e o código.</p>
+                <p>O sistema criará um código individual forte, exibido uma única vez.</p>
+                <p>No banco ele fica somente em formato irreversível. Se for perdido, gere outro.</p>
+                <p>Entregue ao aluno: nome, seu código público e o código individual.</p>
               </CardContent>
             </Card>
           </div>
+
+          <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
+            <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('privacy_consent')} />
+            <span>Confirmo que expliquei a finalidade do tratamento e que o aluno autorizou o cadastro destes dados, inclusive dados de saúde eventualmente informados. <a href="/privacy" target="_blank" className="text-primary underline">Ler a Política de Privacidade</a>.</span>
+          </label>
+          {errors.privacy_consent && <p className="text-sm text-destructive">{errors.privacy_consent.message}</p>}
 
           <div className="flex justify-end gap-4 border-t pt-4">
             <Button type="button" variant="outline" onClick={() => router.push('/students')}>

@@ -1,69 +1,123 @@
 import { NextResponse } from 'next/server';
 import { studentLoginSchema } from '@/lib/validators';
-import { normalizeName } from '@/lib/auth/hash';
-import {
-  buildStudentAuthPassword,
-  buildSyntheticEmail,
-  canonicalizeStudentAccessCode,
-} from '@/lib/auth/credentials';
-import { createClient } from '@/lib/supabase/server';
-import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
+import { getCodeHint, normalizeAuthCode } from '@/lib/auth/credentials';
+import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
+import { clearRateLimit, consumeRateLimit } from '@/lib/auth/rate-limit';
+import { createSession } from '@/lib/auth/session';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 
-const GENERIC_LOGIN_ERROR = 'Nome ou código de acesso inválido.';
+const GENERIC_ERROR = 'Nome, código do personal ou código individual inválido.';
 
-function json(body: Record<string, unknown>, status: number) {
+function json(body: Record<string, unknown>, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
     status,
-    headers: { 'Cache-Control': 'no-store' },
+    headers: { 'Cache-Control': 'no-store', ...headers },
   });
 }
 
 export async function POST(request: Request) {
   try {
     const result = studentLoginSchema.safeParse(await request.json());
+    if (!result.success) return json({ error: 'Revise os três dados de acesso.' }, 400);
 
-    if (!result.success) {
-      return json({ error: 'Revise o nome e o código informados.' }, 400);
-    }
-
-    const { name, access_code } = result.data;
-    const canonicalCode = canonicalizeStudentAccessCode(access_code);
-    const email = buildSyntheticEmail('student', canonicalCode);
-    const password = buildStudentAuthPassword(canonicalCode);
-    const supabase = await createClient();
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { name, trainer_code, access_code, remember } = result.data;
+    const normalizedName = normalizeName(name);
+    const publicCode = normalizeAuthCode(trainer_code).toUpperCase();
+    const privateCode = normalizeAuthCode(access_code).toUpperCase();
+    const limit = await consumeRateLimit({
+      request,
+      scope: 'student-login',
+      identifier: `${publicCode}|${normalizedName}`,
+      maxAttempts: 5,
+      windowSeconds: 600,
+      blockSeconds: 600,
     });
-
-    if (authError || !authData.user) {
-      return json({ error: GENERIC_LOGIN_ERROR }, 401);
+    if (!limit.allowed) {
+      return json(
+        { error: 'Acesso temporariamente bloqueado. Aguarde e tente novamente.' },
+        429,
+        { 'Retry-After': String(limit.retryAfter) },
+      );
     }
 
-    const { data: student, error: profileError } = await supabase
-      .from('students')
-      .select('id, trainer_id, name, status')
-      .eq('id', authData.user.id)
+    const admin = createAdminClient();
+    const { data: trainer } = await admin
+      .from('trainers')
+      .select('id')
+      .eq('public_code', publicCode.startsWith('FC') ? `FC-${publicCode.slice(2)}` : publicCode)
+      .is('deleted_at', null)
       .maybeSingle();
+    if (!trainer) return json({ error: GENERIC_ERROR }, 401);
 
-    if (
-      profileError
-      || !student
-      || student.status !== 'active'
-      || normalizeName(student.name) !== normalizeName(name)
-    ) {
-      await supabase.auth.signOut();
-      return json({ error: GENERIC_LOGIN_ERROR }, 401);
+    const { data: candidates, error } = await admin
+      .from('students')
+      .select('id, trainer_id, name, status, access_code, access_code_hash, failed_login_attempts, locked_until, avatar_url')
+      .eq('trainer_id', trainer.id)
+      .eq('login_name_normalized', normalizedName)
+      .is('deleted_at', null)
+      .limit(10);
+    if (error) throw error;
+
+    let student: NonNullable<typeof candidates>[number] | null = null;
+    let usedLegacyCode = false;
+    for (const candidate of candidates ?? []) {
+      if (candidate.status !== 'active') continue;
+      if (candidate.locked_until && new Date(candidate.locked_until) > new Date()) continue;
+      const validHash = candidate.access_code_hash
+        ? await verifyPassword(privateCode, candidate.access_code_hash).catch(() => false)
+        : false;
+      const validLegacy = !candidate.access_code_hash
+        && normalizeAuthCode(candidate.access_code || '').toUpperCase() === privateCode;
+      if (validHash || validLegacy) {
+        student = candidate;
+        usedLegacyCode = validLegacy;
+        break;
+      }
     }
+
+    if (!student) {
+      for (const candidate of candidates ?? []) {
+        const attempts = Number((candidate as { failed_login_attempts?: number }).failed_login_attempts || 0) + 1;
+        await admin.from('students').update({
+          failed_login_attempts: attempts,
+          locked_until: attempts >= 5
+            ? new Date(Date.now() + 10 * 60 * 1000).toISOString()
+            : null,
+        }).eq('id', candidate.id);
+      }
+      return json({ error: GENERIC_ERROR }, 401);
+    }
+
+    await admin.from('students').update({
+      access_code_hash: usedLegacyCode ? await hashPassword(privateCode) : student.access_code_hash,
+      access_code_hint: usedLegacyCode ? getCodeHint(privateCode) : undefined,
+      access_code: usedLegacyCode ? null : undefined,
+      credential_version: usedLegacyCode ? 1 : 2,
+      failed_login_attempts: 0,
+      locked_until: null,
+      last_login_at: new Date().toISOString(),
+    }).eq('id', student.id);
+    await clearRateLimit(limit.keyHash);
+    await createSession({
+      actorId: student.id,
+      role: 'student',
+      trainerId: student.trainer_id,
+      request,
+      remember,
+    });
 
     return json({
       success: true,
+      credential_upgrade: usedLegacyCode,
       user: {
         id: student.id,
         role: 'student',
         name: student.name,
         trainer_id: student.trainer_id,
-        avatar_url: storedAvatarUrl(authData.user.user_metadata),
+        avatar_url: isPrivateAvatar(student.avatar_url)
+          ? `/api/profile/avatar/image?user=${encodeURIComponent(student.id)}`
+          : (student.avatar_url || undefined),
       },
     }, 200);
   } catch (error) {

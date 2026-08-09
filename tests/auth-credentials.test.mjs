@@ -1,39 +1,46 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  buildStudentAuthPassword,
-  buildSyntheticEmail,
-  canonicalizeStudentAccessCode,
-  generateNumericAccessCode,
-  isDuplicateAccountError,
+  generateRecoveryCode,
+  generateStudentPrivateCode,
+  generateTrainerPrivateCode,
+  generateTrainerPublicCode,
+  getCodeHint,
   normalizeAuthCode,
 } from '../src/lib/auth/credentials.ts';
 
 test('normaliza códigos sem depender de caixa ou separadores', () => {
-  assert.equal(normalizeAuthCode(' #PRO-Abner '), 'proabner');
-  assert.equal(buildSyntheticEmail('trainer', '#PRO-Abner'), 'trainer_proabner@example.com');
+  assert.equal(normalizeAuthCode(' FC-Ab2-9 '), 'fcab29');
 });
 
-test('mantém o código numérico do aluno consistente', () => {
-  assert.equal(canonicalizeStudentAccessCode(' 4821 '), '4821');
-  assert.equal(buildSyntheticEmail('student', '4821'), 'student_4821@example.com');
-  assert.equal(buildStudentAuthPassword('4821'), 'FitAluno!4821#');
-  assert.throws(() => buildStudentAuthPassword('48A1'), /inválido/);
-});
-
-test('gera códigos aleatórios apenas com números e no tamanho solicitado', () => {
-  for (let index = 0; index < 100; index += 1) {
-    assert.match(generateNumericAccessCode(4), /^\d{4}$/);
-    assert.match(generateNumericAccessCode(6), /^\d{6}$/);
+test('gera códigos criptograficamente aleatórios nos formatos comerciais', () => {
+  const generated = new Set();
+  for (let index = 0; index < 200; index += 1) {
+    const trainer = generateTrainerPrivateCode();
+    const student = generateStudentPrivateCode();
+    const publicCode = generateTrainerPublicCode();
+    const recovery = generateRecoveryCode();
+    assert.match(trainer, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){3}$/);
+    assert.match(student, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){2}$/);
+    assert.match(publicCode, /^FC-[A-HJ-NP-Z2-9]{8}$/);
+    assert.match(recovery, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){5}$/);
+    generated.add(`${trainer}|${student}|${publicCode}|${recovery}`);
   }
+  assert.equal(generated.size, 200);
 });
 
-test('rejeita códigos que ficam curtos depois da normalização', () => {
-  assert.throws(() => buildSyntheticEmail('student', '---A1'), /inválido/);
+test('não usa caracteres visualmente ambíguos', () => {
+  const values = Array.from({ length: 100 }, () => [
+    generateTrainerPrivateCode(),
+    generateStudentPrivateCode(),
+    generateRecoveryCode(),
+  ].join(''));
+  assert.equal(values.some((value) => /[01IO]/.test(value)), false);
 });
 
-test('identifica conflitos retornados pelo provedor de autenticação', () => {
-  assert.equal(isDuplicateAccountError({ code: 'email_exists' }), true);
-  assert.equal(isDuplicateAccountError({ message: 'User already registered' }), true);
-  assert.equal(isDuplicateAccountError({ message: 'Temporary failure' }), false);
+test('a dica revela somente os quatro caracteres finais', () => {
+  const code = 'ABCD-EFGH-JKLM';
+  const hint = getCodeHint(code);
+  assert.equal(hint.endsWith('JKLM'), true);
+  assert.equal(hint.includes('ABCD'), false);
 });

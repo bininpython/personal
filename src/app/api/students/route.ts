@@ -1,20 +1,13 @@
 import { NextResponse } from 'next/server';
 import {
   MAX_STUDENTS_PER_TRAINER,
-  STUDENT_ACCESS_CODE_LENGTH,
 } from '@/constants';
 import { studentCreateSchema } from '@/lib/validators';
 import { getSession } from '@/lib/auth/session';
-import {
-  buildStudentAuthPassword,
-  buildSyntheticEmail,
-  generateNumericAccessCode,
-  isDuplicateAccountError,
-} from '@/lib/auth/credentials';
+import { generateStudentPrivateCode, getCodeHint, normalizeAuthCode } from '@/lib/auth/credentials';
+import { hashPassword, normalizeName } from '@/lib/auth/hash';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
-
-const CODE_GENERATION_ATTEMPTS = 100;
 
 function json(body: Record<string, unknown>, status: number) {
   return NextResponse.json(body, {
@@ -24,8 +17,6 @@ function json(body: Record<string, unknown>, status: number) {
 }
 
 export async function POST(request: Request) {
-  let reservedCode = '';
-
   try {
     const session = await getSession();
     if (!session || session.role !== 'trainer') {
@@ -45,7 +36,9 @@ export async function POST(request: Request) {
     const { count: currentStudentCount, error: countError } = await admin
       .from('students')
       .select('id', { count: 'exact', head: true })
-      .eq('trainer_id', session.trainer_id);
+      .eq('trainer_id', session.trainer_id)
+      .eq('status', 'active')
+      .is('deleted_at', null);
 
     if (countError) {
       console.error('[Create Student] Count error:', countError);
@@ -58,68 +51,20 @@ export async function POST(request: Request) {
       }, 409);
     }
 
-    let authUserId = '';
-    let mockEmail = '';
-
-    for (let attempt = 0; attempt < CODE_GENERATION_ATTEMPTS; attempt += 1) {
-      const candidateCode = generateNumericAccessCode(STUDENT_ACCESS_CODE_LENGTH);
-      const { error: reservationError } = await admin
-        .from('student_access_codes')
-        .insert({
-          code: candidateCode,
-          trainer_id: session.trainer_id,
-        });
-
-      if (reservationError) {
-        if (reservationError.code === '23505') continue;
-
-        console.error('[Create Student] Code reservation error:', reservationError);
-        return json({
-          error: 'O banco ainda não está atualizado para gerar códigos de aluno.',
-        }, 503);
-      }
-
-      reservedCode = candidateCode;
-      mockEmail = buildSyntheticEmail('student', reservedCode);
-      const password = buildStudentAuthPassword(reservedCode);
-      const { data: authData, error: authError } = await admin.auth.admin.createUser({
-        email: mockEmail,
-        password,
-        email_confirm: true,
-        user_metadata: { name: data.full_name },
-        app_metadata: { role: 'student' },
-      });
-
-      if (authError || !authData.user) {
-        if (isDuplicateAccountError(authError)) {
-          reservedCode = '';
-          continue;
-        }
-
-        await admin.from('student_access_codes').delete().eq('code', reservedCode);
-        reservedCode = '';
-        console.error('[Create Student] Auth error:', authError);
-        return json({ error: 'Não foi possível criar o acesso do aluno.' }, 500);
-      }
-
-      authUserId = authData.user.id;
-      break;
-    }
-
-    if (!reservedCode || !authUserId) {
-      return json({
-        error: 'Não há código disponível no momento. Tente novamente mais tarde.',
-      }, 503);
-    }
-
+    const studentId = crypto.randomUUID();
+    const accessCode = generateStudentPrivateCode();
     const { error: profileError } = await admin.from('students').insert({
-      id: authUserId,
+      id: studentId,
       trainer_id: session.trainer_id,
       name: data.full_name,
+      login_name_normalized: normalizeName(data.full_name),
       nickname: data.nickname || null,
       birth_date: data.birth_date || null,
-      access_code: reservedCode,
-      mock_email: mockEmail,
+      access_code: null,
+      access_code_hash: await hashPassword(normalizeAuthCode(accessCode).toUpperCase()),
+      access_code_hint: getCodeHint(accessCode),
+      mock_email: null,
+      credential_version: 2,
       status: 'active',
       goal: data.goal || null,
       level: data.experience_level || 'beginner',
@@ -132,12 +77,11 @@ export async function POST(request: Request) {
       available_days: data.available_days || [],
       start_date: data.start_date || null,
       notes: data.notes || null,
+      privacy_consent_at: new Date().toISOString(),
+      privacy_policy_version: '2026-08-08',
     });
 
     if (profileError) {
-      await admin.auth.admin.deleteUser(authUserId);
-      await admin.from('student_access_codes').delete().eq('code', reservedCode);
-
       if (
         profileError.code === 'P0001'
         || profileError.message.includes('student_limit_reached')
@@ -151,23 +95,16 @@ export async function POST(request: Request) {
       return json({ error: 'Não foi possível salvar o perfil do aluno.' }, 500);
     }
 
-    const { error: reservationUpdateError } = await admin
-      .from('student_access_codes')
-      .update({ student_id: authUserId })
-      .eq('code', reservedCode);
-
-    if (reservationUpdateError) {
-      console.error('[Create Student] Reservation link error:', reservationUpdateError);
-    }
-
     return json({
       success: true,
       student_count: (currentStudentCount ?? 0) + 1,
       student_limit: MAX_STUDENTS_PER_TRAINER,
       student: {
-        id: authUserId,
+        id: studentId,
         name: data.full_name,
-        access_code: reservedCode,
+        access_code: accessCode,
+        access_code_hint: getCodeHint(accessCode),
+        codes_shown_once: true,
       },
     }, 201);
   } catch (error) {
@@ -191,8 +128,9 @@ export async function GET() {
     const admin = createAdminClient();
     const { data, error } = await admin
       .from('students')
-      .select('id, name, access_code, goal, level, status, created_at')
+      .select('id, name, access_code_hint, goal, level, status, created_at')
       .eq('trainer_id', session.trainer_id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -233,7 +171,7 @@ export async function GET() {
       return {
         id: student.id,
         name: student.name,
-        access_code: student.access_code,
+        access_code: student.access_code_hint || 'Não disponível',
         goal: student.goal || 'Não definido',
         level: student.level === 'beginner'
           ? 'Iniciante'
@@ -252,7 +190,8 @@ export async function GET() {
 
     return json({
       students,
-      student_count: students.length,
+      student_count: students.filter((student) => student.status === 'active').length,
+      total_student_count: students.length,
       student_limit: MAX_STUDENTS_PER_TRAINER,
     }, 200);
   } catch (error) {

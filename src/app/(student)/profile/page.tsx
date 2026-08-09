@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import type { StudentProgressData } from '@/types/student-progress';
+import { AccountControls } from '@/components/privacy/account-controls';
 
 interface StudentProfile {
   full_name: string;
@@ -97,6 +98,7 @@ export default function ProfilePage() {
 
       <Card className="border-border/60"><CardHeader><CardTitle className="text-lg">Minha evolução detalhada</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Suas avaliações, mudanças corporais, constância e treinos registrados pelo personal aparecem abaixo.</p></CardContent></Card>
       <StudentProgressDashboard data={progress} />
+      <Card className="border-border/60"><CardHeader><CardTitle className="text-lg">Meus dados e privacidade</CardTitle></CardHeader><CardContent><AccountControls name={profile.full_name} /></CardContent></Card>
     </div>
   );
 }

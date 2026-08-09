@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Users, Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
-  ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive, Copy, Check
+  ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,7 +42,6 @@ export default function StudentsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [studentLimit, setStudentLimit] = useState(MAX_STUDENTS_PER_TRAINER);
-  const [copiedCode, setCopiedCode] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,17 +60,6 @@ export default function StudentsPage() {
     };
     fetchStudents();
   }, []);
-
-  const copyAccessCode = async (code: string) => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      toast.success('Código copiado!');
-      setTimeout(() => setCopiedCode(''), 2000);
-    } catch {
-      toast.error('Não foi possível copiar o código.');
-    }
-  };
 
   const updateStudentStatus = async (student: StudentSummary) => {
     const nextStatus = student.status === 'active' ? 'inactive' : 'active';
@@ -92,7 +80,8 @@ export default function StudentsPage() {
     }
   };
 
-  const limitReached = students.length >= studentLimit;
+  const activeStudentCount = students.filter((student) => student.status === 'active').length;
+  const limitReached = activeStudentCount >= studentLimit;
 
   const filteredStudents = students.filter(s => {
     const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase());
@@ -125,7 +114,7 @@ export default function StudentsPage() {
             Alunos
           </h1>
           <p className="text-muted-foreground mt-1">
-            {students.length} de {studentLimit} alunos cadastrados
+            {activeStudentCount} de {studentLimit} alunos ativos · {students.length} no total
           </p>
         </div>
         <Button
@@ -229,22 +218,10 @@ export default function StudentsPage() {
                   </div>
 
                   <div className="space-y-3">
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs hover:bg-muted"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        void copyAccessCode(student.access_code);
-                      }}
-                    >
-                      <span className="text-muted-foreground">Código do aluno</span>
-                      <span className="flex items-center gap-2 font-mono text-sm font-bold tracking-widest">
-                        {student.access_code}
-                        {copiedCode === student.access_code
-                          ? <Check className="h-3.5 w-3.5 text-emerald-500" />
-                          : <Copy className="h-3.5 w-3.5" />}
-                      </span>
-                    </button>
+                    <div className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs">
+                      <span className="text-muted-foreground">Final do código</span>
+                      <span className="font-mono text-sm font-bold tracking-widest">{student.access_code}</span>
+                    </div>
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">Conclusão</span>
                       <div className="flex items-center gap-1">
@@ -329,21 +306,7 @@ export default function StudentsPage() {
                     </td>
                     <td className="p-4 text-sm hidden sm:table-cell">{student.goal}</td>
                     <td className="p-4">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="font-mono font-bold tracking-widest"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          void copyAccessCode(student.access_code);
-                        }}
-                      >
-                        {student.access_code}
-                        {copiedCode === student.access_code
-                          ? <Check className="ml-2 h-3.5 w-3.5 text-emerald-500" />
-                          : <Copy className="ml-2 h-3.5 w-3.5" />}
-                      </Button>
+                      <span className="font-mono text-sm font-bold tracking-widest">{student.access_code}</span>
                     </td>
                     <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">{student.lastWorkout}</td>
                     <td className="p-4">

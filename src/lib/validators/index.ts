@@ -3,10 +3,6 @@
 // ============================================
 
 import { z } from 'zod';
-import {
-  PASSWORD_MIN_LENGTH,
-  STUDENT_ACCESS_CODE_LENGTH,
-} from '@/constants';
 import { normalizeAuthCode } from '@/lib/auth/credentials';
 
 // ---- Trainer Registration ----
@@ -19,9 +15,7 @@ export const trainerRegisterSchema = z.object({
     .trim()
     .regex(/^[A-Za-z]{2}$/, 'Use a sigla do estado com 2 letras')
     .transform((value) => value.toUpperCase()),
-  password: z
-    .string()
-    .min(PASSWORD_MIN_LENGTH, `Senha deve ter no mínimo ${PASSWORD_MIN_LENGTH} caracteres`),
+  terms_accepted: z.boolean().refine((value) => value, 'Aceite os Termos e a Política de Privacidade.'),
 }).strict();
 
 export type TrainerRegisterInput = z.infer<typeof trainerRegisterSchema>;
@@ -29,13 +23,13 @@ export type TrainerRegisterInput = z.infer<typeof trainerRegisterSchema>;
 // ---- Trainer Login ----
 
 export const trainerLoginSchema = z.object({
-  trainer_code: z
-    .string()
-    .trim()
-    .min(1, 'Informe seu código de personal')
-    .refine((code) => normalizeAuthCode(code).length >= 4, 'Código de personal inválido'),
-  password: z.string().min(1, 'Informe sua senha'),
-});
+  name: z.string().trim().min(3, 'Informe seu nome profissional').max(160),
+  access_code: z.string().trim().refine(
+    (code) => normalizeAuthCode(code).length >= 6,
+    'Código de acesso inválido',
+  ),
+  remember: z.boolean().optional(),
+}).strict();
 
 export type TrainerLoginInput = z.infer<typeof trainerLoginSchema>;
 
@@ -43,14 +37,16 @@ export type TrainerLoginInput = z.infer<typeof trainerLoginSchema>;
 
 export const studentLoginSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome'),
-  access_code: z
-    .string()
-    .trim()
-    .regex(
-      new RegExp(`^\\d{${STUDENT_ACCESS_CODE_LENGTH}}$`),
-      `O código deve ter exatamente ${STUDENT_ACCESS_CODE_LENGTH} números`,
-    ),
-});
+  trainer_code: z.string().trim().refine(
+    (code) => normalizeAuthCode(code).length >= 6,
+    'Código público do personal inválido',
+  ),
+  access_code: z.string().trim().refine(
+    (code) => normalizeAuthCode(code).length >= 4,
+    'Código individual inválido',
+  ),
+  remember: z.boolean().optional(),
+}).strict();
 
 export type StudentLoginInput = z.infer<typeof studentLoginSchema>;
 
@@ -71,7 +67,11 @@ export const studentCreateSchema = z.object({
   available_days: z.array(z.string()).optional(),
   start_date: z.string().optional(),
   notes: z.string().trim().optional(),
-});
+  privacy_consent: z.boolean().refine(
+    (value) => value,
+    'Confirme que o aluno autorizou o tratamento dos dados.',
+  ),
+}).strict();
 
 export type StudentCreateInput = z.infer<typeof studentCreateSchema>;
 
@@ -88,6 +88,8 @@ export const studentProfileUpdateSchema = z.object({
   restrictions: z.string().trim().max(5000).optional(),
   injuries: z.string().trim().max(5000).optional(),
   medical_notes: z.string().trim().max(5000).optional(),
+  privacy_consent: z.boolean().optional(),
+  terms_accepted: z.boolean().optional(),
 }).strict();
 
 export type StudentProfileUpdateInput = z.infer<typeof studentProfileUpdateSchema>;
@@ -172,6 +174,31 @@ export const setRecordSchema = z.object({
 });
 
 export type SetRecordInput = z.infer<typeof setRecordSchema>;
+
+export const completeWorkoutSchema = z.object({
+  clientSessionId: z.string().uuid(),
+  workoutDayId: z.string().uuid(),
+  startedAt: z.string().datetime(),
+  durationSeconds: z.number().int().min(0).max(21_600),
+  rating: z.number().int().min(1).max(5).optional(),
+  feedback: z.string().trim().max(1000).optional(),
+  exercises: z.array(z.object({
+    workoutExerciseId: z.string().uuid(),
+    sets: z.array(z.object({
+      setNumber: z.number().int().min(1).max(100),
+      completed: z.boolean(),
+      performedRepetitions: z.number().int().min(0).max(10_000).optional(),
+      performedLoad: z.number().min(0).max(100_000).optional(),
+      rpe: z.number().int().min(1).max(10).optional(),
+    }).strict()).max(100),
+  }).strict()).max(200),
+}).strict();
+
+export const trainerRecoverySchema = z.object({
+  name: z.string().trim().min(3).max(160),
+  trainer_code: z.string().trim().min(6).max(32),
+  recovery_code: z.string().trim().min(12).max(64),
+}).strict();
 
 // ---- Physical Assessment ----
 

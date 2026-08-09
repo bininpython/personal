@@ -1,147 +1,114 @@
 import { NextResponse } from 'next/server';
-import { TRAINER_ACCESS_CODE_LENGTH } from '@/constants';
 import { trainerRegisterSchema } from '@/lib/validators';
 import {
-  buildSyntheticEmail,
-  generateNumericAccessCode,
-  isDuplicateAccountError,
+  generateRecoveryCode,
+  generateTrainerPrivateCode,
+  generateTrainerPublicCode,
+  getCodeHint,
+  normalizeAuthCode,
 } from '@/lib/auth/credentials';
+import { hashPassword, normalizeName } from '@/lib/auth/hash';
+import { consumeRateLimit } from '@/lib/auth/rate-limit';
+import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 
-const CODE_GENERATION_ATTEMPTS = 40;
-
-function json(body: Record<string, unknown>, status: number) {
+function json(body: Record<string, unknown>, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
     status,
-    headers: { 'Cache-Control': 'no-store' },
+    headers: { 'Cache-Control': 'no-store', ...headers },
   });
 }
 
 export async function POST(request: Request) {
   try {
-    const result = trainerRegisterSchema.safeParse(await request.json());
-
-    if (!result.success) {
-      return json({
-        error: 'Revise os dados informados.',
-        details: result.error.flatten(),
-      }, 400);
+    const limit = await consumeRateLimit({
+      request,
+      scope: 'trainer-register',
+      maxAttempts: 3,
+      windowSeconds: 3600,
+      blockSeconds: 3600,
+    });
+    if (!limit.allowed) {
+      return json(
+        { error: 'Muitas tentativas. Aguarde antes de tentar novamente.' },
+        429,
+        { 'Retry-After': String(limit.retryAfter) },
+      );
     }
 
-    const { full_name, city, state, password } = result.data;
+    const result = trainerRegisterSchema.safeParse(await request.json());
+    if (!result.success) {
+      return json({ error: 'Revise os dados informados.', details: result.error.flatten() }, 400);
+    }
+
     const admin = createAdminClient();
-    let createdAccount: {
-      authUserId: string;
-      trainerId: string;
-      trainerCode: string;
-      email: string;
-    } | null = null;
+    const { full_name, city, state } = result.data;
+    const privateCode = generateTrainerPrivateCode();
+    const recoveryCode = generateRecoveryCode();
 
-    for (let attempt = 0; attempt < CODE_GENERATION_ATTEMPTS; attempt += 1) {
-      const trainerCode = generateNumericAccessCode(TRAINER_ACCESS_CODE_LENGTH);
-      const email = buildSyntheticEmail('trainer', trainerCode);
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      const publicCode = generateTrainerPublicCode();
+      const trainerId = crypto.randomUUID();
+      const [accessHash, recoveryHash] = await Promise.all([
+        hashPassword(normalizeAuthCode(privateCode).toUpperCase()),
+        hashPassword(normalizeAuthCode(recoveryCode).toUpperCase()),
+      ]);
 
-      const { data: existingTrainer, error: lookupError } = await admin
-        .from('trainers')
-        .select('id')
-        .eq('code', trainerCode)
-        .maybeSingle();
-
-      if (lookupError) {
-        console.error('[Trainer Register] Code lookup error:', lookupError);
-        return json({ error: 'Não foi possível verificar o código de acesso.' }, 500);
-      }
-
-      if (existingTrainer) continue;
-
-      const { data: authData, error: authError } = await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          name: full_name,
-          code: trainerCode,
-          city,
-          state,
-        },
-        app_metadata: { role: 'trainer' },
-      });
-
-      if (authError || !authData.user) {
-        if (isDuplicateAccountError(authError)) continue;
-
-        console.error('[Trainer Register] Auth error:', authError);
-        return json({ error: 'Não foi possível criar a conta. Verifique sua senha.' }, 400);
-      }
-
-      const userId = authData.user.id;
-      const { data: trainer, error: profileError } = await admin
+      const { data: trainer, error } = await admin
         .from('trainers')
         .insert({
-          auth_user_id: userId,
+          id: trainerId,
+          auth_user_id: null,
           name: full_name,
-          code: trainerCode,
+          login_name_normalized: normalizeName(full_name),
+          code: publicCode,
+          public_code: publicCode,
+          access_code_hash: accessHash,
+          access_code_hint: getCodeHint(privateCode),
+          recovery_code_hash: recoveryHash,
+          recovery_code_hint: getCodeHint(recoveryCode),
+          credential_version: 2,
+          terms_accepted_at: new Date().toISOString(),
+          terms_version: '2026-08-08',
+          privacy_policy_version: '2026-08-08',
           city,
           state,
         })
-        .select('id')
+        .select('id, name')
         .single();
 
-      if (profileError || !trainer) {
-        await admin.auth.admin.deleteUser(userId);
+      if (error?.code === '23505') continue;
+      if (error || !trainer) throw error || new Error('Cadastro não criado.');
 
-        if (profileError?.code === '23505') continue;
-
-        console.error('[Trainer Register] Profile error:', profileError);
-        return json({ error: 'Não foi possível criar o perfil do personal.' }, 500);
-      }
-
-      createdAccount = {
-        authUserId: userId,
+      await createSession({
+        actorId: trainer.id,
+        role: 'trainer',
         trainerId: trainer.id,
-        trainerCode,
-        email,
-      };
-      break;
-    }
+        request,
+      });
 
-    if (!createdAccount) {
-      return json({ error: 'Não foi possível gerar um código exclusivo. Tente novamente.' }, 503);
-    }
-
-    const supabase = await createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: createdAccount.email,
-      password,
-    });
-
-    if (signInError) {
       return json({
         success: true,
-        requires_login: true,
-        trainer_code: createdAccount.trainerCode,
-        message: 'Conta criada. Guarde seu código e faça login para continuar.',
+        access_code: privateCode,
+        trainer_code: publicCode,
+        recovery_code: recoveryCode,
+        codes_shown_once: true,
+        user: {
+          id: trainer.id,
+          role: 'trainer',
+          name: trainer.name,
+          trainer_id: trainer.id,
+          trainer_code: publicCode,
+        },
       }, 201);
     }
 
-    return json({
-      success: true,
-      trainer_code: createdAccount.trainerCode,
-      user: {
-        id: createdAccount.authUserId,
-        role: 'trainer',
-        name: full_name,
-        trainer_id: createdAccount.trainerId,
-      },
-    }, 201);
+    return json({ error: 'Não foi possível gerar um código exclusivo. Tente novamente.' }, 503);
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
-      console.error('[Trainer Register] Configuration error:', error.message);
       return json({ error: 'O serviço de cadastro ainda não está configurado.' }, 503);
     }
-
     console.error('[Trainer Register] Unexpected error:', error);
     return json({ error: 'Erro interno do servidor.' }, 500);
   }

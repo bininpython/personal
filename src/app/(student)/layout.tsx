@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home, Dumbbell, History, TrendingUp,
-  User, LogOut, MessageSquare, Moon, Sun
+  User, LogOut, MessageSquare, Moon, Sun, CircleHelp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -40,7 +40,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         const res = await fetch(`/api/students/${user.id}`);
         if (res.ok) {
           const { student } = await res.json();
-          if (!student.height || !student.current_weight || student.height === 0 || student.current_weight === 0) {
+          if (!student.privacy_consent_at) {
             router.push('/onboarding');
             return;
           }
@@ -88,6 +88,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="flex items-center justify-between px-4 h-14 max-w-2xl mx-auto">
           <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => router.push('/help')} />}>
+                <CircleHelp className="w-4 h-4" />
+              </TooltipTrigger>
+              <TooltipContent>Ajuda e tutoriais</TooltipContent>
+            </Tooltip>
             <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
               <Dumbbell className="w-4 h-4 text-white" />
             </div>

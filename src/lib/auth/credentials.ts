@@ -1,60 +1,49 @@
-export type AccountRole = 'trainer' | 'student';
-
-const MIN_NORMALIZED_CODE_LENGTH = 4;
-const MAX_NUMERIC_CODE_LENGTH = 8;
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 export function normalizeAuthCode(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
-export function canonicalizeStudentAccessCode(value: string): string {
-  return value.trim();
-}
+function randomCharacters(length: number) {
+  const result: string[] = [];
+  const values = new Uint8Array(length);
+  const unbiasedLimit = Math.floor(256 / CODE_ALPHABET.length) * CODE_ALPHABET.length;
 
-export function generateNumericAccessCode(length: number): string {
-  if (!Number.isInteger(length) || length < 1 || length > MAX_NUMERIC_CODE_LENGTH) {
-    throw new Error('Tamanho de código inválido.');
+  while (result.length < length) {
+    crypto.getRandomValues(values);
+    for (const value of values) {
+      if (value >= unbiasedLimit) continue;
+      result.push(CODE_ALPHABET[value % CODE_ALPHABET.length]);
+      if (result.length === length) break;
+    }
   }
 
-  const codeSpace = 10 ** length;
-  const randomRange = 2 ** 32;
-  const unbiasedLimit = Math.floor(randomRange / codeSpace) * codeSpace;
-  const randomValue = new Uint32Array(1);
-
-  do {
-    crypto.getRandomValues(randomValue);
-  } while (randomValue[0] >= unbiasedLimit);
-
-  return String(randomValue[0] % codeSpace).padStart(length, '0');
+  return result.join('');
 }
 
-export function buildSyntheticEmail(role: AccountRole, code: string): string {
-  const normalizedCode = normalizeAuthCode(code);
-
-  if (normalizedCode.length < MIN_NORMALIZED_CODE_LENGTH) {
-    throw new Error('Código de acesso inválido.');
-  }
-
-  return `${role}_${normalizedCode}@example.com`;
+function groupCode(value: string, groupSize = 4) {
+  return value.match(new RegExp(`.{1,${groupSize}}`, 'g'))?.join('-') ?? value;
 }
 
-export function buildStudentAuthPassword(code: string): string {
-  const canonicalCode = canonicalizeStudentAccessCode(code);
-
-  if (!/^\d{4}$/.test(canonicalCode)) {
-    throw new Error('Código de acesso do aluno inválido.');
-  }
-
-  return `FitAluno!${canonicalCode}#`;
+export function generateTrainerPrivateCode() {
+  return groupCode(randomCharacters(16));
 }
 
-export function isDuplicateAccountError(error: { code?: string; message?: string } | null): boolean {
-  if (!error) return false;
+export function generateTrainerPublicCode() {
+  return `FC-${randomCharacters(8)}`;
+}
 
-  const message = error.message?.toLowerCase() || '';
-  return error.code === 'email_exists'
-    || error.code === 'user_already_exists'
-    || message.includes('already registered')
-    || message.includes('already been registered')
-    || message.includes('duplicate');
+export function generateStudentPrivateCode() {
+  return groupCode(randomCharacters(12));
+}
+
+export function generateRecoveryCode() {
+  return groupCode(randomCharacters(24));
+}
+
+export function getCodeHint(code: string) {
+  const normalized = normalizeAuthCode(code).toUpperCase();
+  return normalized.length <= 4
+    ? '•'.repeat(normalized.length)
+    : `${'•'.repeat(normalized.length - 4)}${normalized.slice(-4)}`;
 }

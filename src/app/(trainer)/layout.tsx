@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Users, Dumbbell, BookOpen, ClipboardList,
   Calendar, MessageSquare, BarChart3, Bell, Settings,
-  LogOut, Menu, Moon, Sun, ChevronLeft
+  LogOut, Menu, Moon, Sun, ChevronLeft, CircleHelp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -135,6 +135,13 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
       {/* Footer */}
       <div className="px-3 py-3 space-y-1">
+        <Link
+          href="/help"
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
+        >
+          <CircleHelp className="w-4.5 h-4.5 flex-shrink-0" />
+          {(!collapsed || mobile) && <span>Ajuda e tutoriais</span>}
+        </Link>
         <Link
           href="/settings"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
+import { completeWorkoutSchema } from '@/lib/validators';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import {
@@ -24,14 +24,6 @@ interface RelatedPlan {
   status: string;
   days_per_week: number | null;
 }
-
-const completeWorkoutSchema = z.object({
-  workoutDayId: z.string().uuid(),
-  completionPercentage: z.number().min(0).max(100).default(100),
-  durationSeconds: z.number().int().min(0).max(21_600).optional(),
-  rating: z.number().int().min(1).max(5).optional(),
-  feedback: z.string().trim().max(1000).optional(),
-}).strict();
 
 function json(body: Record<string, unknown>, status = 200) {
   return NextResponse.json(body, {
@@ -134,6 +126,17 @@ export async function POST(request: Request) {
     if (!parsed.success) return json({ error: 'Treino inválido.' }, 400);
 
     const admin = createAdminClient();
+    const { data: idempotentSession, error: idempotencyError } = await admin
+      .from('workout_sessions')
+      .select('id, completion_percentage, total_volume')
+      .eq('student_id', session.sub)
+      .eq('client_session_id', parsed.data.clientSessionId)
+      .maybeSingle();
+    if (idempotencyError) throw idempotencyError;
+    if (idempotentSession) {
+      return json({ success: true, session: idempotentSession, idempotent: true });
+    }
+
     const { data: day, error: dayError } = await admin
       .from('workout_days')
       .select('id, plan_id, order_index, workout_plans!inner (id, name, student_id, trainer_id, status, days_per_week)')
@@ -188,19 +191,67 @@ export async function POST(request: Request) {
       });
     }
 
-    const now = new Date().toISOString();
+    const { data: plannedExercises, error: exerciseError } = await admin
+      .from('workout_exercises')
+      .select('id, exercise_id, sets, reps')
+      .eq('workout_day_id', day.id);
+    if (exerciseError) throw exerciseError;
+
+    const plannedById = new Map((plannedExercises ?? []).map((exercise) => [exercise.id, exercise]));
+    if (
+      parsed.data.exercises.length !== plannedById.size
+      || parsed.data.exercises.some((exercise) => !plannedById.has(exercise.workoutExerciseId))
+    ) {
+      return json({ error: 'Os exercícios enviados não correspondem a este treino.' }, 400);
+    }
+
+    let expectedSets = 0;
+    let completedSets = 0;
+    let totalVolume = 0;
+    for (const exercise of parsed.data.exercises) {
+      const planned = plannedById.get(exercise.workoutExerciseId)!;
+      expectedSets += Number(planned.sets || 0);
+      const uniqueSets = new Set(exercise.sets.map((set) => set.setNumber));
+      if (
+        exercise.sets.length !== Number(planned.sets)
+        || uniqueSets.size !== exercise.sets.length
+        || exercise.sets.some((set) => set.setNumber > Number(planned.sets))
+      ) return json({ error: 'As séries enviadas não correspondem ao treino prescrito.' }, 400);
+
+      for (const set of exercise.sets) {
+        if (!set.completed) continue;
+        completedSets += 1;
+        totalVolume += Number(set.performedRepetitions || 0) * Number(set.performedLoad || 0);
+      }
+    }
+
+    const completionPercentage = expectedSets > 0
+      ? Math.round((completedSets / expectedSets) * 10000) / 100
+      : 0;
+    const completedAt = new Date();
+    const startedAt = new Date(parsed.data.startedAt);
+    if (startedAt > new Date(completedAt.getTime() + 60_000)) {
+      return json({ error: 'O horário inicial do treino é inválido.' }, 400);
+    }
+    const measuredDuration = Math.max(0, Math.min(
+      21_600,
+      Math.floor((completedAt.getTime() - startedAt.getTime()) / 1000),
+    ));
+    const durationSeconds = Math.min(parsed.data.durationSeconds, measuredDuration + 60);
+
     const { data: workoutSession, error } = await admin
       .from('workout_sessions')
       .insert({
         student_id: session.sub,
         workout_day_id: day.id,
         workout_plan_id: plan.id,
-        started_at: now,
-        completed_at: now,
-        completion_percentage: parsed.data.completionPercentage,
-        total_volume: 0,
+        client_session_id: parsed.data.clientSessionId,
+        started_at: startedAt.toISOString(),
+        completed_at: completedAt.toISOString(),
+        completion_percentage: completionPercentage,
+        total_volume: Math.round(totalVolume * 100) / 100,
         status: 'completed',
-        duration_seconds: parsed.data.durationSeconds ?? null,
+        duration_seconds: durationSeconds,
         rating: parsed.data.rating ?? null,
         feedback: parsed.data.feedback || null,
       })
@@ -208,7 +259,58 @@ export async function POST(request: Request) {
       .single();
 
     if (error) throw error;
-    return json({ success: true, session: workoutSession }, 201);
+
+    try {
+      const exerciseRows = parsed.data.exercises.map((exercise) => {
+        const planned = plannedById.get(exercise.workoutExerciseId)!;
+        return {
+          workout_session_id: workoutSession.id,
+          workout_exercise_id: planned.id,
+          exercise_id: planned.exercise_id,
+          completed: exercise.sets.every((set) => set.completed),
+          skipped: exercise.sets.every((set) => !set.completed),
+        };
+      });
+      const { data: exerciseSessions, error: exerciseSessionError } = await admin
+        .from('exercise_sessions')
+        .insert(exerciseRows)
+        .select('id, workout_exercise_id');
+      if (exerciseSessionError) throw exerciseSessionError;
+
+      const exerciseSessionByWorkoutExercise = new Map(
+        (exerciseSessions ?? []).map((row) => [row.workout_exercise_id, row.id]),
+      );
+      const setRows = parsed.data.exercises.flatMap((exercise) => {
+        const planned = plannedById.get(exercise.workoutExerciseId)!;
+        const plannedRepetitions = /^\d+$/.test(String(planned.reps)) ? Number(planned.reps) : null;
+        return exercise.sets.map((set) => ({
+          exercise_session_id: exerciseSessionByWorkoutExercise.get(exercise.workoutExerciseId),
+          set_number: set.setNumber,
+          completed: set.completed,
+          planned_repetitions: plannedRepetitions,
+          performed_repetitions: set.performedRepetitions ?? null,
+          performed_load: set.performedLoad ?? null,
+          rpe: set.rpe ?? null,
+          completed_at: set.completed ? completedAt.toISOString() : null,
+        }));
+      });
+      if (setRows.some((row) => !row.exercise_session_id)) throw new Error('Série sem exercício executado.');
+      const { error: setError } = await admin.from('set_records').insert(setRows);
+      if (setError) throw setError;
+    } catch (persistenceError) {
+      await admin.from('workout_sessions').delete().eq('id', workoutSession.id);
+      throw persistenceError;
+    }
+
+    return json({
+      success: true,
+      session: {
+        ...workoutSession,
+        completion_percentage: completionPercentage,
+        total_volume: Math.round(totalVolume * 100) / 100,
+        duration_seconds: durationSeconds,
+      },
+    }, 201);
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {
       return json({ error: 'O banco de dados ainda não está configurado.' }, 503);

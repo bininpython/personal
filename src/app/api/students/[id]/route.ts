@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth/session';
+import { getSession, revokeActorSessions } from '@/lib/auth/session';
 import { studentProfileUpdateSchema } from '@/lib/validators';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createClient } from '@/lib/supabase/server';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
-import { storedAvatarUrl } from '@/lib/profile/avatar-metadata';
+import { normalizeName } from '@/lib/auth/hash';
+import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 
 function json(body: Record<string, unknown>, status: number) {
   return NextResponse.json(body, {
@@ -25,8 +25,8 @@ export async function GET(
     return json({ error: 'Não autorizado.' }, 403);
   }
 
-  const supabase = await createClient();
-  const { data: student, error } = await supabase
+  const admin = createAdminClient();
+  const { data: student, error } = await admin
     .from('students')
     .select(`
       id,
@@ -46,6 +46,8 @@ export async function GET(
       available_days,
       start_date,
       notes,
+      avatar_url,
+      privacy_consent_at,
       created_at
     `)
     .eq('id', id)
@@ -59,9 +61,9 @@ export async function GET(
     return json({ error: 'Não autorizado.' }, 403);
   }
 
-  const admin = createAdminClient();
-  const { data: authData } = await admin.auth.admin.getUserById(student.id);
-  const avatarUrl = storedAvatarUrl(authData.user?.user_metadata);
+  const avatarUrl = isPrivateAvatar(student.avatar_url)
+    ? `/api/profile/avatar/image?user=${encodeURIComponent(student.id)}`
+    : (student.avatar_url || '');
 
   return json({
     student: {
@@ -84,6 +86,7 @@ export async function GET(
       status: student.status,
       notes: session.role === 'trainer' ? student.notes || '' : '',
       created_at: student.created_at,
+      privacy_consent_at: student.privacy_consent_at,
     },
   }, 200);
 }
@@ -136,9 +139,20 @@ export async function PATCH(
     if (data.weight !== undefined) updates.weight = data.weight;
     if (data.gender !== undefined) updates.gender = data.gender;
     if (data.restrictions !== undefined) updates.restrictions = data.restrictions;
+    if (isStudent && data.privacy_consent === true) {
+      updates.privacy_consent_at = new Date().toISOString();
+      updates.privacy_policy_version = '2026-08-08';
+    }
+    if (isStudent && data.terms_accepted === true) {
+      updates.terms_accepted_at = new Date().toISOString();
+      updates.terms_version = '2026-08-08';
+    }
 
     if (isTrainer) {
-      if (data.full_name !== undefined) updates.name = data.full_name;
+      if (data.full_name !== undefined) {
+        updates.name = data.full_name;
+        updates.login_name_normalized = normalizeName(data.full_name);
+      }
       if (data.status !== undefined) updates.status = data.status;
       if (data.notes !== undefined) updates.notes = data.notes;
       if (data.injuries !== undefined) updates.injuries = data.injuries;
@@ -153,8 +167,15 @@ export async function PATCH(
 
       if (updateError) {
         console.error('[Patch Student] Update error:', updateError);
+        if (updateError.code === 'P0001' || updateError.message.includes('student_limit_reached')) {
+          return json({ error: 'O limite de alunos ativos foi atingido. Arquive outro aluno antes de reativar.' }, 409);
+        }
         return json({ error: 'Não foi possível atualizar o aluno.' }, 500);
       }
+    }
+
+    if (isTrainer && data.status === 'inactive') {
+      await revokeActorSessions(student.id, 'student');
     }
 
     return json({ success: true }, 200);

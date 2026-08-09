@@ -3,37 +3,42 @@
 // ============================================
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
-import type { UserRole } from '@/types';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fitcontrol-pro-dev-secret-key-change-in-production'
-);
+import type { SessionRole } from '@/lib/auth/session-types';
 
 const JWT_ISSUER = 'fitcontrol-pro';
 const JWT_AUDIENCE = 'fitcontrol-pro-app';
 
 export interface TokenPayload extends JWTPayload {
   sub: string;
-  role: UserRole;
+  sid: string;
+  role: SessionRole;
   trainer_id: string;
-  name: string;
-  avatar_url?: string;
 }
 
-/**
- * Create a signed JWT for a trainer
- */
-export async function createTrainerToken(trainer: {
+function signingKey() {
+  const secret = process.env.SESSION_SECRET
+    || process.env.SUPABASE_SECRET_KEY
+    || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!secret || secret.length < 32) {
+    throw new Error('Configure SESSION_SECRET com pelo menos 32 caracteres.');
+  }
+
+  return new TextEncoder().encode(secret);
+}
+
+export async function createSessionToken(session: {
   id: string;
-  full_name: string;
-  avatar_url?: string;
-}, expiresInDays: number = 7): Promise<string> {
+  actorId: string;
+  role: SessionRole;
+  trainerId: string;
+  expiresAt: Date;
+}): Promise<string> {
   const payload: TokenPayload = {
-    sub: trainer.id,
-    role: 'trainer',
-    trainer_id: trainer.id,
-    name: trainer.full_name,
-    avatar_url: trainer.avatar_url || undefined,
+    sub: session.actorId,
+    sid: session.id,
+    role: session.role,
+    trainer_id: session.trainerId,
   };
 
   return new SignJWT(payload)
@@ -41,34 +46,9 @@ export async function createTrainerToken(trainer: {
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
     .setAudience(JWT_AUDIENCE)
-    .setExpirationTime(`${expiresInDays}d`)
-    .sign(JWT_SECRET);
-}
-
-/**
- * Create a signed JWT for a student
- */
-export async function createStudentToken(student: {
-  id: string;
-  trainer_id: string;
-  full_name: string;
-  avatar_url?: string;
-}, expiresInDays: number = 7): Promise<string> {
-  const payload: TokenPayload = {
-    sub: student.id,
-    role: 'student',
-    trainer_id: student.trainer_id,
-    name: student.full_name,
-    avatar_url: student.avatar_url || undefined,
-  };
-
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setIssuer(JWT_ISSUER)
-    .setAudience(JWT_AUDIENCE)
-    .setExpirationTime(`${expiresInDays}d`)
-    .sign(JWT_SECRET);
+    .setJti(session.id)
+    .setExpirationTime(Math.floor(session.expiresAt.getTime() / 1000))
+    .sign(signingKey());
 }
 
 /**
@@ -76,10 +56,18 @@ export async function createStudentToken(student: {
  */
 export async function verifyToken(token: string): Promise<TokenPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET, {
+    const { payload } = await jwtVerify(token, signingKey(), {
       issuer: JWT_ISSUER,
       audience: JWT_AUDIENCE,
+      algorithms: ['HS256'],
     });
+    if (
+      typeof payload.sub !== 'string'
+      || typeof payload.sid !== 'string'
+      || (payload.role !== 'trainer' && payload.role !== 'student')
+      || typeof payload.trainer_id !== 'string'
+    ) return null;
+
     return payload as TokenPayload;
   } catch {
     return null;

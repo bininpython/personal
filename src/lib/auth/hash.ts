@@ -21,27 +21,6 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 /**
- * Generate a random access code for students
- * Format: AL-XXXXXX (6 alphanumeric characters)
- */
-export function generateAccessCode(prefix: string = 'AL-'): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed ambiguous chars (0,O,1,I)
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return `${prefix}${code}`;
-}
-
-/**
- * Generate a trainer code
- * Format: #PRO-XXXXXX (6 alphanumeric characters)
- */
-export function generateTrainerCode(): string {
-  return generateAccessCode('#PRO-');
-}
-
-/**
  * Get a hint for the access code (show last 3 chars)
  * Example: AL-•••K9M → shows only the last 3 characters
  */
