@@ -71,8 +71,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
 
   if (checking && !isOnboarding) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="dk-app dk-app-surface flex h-screen items-center justify-center">
+        <div className="size-9 animate-spin rounded-full border-4 border-[#c9ff32] border-t-black" />
       </div>
     );
   }
@@ -83,35 +83,52 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="dk-app flex min-h-screen flex-col bg-[#090a08]">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-lg border-b border-border">
-        <div className="flex items-center justify-between px-4 h-14 max-w-2xl mx-auto">
-          <div className="flex items-center gap-2">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+          <BrandMark compact inverted />
+          <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação do aluno">
+            {BOTTOM_NAV.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${active ? 'bg-[#c9ff32] text-black' : 'text-white/50 hover:bg-white/8 hover:text-white'}`}
+                >
+                  <item.icon className="size-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="flex items-center gap-1 sm:gap-2">
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => router.push('/help')} />}>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => router.push('/help')} />}>
                 <CircleHelp className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Ajuda e tutoriais</TooltipContent>
             </Tooltip>
-            <BrandMark compact />
-          </div>
-          <div className="flex items-center gap-2">
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} />}>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} />}>
                 {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
               </TooltipTrigger>
               <TooltipContent>{resolvedTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleLogout} />}>
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="hidden h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white sm:inline-flex" onClick={handleLogout} />}>
                 <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
             </Tooltip>
-            <Avatar className="w-8 h-8">
+            <div className="ml-1 hidden text-right xl:block">
+              <p className="max-w-28 truncate text-xs font-bold">{user?.name || 'Aluno'}</p>
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">Atleta D KONG</p>
+            </div>
+            <Avatar className="w-9 h-9 ring-2 ring-[#c9ff32]/30">
               {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-              <AvatarFallback className="bg-blue-500/10 text-blue-500 text-xs font-bold">
+              <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
                 {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AL'}
               </AvatarFallback>
             </Avatar>
@@ -120,28 +137,28 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 pb-24">
-        <div className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
+      <main className="dk-app-surface flex-1 pb-24 lg:pb-0">
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8 lg:py-10">
           {children}
         </div>
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-lg border-t border-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        <div className="flex items-center justify-around h-16 max-w-2xl mx-auto px-2">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="mx-auto flex h-16 max-w-2xl items-center justify-around px-1">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors relative
-                  ${active ? 'text-blue-500' : 'text-muted-foreground'}`}
+                className={`relative flex flex-col items-center gap-1 rounded-lg px-2 py-1.5 transition-colors
+                  ${active ? 'text-[#c9ff32]' : 'text-white/38'}`}
               >
-                <item.icon className={`w-5 h-5 ${active ? 'text-blue-500' : ''}`} />
+                <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
                 {active && (
-                  <div className="absolute -top-0.5 w-5 h-0.5 bg-blue-500 rounded-full" />
+                  <div className="absolute -top-0.5 h-0.5 w-5 rounded-full bg-[#c9ff32] shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
                 )}
               </Link>
             );

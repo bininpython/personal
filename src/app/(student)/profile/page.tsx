@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Calendar, Dumbbell, Loader2, Ruler, Target, User, Weight } from 'lucide-react';
+import { Activity, Calendar, Dumbbell, Loader2, Ruler, ShieldCheck, Target, TrendingUp, Weight } from 'lucide-react';
 import { AvatarPicker } from '@/components/profile/avatar-picker';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/hooks/use-auth';
 import type { StudentProgressData } from '@/types/student-progress';
 import { AccountControls } from '@/components/privacy/account-controls';
@@ -72,11 +71,10 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
-      <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><User className="size-6 text-blue-500" /> Meu perfil e evolução</h1>
-      <Card className="border-border/60">
-        <CardContent className="p-6">
-          <div className="mb-6 flex items-center gap-4">
+    <div className="space-y-8 animate-fade-in pb-10">
+      <section className="dk-hero-panel p-6 sm:p-8 lg:p-10">
+        <div className="relative z-10 grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
             <AvatarPicker
               name={profile.full_name}
               avatarUrl={profile.avatar_url}
@@ -85,20 +83,33 @@ export default function ProfilePage() {
                 setProgress((current) => current ? { ...current, student: { ...current.student, avatarUrl } } : current);
                 await refreshUser();
               }}
-              sizeClassName="size-20"
+              sizeClassName="size-24 border-4 border-white/15"
             />
-            <div><h2 className="text-xl font-bold">{profile.full_name}</h2><Badge className="bg-emerald-500/10 text-emerald-600">{profile.status === 'active' ? 'Ativo' : 'Inativo'}</Badge><p className="mt-2 text-xs text-muted-foreground">Toque na foto para trocar ou escolher um avatar.</p></div>
+            <div>
+              <div className="mb-3 flex flex-wrap items-center gap-2"><span className="dk-kicker text-[#c9ff32]">Perfil do atleta</span><Badge className="dk-volt-chip border-0">{profile.status === 'active' ? 'Ativo' : 'Inativo'}</Badge></div>
+              <h1 className="dk-display text-4xl sm:text-5xl">{profile.full_name}</h1>
+              <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/50"><span className="flex items-center gap-1.5"><Target className="size-4 text-[#c9ff32]" /> {profile.goal || 'Objetivo não informado'}</span><span className="flex items-center gap-1.5"><Dumbbell className="size-4 text-[#c9ff32]" /> {LEVELS[profile.experience_level] || 'Nível não informado'}</span></p>
+              <p className="mt-3 text-xs text-white/35">Toque na foto para trocar seu avatar.</p>
+            </div>
           </div>
-          <Separator className="my-4" />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {items.map((item) => <div key={item.label} className="flex items-center gap-3 rounded-lg bg-muted/50 p-3"><item.icon className="size-4 text-muted-foreground" /><div><p className="text-[10px] text-muted-foreground">{item.label}</p><p className="text-sm font-medium">{item.value}</p></div></div>)}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Ruler className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.height > 0 ? `${profile.height} cm` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Altura</p></div>
+            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><Weight className="size-4" /><p className="mt-4 text-2xl font-black">{profile.current_weight > 0 ? `${profile.current_weight} kg` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/45">Peso atual</p></div>
+            <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1"><Calendar className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.available_days.length || '—'}x</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Disponibilidade</p></div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
-      <Card className="border-border/60"><CardHeader><CardTitle className="text-lg">Minha evolução detalhada</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Suas avaliações, mudanças corporais, constância e treinos registrados pelo personal aparecem abaixo.</p></CardContent></Card>
+      <section>
+        <div className="mb-4"><p className="dk-kicker text-muted-foreground">Identidade esportiva</p><h2 className="dk-display mt-3 text-3xl sm:text-4xl">SEUS DADOS. SEU RITMO.</h2></div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {items.map((item) => <div key={item.label} className="dk-metric flex items-center gap-3 p-4 sm:p-5"><span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black"><item.icon className="size-4" /></span><div className="min-w-0"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{item.label}</p><p className="mt-1 truncate text-sm font-black sm:text-base">{item.value}</p></div></div>)}
+        </div>
+      </section>
+
+      <Card><CardHeader className="border-b border-black/8 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Performance real</p><CardTitle className="mt-1 flex items-center gap-2 text-2xl font-black tracking-tight"><TrendingUp className="size-5" /> Minha evolução detalhada</CardTitle></CardHeader><CardContent className="flex items-start gap-3 p-5 sm:p-6"><Activity className="mt-0.5 size-5 shrink-0 text-[#7cae00]" /><p className="text-sm leading-6 text-muted-foreground">Suas avaliações, mudanças corporais, constância e treinos registrados pelo personal aparecem abaixo.</p></CardContent></Card>
       <StudentProgressDashboard data={progress} />
-      <Card className="border-border/60"><CardHeader><CardTitle className="text-lg">Meus dados e privacidade</CardTitle></CardHeader><CardContent><AccountControls name={profile.full_name} /></CardContent></Card>
+      <Card><CardHeader className="border-b border-black/8 dark:border-white/8"><CardTitle className="flex items-center gap-2 text-xl font-black"><ShieldCheck className="size-5 text-[#7cae00]" /> Meus dados e privacidade</CardTitle></CardHeader><CardContent className="p-5 sm:p-6"><AccountControls name={profile.full_name} /></CardContent></Card>
     </div>
   );
 }

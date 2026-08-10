@@ -69,63 +69,74 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            {greeting}, {user?.name?.split(' ')[0] || 'Personal'} 👋
+    <div className="space-y-8 animate-fade-in">
+      <section className="dk-hero-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end lg:p-10">
+        <div className="relative z-10">
+          <p className="dk-kicker text-[#c9ff32]">Central de performance</p>
+          <h1 className="dk-display mt-6 max-w-4xl text-[clamp(2.8rem,6vw,5.8rem)]">
+            {greeting.toUpperCase()},<br />
+            <span className="text-[#c9ff32]">{user?.name?.split(' ')[0]?.toUpperCase() || 'PERSONAL'}.</span>
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Aqui está o resumo dos seus alunos e treinos.
+          <p className="mt-6 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
+            Sua operação em uma visão direta: alunos, consistência, agenda e pontos que pedem ação.
           </p>
+          <Button onClick={() => router.push('/students/new')} className="mt-7 h-12 bg-[#c9ff32] px-6 text-black hover:bg-[#b8ef22]">
+            <Users className="mr-2 size-4" /> Novo aluno
+          </Button>
         </div>
-        <Button onClick={() => router.push('/students/new')} className="bg-primary hover:bg-primary/90 shrink-0">
-          <Users className="w-4 h-4 mr-2" />
-          Novo Aluno
-        </Button>
-      </div>
+        <div className="relative z-10 grid grid-cols-2 gap-3">
+          <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4 backdrop-blur">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Alunos ativos</p>
+            <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.activeStudents}</p>
+          </div>
+          <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Constância</p>
+            <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.averageConsistency}%</p>
+          </div>
+          <div className="col-span-2 flex items-center justify-between rounded-2xl border border-white/12 bg-white/[0.06] p-4">
+            <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Hoje na agenda</p><p className="mt-1 text-xl font-black">{stats.appointmentsToday} compromisso(s)</p></div>
+            <CalendarDays className="size-6 text-[#c9ff32]" />
+          </div>
+        </div>
+      </section>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div>
+        <p className="dk-kicker text-muted-foreground">Pulso da operação</p>
+        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-6">
         {[
-          { label: 'Alunos Ativos', value: stats.activeStudents.toString(), icon: Users, color: 'text-emerald-500', bg: 'bg-emerald-500/10', change: '' },
-          { label: 'Treinaram Hoje', value: stats.trainedToday.toString(), icon: Activity, color: 'text-blue-500', bg: 'bg-blue-500/10', change: '' },
-          { label: 'Constância Média', value: `${stats.averageConsistency}%`, icon: TrendingUp, color: 'text-violet-500', bg: 'bg-violet-500/10', change: '' },
-          { label: 'Taxa de Conclusão', value: `${stats.completionRate}%`, icon: Target, color: 'text-amber-500', bg: 'bg-amber-500/10', change: '' },
-          { label: 'Risco Alto', value: stats.atRisk.toString(), icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10', change: '' },
-          { label: 'Agenda Hoje', value: stats.appointmentsToday.toString(), icon: CalendarDays, color: 'text-cyan-500', bg: 'bg-cyan-500/10', change: '' },
+          { label: 'Alunos ativos', value: stats.activeStudents.toString(), icon: Users },
+          { label: 'Treinaram hoje', value: stats.trainedToday.toString(), icon: Activity },
+          { label: 'Constância média', value: `${stats.averageConsistency}%`, icon: TrendingUp },
+          { label: 'Conclusão', value: `${stats.completionRate}%`, icon: Target },
+          { label: 'Risco alto', value: stats.atRisk.toString(), icon: AlertTriangle },
+          { label: 'Agenda hoje', value: stats.appointmentsToday.toString(), icon: CalendarDays },
         ].map((stat, i) => (
-          <Card key={i} className="border-border/50 hover:shadow-md transition-shadow animate-slide-up" style={{ animationDelay: `${0.05 * i}s` }}>
+          <Card key={stat.label} className="group animate-slide-up transition-transform hover:-translate-y-1" style={{ animationDelay: `${0.05 * i}s` }}>
             <CardContent className="p-4 sm:p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center`}>
-                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
-                </div>
+              <div className="mb-5 flex size-10 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                <stat.icon className="size-4" />
               </div>
-              <div className="text-2xl sm:text-3xl font-bold">{stat.value}</div>
-              <p className="text-sm text-muted-foreground mt-0.5">{stat.label}</p>
-              <p className="text-xs text-muted-foreground/70 mt-1">{stat.change}</p>
+              <div className="text-3xl font-black tracking-[-0.06em]">{stat.value}</div>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">{stat.label}</p>
             </CardContent>
           </Card>
         ))}
+        </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid lg:grid-cols-3 gap-4">
-        {/* Goal Distribution */}
-        <Card className="border-border/50 lg:col-span-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" />
-              Foco dos Alunos
+      <div className="grid gap-5 lg:grid-cols-3">
+        <Card className="lg:col-span-1">
+          <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Distribuição</p>
+            <CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight">
+              <Target className="size-5" /> Foco dos alunos
             </CardTitle>
           </CardHeader>
           <CardContent>
             {goalDist.length === 0 ? (
               <div className="h-[220px] flex items-center justify-center text-center text-muted-foreground text-sm flex-col">
-                <PieChart className="w-10 h-10 mb-2 opacity-20" />
-                Sem alunos<br/>cadastrados
+                <PieChart className="mb-2 size-10 opacity-20" />
+                Sem alunos cadastrados
               </div>
             ) : (
               <div className="h-[220px]">
@@ -148,7 +159,7 @@ export default function DashboardPage() {
                       contentStyle={{
                         background: 'hsl(var(--card))',
                         border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
+                        borderRadius: '16px',
                         fontSize: '12px',
                       }}
                     />
@@ -157,7 +168,7 @@ export default function DashboardPage() {
               </div>
             )}
             {goalDist.length > 0 && (
-              <div className="flex flex-wrap gap-2 justify-center mt-2">
+              <div className="mt-2 flex flex-wrap justify-center gap-2">
                 {goalDist.map((goal, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-xs">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: goal.color }} />
@@ -169,18 +180,11 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Student Ranking */}
-        <Card className="lg:col-span-2 border-border/50">
-          <CardHeader className="pb-3">
+        <Card className="lg:col-span-2">
+          <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                Ranking de Engajamento
-              </CardTitle>
-              <Button variant="ghost" size="sm" onClick={() => router.push('/students')} className="text-xs">
-                Ver todos
-                <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-              </Button>
+              <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Performance</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><TrendingUp className="size-5" /> Ranking de engajamento</CardTitle></div>
+              <Button variant="outline" size="sm" onClick={() => router.push('/students')} className="text-xs">Ver todos <ChevronRight className="ml-0.5 size-3.5" /></Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -192,14 +196,14 @@ export default function DashboardPage() {
               ranking.slice(0, 5).map((student, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-black/8 hover:bg-[#c9ff32]/10 dark:hover:border-white/8"
                   onClick={() => router.push(`/students/${student.id}`)}
                 >
-                  <div className="font-bold text-muted-foreground w-4 text-center">
+                  <div className="w-5 text-center font-mono text-xs font-bold text-muted-foreground">
                     {i + 1}
                   </div>
                   <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                    <AvatarFallback className="bg-black text-sm font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
                       {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
@@ -211,7 +215,7 @@ export default function DashboardPage() {
                     <div className="text-right">
                       <div className="flex items-center gap-1 justify-end">
                         <span className="text-sm font-semibold">{student.consistency}%</span>
-                        {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />}
+                        {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-[#7cae00]" />}
                         {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />}
                         {student.trend === 'stable' && <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       </div>
