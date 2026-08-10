@@ -144,7 +144,7 @@ export default function NewStudentPage() {
             </div>
 
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-              O aluno entrará usando o nome <strong>{createdStudent.name}</strong>, seu código público de personal e este código individual. Não precisa de e-mail nem telefone.
+              O aluno entrará usando apenas o nome <strong>{createdStudent.name}</strong> e este código individual. Não precisa de e-mail, telefone ou senha.
             </div>
 
             <p className="text-center text-sm text-muted-foreground">
@@ -247,9 +247,9 @@ export default function NewStudentPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6 text-sm text-muted-foreground">
-                <p>O sistema criará um código individual de 8 caracteres, fácil de digitar e exibido uma única vez.</p>
+                <p>O sistema criará um código individual de 6 números no formato 000-000, exibido uma única vez.</p>
                 <p>No banco ele fica somente em formato irreversível. Se for perdido, gere outro.</p>
-                <p>Entregue ao aluno: nome, seu código público e o código individual.</p>
+                <p>Entregue ao aluno somente o nome cadastrado e o código individual.</p>
               </CardContent>
             </Card>
           </div>

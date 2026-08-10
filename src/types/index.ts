@@ -1,5 +1,5 @@
 // ============================================
-// FitControl Pro — Type Definitions
+// D KONG — Type Definitions
 // ============================================
 
 // ---- Auth & Users ----

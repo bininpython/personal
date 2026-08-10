@@ -1,5 +1,5 @@
 // ============================================
-// FitControl Pro — Demo Data Store
+// D KONG — Demo Data Store
 // In-memory store for demonstration without Supabase
 // ============================================
 
@@ -882,7 +882,7 @@ export async function initDemoData() {
     }
   }
 
-  console.log('[FitControl] Demo data initialized successfully');
+  console.log('[D KONG] Demo data initialized successfully');
 }
 
 // ---- DATA ACCESS FUNCTIONS ----

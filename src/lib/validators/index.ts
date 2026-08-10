@@ -1,5 +1,5 @@
 // ============================================
-// FitControl Pro — Zod Validators
+// D KONG — Zod Validators
 // ============================================
 
 import { z } from 'zod';
@@ -10,11 +10,9 @@ import { normalizeAuthCode } from '@/lib/auth/credentials';
 export const trainerRegisterSchema = z.object({
   full_name: z.string().trim().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   city: z.string().trim().min(2, 'Informe sua cidade').max(100, 'Cidade muito longa'),
-  state: z
-    .string()
-    .trim()
-    .regex(/^[A-Za-z]{2}$/, 'Use a sigla do estado com 2 letras')
-    .transform((value) => value.toUpperCase()),
+  nickname: z.string().trim().max(50, 'Apelido muito longo').optional(),
+  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres').max(72, 'Senha muito longa'),
+  age: z.number().int('Informe uma idade válida').min(18, 'Você deve ter pelo menos 18 anos').max(100, 'Informe uma idade válida'),
   terms_accepted: z.boolean().refine((value) => value, 'Aceite os Termos e a Política de Privacidade.'),
 }).strict();
 
@@ -25,8 +23,11 @@ export type TrainerRegisterInput = z.infer<typeof trainerRegisterSchema>;
 export const trainerLoginSchema = z.object({
   name: z.string().trim().min(3, 'Informe seu nome profissional').max(160),
   access_code: z.string().trim().refine(
-    (code) => normalizeAuthCode(code).length >= 6,
-    'Código de acesso inválido',
+    (code) => {
+      const normalized = normalizeAuthCode(code);
+      return /^\d{6}$/.test(normalized) || /^[a-z0-9]{8}$/.test(normalized);
+    },
+    'Use o código de 6 números',
   ),
   remember: z.boolean().optional(),
 }).strict();
@@ -37,13 +38,12 @@ export type TrainerLoginInput = z.infer<typeof trainerLoginSchema>;
 
 export const studentLoginSchema = z.object({
   name: z.string().trim().min(2, 'Informe seu nome'),
-  trainer_code: z.string().trim().refine(
-    (code) => normalizeAuthCode(code).length >= 6,
-    'Código público do personal inválido',
-  ),
   access_code: z.string().trim().refine(
-    (code) => normalizeAuthCode(code).length >= 4,
-    'Código individual inválido',
+    (code) => {
+      const normalized = normalizeAuthCode(code);
+      return /^\d{6}$/.test(normalized) || /^[a-z0-9]{8}$/.test(normalized);
+    },
+    'Use o código de 6 números enviado pelo seu personal',
   ),
   remember: z.boolean().optional(),
 }).strict();
@@ -196,8 +196,8 @@ export const completeWorkoutSchema = z.object({
 
 export const trainerRecoverySchema = z.object({
   name: z.string().trim().min(3).max(160),
-  trainer_code: z.string().trim().min(6).max(32),
-  recovery_code: z.string().trim().min(12).max(64),
+  password: z.string().min(6).max(72),
+  age: z.number().int().min(18).max(100),
 }).strict();
 
 // ---- Physical Assessment ----

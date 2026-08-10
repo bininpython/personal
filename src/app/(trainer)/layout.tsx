@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
-import { APP_NAME } from '@/constants';
+import { BrandMark } from '@/components/brand/brand-mark';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -77,15 +77,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
-        <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
-          <Dumbbell className="w-4.5 h-4.5 text-primary-foreground" />
-        </div>
-        {(!collapsed || mobile) && (
-          <div className="min-w-0">
-            <h2 className="text-sm font-bold truncate">{APP_NAME}</h2>
-            <p className="text-xs text-muted-foreground truncate">Painel do Personal</p>
-          </div>
-        )}
+        <BrandMark compact iconOnly={collapsed && !mobile} />
       </div>
 
       <Separator />
@@ -215,10 +207,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               {renderNavContent(true)}
             </SheetContent>
           </Sheet>
-          <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-            <Dumbbell className="w-3.5 h-3.5 text-primary-foreground" />
-          </div>
-          <span className="text-sm font-bold">{APP_NAME}</span>
+          <BrandMark compact />
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="h-9 w-9 relative" onClick={() => router.push('/alerts')}>

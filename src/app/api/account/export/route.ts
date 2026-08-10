@@ -46,7 +46,7 @@ export async function GET() {
     }
 
     const body = JSON.stringify({
-      product: 'FitControl Pro',
+      product: 'D KONG',
       exportedAt: new Date().toISOString(),
       subjectType: session.role,
       data: exportData,

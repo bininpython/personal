@@ -13,18 +13,18 @@ export function AccountControls({ name, trainer = false }: { name: string; train
   const [confirmation, setConfirmation] = useState('');
   const [deleting, setDeleting] = useState(false);
   const [rotating, setRotating] = useState(false);
-  const [codes, setCodes] = useState<{ access: string; recovery: string } | null>(null);
+  const [newAccessCode, setNewAccessCode] = useState<string | null>(null);
 
   async function rotateCodes() {
     setRotating(true);
     try {
       const response = await fetch('/api/auth/trainer/rotate-codes', { method: 'POST' });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Não foi possível trocar os códigos.');
-      setCodes({ access: data.access_code, recovery: data.recovery_code });
-      toast.success('Códigos trocados. Todas as outras sessões foram encerradas.');
+      if (!response.ok) throw new Error(data.error || 'Não foi possível trocar o código.');
+      setNewAccessCode(data.access_code);
+      toast.success('Código trocado. Todas as outras sessões foram encerradas.');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Não foi possível trocar os códigos.');
+      toast.error(error instanceof Error ? error.message : 'Não foi possível trocar o código.');
     } finally {
       setRotating(false);
     }
@@ -59,11 +59,11 @@ export function AccountControls({ name, trainer = false }: { name: string; train
           {rotating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Trocar código de acesso
         </Button>}
       </div>
-      {codes && (
+      {newAccessCode && (
         <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
-          <p className="font-medium">Salve agora. Estes códigos aparecem uma única vez.</p>
-          <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO DE ACESSO (8 CARACTERES)</span><code className="block break-all font-bold">{codes.access}</code></div>
-          <div><span className="text-xs text-muted-foreground">NOVA CHAVE DE RECUPERAÇÃO</span><code className="block break-all font-bold">{codes.recovery}</code></div>
+          <p className="font-medium">Salve agora. Este código aparece uma única vez.</p>
+          <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO PESSOAL</span><code className="mt-1 block font-mono text-2xl font-bold tracking-[0.16em]">{newAccessCode}</code></div>
+          <p className="text-xs text-muted-foreground">Sua senha e idade continuam válidas para recuperação.</p>
         </div>
       )}
       {!showDelete ? (

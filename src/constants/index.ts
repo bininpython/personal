@@ -1,11 +1,11 @@
 // ============================================
-// FitControl Pro — Constants
+// D KONG — Constants
 // ============================================
 
 // ---- App Config ----
 
-export const APP_NAME = 'FitControl Pro';
-export const APP_SUBTITLE = 'Gestão de treinos, alunos e evolução física.';
+export const APP_NAME = 'D KONG';
+export const APP_SUBTITLE = 'Treino forte. Gestão inteligente. Evolução real.';
 export const APP_VERSION = '1.0.0';
 
 // ---- Auth ----

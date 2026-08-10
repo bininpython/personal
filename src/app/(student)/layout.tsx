@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
-import { APP_NAME } from '@/constants';
+import { BrandMark } from '@/components/brand/brand-mark';
 import { useEffect, useState } from 'react';
 
 const BOTTOM_NAV = [
@@ -94,10 +94,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               </TooltipTrigger>
               <TooltipContent>Ajuda e tutoriais</TooltipContent>
             </Tooltip>
-            <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
-              <Dumbbell className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-sm font-bold">{APP_NAME}</span>
+            <BrandMark compact />
           </div>
           <div className="flex items-center gap-2">
             <Tooltip>

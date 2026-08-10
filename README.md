@@ -1,14 +1,14 @@
-# FitControl Pro
+# D KONG
 
 Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanharem a execução e a evolução dos treinos.
 
 ## Acesso
 
 - A autenticação não coleta e-mail nem telefone e não cria contas sintéticas.
-- O personal entra com nome e um código diário de 8 caracteres (`XXXX-XXXX`). Um código público separado identifica sua carteira para os alunos.
-- Cada aluno entra com nome, código público do personal e código individual.
-- Códigos de acesso são aleatórios, têm 40 bits de entropia, são armazenados apenas como hash bcrypt e exibidos uma única vez. Rate limit e bloqueio protegem contra tentativas automatizadas.
-- O personal recebe uma chave de recuperação de uso controlado; o código do aluno pode ser redefinido pelo personal.
+- O personal entra com nome e um único código numérico de 6 caracteres (`000-000`).
+- Cada aluno entra somente com nome e o código individual criado pelo personal.
+- Códigos são gerados com aleatoriedade criptográfica, armazenados apenas como hash bcrypt e exibidos por inteiro uma única vez. Rate limit e bloqueio protegem contra tentativas automatizadas.
+- O personal recupera o acesso com nome, senha e idade; após a validação, o sistema emite um novo código. O código do aluno pode ser redefinido no perfil pelo personal.
 - Sessões são assinadas, registradas no banco, revogáveis e protegidas por cookie HttpOnly.
 - Cada personal pode manter até 10 alunos **ativos**; alunos arquivados não consomem o limite.
 
@@ -16,7 +16,7 @@ Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanh
 
 1. Copie `.env.example` para `.env.local`.
 2. Preencha as chaves públicas do Supabase e a chave secreta usada apenas no servidor.
-3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo obrigatoriamente `20260808_commercial_security.sql`.
+3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo `20260808_commercial_security.sql` e `20260810_d_kong_auth.sql`.
 4. Instale as dependências e inicie o projeto:
 
 ```bash

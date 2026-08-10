@@ -102,7 +102,7 @@ export async function getSession(): Promise<AuthSession | null> {
     if (payload.role === 'trainer') {
       const { data: trainer } = await admin
         .from('trainers')
-        .select('id, name, public_code, avatar_url, deleted_at')
+        .select('id, name, avatar_url, deleted_at')
         .eq('id', payload.sub)
         .maybeSingle();
       if (!trainer || trainer.deleted_at) return null;
@@ -113,7 +113,6 @@ export async function getSession(): Promise<AuthSession | null> {
         role: 'trainer',
         name: trainer.name,
         trainer_id: trainer.id,
-        trainer_code: trainer.public_code,
         avatar_url: displayedAvatar(trainer.avatar_url, trainer.id),
       };
     }
