@@ -7,6 +7,5 @@ export interface AuthSession {
   role: SessionRole;
   name: string;
   trainer_id: string;
-  trainer_code?: string;
   avatar_url?: string;
 }

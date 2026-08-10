@@ -14,6 +14,9 @@ const COMMERCIAL_SCHEMA_MARKERS = [
   'login_name_normalized',
   'access_code_hash',
   'recovery_code_hash',
+  'recovery_password_hash',
+  'nickname',
+  'age',
   'public_code',
   'deleted_at',
 ];

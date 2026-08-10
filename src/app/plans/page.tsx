@@ -9,7 +9,7 @@ export default function PlansPage() {
       <div className="mx-auto max-w-4xl">
         <Link href="/" className="inline-flex items-center gap-2 text-sm font-bold">
           <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Dumbbell className="size-4" /></span>
-          FitControl Pro
+          D KONG
         </Link>
         <div className="mx-auto mt-14 max-w-2xl text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-5xl">Plano simples, sem surpresa</h1>

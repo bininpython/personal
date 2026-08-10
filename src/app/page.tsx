@@ -1,289 +1,222 @@
-'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  Check,
+  Dumbbell,
+  KeyRound,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Zap,
+} from 'lucide-react';
+import { BrandMark } from '@/components/brand/brand-mark';
 
-import { useRouter } from 'next/navigation';
-import { Dumbbell, Users, BarChart3, Shield, Target, TrendingUp, Award, Clock, Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { APP_NAME, APP_SUBTITLE } from '@/constants';
+const capabilities = [
+  {
+    number: '01',
+    icon: Users,
+    title: 'Alunos sob controle',
+    description: 'Perfis, avaliações, histórico e comunicação reunidos em uma visão limpa e acionável.',
+  },
+  {
+    number: '02',
+    icon: Dumbbell,
+    title: 'Treinos que evoluem',
+    description: 'Monte fichas completas, acompanhe cada série e ajuste o plano a partir do desempenho real.',
+  },
+  {
+    number: '03',
+    icon: BarChart3,
+    title: 'Dados que viram decisão',
+    description: 'Consistência, frequência e progresso traduzidos em indicadores fáceis de entender.',
+  },
+];
+
+const highlights = [
+  'Sem e-mail obrigatório',
+  'Códigos simples de 6 números',
+  'Experiência otimizada para celular',
+];
 
 export default function LandingPage() {
-  const router = useRouter();
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-muted/50 via-background to-background" />
-
-        <nav className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <Dumbbell className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold tracking-tight">{APP_NAME}</h2>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/login')}
-              className="hidden sm:inline-flex"
+    <div className="min-h-screen overflow-hidden bg-[#f6f6f1] text-[#0a0a0a]">
+      <header className="border-b border-black/10 bg-[#f6f6f1]/90 backdrop-blur-xl">
+        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
+          <Link href="/" aria-label="D KONG — início">
+            <BrandMark priority />
+          </Link>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link href="/login" className="hidden text-sm font-bold transition-opacity hover:opacity-55 sm:inline-flex">
+              Já tenho acesso
+            </Link>
+            <Link
+              href="/register"
+              className="inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             >
-              Entrar
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => router.push('/login')}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Começar Agora
-            </Button>
+              Começar agora <ArrowUpRight className="size-4" />
+            </Link>
           </div>
         </nav>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-20 sm:pb-32">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-border/50 bg-muted/30 text-muted-foreground text-sm font-medium mb-6 animate-fade-in">
-              Gestão Profissional de Alunos
-            </div>
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up">
-              {APP_NAME}
-            </h1>
-            <p className="text-base sm:text-xl text-muted-foreground mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              {APP_SUBTITLE}
-            </p>
-            <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.15s' }}>
-              Cadastre alunos, crie fichas personalizadas, registre avaliações e entregue os treinos
-              diretamente na conta de cada aluno.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <Button
-                size="lg"
-                onClick={() => router.push('/login')}
-                className="text-base px-8 h-12"
-              >
-                Acessar Plataforma
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => router.push('/plans')}
-                className="text-base px-8 h-12"
-              >
-                Ver Planos
-              </Button>
-            </div>
-          </div>
-        </div>
       </header>
 
-      {/* Stats Bar */}
-      <section className="border-y border-border bg-card/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6">
-          {[
-            { value: '100%', label: 'Gratuito para testar', icon: Star },
-            { value: '254', label: 'Exercícios na biblioteca', icon: Dumbbell },
-            { value: '10 s', label: 'Atualização das fichas', icon: Clock },
-            { value: 'Seguro', label: 'Dados protegidos', icon: Shield },
-          ].map((stat, i) => (
-            <div key={i} className="text-center animate-fade-in" style={{ animationDelay: `${0.1 * i}s` }}>
-              <stat.icon className="w-5 h-5 text-primary mx-auto mb-2" />
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+      <main>
+        <section className="relative mx-auto grid max-w-7xl gap-10 px-5 pb-16 pt-12 sm:px-8 sm:pb-24 sm:pt-20 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-16">
+          <div className="absolute left-1/2 top-24 -z-0 size-[520px] -translate-x-1/2 rounded-full bg-[#c9ff32]/12 blur-3xl" />
+          <div className="relative z-10">
+            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-[0.7rem] font-bold uppercase tracking-[0.2em] shadow-sm">
+              <span className="size-2 rounded-full bg-[#9fdb00] shadow-[0_0_0_4px_rgba(159,219,0,0.14)]" />
+              Performance management
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Tudo que você precisa em um só lugar
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Ferramentas profissionais para transformar a gestão dos seus alunos
+            <h1 className="max-w-4xl text-[clamp(3.55rem,8.5vw,7.6rem)] font-black leading-[0.83] tracking-[-0.075em]">
+              FORÇA NA
+              <span className="block text-[#7cae00]">GESTÃO.</span>
+              FOCO NO
+              <span className="block">RESULTADO.</span>
+            </h1>
+            <p className="mt-8 max-w-xl text-base leading-7 text-black/58 sm:text-lg">
+              D KONG transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
             </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: Users,
-                title: 'Gestão de Alunos',
-                description: 'Cadastre, organize e acompanhe todos os seus alunos com perfis completos, status e evolução.',
-                color: 'text-emerald-500',
-                bg: 'bg-emerald-500/10',
-              },
-              {
-                icon: Target,
-                title: 'Fichas Personalizadas',
-                description: 'Crie fichas de treino detalhadas com séries, repetições, carga, método e vídeos demonstrativos.',
-                color: 'text-blue-500',
-                bg: 'bg-blue-500/10',
-              },
-              {
-                icon: TrendingUp,
-                title: 'Evolução em Gráficos',
-                description: 'Registre avaliações físicas e acompanhe peso e frequência com dados do próprio aluno.',
-                color: 'text-amber-500',
-                bg: 'bg-amber-500/10',
-              },
-              {
-                icon: Dumbbell,
-                title: 'Checklist de Séries',
-                description: 'O aluno marca cada série realizada e conclui o treino para salvar no histórico.',
-                color: 'text-emerald-500',
-                bg: 'bg-emerald-500/10',
-              },
-              {
-                icon: BarChart3,
-                title: 'Histórico de Treinos',
-                description: 'Treinos concluídos pelo aluno são salvos e aparecem no histórico e na evolução.',
-                color: 'text-blue-500',
-                bg: 'bg-blue-500/10',
-              },
-              {
-                icon: Award,
-                title: 'Acesso sem E-mail',
-                description: 'Personal e aluno entram com os códigos gerados pelo sistema, sem expor e-mails internos.',
-                color: 'text-amber-500',
-                bg: 'bg-amber-500/10',
-              },
-            ].map((feature, i) => (
-              <Card
-                key={i}
-                className="group border border-border/50 hover:border-primary/30 bg-card hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 animate-fade-in"
-                style={{ animationDelay: `${0.05 * i}s` }}
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/login"
+                className="inline-flex h-14 items-center justify-center gap-3 rounded-full bg-black px-7 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:shadow-xl"
               >
-                <CardContent className="p-6">
-                  <div className={`w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center mb-4 transition-transform duration-300`}>
-                    <feature.icon className="w-5 h-5 text-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Como funciona
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Simples para o personal, ainda mais simples para o aluno
-            </p>
+                Acessar plataforma <ArrowRight className="size-4" />
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex h-14 items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
+              >
+                Criar conta de personal
+              </Link>
+            </div>
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3">
+              {highlights.map((item) => (
+                <span key={item} className="inline-flex items-center gap-2 text-xs font-semibold text-black/55">
+                  <span className="flex size-5 items-center justify-center rounded-full bg-black text-white"><Check className="size-3" /></span>
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-            {/* Personal Flow */}
-            <div>
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Shield className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold">Para o Personal</h3>
+          <div className="relative z-10 mx-auto w-full max-w-[540px]">
+            <div className="absolute -left-5 top-12 hidden rounded-2xl bg-[#c9ff32] px-5 py-4 shadow-xl sm:block">
+              <p className="text-[0.62rem] font-black uppercase tracking-[0.22em]">Acesso simples</p>
+              <p className="mt-1 font-mono text-xl font-black tracking-[0.12em]">564-625</p>
+            </div>
+            <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white p-5 shadow-[0_40px_100px_rgba(0,0,0,0.14)] sm:p-8">
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-[#c9ff32]" />
+              <div className="flex items-center justify-between border-b border-black/10 pb-5">
+                <span className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-black/40">The training OS</span>
+                <Sparkles className="size-4 text-[#7cae00]" />
               </div>
-              <div className="space-y-4">
-                {[
-                  'Cadastre-se com um código exclusivo e senha segura',
-                  'Adicione seus alunos e gere códigos de acesso',
-                  'Crie fichas de treino personalizadas',
-                  'Acompanhe fichas, avaliações e histórico',
-                ].map((step, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                      {i + 1}
-                    </div>
-                    <p className="text-muted-foreground">{step}</p>
+              <div className="relative mx-auto aspect-square max-w-[430px]">
+                <Image
+                  src="/dkong-logo.jpg"
+                  alt="Gorila com boné, símbolo da D KONG"
+                  fill
+                  sizes="(max-width: 640px) 85vw, 430px"
+                  className="object-contain mix-blend-multiply"
+                  priority
+                  loading="eager"
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-2 border-t border-black/10 pt-5 text-center">
+                {[['254+', 'exercícios'], ['100%', 'mobile'], ['24/7', 'acesso']].map(([value, label]) => (
+                  <div key={label}>
+                    <p className="text-lg font-black">{value}</p>
+                    <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-black/38">{label}</p>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Student Flow */}
-            <div>
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
-                  <Dumbbell className="w-4 h-4 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold">Para o Aluno</h3>
+            <div className="absolute -bottom-6 -right-3 rounded-2xl bg-black px-5 py-4 text-white shadow-2xl sm:-right-8">
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Zap className="size-4 fill-current" /></span>
+                <div><p className="text-xs font-bold">Operação rápida</p><p className="text-[0.65rem] text-white/50">do cadastro ao treino</p></div>
               </div>
-              <div className="space-y-4">
-                {[
-                  'Receba seu nome e código de acesso do personal',
-                  'Acesse o sistema — sem e-mail, sem senha complicada',
-                  'Visualize seu treino do dia e inicie',
-                  'Marque cada série, registre carga e veja seu progresso',
-                ].map((step, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">
-                      {i + 1}
-                    </div>
-                    <p className="text-muted-foreground">{step}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-[#0a0a0a] px-5 py-20 text-white sm:px-8 sm:py-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-8 border-b border-white/12 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#c9ff32]">Sistema completo</p>
+              <h2 className="max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-6xl">
+                TUDO O QUE IMPORTA. SEM O QUE ATRAPALHA.
+              </h2>
+            </div>
+            <div className="grid lg:grid-cols-3">
+              {capabilities.map((item) => (
+                <article key={item.number} className="group border-b border-white/12 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-12 first:lg:pl-0 last:lg:border-r-0 last:lg:pr-0">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs text-white/35">/{item.number}</span>
+                    <item.icon className="size-5 text-[#c9ff32] transition-transform group-hover:scale-110" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="mt-20 text-2xl font-black tracking-[-0.035em]">{item.title}</h3>
+                  <p className="mt-4 max-w-sm text-sm leading-6 text-white/48">{item.description}</p>
+                </article>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="rounded-2xl bg-card border border-border/50 p-6 sm:p-14">
-            <Dumbbell className="w-12 h-12 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Comece a usar agora
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-              Crie sua conta de personal trainer e comece a organizar seus alunos.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                size="lg"
-                onClick={() => router.push('/login')}
-                className="text-base px-8 h-12"
-              >
-                Acessar o Sistema
-              </Button>
+        <section className="px-5 py-20 sm:px-8 sm:py-28">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-24">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.25em] text-[#668f00]">Acesso D KONG</p>
+              <h2 className="mt-5 text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
+              <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Um fluxo pensado para funcionar na academia, entre uma série e outra — rápido, legível e sem códigos desnecessários.</p>
             </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-              <Dumbbell className="w-3.5 h-3.5 text-primary-foreground" />
+            <div className="space-y-4">
+              {[
+                { icon: ShieldCheck, tag: 'PERSONAL', title: 'Nome + código pessoal', text: 'Cadastre-se uma vez e receba um único código no formato 000-000.' },
+                { icon: KeyRound, tag: 'ALUNO', title: 'Nome + código do aluno', text: 'O personal cria o código no perfil do aluno e envia. Só isso.' },
+                { icon: Zap, tag: 'RECUPERAÇÃO', title: 'Nome + senha + idade', text: 'Valide seus dados e gere um novo código sem e-mail ou etapas confusas.' },
+              ].map((step, index) => (
+                <div key={step.tag} className="grid gap-5 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:grid-cols-[56px_1fr_auto] sm:items-center">
+                  <span className="flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><step.icon className="size-5" /></span>
+                  <div>
+                    <p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-black/38">{step.tag}</p>
+                    <h3 className="mt-1 text-lg font-black">{step.title}</h3>
+                    <p className="mt-1 text-sm leading-6 text-black/48">{step.text}</p>
+                  </div>
+                  <span className="font-mono text-sm text-black/25">0{index + 1}</span>
+                </div>
+              ))}
             </div>
-            <span className="text-sm font-semibold">{APP_NAME}</span>
           </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <button onClick={() => router.push('/terms')} className="hover:text-foreground transition-colors">
-              Termos de Uso
-            </button>
-            <button onClick={() => router.push('/privacy')} className="hover:text-foreground transition-colors">
-              Privacidade
-            </button>
+        </section>
+
+        <section className="px-5 pb-8 sm:px-8 sm:pb-12">
+          <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 overflow-hidden rounded-[2.2rem] bg-[#c9ff32] p-8 sm:p-12 lg:flex-row lg:items-end lg:p-16">
+            <div className="absolute -right-20 -top-40 size-96 rounded-full border-[55px] border-black/[0.055]" />
+            <div className="relative z-10 max-w-3xl">
+              <p className="text-xs font-black uppercase tracking-[0.24em]">Sua próxima evolução começa aqui</p>
+              <h2 className="mt-5 text-4xl font-black leading-[0.9] tracking-[-0.06em] sm:text-6xl">GESTÃO FORTE. ALUNOS MAIS PERTO.</h2>
+            </div>
+            <Link href="/register" className="relative z-10 inline-flex h-14 shrink-0 items-center gap-3 rounded-full bg-black px-7 text-sm font-bold text-white transition-transform hover:-translate-y-1">
+              Criar minha conta <ArrowUpRight className="size-4" />
+            </Link>
           </div>
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} {APP_NAME}
-          </p>
+        </section>
+      </main>
+
+      <footer className="px-5 py-8 sm:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 border-t border-black/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
+          <BrandMark compact />
+          <div className="flex gap-5 text-xs font-semibold text-black/45">
+            <Link href="/terms" className="hover:text-black">Termos</Link>
+            <Link href="/privacy" className="hover:text-black">Privacidade</Link>
+            <Link href="/help" className="hover:text-black">Ajuda</Link>
+          </div>
+          <p className="text-xs text-black/35">© {new Date().getFullYear()} D KONG</p>
         </div>
       </footer>
     </div>

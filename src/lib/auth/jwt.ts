@@ -1,5 +1,5 @@
 // ============================================
-// FitControl Pro — JWT Token Management
+// D KONG — JWT Token Management
 // ============================================
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';

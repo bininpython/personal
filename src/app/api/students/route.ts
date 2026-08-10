@@ -5,7 +5,7 @@ import {
 import { studentCreateSchema } from '@/lib/validators';
 import { getSession } from '@/lib/auth/session';
 import { generateStudentPrivateCode, getCodeHint, normalizeAuthCode } from '@/lib/auth/credentials';
-import { hashPassword, normalizeName } from '@/lib/auth/hash';
+import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 
@@ -52,19 +52,43 @@ export async function POST(request: Request) {
     }
 
     const studentId = crypto.randomUUID();
-    const accessCode = generateStudentPrivateCode();
+    const normalizedStudentName = normalizeName(data.full_name);
+    const { data: sameNameStudents, error: codeLookupError } = await admin
+      .from('students')
+      .select('access_code, access_code_hash')
+      .eq('login_name_normalized', normalizedStudentName)
+      .is('deleted_at', null)
+      .limit(50);
+    if (codeLookupError) throw codeLookupError;
+
+    let accessCode = '';
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      const candidateCode = generateStudentPrivateCode();
+      const canonicalCode = normalizeAuthCode(candidateCode).toUpperCase();
+      const alreadyUsed = (await Promise.all((sameNameStudents ?? []).map(async (candidate) => (
+        candidate.access_code_hash
+          ? verifyPassword(canonicalCode, candidate.access_code_hash).catch(() => false)
+          : normalizeAuthCode(candidate.access_code || '').toUpperCase() === canonicalCode
+      )))).some(Boolean);
+      if (!alreadyUsed) {
+        accessCode = candidateCode;
+        break;
+      }
+    }
+    if (!accessCode) return json({ error: 'Não foi possível gerar um código exclusivo.' }, 503);
+
     const { error: profileError } = await admin.from('students').insert({
       id: studentId,
       trainer_id: session.trainer_id,
       name: data.full_name,
-      login_name_normalized: normalizeName(data.full_name),
+      login_name_normalized: normalizedStudentName,
       nickname: data.nickname || null,
       birth_date: data.birth_date || null,
       access_code: null,
       access_code_hash: await hashPassword(normalizeAuthCode(accessCode).toUpperCase()),
       access_code_hint: getCodeHint(accessCode),
       mock_email: null,
-      credential_version: 2,
+      credential_version: 3,
       status: 'active',
       goal: data.goal || null,
       level: data.experience_level || 'beginner',

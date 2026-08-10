@@ -1,47 +1,38 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  generateRecoveryCode,
+  formatAccessCodeInput,
   generateStudentPrivateCode,
   generateTrainerPrivateCode,
-  generateTrainerPublicCode,
   getCodeHint,
   normalizeAuthCode,
 } from '../src/lib/auth/credentials.ts';
 
-test('normaliza códigos sem depender de caixa ou separadores', () => {
-  assert.equal(normalizeAuthCode(' FC-Ab2-9 '), 'fcab29');
+test('normaliza códigos numéricos sem depender do hífen', () => {
+  assert.equal(normalizeAuthCode(' 564-625 '), '564625');
 });
 
-test('gera códigos criptograficamente aleatórios nos formatos comerciais', () => {
+test('formata progressivamente o código para digitação', () => {
+  assert.equal(formatAccessCodeInput('564'), '564');
+  assert.equal(formatAccessCodeInput('564625'), '564-625');
+  assert.equal(formatAccessCodeInput('564-6259'), '564-625');
+});
+
+test('gera códigos criptograficamente aleatórios com seis números', () => {
   const generated = new Set();
-  for (let index = 0; index < 200; index += 1) {
+  for (let index = 0; index < 50; index += 1) {
     const trainer = generateTrainerPrivateCode();
     const student = generateStudentPrivateCode();
-    const publicCode = generateTrainerPublicCode();
-    const recovery = generateRecoveryCode();
-    assert.match(trainer, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/);
-    assert.match(student, /^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/);
-    assert.match(publicCode, /^FC-[A-HJ-NP-Z2-9]{8}$/);
-    assert.match(recovery, /^[A-HJ-NP-Z2-9]{4}(?:-[A-HJ-NP-Z2-9]{4}){5}$/);
-    generated.add(`${trainer}|${student}|${publicCode}|${recovery}`);
+    assert.match(trainer, /^\d{3}-\d{3}$/);
+    assert.match(student, /^\d{3}-\d{3}$/);
+    generated.add(`${trainer}|${student}`);
   }
-  assert.equal(generated.size, 200);
+  assert.equal(generated.size, 50);
 });
 
-test('não usa caracteres visualmente ambíguos', () => {
-  const values = Array.from({ length: 100 }, () => [
-    generateTrainerPrivateCode(),
-    generateStudentPrivateCode(),
-    generateRecoveryCode(),
-  ].join(''));
-  assert.equal(values.some((value) => /[01IO]/.test(value)), false);
-});
-
-test('a dica revela somente os dois caracteres finais', () => {
-  const code = 'ABCD-EFGH-JKLM';
-  const hint = getCodeHint(code);
-  assert.equal(hint.endsWith('LM'), true);
-  assert.equal(hint.includes('ABCD'), false);
-  assert.equal(hint.includes('JK'), false);
+test('a dica revela somente os dois números finais', () => {
+  const hint = getCodeHint('564-625');
+  assert.equal(hint.endsWith('25'), true);
+  assert.equal(hint.includes('564'), false);
+  assert.equal(hint.length, 6);
 });

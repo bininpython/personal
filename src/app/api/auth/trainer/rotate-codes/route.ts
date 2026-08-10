@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import {
-  generateRecoveryCode,
   generateTrainerPrivateCode,
   getCodeHint,
   normalizeAuthCode,
@@ -17,14 +16,11 @@ export async function POST(request: Request) {
 
   try {
     const accessCode = generateTrainerPrivateCode();
-    const recoveryCode = generateRecoveryCode();
     const admin = createAdminClient();
     const { error } = await admin.from('trainers').update({
       access_code_hash: await hashPassword(normalizeAuthCode(accessCode).toUpperCase()),
       access_code_hint: getCodeHint(accessCode),
-      recovery_code_hash: await hashPassword(normalizeAuthCode(recoveryCode).toUpperCase()),
-      recovery_code_hint: getCodeHint(recoveryCode),
-      credential_version: 2,
+      credential_version: 3,
       failed_login_attempts: 0,
       locked_until: null,
     }).eq('id', session.sub);
@@ -41,11 +37,10 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       access_code: accessCode,
-      recovery_code: recoveryCode,
       codes_shown_once: true,
     }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (error) {
     console.error('[Rotate trainer codes] Error:', error);
-    return NextResponse.json({ error: 'Não foi possível trocar os códigos.' }, { status: 500 });
+    return NextResponse.json({ error: 'Não foi possível trocar o código.' }, { status: 500 });
   }
 }

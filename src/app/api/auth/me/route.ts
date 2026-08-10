@@ -18,7 +18,6 @@ export async function GET() {
       role: session.role,
       name: session.name,
       trainer_id: session.trainer_id,
-      trainer_code: session.trainer_code,
       avatar_url: session.avatar_url,
     },
   });

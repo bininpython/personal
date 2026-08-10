@@ -1,5 +1,5 @@
 // ============================================
-// FitControl Pro — Password & Code Hashing
+// D KONG — Password & Code Hashing
 // ============================================
 
 import bcrypt from 'bcryptjs';

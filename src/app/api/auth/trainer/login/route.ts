@@ -117,7 +117,6 @@ export async function POST(request: Request) {
         role: 'trainer',
         name: trainer.name,
         trainer_id: trainer.id,
-        trainer_code: publicCode,
         avatar_url: isPrivateAvatar(trainer.avatar_url)
           ? `/api/profile/avatar/image?user=${encodeURIComponent(trainer.id)}`
           : (trainer.avatar_url || undefined),

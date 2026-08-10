@@ -91,7 +91,7 @@ export default function OnboardingPage() {
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <Play className="w-8 h-8 text-primary ml-1" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Bem-vindo(a) ao FitControl!</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Bem-vindo(a) à D KONG!</h1>
           <p className="text-muted-foreground">
             Para que seu personal possa montar seu treino, precisamos de alguns dados físicos básicos.
           </p>

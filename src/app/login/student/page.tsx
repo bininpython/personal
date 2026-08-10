@@ -4,25 +4,27 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dumbbell, User, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ArrowRight, Dumbbell, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { AuthScene } from '@/components/auth/auth-scene';
 import { PublicBackLink } from '@/components/navigation/public-back-link';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
+import { formatAccessCodeInput } from '@/lib/auth/credentials';
 import { studentLoginSchema, type StudentLoginInput } from '@/lib/validators';
 import { toast } from 'sonner';
-import { APP_NAME } from '@/constants';
 
 export default function StudentLoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const [showCode, setShowCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<StudentLoginInput>({
     resolver: zodResolver(studentLoginSchema),
-    defaultValues: { name: '', trainer_code: '', access_code: '', remember: false },
+    defaultValues: { name: '', access_code: '', remember: false },
   });
+  const accessCodeField = register('access_code');
 
   const onSubmit = async (data: StudentLoginInput) => {
     setIsLoading(true);
@@ -35,7 +37,7 @@ export default function StudentLoginPage() {
       const result = await response.json();
       if (!response.ok) return toast.error(result.error || 'Não foi possível entrar.');
       login(result.user);
-      toast.success(`Bem-vindo, ${result.user.name}!`);
+      toast.success(`Bom treino, ${result.user.name}!`);
       router.replace('/home');
       router.refresh();
     } catch {
@@ -46,51 +48,61 @@ export default function StudentLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-background to-emerald-600/5 pointer-events-none" />
+    <div className="flex min-h-screen flex-col bg-[#f4f4ef] text-black">
       <PublicBackLink href="/login" />
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-10">
-        <Card className="w-full max-w-md border-border/50 shadow-xl">
-          <CardHeader className="text-center pb-2">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500">
-              <User className="h-6 w-6 text-white" />
+      <AuthScene
+        eyebrow="Área do aluno"
+        title="SEU TREINO. SEU RITMO. SUA EVOLUÇÃO."
+        description="Abra o treino do dia, registre suas séries e acompanhe cada conquista sem distrações."
+      >
+        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><Dumbbell className="size-6" /></div>
+        <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Acesso do aluno</p>
+        <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Pronto para treinar?</h1>
+        <p className="mt-3 text-sm leading-6 text-black/50">Você só precisa do seu nome e do código enviado pelo personal.</p>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-xs font-bold uppercase tracking-[0.12em]">Seu nome</Label>
+            <Input id="name" autoComplete="name" placeholder="Digite seu nome completo" className="h-12 rounded-xl border-black/12 bg-white px-4" {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="access_code" className="text-xs font-bold uppercase tracking-[0.12em]">Código do aluno</Label>
+            <div className="relative">
+              <Input
+                {...accessCodeField}
+                id="access_code"
+                type={showCode ? 'text' : 'password'}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={7}
+                placeholder="000-000"
+                className="h-14 rounded-xl border-black/12 bg-white px-4 pr-12 font-mono text-xl font-black tracking-[0.22em]"
+                onChange={(event) => {
+                  event.target.value = formatAccessCodeInput(event.target.value);
+                  void accessCodeField.onChange(event);
+                }}
+              />
+              <button type="button" onClick={() => setShowCode((value) => !value)} aria-label={showCode ? 'Ocultar código' : 'Mostrar código'} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40">
+                {showCode ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
             </div>
-            <h1 className="text-2xl font-bold">Acesso do Aluno</h1>
-            <p className="text-sm text-muted-foreground">{APP_NAME} · sem e-mail ou telefone</p>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Seu nome</Label>
-                <Input id="name" autoComplete="name" placeholder="Digite seu nome completo" {...register('name')} />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="trainer_code">Código público do personal</Label>
-                <Input id="trainer_code" placeholder="FC-XXXXXXXX" className="font-mono uppercase tracking-wider" {...register('trainer_code')} />
-                {errors.trainer_code && <p className="text-sm text-destructive">{errors.trainer_code.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="access_code">Seu código individual</Label>
-                <Input id="access_code" type="password" autoComplete="current-password" placeholder="XXXX-XXXX" className="font-mono uppercase tracking-wider" {...register('access_code')} />
-                <p className="text-xs text-muted-foreground">8 caracteres. Maiúsculas, minúsculas e hífen não fazem diferença.</p>
-                {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
-              </div>
-              <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <input type="checkbox" className="h-4 w-4 accent-blue-500" {...register('remember')} />
-                Manter conectado neste dispositivo por 30 dias
-              </label>
-              <Button type="submit" className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white" disabled={isLoading}>
-                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Dumbbell className="mr-2 h-4 w-4" />}
-                Entrar no Meu Treino
-              </Button>
-            </form>
-            <p className="mt-6 rounded-lg border bg-muted/30 p-3 text-center text-xs text-muted-foreground">
-              Esqueceu o código? Peça ao seu personal para gerar um novo. O código antigo será invalidado.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
+          </div>
+          <label className="flex items-center gap-2 text-xs font-medium text-black/50">
+            <input type="checkbox" className="size-4 accent-black" {...register('remember')} />
+            Manter conectado por 30 dias
+          </label>
+          <Button type="submit" className="h-14 w-full rounded-full bg-black text-white hover:bg-black/85" disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <ArrowRight className="mr-2 size-4" />}
+            Abrir meu treino
+          </Button>
+        </form>
+
+        <p className="mt-7 rounded-2xl border border-black/8 bg-white/60 p-4 text-center text-xs leading-5 text-black/48">
+          Não lembra o código? Peça ao seu personal para gerar um novo no seu perfil.
+        </p>
+      </AuthScene>
     </div>
   );
 }

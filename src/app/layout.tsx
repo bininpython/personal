@@ -19,9 +19,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "FitControl Pro — Gestão de Treinos",
-  description: "Sistema profissional para personal trainers gerenciarem alunos, fichas de treino, evolução física e desempenho.",
+  title: "D KONG — Performance e Gestão de Treinos",
+  description: "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho.",
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
+  icons: {
+    icon: "/dkong-logo.jpg",
+    apple: "/dkong-logo.jpg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

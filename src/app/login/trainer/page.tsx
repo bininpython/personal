@@ -5,16 +5,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Dumbbell, Shield, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ArrowRight, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
+import { AuthScene } from '@/components/auth/auth-scene';
 import { PublicBackLink } from '@/components/navigation/public-back-link';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
+import { formatAccessCodeInput } from '@/lib/auth/credentials';
 import { trainerLoginSchema, type TrainerLoginInput } from '@/lib/validators';
 import { toast } from 'sonner';
-import { APP_NAME } from '@/constants';
 
 export default function TrainerLoginPage() {
   const router = useRouter();
@@ -25,6 +25,7 @@ export default function TrainerLoginPage() {
     resolver: zodResolver(trainerLoginSchema),
     defaultValues: { name: '', access_code: '', remember: false },
   });
+  const accessCodeField = register('access_code');
 
   const onSubmit = async (data: TrainerLoginInput) => {
     setIsLoading(true);
@@ -37,11 +38,7 @@ export default function TrainerLoginPage() {
       const result = await response.json();
       if (!response.ok) return toast.error(result.error || 'Não foi possível entrar.');
       login(result.user);
-      if (result.credential_upgrade) {
-        toast.info('Sua conta antiga foi atualizada. Troque os códigos em Configurações.');
-      } else {
-        toast.success(`Bem-vindo, ${result.user.name}!`);
-      }
+      toast.success(`Bem-vindo, ${result.user.name}!`);
       router.replace('/dashboard');
       router.refresh();
     } catch {
@@ -52,59 +49,62 @@ export default function TrainerLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/5 via-background to-blue-600/5 pointer-events-none" />
+    <div className="flex min-h-screen flex-col bg-[#f4f4ef] text-black">
       <PublicBackLink href="/login" />
-      <div className="relative z-10 flex-1 flex items-center justify-center px-4 py-10">
-        <Card className="w-full max-w-md border-border/50 shadow-xl">
-          <CardHeader className="text-center pb-2">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-md">
-              <Shield className="h-6 w-6 text-primary-foreground" />
+      <AuthScene
+        eyebrow="Área do personal"
+        title="CONTROLE TOTAL. ACESSO DIRETO."
+        description="Seu painel profissional com todos os alunos, treinos, avaliações e indicadores em um só lugar."
+      >
+        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><ShieldCheck className="size-6" /></div>
+        <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Personal trainer</p>
+        <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Entre no seu painel</h1>
+        <p className="mt-3 text-sm leading-6 text-black/50">Use seu nome e o código de 6 números.</p>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-xs font-bold uppercase tracking-[0.12em]">Seu nome</Label>
+            <Input id="name" autoComplete="name" placeholder="Ex: Abner Pereira" className="h-12 rounded-xl border-black/12 bg-white px-4" {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="access_code" className="text-xs font-bold uppercase tracking-[0.12em]">Código pessoal</Label>
+            <div className="relative">
+              <Input
+                {...accessCodeField}
+                id="access_code"
+                type={showCode ? 'text' : 'password'}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={7}
+                placeholder="000-000"
+                className="h-14 rounded-xl border-black/12 bg-white px-4 pr-12 font-mono text-xl font-black tracking-[0.22em]"
+                onChange={(event) => {
+                  event.target.value = formatAccessCodeInput(event.target.value);
+                  void accessCodeField.onChange(event);
+                }}
+              />
+              <button type="button" onClick={() => setShowCode((value) => !value)} aria-label={showCode ? 'Ocultar código' : 'Mostrar código'} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40">
+                {showCode ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              </button>
             </div>
-            <h1 className="text-2xl font-bold">Acesso do Personal</h1>
-            <p className="text-sm text-muted-foreground">{APP_NAME} · sem e-mail ou telefone</p>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Seu nome profissional</Label>
-                <Input id="name" autoComplete="name" placeholder="Ex: Abner Pereira" {...register('name')} />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="access_code">Código de acesso</Label>
-                <div className="relative">
-                  <Input
-                    id="access_code"
-                    type={showCode ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    placeholder="XXXX-XXXX"
-                    className="pr-10 font-mono uppercase tracking-wider"
-                    {...register('access_code')}
-                  />
-                  <button type="button" onClick={() => setShowCode((value) => !value)} aria-label={showCode ? 'Ocultar código' : 'Mostrar código'} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                    {showCode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground">8 caracteres, sem diferenciar maiúsculas e minúsculas. O hífen é opcional.</p>
-                {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
-              </div>
-              <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                <input type="checkbox" className="h-4 w-4 accent-primary" {...register('remember')} />
-                Manter conectado neste dispositivo por 30 dias
-              </label>
-              <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Dumbbell className="mr-2 h-4 w-4" />}
-                Entrar como Personal
-              </Button>
-            </form>
-            <div className="mt-6 flex items-center justify-between text-sm">
-              <Link href="/recover" className="text-primary hover:underline">Recuperar acesso</Link>
-              <Link href="/register" className="text-primary hover:underline">Criar conta</Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            {errors.access_code && <p className="text-sm text-destructive">{errors.access_code.message}</p>}
+          </div>
+          <label className="flex items-center gap-2 text-xs font-medium text-black/50">
+            <input type="checkbox" className="size-4 accent-black" {...register('remember')} />
+            Manter conectado por 30 dias
+          </label>
+          <Button type="submit" className="h-13 w-full rounded-full bg-black text-white hover:bg-black/85" disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <ArrowRight className="mr-2 size-4" />}
+            Entrar como personal
+          </Button>
+        </form>
+
+        <div className="mt-7 flex items-center justify-between text-sm font-semibold">
+          <Link href="/recover" className="text-black/55 hover:text-black">Esqueci meu código</Link>
+          <Link href="/register" className="text-[#557900] hover:underline">Criar conta</Link>
+        </div>
+      </AuthScene>
     </div>
   );
 }

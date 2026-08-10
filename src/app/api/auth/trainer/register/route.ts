@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { trainerRegisterSchema } from '@/lib/validators';
 import {
-  generateRecoveryCode,
   generateTrainerPrivateCode,
   generateTrainerPublicCode,
   getCodeHint,
   normalizeAuthCode,
 } from '@/lib/auth/credentials';
-import { hashPassword, normalizeName } from '@/lib/auth/hash';
+import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -44,16 +43,31 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
-    const { full_name, city, state } = result.data;
-    const privateCode = generateTrainerPrivateCode();
-    const recoveryCode = generateRecoveryCode();
+    const { full_name, city, nickname, password, age } = result.data;
+    const normalizedName = normalizeName(full_name);
+    const { data: existingCandidates, error: candidatesError } = await admin
+      .from('trainers')
+      .select('code, access_code_hash')
+      .eq('login_name_normalized', normalizedName)
+      .is('deleted_at', null)
+      .limit(50);
+    if (candidatesError) throw candidatesError;
 
     for (let attempt = 0; attempt < 10; attempt += 1) {
+      const privateCode = generateTrainerPrivateCode();
+      const canonicalCode = normalizeAuthCode(privateCode).toUpperCase();
+      const codeAlreadyUsed = (await Promise.all((existingCandidates ?? []).map(async (candidate) => (
+        candidate.access_code_hash
+          ? verifyPassword(canonicalCode, candidate.access_code_hash).catch(() => false)
+          : normalizeAuthCode(candidate.code || '').toUpperCase() === canonicalCode
+      )))).some(Boolean);
+      if (codeAlreadyUsed) continue;
+
       const publicCode = generateTrainerPublicCode();
       const trainerId = crypto.randomUUID();
-      const [accessHash, recoveryHash] = await Promise.all([
-        hashPassword(normalizeAuthCode(privateCode).toUpperCase()),
-        hashPassword(normalizeAuthCode(recoveryCode).toUpperCase()),
+      const [accessHash, recoveryPasswordHash] = await Promise.all([
+        hashPassword(canonicalCode),
+        hashPassword(password),
       ]);
 
       const { data: trainer, error } = await admin
@@ -62,19 +76,19 @@ export async function POST(request: Request) {
           id: trainerId,
           auth_user_id: null,
           name: full_name,
-          login_name_normalized: normalizeName(full_name),
+          login_name_normalized: normalizedName,
           code: publicCode,
           public_code: publicCode,
           access_code_hash: accessHash,
           access_code_hint: getCodeHint(privateCode),
-          recovery_code_hash: recoveryHash,
-          recovery_code_hint: getCodeHint(recoveryCode),
+          recovery_password_hash: recoveryPasswordHash,
           credential_version: 2,
           terms_accepted_at: new Date().toISOString(),
-          terms_version: '2026-08-08',
-          privacy_policy_version: '2026-08-08',
+          terms_version: '2026-08-10',
+          privacy_policy_version: '2026-08-10',
           city,
-          state,
+          nickname: nickname || null,
+          age,
         })
         .select('id, name')
         .single();
@@ -92,15 +106,12 @@ export async function POST(request: Request) {
       return json({
         success: true,
         access_code: privateCode,
-        trainer_code: publicCode,
-        recovery_code: recoveryCode,
         codes_shown_once: true,
         user: {
           id: trainer.id,
           role: 'trainer',
           name: trainer.name,
           trainer_id: trainer.id,
-          trainer_code: publicCode,
         },
       }, 201);
     }
