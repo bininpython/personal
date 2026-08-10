@@ -47,7 +47,7 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div><h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight"><History className="size-6 text-blue-500" /> Histórico de Treinos</h1><p className="mt-1 text-muted-foreground">{history.length} treino(s) registrado(s)</p></div>
+      <div><p className="dk-kicker text-muted-foreground">Memória de treino</p><h1 className="dk-display mt-3 flex items-center gap-3 text-4xl"><History className="size-7 text-[#7cae00]" /> HISTÓRICO</h1><p className="mt-2 text-muted-foreground">{history.length} treino(s) registrado(s)</p></div>
       {error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
       ) : history.length === 0 ? (
@@ -55,7 +55,7 @@ export default function HistoryPage() {
       ) : (
         <div className="space-y-3">
           {history.map((workout) => (
-            <Card key={workout.id} className="border-border/60"><CardContent className="p-4">
+            <Card key={workout.id}><CardContent className="p-5">
               <div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-semibold">{workout.name}</p><div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Calendar className="size-3" />{new Date(workout.date).toLocaleDateString('pt-BR')}</span><span className="flex items-center gap-1"><Clock className="size-3" />{formatDuration(workout.durationSeconds)}</span></div></div><Badge className="bg-emerald-500/10 text-emerald-600"><CheckCircle2 className="mr-1 size-3" /> {workout.completion}%</Badge></div>
               <Progress value={workout.completion} className="h-1.5" />
               {workout.volume > 0 && <p className="mt-2 text-xs text-muted-foreground">Volume: {workout.volume.toLocaleString('pt-BR')} kg</p>}

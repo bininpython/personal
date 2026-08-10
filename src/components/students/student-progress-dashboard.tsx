@@ -95,8 +95,8 @@ export function StudentProgressDashboard({ data, showTimeline = true }: StudentP
       {data.assessments.length > 0 ? (
         <div className="grid gap-6 xl:grid-cols-2">
           <Card className="print:break-inside-avoid">
-            <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Scale className="size-5 text-blue-500" /> Peso e massa muscular</CardTitle></CardHeader>
-            <CardContent><div className="h-72"><ResponsiveContainer width="100%" height="100%"><LineChart data={data.assessments}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} /><Tooltip /><Legend /><Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#2563eb" strokeWidth={3} connectNulls /><Line type="monotone" dataKey="muscleMass" name="Massa muscular (kg)" stroke="#16a34a" strokeWidth={3} connectNulls /></LineChart></ResponsiveContainer></div></CardContent>
+            <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Scale className="size-5 text-[#7cae00]" /> Peso e massa muscular</CardTitle></CardHeader>
+            <CardContent><div className="h-72"><ResponsiveContainer width="100%" height="100%"><LineChart data={data.assessments}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="dateLabel" tick={{ fontSize: 10 }} /><YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} /><Tooltip /><Legend /><Line type="monotone" dataKey="weight" name="Peso (kg)" stroke="#7cae00" strokeWidth={3} connectNulls /><Line type="monotone" dataKey="muscleMass" name="Massa muscular (kg)" stroke="#111111" strokeWidth={3} connectNulls /></LineChart></ResponsiveContainer></div></CardContent>
           </Card>
           <Card className="print:break-inside-avoid">
             <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Activity className="size-5 text-rose-500" /> Gordura corporal e IMC</CardTitle></CardHeader>
@@ -107,7 +107,7 @@ export function StudentProgressDashboard({ data, showTimeline = true }: StudentP
 
       <Card className="print:break-inside-avoid">
         <CardHeader><CardTitle className="flex items-center gap-2 text-base"><Dumbbell className="size-5 text-primary" /> Treinos concluídos por semana</CardTitle></CardHeader>
-        <CardContent><div className="h-64"><ResponsiveContainer width="100%" height="100%"><BarChart data={data.weeklyWorkouts}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 11 }} /><YAxis allowDecimals={false} /><Tooltip /><Bar dataKey="workouts" name="Treinos" fill="#2563eb" radius={[6, 6, 0, 0]} /></BarChart></ResponsiveContainer></div></CardContent>
+        <CardContent><div className="h-64"><ResponsiveContainer width="100%" height="100%"><BarChart data={data.weeklyWorkouts}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="label" tick={{ fontSize: 11 }} /><YAxis allowDecimals={false} /><Tooltip /><Bar dataKey="workouts" name="Treinos" fill="#9fdb00" radius={[8, 8, 0, 0]} /></BarChart></ResponsiveContainer></div></CardContent>
       </Card>
 
       <div className="grid gap-6 xl:grid-cols-2">
@@ -118,7 +118,7 @@ export function StudentProgressDashboard({ data, showTimeline = true }: StudentP
 
         {showTimeline && <Card>
           <CardHeader><CardTitle className="flex items-center gap-2 text-base"><CalendarDays className="size-5 text-primary" /> Linha do tempo da evolução</CardTitle></CardHeader>
-          <CardContent>{data.timeline.length === 0 ? <p className="py-8 text-center text-sm text-muted-foreground">A evolução aparecerá conforme avaliações e treinos forem registrados.</p> : <div className="relative ml-3 border-l pl-6">{data.timeline.map((item) => <div key={item.id} className="relative mb-6 last:mb-0"><span className={`absolute -left-[31px] top-0 flex size-4 items-center justify-center rounded-full ring-4 ring-background ${item.type === 'assessment' ? 'bg-violet-500' : 'bg-blue-500'}`} /><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-semibold">{item.title}</p><p className="mt-1 text-sm text-muted-foreground">{item.description}</p></div><Badge variant="secondary" className="text-[10px]">{formatDate(item.date)}</Badge></div></div>)}</div>}</CardContent>
+          <CardContent>{data.timeline.length === 0 ? <p className="py-8 text-center text-sm text-muted-foreground">A evolução aparecerá conforme avaliações e treinos forem registrados.</p> : <div className="relative ml-3 border-l pl-6">{data.timeline.map((item) => <div key={item.id} className="relative mb-6 last:mb-0"><span className={`absolute -left-[31px] top-0 flex size-4 items-center justify-center rounded-full ring-4 ring-background ${item.type === 'assessment' ? 'bg-black dark:bg-white' : 'bg-[#9fdb00]'}`} /><div className="flex flex-wrap items-start justify-between gap-2"><div><p className="font-semibold">{item.title}</p><p className="mt-1 text-sm text-muted-foreground">{item.description}</p></div><Badge variant="secondary" className="text-[10px]">{formatDate(item.date)}</Badge></div></div>)}</div>}</CardContent>
         </Card>}
       </div>
 

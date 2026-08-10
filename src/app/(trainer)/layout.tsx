@@ -77,10 +77,10 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
-        <BrandMark compact iconOnly={collapsed && !mobile} />
+        <BrandMark inverted compact={collapsed && !mobile} iconOnly={collapsed && !mobile} />
       </div>
 
-      <Separator />
+      <Separator className="bg-white/10" />
 
       {/* Nav Items */}
       <ScrollArea className="flex-1 px-3 py-3">
@@ -94,17 +94,17 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 onClick={() => mobile && setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                   ${active
-                    ? 'bg-primary/10 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-[#c9ff32] text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
+                    : 'text-white/55 hover:bg-white/8 hover:text-white'
                   }
                   ${collapsed && !mobile ? 'justify-center' : ''}
                 `}
               >
-                <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${active ? 'text-primary' : ''}`} />
+                <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${active ? 'text-black' : ''}`} />
                 {(!collapsed || mobile) && (
                   <>
                     <span className="truncate">{item.label}</span>
-                    {item.href === '/alerts' && unreadAlerts > 0 && <span className="ml-auto rounded-full bg-destructive px-1.5 py-0.5 text-[10px] text-white">{unreadAlerts}</span>}
+                    {item.href === '/alerts' && unreadAlerts > 0 && <span className="ml-auto rounded-full bg-white px-1.5 py-0.5 text-[10px] text-black">{unreadAlerts}</span>}
                   </>
                 )}
               </Link>
@@ -123,20 +123,20 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         </nav>
       </ScrollArea>
 
-      <Separator />
+      <Separator className="bg-white/10" />
 
       {/* Footer */}
       <div className="px-3 py-3 space-y-1">
         <Link
           href="/help"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <CircleHelp className="w-4.5 h-4.5 flex-shrink-0" />
           {(!collapsed || mobile) && <span>Ajuda e tutoriais</span>}
         </Link>
         <Link
           href="/settings"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <Settings className="w-4.5 h-4.5 flex-shrink-0" />
@@ -145,31 +145,31 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
         <button
           onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors w-full
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors w-full
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           {resolvedTheme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
           {(!collapsed || mobile) && <span>{resolvedTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>}
         </button>
 
-        <Separator className="my-2" />
+        <Separator className="my-2 bg-white/10" />
 
         <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-3 py-2`}>
           <Avatar className="w-8 h-8 flex-shrink-0">
             {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+            <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>
           </Avatar>
           {(!collapsed || mobile) && (
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium truncate">{user?.name || 'Personal'}</p>
-              <p className="text-xs text-muted-foreground">Personal Trainer</p>
+              <p className="text-sm font-bold text-white truncate">{user?.name || 'Personal'}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35">Personal</p>
             </div>
           )}
           {(!collapsed || mobile) && (
             <Tooltip>
-              <TooltipTrigger render={<button onClick={handleLogout} className="text-muted-foreground hover:text-destructive transition-colors" />}>
+              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/40 hover:text-[#c9ff32] transition-colors" />}>
                 <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
@@ -181,15 +181,15 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="dk-app flex h-screen overflow-hidden bg-[#090a08]">
       {/* Desktop Sidebar */}
-      <aside className={`hidden lg:flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300
+      <aside className={`relative hidden lg:flex flex-col border-r border-white/10 bg-[#090a08] text-white transition-all duration-300
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}
       >
         {renderNavContent()}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute top-20 -right-3 w-6 h-6 rounded-full border bg-background shadow-sm flex items-center justify-center text-muted-foreground hover:text-foreground z-50 hidden lg:flex transition-colors"
+          className="absolute top-20 -right-3 w-6 h-6 rounded-full border border-black bg-[#c9ff32] shadow-sm flex items-center justify-center text-black hover:scale-105 z-50 hidden lg:flex transition-transform"
           style={{ left: collapsed ? '60px' : '248px' }}
         >
           <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
@@ -197,26 +197,26 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-background/80 backdrop-blur-lg border-b border-border flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-[#090a08]/95 text-white backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9" />}>
+            <SheetTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white hover:bg-white/10 hover:text-white" />}>
               <Menu className="w-5 h-5" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] p-0">
+            <SheetContent side="left" className="w-[280px] border-white/10 bg-[#090a08] p-0 text-white">
               {renderNavContent(true)}
             </SheetContent>
           </Sheet>
-          <BrandMark compact />
+          <BrandMark compact inverted />
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-9 w-9 relative" onClick={() => router.push('/alerts')}>
+          <Button variant="ghost" size="icon" className="h-9 w-9 relative text-white hover:bg-white/10 hover:text-white" onClick={() => router.push('/alerts')}>
             <Bell className="w-4.5 h-4.5" />
             {unreadAlerts > 0 && <span className="absolute right-1 top-1 size-2 rounded-full bg-destructive" />}
           </Button>
           <Avatar className="w-8 h-8">
             {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+            <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>
           </Avatar>
@@ -224,14 +224,14 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto lg:pt-0 pt-14 pb-20 lg:pb-0">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-[1600px] mx-auto">
+      <main className="dk-app-surface flex-1 overflow-y-auto pt-16 pb-20 lg:pt-0 lg:pb-0">
+        <div className="relative z-10 mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 xl:p-10">
           {children}
         </div>
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-lg border-t border-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090a08]/95 text-white backdrop-blur-xl border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex items-center justify-around h-16 px-2">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.href);
@@ -240,12 +240,12 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors relative
-                  ${active ? 'text-primary' : 'text-muted-foreground'}`}
+                  ${active ? 'text-[#c9ff32]' : 'text-white/40'}`}
               >
-                <item.icon className={`w-5 h-5 ${active ? 'text-primary' : ''}`} />
+                <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
                 {active && (
-                  <div className="absolute -top-0.5 w-5 h-0.5 bg-primary rounded-full" />
+                  <div className="absolute -top-0.5 w-5 h-0.5 bg-[#c9ff32] rounded-full shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
                 )}
               </Link>
             );
