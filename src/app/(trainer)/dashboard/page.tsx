@@ -12,6 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
+import { useTheme } from '@/hooks/use-theme';
+import { ActivationChecklist, type OnboardingState } from '@/components/trainer/activation-checklist';
+import { groupIntoCategories } from '@/lib/charts/palette';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -31,11 +34,11 @@ interface RankingStudent {
 interface GoalDistribution {
   name: string;
   value: number;
-  color: string;
 }
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { resolvedTheme } = useTheme();
   const router = useRouter();
   const [greeting] = useState(() => {
     const hour = new Date().getHours();
@@ -52,6 +55,7 @@ export default function DashboardPage() {
   });
   const [ranking, setRanking] = useState<RankingStudent[]>([]);
   const [goalDist, setGoalDist] = useState<GoalDistribution[]>([]);
+  const [onboarding, setOnboarding] = useState<OnboardingState | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,12 +65,15 @@ export default function DashboardPage() {
         if (data.stats) setStats(data.stats);
         if (data.studentRanking) setRanking(data.studentRanking);
         if (data.goalDistribution) setGoalDist(data.goalDistribution);
+        if (data.onboarding) setOnboarding(data.onboarding);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       }
     };
     fetchData();
   }, []);
+
+  const goalSlices = groupIntoCategories(goalDist, resolvedTheme === 'dark');
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -99,6 +106,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
+
+      {onboarding && <ActivationChecklist state={onboarding} />}
 
       <div>
         <p className="dk-kicker text-muted-foreground">Pulso da operação</p>
@@ -143,7 +152,7 @@ export default function DashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={goalDist}
+                      data={goalSlices}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -151,14 +160,15 @@ export default function DashboardPage() {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {goalDist.map((entry, index) => (
+                      {goalSlices.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        background: 'hsl(var(--card))',
-                        border: '1px solid hsl(var(--border))',
+                        background: 'var(--card)',
+                        color: 'var(--card-foreground)',
+                        border: '1px solid var(--border)',
                         borderRadius: '16px',
                         fontSize: '12px',
                       }}
@@ -167,9 +177,9 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
             )}
-            {goalDist.length > 0 && (
+            {goalSlices.length > 0 && (
               <div className="mt-2 flex flex-wrap justify-center gap-2">
-                {goalDist.map((goal, i) => (
+                {goalSlices.map((goal, i) => (
                   <div key={i} className="flex items-center gap-1.5 text-xs">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: goal.color }} />
                     <span className="text-muted-foreground">{goal.name} ({goal.value})</span>
@@ -215,8 +225,8 @@ export default function DashboardPage() {
                     <div className="text-right">
                       <div className="flex items-center gap-1 justify-end">
                         <span className="text-sm font-semibold">{student.consistency}%</span>
-                        {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-[#7cae00]" />}
-                        {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />}
+                        {student.trend === 'up' && <ArrowUpRight className="w-3.5 h-3.5 text-ok" />}
+                        {student.trend === 'down' && <ArrowDownRight className="w-3.5 h-3.5 text-danger" />}
                         {student.trend === 'stable' && <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />}
                       </div>
                       <Progress value={student.consistency} className="w-16 h-1.5 mt-1" />

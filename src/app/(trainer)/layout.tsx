@@ -18,16 +18,29 @@ import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { BrandMark } from '@/components/brand/brand-mark';
 
-const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/students', label: 'Alunos', icon: Users },
-  { href: '/workouts', label: 'Fichas de Treino', icon: Dumbbell },
-  { href: '/exercises', label: 'Exercícios', icon: BookOpen },
-  { href: '/assessments', label: 'Avaliações', icon: ClipboardList },
-  { href: '/schedule', label: 'Agenda', icon: Calendar },
-  { href: '/messages', label: 'Mensagens', icon: MessageSquare },
-  { href: '/reports', label: 'Relatórios', icon: BarChart3 },
-  { href: '/alerts', label: 'Alertas', icon: Bell },
+// A navegação é dividida entre o que se usa todo dia e o que se consulta de
+// vez em quando. "Montar ficha" fica recuado sob "Fichas de treino" porque é
+// a ação daquela seção, não um assunto separado.
+const NAV_GROUPS = [
+  {
+    label: 'Operação',
+    items: [
+      { href: '/dashboard', label: 'Início', icon: LayoutDashboard, child: false },
+      { href: '/students', label: 'Alunos', icon: Users, child: false },
+      { href: '/workouts', label: 'Fichas de treino', icon: Dumbbell, child: false },
+      { href: '/exercises', label: 'Montar ficha', icon: BookOpen, child: true },
+      { href: '/schedule', label: 'Agenda', icon: Calendar, child: false },
+      { href: '/messages', label: 'Mensagens', icon: MessageSquare, child: false },
+    ],
+  },
+  {
+    label: 'Análise',
+    items: [
+      { href: '/assessments', label: 'Avaliações', icon: ClipboardList, child: false },
+      { href: '/reports', label: 'Relatórios', icon: BarChart3, child: false },
+      { href: '/alerts', label: 'Alertas', icon: Bell, child: false },
+    ],
+  },
 ];
 
 const BOTTOM_NAV = [
@@ -84,42 +97,51 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
       {/* Nav Items */}
       <ScrollArea className="flex-1 px-3 py-3">
-        <nav className="space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const active = isActive(item.href);
-            const link = (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => mobile && setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                  ${active
-                    ? 'bg-[#c9ff32] text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
-                    : 'text-white/55 hover:bg-white/8 hover:text-white'
-                  }
-                  ${collapsed && !mobile ? 'justify-center' : ''}
-                `}
-              >
-                <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${active ? 'text-black' : ''}`} />
-                {(!collapsed || mobile) && (
-                  <>
-                    <span className="truncate">{item.label}</span>
-                    {item.href === '/alerts' && unreadAlerts > 0 && <span className="ml-auto rounded-full bg-white px-1.5 py-0.5 text-[10px] text-black">{unreadAlerts}</span>}
-                  </>
-                )}
-              </Link>
-            );
+        <nav className="space-y-4">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className="space-y-1">
+              {(!collapsed || mobile) && (
+                <p className="px-3 pb-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/40">
+                  {group.label}
+                </p>
+              )}
+              {group.items.map((item) => {
+                const active = isActive(item.href);
+                const link = (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => mobile && setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      ${active
+                        ? 'bg-[#c9ff32] text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
+                        : 'text-white/60 hover:bg-white/8 hover:text-white'
+                      }
+                      ${collapsed && !mobile ? 'justify-center' : item.child ? 'ml-3' : ''}
+                    `}
+                  >
+                    <item.icon className={`w-4.5 h-4.5 flex-shrink-0 ${active ? 'text-black' : ''}`} />
+                    {(!collapsed || mobile) && (
+                      <>
+                        <span className="truncate">{item.label}</span>
+                        {item.href === '/alerts' && unreadAlerts > 0 && <span className="ml-auto rounded-full bg-white px-1.5 py-0.5 text-[10px] text-black">{unreadAlerts}</span>}
+                      </>
+                    )}
+                  </Link>
+                );
 
-            if (collapsed && !mobile) {
-              return (
-                <Tooltip key={item.href}>
-                  <TooltipTrigger render={link} />
-                  <TooltipContent side="right">{item.label}</TooltipContent>
-                </Tooltip>
-              );
-            }
-            return link;
-          })}
+                if (collapsed && !mobile) {
+                  return (
+                    <Tooltip key={item.href}>
+                      <TooltipTrigger render={link} />
+                      <TooltipContent side="right">{item.label}</TooltipContent>
+                    </Tooltip>
+                  );
+                }
+                return link;
+              })}
+            </div>
+          ))}
         </nav>
       </ScrollArea>
 
@@ -129,14 +151,14 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       <div className="px-3 py-3 space-y-1">
         <Link
           href="/help"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/65 hover:bg-white/8 hover:text-white transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <CircleHelp className="w-4.5 h-4.5 flex-shrink-0" />
           {(!collapsed || mobile) && <span>Ajuda e tutoriais</span>}
         </Link>
         <Link
           href="/settings"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/65 hover:bg-white/8 hover:text-white transition-colors
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <Settings className="w-4.5 h-4.5 flex-shrink-0" />
@@ -145,7 +167,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
         <button
           onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors w-full
+          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/65 hover:bg-white/8 hover:text-white transition-colors w-full
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           {resolvedTheme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -164,12 +186,12 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           {(!collapsed || mobile) && (
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-white truncate">{user?.name || 'Personal'}</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35">Personal</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/55">Personal</p>
             </div>
           )}
           {(!collapsed || mobile) && (
             <Tooltip>
-              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/40 hover:text-[#c9ff32] transition-colors" />}>
+              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/60 hover:text-[#c9ff32] transition-colors" />}>
                 <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
@@ -240,7 +262,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors relative
-                  ${active ? 'text-[#c9ff32]' : 'text-white/40'}`}
+                  ${active ? 'text-[#c9ff32]' : 'text-white/60'}`}
               >
                 <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
