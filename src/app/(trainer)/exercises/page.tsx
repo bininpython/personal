@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Model, {
   type IExerciseData,
@@ -9,6 +9,8 @@ import Model, {
 import {
   Check,
   CalendarClock,
+  ChevronLeft,
+  ChevronRight,
   Dumbbell,
   Info,
   Loader2,
@@ -105,6 +107,17 @@ interface EditablePlanResponse {
 
 const MAX_WORKOUT_DAYS = 30;
 
+// Abaixo de xl as três colunas não cabem lado a lado. Em vez de empilhá-las —
+// o que produzia rolagem dentro de rolagem — cada coluna vira uma etapa e o
+// personal caminha entre elas pela barra inferior fixa.
+const MOBILE_STEPS = [
+  { title: 'Músculo', hint: 'Escolha o grupo muscular' },
+  { title: 'Exercícios', hint: 'Adicione ao treino atual' },
+  { title: 'Ficha', hint: 'Ajuste séries e publique' },
+] as const;
+
+const LAST_MOBILE_STEP = MOBILE_STEPS.length - 1;
+
 function workoutDayLabel(index: number) {
   let value = index + 1;
   let label = '';
@@ -159,6 +172,8 @@ export default function ExercisesPage() {
   const [startDate, setStartDate] = useState(() => brazilToday());
   const [validityAmount, setValidityAmount] = useState(4);
   const [validityUnit, setValidityUnit] = useState<PlanValidityUnit>('weeks');
+  const [mobileStep, setMobileStep] = useState(0);
+  const builderRef = useRef<HTMLDivElement>(null);
 
   const activeDay = days.find((day) => day.id === activeDayId) ?? days[0];
   const totalSelected = days.reduce((total, day) => total + day.exercises.length, 0);
@@ -264,11 +279,25 @@ export default function ExercisesPage() {
     return () => window.clearTimeout(initialLoad);
   }, [loadEditablePlan, loadMuscle]);
 
+  // A área rolável do painel é o <main> do layout, não a janela. Ao trocar de
+  // etapa no celular o topo da nova etapa precisa aparecer.
+  const goToStep = useCallback((step: number) => {
+    setMobileStep(step);
+    builderRef.current?.closest('main')?.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Escolher o músculo é a etapa 1: ao escolher, o personal já segue para a
+  // lista de exercícios daquele grupo.
+  const selectMuscle = useCallback((muscle: MuscleRegion) => {
+    void loadMuscle(muscle);
+    goToStep(1);
+  }, [goToStep, loadMuscle]);
+
   const handleMuscleClick = useCallback((stats: IMuscleStats) => {
     if (isMuscleRegion(stats.muscle)) {
-      void loadMuscle(stats.muscle);
+      selectMuscle(stats.muscle);
     }
-  }, [loadMuscle]);
+  }, [selectMuscle]);
 
   const filteredExercises = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR');
@@ -356,6 +385,7 @@ export default function ExercisesPage() {
     const emptyDay = days.find((day) => day.exercises.length === 0);
     if (emptyDay) {
       setActiveDayId(emptyDay.id);
+      goToStep(LAST_MOBILE_STEP);
       toast.error(`Adicione pelo menos um exercício ao Treino ${emptyDay.label}.`);
       return;
     }
@@ -420,7 +450,7 @@ export default function ExercisesPage() {
   }
 
   return (
-    <div className="space-y-6 pb-10 animate-fade-in">
+    <div ref={builderRef} className="space-y-6 pb-28 animate-fade-in xl:pb-10">
       <PageHeader
         kicker="Operação"
         title={editingPlanId ? 'Editar ficha' : 'Montar ficha'}
@@ -428,12 +458,40 @@ export default function ExercisesPage() {
           ? 'Personalize a ficha existente e publique uma nova versão para o aluno.'
           : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
         actions={
-          <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-11">
+          <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="hidden h-11 xl:inline-flex">
             <Save className="mr-2 size-4" />
             {editingPlanId ? 'Salvar alterações' : 'Publicar ficha'} ({totalSelected})
           </Button>
         }
       />
+
+      <nav aria-label="Etapas do montador" className="xl:hidden">
+        <ol className="flex items-stretch gap-2">
+          {MOBILE_STEPS.map((step, index) => {
+            const current = mobileStep === index;
+            return (
+              <li key={step.title} className="min-w-0 flex-1">
+                <button
+                  type="button"
+                  onClick={() => goToStep(index)}
+                  aria-current={current ? 'step' : undefined}
+                  className={`w-full rounded-xl border px-2 py-2 text-left transition-colors ${
+                    current
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      : 'border-border bg-background text-muted-foreground'
+                  }`}
+                >
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.12em] opacity-70">
+                    Passo {index + 1}
+                  </span>
+                  <span className="block truncate text-sm font-bold">{step.title}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="mt-2 text-xs text-muted-foreground">{MOBILE_STEPS[mobileStep].hint}</p>
+      </nav>
 
       <div className="flex items-start gap-2 rounded-xl border border-info/20 bg-info-wash p-3 text-sm text-muted-foreground">
         <Info className="mt-0.5 size-4 shrink-0 text-info" />
@@ -444,7 +502,7 @@ export default function ExercisesPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[330px_minmax(360px,1fr)_minmax(390px,1fr)]">
-        <Card className="overflow-hidden border-border/60">
+        <Card className={`overflow-hidden border-border/60 ${mobileStep === 0 ? 'xl:flex' : 'hidden xl:flex'}`}>
           <CardHeader className="border-b border-border/40 pb-3">
             <div className="flex items-center justify-between gap-3">
               <CardTitle className="text-base">Anatomia interativa</CardTitle>
@@ -495,7 +553,7 @@ export default function ExercisesPage() {
                 <button
                   type="button"
                   key={muscle}
-                  onClick={() => void loadMuscle(muscle)}
+                  onClick={() => selectMuscle(muscle)}
                   className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
                     activeMuscle === muscle
                       ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
@@ -509,7 +567,7 @@ export default function ExercisesPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 border-border/60">
+        <Card className={`min-w-0 border-border/60 ${mobileStep === 1 ? 'xl:flex' : 'hidden xl:flex'}`}>
           <CardHeader className="space-y-3 border-b border-border/40 pb-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-base">
@@ -529,9 +587,28 @@ export default function ExercisesPage() {
                 className="pl-9"
               />
             </div>
+            {/* No celular a ficha em construção está em outra etapa, então o
+                treino que vai receber o exercício precisa estar visível aqui. */}
+            <div className="flex flex-wrap items-center gap-1.5 xl:hidden">
+              <span className="text-xs text-muted-foreground">Adicionando em:</span>
+              {days.map((day) => (
+                <button
+                  type="button"
+                  key={day.id}
+                  onClick={() => setActiveDayId(day.id)}
+                  className={`rounded-lg border px-2.5 py-1 text-xs font-medium ${
+                    activeDay.id === day.id
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      : 'border-border bg-background text-muted-foreground'
+                  }`}
+                >
+                  {day.label} · {day.exercises.length}
+                </button>
+              ))}
+            </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[690px]">
+            <ScrollArea className="xl:h-[690px]">
               {loading ? (
                 <div className="flex h-52 items-center justify-center text-muted-foreground">
                   <Loader2 className="mr-2 size-5 animate-spin" /> Carregando exercícios...
@@ -587,7 +664,7 @@ export default function ExercisesPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 border-border/60">
+        <Card className={`min-w-0 border-border/60 ${mobileStep === 2 ? 'xl:flex' : 'hidden xl:flex'}`}>
           <CardHeader className="space-y-3 border-b border-border/40 pb-4">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -636,7 +713,7 @@ export default function ExercisesPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[690px]">
+            <ScrollArea className="xl:h-[690px]">
               {activeDay.exercises.length === 0 ? (
                 <div className="flex h-64 flex-col items-center justify-center px-8 text-center text-muted-foreground">
                   <Dumbbell className="mb-3 size-9 opacity-30" />
@@ -712,8 +789,42 @@ export default function ExercisesPage() {
         </Card>
       </div>
 
+      <div className="dk-step-bar border-t border-border bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-[1600px] items-center gap-2 px-4 py-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-bold">
+              {totalSelected} exercício(s) na ficha
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              Treino {activeDay.label} · {activeDay.exercises.length} selecionado(s)
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => goToStep(mobileStep - 1)}
+            disabled={mobileStep === 0}
+            aria-label="Etapa anterior"
+          >
+            <ChevronLeft className="size-4" />
+          </Button>
+          {mobileStep < LAST_MOBILE_STEP ? (
+            <Button type="button" onClick={() => goToStep(mobileStep + 1)}>
+              Avançar
+              <ChevronRight className="ml-1.5 size-4" />
+            </Button>
+          ) : (
+            <Button type="button" onClick={openSaveDialog} disabled={totalSelected === 0}>
+              <Save className="mr-1.5 size-4" />
+              {editingPlanId ? 'Salvar' : 'Publicar'}
+            </Button>
+          )}
+        </div>
+      </div>
+
       <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-h-[88vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{editingPlanId ? 'Salvar nova versão da ficha' : 'Publicar ficha para o aluno'}</DialogTitle>
             <DialogDescription>
