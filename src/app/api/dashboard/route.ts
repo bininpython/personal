@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
 import { getTrainerAnalytics } from '@/lib/analytics/trainer-analytics';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { formatDateInSaoPaulo, getSaoPauloDayRange } from '@/lib/time/sao-paulo';
 
 export async function GET() {
   try {
@@ -12,10 +13,7 @@ export async function GET() {
 
     const analytics = await getTrainerAnalytics(session.trainer_id);
     const admin = createAdminClient();
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 1);
+    const { startIso, nextStartIso } = getSaoPauloDayRange();
     const studentIds = analytics.students.map((student) => student.id);
 
     const [todaySessions, todayAppointments, firstPlan, signedInStudent] = await Promise.all([
@@ -25,16 +23,16 @@ export async function GET() {
           .select('student_id')
           .in('student_id', studentIds)
           .eq('status', 'completed')
-          .gte('completed_at', start.toISOString())
-          .lt('completed_at', end.toISOString())
+          .gte('completed_at', startIso)
+          .lt('completed_at', nextStartIso)
         : Promise.resolve({ data: [], error: null }),
       admin
         .from('appointments')
         .select('id')
         .eq('trainer_id', session.trainer_id)
         .eq('status', 'scheduled')
-        .gte('start_time', start.toISOString())
-        .lt('start_time', end.toISOString()),
+        .gte('start_time', startIso)
+        .lt('start_time', nextStartIso),
       admin
         .from('workout_plans')
         .select('id')
@@ -83,7 +81,7 @@ export async function GET() {
         id: student.id,
         name: student.name,
         goal: student.goal,
-        lastWorkout: student.lastWorkoutAt ? new Date(student.lastWorkoutAt).toLocaleDateString('pt-BR') : 'Sem treino registrado',
+        lastWorkout: student.lastWorkoutAt ? formatDateInSaoPaulo(student.lastWorkoutAt) : 'Sem treino registrado',
         completion: student.completionAverage,
         consistency: student.consistencyScore,
         workouts: student.workouts30d,

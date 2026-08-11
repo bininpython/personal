@@ -39,8 +39,33 @@ test('every public authentication page uses the protected return control', () =>
   }
 });
 
+test('public metadata routes bypass the authentication proxy', () => {
+  const proxy = source('src/proxy.ts');
+  const publicMetadataRoutes = ['/icon', '/opengraph-image', '/robots.txt', '/sitemap.xml'];
+
+  for (const route of publicMetadataRoutes) {
+    assert.match(proxy, new RegExp(`['"]${route.replace('.', '\\.')}['"]`), `${route} must remain publicly accessible.`);
+  }
+});
+
 test('navigation never depends on browser history being available', () => {
   const files = filesBelow(join(projectRoot, 'src'));
   const offenders = files.filter((path) => /router\.back\(|history\.back\(|window\.history\.back\(/.test(readFileSync(path, 'utf8')));
   assert.deepEqual(offenders, []);
+});
+
+test('trainer navigation exposes the primary task with clear hierarchy', () => {
+  const layout = source('src/app/(trainer)/layout.tsx');
+  assert.match(layout, /label: 'Operação'/);
+  assert.match(layout, /label: 'Treinos'/);
+  assert.match(layout, /label: 'Gestão'/);
+  assert.match(layout, /href: '\/exercises', label: 'Montar ficha'/);
+});
+
+test('workout builder becomes a three-step flow below desktop width', () => {
+  const builder = source('src/app/(trainer)/exercises/page.tsx');
+  assert.match(builder, /MOBILE_STEPS/);
+  assert.match(builder, /aria-label="Etapas do montador"/);
+  assert.match(builder, /dk-step-bar/);
+  assert.match(builder, /xl:hidden/);
 });

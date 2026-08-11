@@ -39,7 +39,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* Marca e estados D KONG expostos como utilitários (text-volt, bg-ok-wash…). */
+  /* Marca e estados G KONG expostos como utilitários (text-volt, bg-ok-wash…). */
   --color-volt: var(--dk-volt);
   --color-volt-strong: var(--dk-volt-strong);
   --color-volt-ink: var(--dk-volt-ink);
@@ -245,7 +245,7 @@
   filter: brightness(1.2);
 }
 
-/* ---- D KONG authenticated experience ---- */
+/* ---- G KONG authenticated experience ---- */
 :root {
   --dk-ink: #090a08;
   --dk-paper: #f5f5ef;

@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { studentNeedsOnboarding } from '@/lib/profile/onboarding';
 import { useEffect, useState } from 'react';
 
 const BOTTOM_NAV = [
@@ -36,19 +37,26 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     let active = true;
 
     const checkProfile = async () => {
+      let redirecting = false;
       try {
         const res = await fetch(`/api/students/${user.id}`);
-        if (res.ok) {
-          const { student } = await res.json();
-          if (!student.privacy_consent_at) {
-            router.push('/onboarding');
-            return;
-          }
+        if (!res.ok) {
+          redirecting = true;
+          router.replace('/onboarding');
+          return;
+        }
+        const { student } = await res.json();
+        if (studentNeedsOnboarding(student)) {
+          redirecting = true;
+          router.replace('/onboarding');
+          return;
         }
       } catch (err) {
         console.error('Error checking profile', err);
+        redirecting = true;
+        router.replace('/onboarding');
       } finally {
-        if (active) setChecking(false);
+        if (active && !redirecting) setChecking(false);
       }
     };
 
@@ -95,7 +103,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${active ? 'bg-[#c9ff32] text-black' : 'text-white/50 hover:bg-white/8 hover:text-white'}`}
+                  className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${active ? 'bg-[#c9ff32] text-black' : 'text-white/70 hover:bg-white/8 hover:text-white'}`}
                 >
                   <item.icon className="size-4" />
                   {item.label}
@@ -124,7 +132,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             </Tooltip>
             <div className="ml-1 hidden text-right xl:block">
               <p className="max-w-28 truncate text-xs font-bold">{user?.name || 'Aluno'}</p>
-              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">Atleta D KONG</p>
+              <p className="rounded-md bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black">Atleta G KONG</p>
             </div>
             <Avatar className="w-9 h-9 ring-2 ring-[#c9ff32]/30">
               {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
@@ -152,8 +160,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex flex-col items-center gap-1 rounded-lg px-2 py-1.5 transition-colors
-                  ${active ? 'text-[#c9ff32]' : 'text-white/38'}`}
+                className={`relative flex min-h-12 min-w-14 flex-col items-center gap-1 rounded-lg px-2 py-1.5 transition-colors
+                  ${active ? 'text-[#c9ff32]' : 'text-white/65'}`}
               >
                 <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>

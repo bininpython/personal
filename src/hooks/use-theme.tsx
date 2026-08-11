@@ -16,14 +16,20 @@ const ThemeContext = createContext<ThemeContextType>({
   resolvedTheme: 'dark',
 });
 
+const THEME_STORAGE_KEY = 'dkong-theme';
+const LEGACY_THEME_STORAGE_KEY = 'fitcontrol-theme';
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const saved = localStorage.getItem('fitcontrol-theme') as Theme | null;
-      if (saved) setThemeState(saved);
+      const saved = (localStorage.getItem(THEME_STORAGE_KEY) ?? localStorage.getItem(LEGACY_THEME_STORAGE_KEY)) as Theme | null;
+      if (saved) {
+        setThemeState(saved);
+        localStorage.setItem(THEME_STORAGE_KEY, saved);
+      }
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -57,7 +63,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const setTheme = (t: Theme) => {
     setThemeState(t);
-    localStorage.setItem('fitcontrol-theme', t);
+    localStorage.setItem(THEME_STORAGE_KEY, t);
   };
 
   return (

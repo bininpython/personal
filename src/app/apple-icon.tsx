@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-// Substitui o dkong-logo.jpg de 158 KB que era servido como ícone de iOS.
+// Substitui o gkong-logo.jpg de 158 KB que antes era servido como ícone de iOS.
 export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
 

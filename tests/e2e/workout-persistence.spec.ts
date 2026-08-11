@@ -10,7 +10,7 @@ const exerciseId = '50000000-0000-4000-8000-000000000001';
 test.beforeEach(async ({ context, page }) => {
   await setOptimisticSession(context, 'student', studentId, trainerId);
   await page.route('**/api/auth/me', (route) => route.fulfill({ json: { user: { id: studentId, role: 'student', name: 'Aluno Teste', trainer_id: trainerId } } }));
-  await page.route('**/api/students/**', (route) => route.fulfill({ json: { student: { id: studentId, privacy_consent_at: '2026-08-08T12:00:00Z', height: 0, current_weight: 0 } } }));
+  await page.route('**/api/students/**', (route) => route.fulfill({ json: { student: { id: studentId, privacy_consent_at: '2026-08-08T12:00:00Z', terms_accepted_at: '2026-08-08T12:00:00Z', height: 0, current_weight: 0 } } }));
   await page.route('**/api/notifications', (route) => route.fulfill({ json: { unread: 0 } }));
   await page.route('**/api/workout-plans', (route) => route.fulfill({ json: {
     plan: {

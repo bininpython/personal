@@ -7,9 +7,9 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
-      allow: '/',
-      // Nada atrás de sessão deve ser rastreado — inclusive as telas do aluno,
-      // que carregam dado pessoal.
+      allow: ['/', '/plans', '/register', '/login', '/help', '/privacy', '/terms'],
+      // Nada atrás de sessão deve ser rastreado, inclusive as telas do aluno,
+      // que carregam dados pessoais.
       disallow: [
         '/api/',
         '/dashboard',

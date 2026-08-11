@@ -21,10 +21,10 @@ export function AuthScene({ children, eyebrow, title, description, wide = false 
           <div className="relative z-10 max-w-md">
             <p className="mb-5 text-xs font-bold uppercase tracking-[0.3em] text-[#c9ff32]">{eyebrow}</p>
             <h2 className="text-5xl font-black leading-[0.94] tracking-[-0.055em]">{title}</h2>
-            <p className="mt-6 max-w-sm text-base leading-7 text-white/58">{description}</p>
+            <p className="mt-6 max-w-sm text-base leading-7 text-white/72">{description}</p>
           </div>
 
-          <div className="relative z-10 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.16em] text-white/38">
+          <div className="relative z-10 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white/65">
             <span className="h-px w-12 bg-[#c9ff32]" />
             Simples por design
           </div>

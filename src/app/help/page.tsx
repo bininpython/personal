@@ -5,7 +5,7 @@ import { PublicBackLink } from '@/components/navigation/public-back-link';
 
 const trainerTutorials = [
   ['Salve seu código', 'No cadastro, guarde o código pessoal de 6 números. Sua senha e idade servem somente para recuperar o acesso.'],
-  ['Cadastre um aluno', 'Abra Alunos → Novo aluno, confirme a autorização de privacidade e entregue ao aluno o nome cadastrado e o código individual.'],
+  ['Cadastre um aluno', 'Abra Alunos → Novo aluno, confirme a autorização para o cadastro e entregue ao aluno o nome cadastrado e o código individual. No primeiro acesso, o aluno aceita diretamente os Termos e a Política de Privacidade.'],
   ['Publique a ficha', 'Abra Montar ficha, escolha o aluno, adicione dias e exercícios, configure séries, repetições e descanso e publique.'],
   ['Acompanhe resultados', 'Início, Relatórios e o perfil do aluno mostram frequência, conclusão, volume, avaliações e alertas.'],
   ['Recupere ou troque acessos', 'Em Configurações, troque seu código pessoal. No perfil do aluno, gere um novo código individual quando ele perder o anterior.'],

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { workoutPlanCreateSchema } from '@/lib/validators';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
@@ -62,6 +63,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
 
     const admin = createAdminClient();
 
@@ -143,6 +145,71 @@ export async function GET() {
       .order('completed_at', { ascending: true });
     if (completedError) throw completedError;
 
+    const currentExerciseIds = Array.from(new Set(((data.workout_days ?? []) as RelatedWorkoutDay[]).flatMap((day) => (
+      (day.workout_exercises ?? []).flatMap((item) => {
+        const exercise = one(item.exercises);
+        return exercise?.id ? [exercise.id] : [];
+      })
+    ))));
+    const lastPerformanceByExercise = new Map<string, { sets: number; repetitions: number | null; load: number | null; rpe: number | null; completedAt: string | null }>();
+
+    if (currentExerciseIds.length > 0) {
+      const { data: recentSessions, error: recentSessionsError } = await admin
+        .from('workout_sessions')
+        .select('id, completed_at')
+        .eq('student_id', session.sub)
+        .eq('status', 'completed')
+        .order('completed_at', { ascending: false })
+        .limit(50);
+      if (recentSessionsError) throw recentSessionsError;
+
+      const recentSessionIds = (recentSessions ?? []).map((item) => item.id);
+      if (recentSessionIds.length > 0) {
+        const { data: exerciseSessions, error: exerciseSessionsError } = await admin
+          .from('exercise_sessions')
+          .select('id, exercise_id, workout_session_id')
+          .in('workout_session_id', recentSessionIds)
+          .in('exercise_id', currentExerciseIds);
+        if (exerciseSessionsError) throw exerciseSessionsError;
+
+        const sessionOrder = new Map(recentSessionIds.map((id, index) => [id, index]));
+        const latestExerciseSessions = new Map<string, { id: string; workout_session_id: string }>();
+        for (const item of (exerciseSessions ?? []).sort((left, right) => (
+          (sessionOrder.get(left.workout_session_id) ?? Number.MAX_SAFE_INTEGER)
+          - (sessionOrder.get(right.workout_session_id) ?? Number.MAX_SAFE_INTEGER)
+        ))) {
+          if (!latestExerciseSessions.has(item.exercise_id)) latestExerciseSessions.set(item.exercise_id, item);
+        }
+
+        const latestExerciseSessionIds = [...latestExerciseSessions.values()].map((item) => item.id);
+        if (latestExerciseSessionIds.length > 0) {
+          const { data: setRecords, error: setRecordsError } = await admin
+            .from('set_records')
+            .select('exercise_session_id, set_number, completed, performed_repetitions, performed_load, rpe')
+            .in('exercise_session_id', latestExerciseSessionIds)
+            .eq('completed', true)
+            .order('set_number', { ascending: true });
+          if (setRecordsError) throw setRecordsError;
+
+          for (const [exerciseId, exerciseSession] of latestExerciseSessions) {
+            const records = (setRecords ?? []).filter((record) => record.exercise_session_id === exerciseSession.id);
+            if (records.length === 0) continue;
+            const repetitions = records.find((record) => record.performed_repetitions !== null)?.performed_repetitions ?? null;
+            const loads = records.map((record) => record.performed_load).filter((value): value is number => value !== null);
+            const rpes = records.map((record) => record.rpe).filter((value): value is number => value !== null);
+            const completedAt = recentSessions?.find((item) => item.id === exerciseSession.workout_session_id)?.completed_at ?? null;
+            lastPerformanceByExercise.set(exerciseId, {
+              sets: records.length,
+              repetitions,
+              load: loads.length > 0 ? Math.max(...loads) : null,
+              rpe: rpes.length > 0 ? Math.round((rpes.reduce((sum, value) => sum + value, 0) / rpes.length) * 10) / 10 : null,
+              completedAt,
+            });
+          }
+        }
+      }
+    }
+
     const completedByDay = new Map<string, number>();
     const lastCompletedByDay = new Map<string, string>();
     for (const completed of completedSessions ?? []) {
@@ -189,6 +256,7 @@ export async function GET() {
                 reps: item.reps,
                 restTime: item.rest_time,
                 method: item.method || '',
+                lastPerformance: exercise?.id ? lastPerformanceByExercise.get(exercise.id) ?? null : null,
               };
             }),
         };

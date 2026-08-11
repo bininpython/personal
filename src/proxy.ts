@@ -13,6 +13,10 @@ const PUBLIC_PATHS = new Set([
   '/privacy',
   '/recover',
   '/help',
+  '/icon',
+  '/opengraph-image',
+  '/robots.txt',
+  '/sitemap.xml',
 ]);
 
 // Arquivos de metadata gerados pelo Next. Precisam responder ao rastreador e
@@ -96,6 +100,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|icon|opengraph-image|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

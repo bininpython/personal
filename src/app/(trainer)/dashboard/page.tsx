@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { ActivationChecklist, type OnboardingState } from '@/components/trainer/activation-checklist';
 import { groupIntoCategories } from '@/lib/charts/palette';
+import { hourInSaoPaulo } from '@/lib/time/sao-paulo';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -41,7 +42,7 @@ export default function DashboardPage() {
   const { resolvedTheme } = useTheme();
   const router = useRouter();
   const [greeting] = useState(() => {
-    const hour = new Date().getHours();
+    const hour = hourInSaoPaulo();
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   });
   const [stats, setStats] = useState({

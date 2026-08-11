@@ -1,20 +1,20 @@
 import { expect, test } from '@playwright/test';
 
-test('login do personal usa somente nome e código de acesso', async ({ page }) => {
+test('login do personal usa somente nome e código pessoal', async ({ page }) => {
   await page.goto('/login/trainer');
-  await expect(page.getByRole('heading', { name: 'Acesso do Personal' })).toBeVisible();
-  await expect(page.getByLabel('Seu nome profissional')).toBeVisible();
-  await expect(page.getByLabel('Código de acesso')).toBeVisible();
-  await expect(page.getByPlaceholder('XXXX-XXXX')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Entre no seu painel' })).toBeVisible();
+  await expect(page.getByLabel('Seu nome')).toBeVisible();
+  await expect(page.getByLabel('Código pessoal')).toBeVisible();
+  await expect(page.getByPlaceholder('000-000')).toBeVisible();
   await expect(page.locator('input[type="email"], input[type="tel"]')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Recuperar acesso' })).toHaveAttribute('href', '/recover');
+  await expect(page.getByRole('link', { name: 'Esqueci meu código' })).toHaveAttribute('href', '/recover');
 });
 
-test('login do aluno exige escopo do personal e código individual', async ({ page }) => {
+test('login do aluno exige somente nome e código individual', async ({ page }) => {
   await page.goto('/login/student');
   await expect(page.getByLabel('Seu nome')).toBeVisible();
-  await expect(page.getByLabel('Código público do personal')).toBeVisible();
-  await expect(page.getByLabel('Seu código individual')).toBeVisible();
+  await expect(page.getByLabel('Código do aluno')).toBeVisible();
+  await expect(page.getByPlaceholder('000-000')).toBeVisible();
   await expect(page.locator('input[type="email"], input[type="tel"]')).toHaveCount(0);
 });
 
@@ -35,8 +35,8 @@ test('páginas recebem cabeçalhos de segurança', async ({ request }) => {
 
 test('recuperação não solicita contato pessoal', async ({ page }) => {
   await page.goto('/recover');
-  await expect(page.getByLabel('Nome profissional')).toBeVisible();
-  await expect(page.getByLabel('Código público')).toBeVisible();
-  await expect(page.getByLabel('Chave de recuperação')).toBeVisible();
+  await expect(page.getByLabel('Seu nome')).toBeVisible();
+  await expect(page.getByLabel('Senha de recuperação')).toBeVisible();
+  await expect(page.getByLabel('Idade')).toBeVisible();
   await expect(page.locator('input[type="email"], input[type="tel"]')).toHaveCount(0);
 });

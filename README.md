@@ -1,4 +1,4 @@
-# D KONG
+# G KONG
 
 Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanharem a execução e a evolução dos treinos.
 
@@ -16,7 +16,7 @@ Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanh
 
 1. Copie `.env.example` para `.env.local`.
 2. Preencha as chaves públicas do Supabase e a chave secreta usada apenas no servidor.
-3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo `20260808_commercial_security.sql` e `20260810_d_kong_auth.sql`.
+3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo `20260808_commercial_security.sql`, `20260810_d_kong_auth.sql` e `20260811_student_consent_attestation.sql`.
 4. Instale as dependências e inicie o projeto:
 
 ```bash
@@ -30,7 +30,7 @@ npm run dev
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` ou `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SECRET_KEY` ou `SUPABASE_SERVICE_ROLE_KEY` — somente no servidor
 - `SESSION_SECRET` — segredo aleatório com pelo menos 32 caracteres para assinar sessões
-- `RATE_LIMIT_SECRET` — pepper independente recomendado para identificadores de bloqueio
+- `RATE_LIMIT_SECRET` — segredo independente com pelo menos 32 caracteres para identificadores de bloqueio; obrigatório em produção
 - `CRON_SECRET` — texto aleatório longo que protege a geração diária de alertas no Vercel
 
 Nunca exponha a chave secreta em variáveis que começam com `NEXT_PUBLIC_`.
@@ -58,6 +58,9 @@ o `CRON_SECRET` configurado nas variáveis do projeto para autorizar essa tarefa
 ## Verificação
 
 ```bash
+npm test
+npm run check:database
+npm run check:release
 npm run test:auth
 npm run test:catalog
 npm run test:analytics
@@ -76,5 +79,5 @@ O teste E2E destrutivo de ciclo completo fica desativado por padrão. Execute-o 
 
 - Configure `SESSION_SECRET`, `RATE_LIMIT_SECRET` e `CRON_SECRET` no ambiente de produção.
 - Aplique a migração comercial e confirme que o bucket `profile-images-private` não é público.
-- Preencha nos Termos e na Política a razão social, CNPJ, endereço, canal de suporte e encarregado de dados.
+- Revise os Termos e a Política sempre que o modelo comercial, o operador legal ou os fornecedores mudarem.
 - Use banco separado para staging/E2E, backup com restauração testada, HTTPS e monitoramento de erros.

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
+import { APP_TIME_ZONE, hourInSaoPaulo } from '@/lib/time/sao-paulo';
 
 interface HomePlan {
   id: string;
@@ -44,7 +45,7 @@ export default function StudentHomePage() {
   const { user } = useAuth();
   const router = useRouter();
   const [greeting] = useState(() => {
-    const hour = new Date().getHours();
+    const hour = hourInSaoPaulo();
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   });
   const [plan, setPlan] = useState<HomePlan | null>(null);
@@ -70,8 +71,17 @@ export default function StudentHomePage() {
     };
 
     void loadPlan();
-    const interval = window.setInterval(loadPlan, 10_000);
-    return () => window.clearInterval(interval);
+    const refresh = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) void loadPlan();
+    };
+    const interval = window.setInterval(refresh, 60_000);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('online', refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('online', refresh);
+    };
   }, []);
 
   const nextWorkout = plan?.days.find((day) => day.id === plan.week.nextWorkoutDayId) ?? plan?.days[0] ?? null;
@@ -86,12 +96,12 @@ export default function StudentHomePage() {
               {greeting.toUpperCase()},<br />
               <span className="text-[#c9ff32]">{user?.name?.split(' ')[0]?.toUpperCase() || 'ALUNO'}.</span>
             </h1>
-            <p className="mt-5 max-w-lg text-sm leading-6 text-white/52 sm:text-base">Sua ficha, seu ritmo e sua evolução em um só lugar.</p>
+            <p className="mt-5 max-w-lg text-sm leading-6 text-white/72 sm:text-base">Sua ficha, seu ritmo e sua evolução em um só lugar.</p>
           </div>
           {plan && (
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Meta semanal</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.target}</p></div>
-              <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Concluídos</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.completed}</p></div>
+              <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/65">Meta semanal</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.target}</p></div>
+              <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-black/65">Concluídos</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.completed}</p></div>
             </div>
           )}
         </div>
@@ -177,7 +187,7 @@ export default function StudentHomePage() {
       {appointments.length > 0 && (
         <Card>
           <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Agenda</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><CalendarDays className="size-5" /> Próximos compromissos</CardTitle></CardHeader>
-          <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-2xl border p-4"><p className="font-bold">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</p></div>)}</CardContent>
+          <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-2xl border p-4"><p className="font-bold">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: APP_TIME_ZONE })}</p></div>)}</CardContent>
         </Card>
       )}
       </div>

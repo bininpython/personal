@@ -12,11 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // One-off local import/seed utilities use CommonJS and are not bundled with the app.
-    "generate-json.js",
-    "register-chris.js",
-    "seed-exercises.js",
-    "scripts/test-register.js",
   ]),
 ]);
 

@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
+import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getSaoPauloMonthRange } from '@/lib/time/sao-paulo';
 
 const appointmentSchema = z.object({
   studentId: z.string().uuid(),
@@ -33,6 +35,7 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
     const searchParams = new URL(request.url).searchParams;
     const month = searchParams.get('month');
     const upcoming = searchParams.get('upcoming') === 'true';
@@ -47,10 +50,8 @@ export async function GET(request: Request) {
       : query.eq('student_id', session.sub);
 
     if (month && /^\d{4}-\d{2}$/.test(month)) {
-      const start = new Date(`${month}-01T00:00:00`);
-      const end = new Date(start);
-      end.setMonth(end.getMonth() + 1);
-      query = query.gte('start_time', start.toISOString()).lt('start_time', end.toISOString());
+      const range = getSaoPauloMonthRange(month);
+      if (range) query = query.gte('start_time', range.startIso).lt('start_time', range.nextStartIso);
     } else if (upcoming) {
       query = query
         .eq('status', 'scheduled')

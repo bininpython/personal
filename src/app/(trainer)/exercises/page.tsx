@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/ui/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,7 +38,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { PageHeader } from '@/components/ui/page-header';
 import {
   EXERCISE_CATALOG,
   MUSCLE_REGIONS,
@@ -543,9 +543,9 @@ export default function ExercisesPage() {
               style={{ width: '100%', maxWidth: '250px', cursor: 'pointer' }}
               svgStyle={{ height: 'auto' }}
               bodyColor="#cbd5e1"
-              highlightedColors={["#7cae00"]}
+              highlightedColors={["#c9ff32"]}
             />
-            <p className="mt-3 text-center text-sm font-bold text-volt-ink">
+            <p className="mt-3 text-center text-sm font-black text-[#668f00] dark:text-[#c9ff32]">
               {MUSCLE_REGIONS[activeMuscle]}
             </p>
             <div className="mt-4 flex w-full flex-wrap justify-center gap-1.5">
@@ -557,7 +557,7 @@ export default function ExercisesPage() {
                   className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
                     activeMuscle === muscle
                       ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
-                      : 'border-border bg-background text-muted-foreground hover:border-volt-strong hover:text-foreground'
+                      : 'border-border bg-background text-muted-foreground hover:border-[#9fdb00] hover:text-foreground'
                   }`}
                 >
                   {label}
@@ -629,7 +629,7 @@ export default function ExercisesPage() {
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               <Badge variant="outline">{exercise.equipment}</Badge>
                               <Badge variant="secondary">{DIFFICULTY_LABELS[exercise.difficulty]}</Badge>
-                              {exercise.videoUrl && <Badge className="bg-danger-wash text-danger">Com vídeo</Badge>}
+                              {exercise.videoUrl && <Badge className="bg-red-500/10 text-red-600">Com vídeo</Badge>}
                             </div>
                           </div>
                           <Button
@@ -650,7 +650,7 @@ export default function ExercisesPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => setPlayingVideo(exercise.videoUrl)}
-                            className="mt-2 h-8 px-2 text-xs text-info"
+                            className="mt-2 px-3 text-xs text-[#668f00]"
                           >
                             <PlayCircle className="mr-1.5 size-3.5" /> Ver execução
                           </Button>
@@ -681,7 +681,7 @@ export default function ExercisesPage() {
                   type="button"
                   key={day.id}
                   onClick={() => setActiveDayId(day.id)}
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                  className={`min-h-11 rounded-full border px-3 py-2 text-xs font-bold ${
                     activeDay.id === day.id
                       ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
@@ -726,7 +726,7 @@ export default function ExercisesPage() {
                     <div key={exercise.key} className="rounded-xl border border-border/60 bg-muted/20 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <span className="text-[10px] font-bold uppercase text-volt-ink">{index + 1}º exercício</span>
+                          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-[#668f00]">{index + 1}º exercício</span>
                           <h3 className="truncate text-sm font-semibold">{exercise.name}</h3>
                         </div>
                         <Button
@@ -734,50 +734,50 @@ export default function ExercisesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => removeExercise(activeDay.id, exercise.key)}
-                          className="size-8 shrink-0"
+                          className="size-11 shrink-0"
                         >
                           <X className="size-4" />
                         </Button>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-2">
                         <div>
-                          <Label className="text-[10px]">Séries</Label>
+                          <Label className="text-xs">Séries</Label>
                           <Input
                             type="number"
                             min={1}
                             max={20}
                             value={exercise.sets}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'sets', Number(event.target.value))}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                         <div>
-                          <Label className="text-[10px]">Repetições</Label>
+                          <Label className="text-xs">Repetições</Label>
                           <Input
                             value={exercise.reps}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'reps', event.target.value)}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                         <div>
-                          <Label className="text-[10px]">Descanso automático (s)</Label>
+                          <Label className="text-xs">Descanso automático (s)</Label>
                           <Input
                             type="number"
                             min={0}
                             max={900}
                             value={exercise.restTime}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'restTime', Number(event.target.value))}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                       </div>
                       <div className="mt-2">
-                        <Label className="text-[10px]">Método / observação</Label>
+                        <Label className="text-xs">Método / observação</Label>
                         <Input
                           value={exercise.method}
                           onChange={(event) => updateExercise(activeDay.id, exercise.key, 'method', event.target.value)}
                           placeholder="Ex.: drop-set na última série"
-                          className="mt-1 h-8 px-2 text-sm"
+                          className="mt-1 px-2 text-sm"
                         />
                       </div>
                     </div>
@@ -847,7 +847,7 @@ export default function ExercisesPage() {
                 {students.map((student) => <option key={student.id} value={student.id}>{student.name}</option>)}
               </select>
               {students.length === 0 && (
-                <p className="text-xs text-warn">Cadastre um aluno ativo antes de publicar a ficha.</p>
+                <p className="text-xs text-amber-600">Cadastre um aluno ativo antes de publicar a ficha.</p>
               )}
             </div>
             <div className="space-y-1.5">
@@ -903,7 +903,7 @@ export default function ExercisesPage() {
                 </select>
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-2.5 text-xs">
-                <CalendarClock className="size-4 text-volt-ink" />
+                <CalendarClock className="size-4 text-primary" />
                 <span>Nova versão válida de <strong>{formatPlanDate(startDate)}</strong> até <strong>{formatPlanDate(endDate)}</strong>.</span>
               </div>
             </div>

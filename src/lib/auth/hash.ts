@@ -1,5 +1,5 @@
 // ============================================
-// D KONG — Password & Code Hashing
+// G KONG — Password & Code Hashing
 // ============================================
 
 import bcrypt from 'bcryptjs';

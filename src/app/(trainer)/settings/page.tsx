@@ -90,11 +90,11 @@ export default function TrainerSettingsPage() {
               }}
               sizeClassName="size-24 border-4 border-white/15"
             />
-            <div><p className="dk-kicker text-[#c9ff32]">D KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/48">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
+            <div><p className="dk-kicker rounded-md bg-white px-2 py-1 text-black">G KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/70">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35">Cidade</p><p className="mt-3 max-w-36 truncate text-lg font-black">{profile.city || '—'}</p></div>
-            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/45">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
+            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-white/65">Cidade</p><p className="mt-3 max-w-36 truncate text-lg font-black">{profile.city || '—'}</p></div>
+            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-black/65">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
           </div>
         </div>
       </section>
@@ -112,7 +112,7 @@ export default function TrainerSettingsPage() {
             <CardHeader className="border-b border-black/8 dark:border-white/8">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Identidade</p>
               <CardTitle className="mt-1 text-2xl font-black tracking-tight">Perfil profissional</CardTitle>
-              <CardDescription>Informações usadas na sua conta D KONG.</CardDescription>
+              <CardDescription>Informações usadas na sua conta G KONG.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               {loading ? (

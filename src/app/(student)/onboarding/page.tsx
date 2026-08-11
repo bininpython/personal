@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
-  Activity, Target, Scale, Ruler, AlertCircle, ChevronRight, Loader2, Play
+  Activity, Target, Scale, Ruler, AlertCircle, ChevronRight, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -85,17 +85,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-lg space-y-6 animate-fade-in">
-        <div className="text-center space-y-2">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Play className="w-8 h-8 text-primary ml-1" />
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight">Bem-vindo(a) à D KONG!</h1>
-          <p className="text-muted-foreground">
-            Para que seu personal possa montar seu treino, precisamos de alguns dados físicos básicos.
-          </p>
-        </div>
+    <div className="mx-auto w-full max-w-3xl space-y-6 pb-10 animate-fade-in">
+        <section className="dk-hero-panel p-6 sm:p-9"><div className="relative z-10"><p className="dk-kicker text-[#c9ff32]">Ativação do atleta</p><h1 className="dk-display mt-6 text-[clamp(2.8rem,9vw,5.5rem)]">SEU CORPO.<br /><span className="text-[#c9ff32]">SEU PONTO DE PARTIDA.</span></h1><p className="mt-5 max-w-xl text-sm leading-6 text-white/72 sm:text-base">Conte o essencial para que seu personal prepare um treino mais seguro e alinhado ao seu objetivo.</p></div></section>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Card className="border-border/50 shadow-xl">
@@ -108,7 +99,7 @@ export default function OnboardingPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="current_weight" className="flex items-center gap-2">
                     <Scale className="w-4 h-4 text-muted-foreground" />
@@ -136,7 +127,7 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Gênero</Label>
                   <Select onValueChange={(value) => setValue('gender', value as OnboardingData['gender'])} defaultValue="other">
@@ -197,18 +188,18 @@ export default function OnboardingPage() {
                 />
               </div>
 
-              <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
-                <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('privacy_consent')} />
+              <label className="flex items-start gap-3 rounded-2xl border bg-muted/20 p-4 text-sm leading-6">
+                <input type="checkbox" className="mt-0.5 size-5 accent-[#9fdb00]" {...register('privacy_consent')} />
                 <span>Autorizo o uso destes dados para acompanhamento de treino pelo meu personal. Sei que posso exportar ou excluir meus dados no perfil. <a href="/privacy" target="_blank" className="text-primary underline">Política de Privacidade</a>.</span>
               </label>
-              <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
-                <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('terms_accepted')} />
+              <label className="flex items-start gap-3 rounded-2xl border bg-muted/20 p-4 text-sm leading-6">
+                <input type="checkbox" className="mt-0.5 size-5 accent-[#9fdb00]" {...register('terms_accepted')} />
                 <span>Li e aceito os <a href="/terms" target="_blank" className="text-primary underline">Termos de Uso</a>.</span>
               </label>
 
             </CardContent>
             <CardFooter className="bg-muted/30 pt-6">
-              <Button type="submit" className="w-full text-lg h-12" disabled={isLoading}>
+              <Button type="submit" className="h-12 w-full bg-black text-lg text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin mr-2" />
                 ) : (
@@ -218,7 +209,6 @@ export default function OnboardingPage() {
             </CardFooter>
           </Card>
         </form>
-      </div>
     </div>
   );
 }

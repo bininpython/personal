@@ -112,7 +112,7 @@ export default function ReportsPage() {
           <div className="mt-5 flex items-center justify-between border-t pt-4 text-xs text-muted-foreground"><span className="flex items-center gap-1"><FileText className="size-3.5" /> Relatório individual de evolução</span><span>Gerado em {new Date(report.generatedAt).toLocaleString('pt-BR')}</span></div>
         </header>
         <StudentProgressDashboard data={report} />
-        <footer className="hidden border-t pt-4 text-center text-xs text-muted-foreground print:block">Relatório gerado pela D KONG em {new Date(report.generatedAt).toLocaleString('pt-BR')}.</footer>
+        <footer className="hidden border-t pt-4 text-center text-xs text-muted-foreground print:block">Relatório gerado pela G KONG em {new Date(report.generatedAt).toLocaleString('pt-BR')}.</footer>
       </> : <Card><CardContent className="py-16 text-center text-sm text-muted-foreground">Selecione um aluno para visualizar o relatório.</CardContent></Card>}
     </div>
   );

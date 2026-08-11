@@ -8,7 +8,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col bg-[#f4f4ef] text-black">
       <PublicBackLink href="/" />
       <AuthScene
-        eyebrow="D KONG Access"
+        eyebrow="G KONG Access"
         title="DOIS PERFIS. UM SÓ FOCO."
         description="Escolha seu tipo de acesso. Cada caminho foi reduzido ao essencial para você entrar e começar rápido."
       >

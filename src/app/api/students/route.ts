@@ -9,6 +9,10 @@ import { generateStudentPrivateCode, getCodeHint, normalizeAuthCode } from '@/li
 import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import {
+  formatDateInSaoPaulo,
+  getTrailingSaoPauloWeekRange,
+} from '@/lib/time/sao-paulo';
 
 function json(body: Record<string, unknown>, status: number) {
   return NextResponse.json(body, {
@@ -102,8 +106,13 @@ export async function POST(request: Request) {
       available_days: data.available_days || [],
       start_date: data.start_date || null,
       notes: data.notes || null,
-      privacy_consent_at: new Date().toISOString(),
-      privacy_policy_version: '2026-08-08',
+      privacy_consent_at: null,
+      privacy_policy_version: null,
+      terms_accepted_at: null,
+      terms_version: null,
+      trainer_privacy_attested_at: new Date().toISOString(),
+      trainer_privacy_attested_by: session.sub,
+      trainer_privacy_policy_version: '2026-08-08',
     });
 
     if (profileError) {
@@ -172,16 +181,19 @@ export async function GET() {
 
     if (sessionError) throw sessionError;
 
-    const now = new Date();
-    const recentStart = new Date(now);
-    recentStart.setDate(recentStart.getDate() - 7);
-    const previousStart = new Date(now);
-    previousStart.setDate(previousStart.getDate() - 14);
+    const recentRange = getTrailingSaoPauloWeekRange();
+    const previousRange = getTrailingSaoPauloWeekRange(undefined, 1);
+    const recentStart = new Date(recentRange.startIso);
+    const recentEnd = new Date(recentRange.nextStartIso);
+    const previousStart = new Date(previousRange.startIso);
 
     const students = data.map((student) => {
       const studentSessions = (sessionRows ?? []).filter((item) => item.student_id === student.id);
       const completedSessions = studentSessions.filter((item) => item.status === 'completed');
-      const recentCount = completedSessions.filter((item) => new Date(item.completed_at || item.started_at) >= recentStart).length;
+      const recentCount = completedSessions.filter((item) => {
+        const date = new Date(item.completed_at || item.started_at);
+        return date >= recentStart && date < recentEnd;
+      }).length;
       const previousCount = completedSessions.filter((item) => {
         const date = new Date(item.completed_at || item.started_at);
         return date >= previousStart && date < recentStart;
@@ -205,7 +217,7 @@ export async function GET() {
             ? 'Intermediário'
             : 'Avançado',
         lastWorkout: lastWorkoutDate
-          ? new Date(lastWorkoutDate).toLocaleDateString('pt-BR')
+          ? formatDateInSaoPaulo(lastWorkoutDate)
           : 'Sem treino registrado',
         frequency: `${recentCount}x/sem`,
         completion,

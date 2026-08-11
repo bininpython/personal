@@ -1,4 +1,4 @@
-# Revisão da plataforma D KONG — segunda passagem
+# Revisão da plataforma G KONG — segunda passagem
 
 Revisão de produto e engenharia — 11 de agosto de 2026
 Base: `claude/montador-mobile-entrega-codigo-1oj725`, sobre a análise de 10 de agosto
@@ -175,7 +175,7 @@ divergindo é o começo de um bug de permissão.
 
 **B9 · A janela de compartilhamento continua fechada (A7).** Sem `metadataBase`, sem
 `openGraph`, sem `sitemap`, sem `robots`. O ícone declarado em `src/app/layout.tsx:26-27` é o
-`dkong-logo.jpg` de **158 KB**, servido também como ícone de iOS. Agora que existe um botão de
+`gkong-logo.jpg` de **158 KB**, servido também como ícone de iOS. Agora que existe um botão de
 WhatsApp no produto (A1), o link que ele carrega chega no celular do aluno **sem imagem e sem
 descrição** — as duas peças foram feitas para trabalhar juntas e só uma existe.
 

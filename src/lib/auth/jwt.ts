@@ -1,8 +1,9 @@
 // ============================================
-// D KONG — JWT Token Management
+// G KONG — JWT Token Management
 // ============================================
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';
+import { getSessionSecret } from '@/lib/auth/secrets';
 import type { SessionRole } from '@/lib/auth/session-types';
 
 const JWT_ISSUER = 'fitcontrol-pro';
@@ -16,15 +17,7 @@ export interface TokenPayload extends JWTPayload {
 }
 
 function signingKey() {
-  const secret = process.env.SESSION_SECRET
-    || process.env.SUPABASE_SECRET_KEY
-    || process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!secret || secret.length < 32) {
-    throw new Error('Configure SESSION_SECRET com pelo menos 32 caracteres.');
-  }
-
-  return new TextEncoder().encode(secret);
+  return new TextEncoder().encode(getSessionSecret());
 }
 
 export async function createSessionToken(session: {

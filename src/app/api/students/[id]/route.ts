@@ -48,6 +48,7 @@ export async function GET(
       notes,
       avatar_url,
       privacy_consent_at,
+      terms_accepted_at,
       created_at
     `)
     .eq('id', id)
@@ -87,6 +88,7 @@ export async function GET(
       notes: session.role === 'trainer' ? student.notes || '' : '',
       created_at: student.created_at,
       privacy_consent_at: student.privacy_consent_at,
+      terms_accepted_at: student.terms_accepted_at,
     },
   }, 200);
 }

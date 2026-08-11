@@ -19,29 +19,31 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const TITLE = "D KONG — Performance e Gestão de Treinos";
+const TITLE = "G KONG — Performance e Gestão de Treinos";
 const DESCRIPTION = "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho. O aluno entra com o nome e um código de seis números — sem e-mail e sem senha.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl(),
-  title: TITLE,
+  title: {
+    default: TITLE,
+    template: "%s | G KONG",
+  },
   description: DESCRIPTION,
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
-  applicationName: "D KONG",
-  // O ícone vem de src/app/favicon.ico, icon e apple-icon. Declarar o logo
-  // JPG aqui servia 158 KB como favicon.
+  applicationName: "G KONG",
+  alternates: { canonical: "/" },
+  // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
+  // JPG como favicon, porque ele é muito maior do que os arquivos dedicados.
   openGraph: {
     type: "website",
-    siteName: "D KONG",
     locale: "pt_BR",
-    title: TITLE,
-    description: DESCRIPTION,
+    url: "/",
+    siteName: "G KONG",
+    title: "G KONG — Força na gestão. Foco no resultado.",
+    description: "Gestão profissional de alunos, fichas de treino e evolução física com acesso simples por código.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "G KONG — Performance System" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: DESCRIPTION,
-  },
+  twitter: { card: "summary_large_image", title: "G KONG — Performance System", description: "Gestão de treinos com acesso simples e evolução visível.", images: ["/opengraph-image"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -88,14 +88,14 @@ export default function ProfilePage() {
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2"><span className="dk-kicker text-[#c9ff32]">Perfil do atleta</span><Badge className="dk-volt-chip border-0">{profile.status === 'active' ? 'Ativo' : 'Inativo'}</Badge></div>
               <h1 className="dk-display text-4xl sm:text-5xl">{profile.full_name}</h1>
-              <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/50"><span className="flex items-center gap-1.5"><Target className="size-4 text-[#c9ff32]" /> {profile.goal || 'Objetivo não informado'}</span><span className="flex items-center gap-1.5"><Dumbbell className="size-4 text-[#c9ff32]" /> {LEVELS[profile.experience_level] || 'Nível não informado'}</span></p>
-              <p className="mt-3 text-xs text-white/35">Toque na foto para trocar seu avatar.</p>
+              <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/70"><span className="flex items-center gap-1.5"><Target className="size-4 text-[#c9ff32]" /> {profile.goal || 'Objetivo não informado'}</span><span className="flex items-center gap-1.5"><Dumbbell className="size-4 text-[#c9ff32]" /> {LEVELS[profile.experience_level] || 'Nível não informado'}</span></p>
+              <p className="mt-3 text-xs text-white/65">Toque na foto para trocar seu avatar.</p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Ruler className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.height > 0 ? `${profile.height} cm` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Altura</p></div>
-            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><Weight className="size-4" /><p className="mt-4 text-2xl font-black">{profile.current_weight > 0 ? `${profile.current_weight} kg` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/45">Peso atual</p></div>
-            <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1"><Calendar className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.available_days.length || '—'}x</p><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Disponibilidade</p></div>
+            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Ruler className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.height > 0 ? `${profile.height} cm` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/65">Altura</p></div>
+            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><Weight className="size-4" /><p className="mt-4 text-2xl font-black">{profile.current_weight > 0 ? `${profile.current_weight} kg` : '—'}</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-black/65">Peso atual</p></div>
+            <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1"><Calendar className="size-4 text-[#c9ff32]" /><p className="mt-4 text-2xl font-black">{profile.available_days.length || '—'}x</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/65">Disponibilidade</p></div>
           </div>
         </div>
       </section>

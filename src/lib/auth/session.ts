@@ -4,6 +4,7 @@ import { createHmac } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { SESSION_EXPIRY_DAYS } from '@/constants';
 import { createSessionToken, verifyToken } from '@/lib/auth/jwt';
+import { getRateLimitSecret } from '@/lib/auth/secrets';
 import { SESSION_COOKIE_NAME, type AuthSession, type SessionRole } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isPrivateAvatar } from '@/lib/profile/private-avatar';
@@ -32,12 +33,7 @@ export async function createSession(input: {
 
   const forwardedFor = input.request?.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
   const rawIp = forwardedFor || input.request?.headers.get('x-real-ip') || 'unknown';
-  const ipPepper = process.env.RATE_LIMIT_SECRET
-    || process.env.SESSION_SECRET
-    || process.env.SUPABASE_SECRET_KEY
-    || process.env.SUPABASE_SERVICE_ROLE_KEY
-    || 'local-development-session-pepper';
-  const encodedIpHash = createHmac('sha256', ipPepper).update(rawIp).digest('hex');
+  const encodedIpHash = createHmac('sha256', getRateLimitSecret()).update(rawIp).digest('hex');
   const userAgent = input.request?.headers.get('user-agent')?.slice(0, 500) || null;
 
   const { data: row, error } = await admin
@@ -119,7 +115,7 @@ export async function getSession(): Promise<AuthSession | null> {
 
     const { data: student } = await admin
       .from('students')
-      .select('id, trainer_id, name, status, avatar_url, deleted_at')
+      .select('id, trainer_id, name, status, avatar_url, privacy_consent_at, terms_accepted_at, deleted_at')
       .eq('id', payload.sub)
       .maybeSingle();
     if (!student || student.status !== 'active' || student.deleted_at) return null;
@@ -131,6 +127,7 @@ export async function getSession(): Promise<AuthSession | null> {
       name: student.name,
       trainer_id: student.trainer_id,
       avatar_url: displayedAvatar(student.avatar_url, student.id),
+      onboarding_complete: Boolean(student.privacy_consent_at && student.terms_accepted_at),
     };
   } catch (error) {
     console.error('[Auth] Failed to resolve session:', error);

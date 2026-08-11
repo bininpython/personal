@@ -1,92 +1,32 @@
 import { ImageResponse } from 'next/og';
-import { APP_NAME, APP_SUBTITLE } from '@/constants';
+import { APP_NAME } from '@/constants';
 
-// O produto se propaga por indicação e WhatsApp. Sem esta imagem o link
-// colado numa conversa chega como texto cru — e o botão de convite do aluno
-// manda exatamente esse link.
-export const alt = `${APP_NAME} — plataforma de treino para personal trainers`;
+export const alt = `${APP_NAME} — força na gestão, foco no resultado`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-export default function OpengraphImage() {
+export default function OpenGraphImage() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          background: '#090a08',
-          color: '#ffffff',
-          padding: '72px',
-          fontFamily: 'sans-serif',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-          <div
-            style={{
-              width: '20px',
-              height: '20px',
-              borderRadius: '999px',
-              background: '#c9ff32',
-            }}
-          />
-          <span
-            style={{
-              fontSize: '26px',
-              fontWeight: 800,
-              letterSpacing: '0.22em',
-              color: '#c9ff32',
-            }}
-          >
-            PERFORMANCE SYSTEM
-          </span>
+    <div style={{ width: '100%', height: '100%', display: 'flex', position: 'relative', overflow: 'hidden', background: '#f5f5ef', color: '#090a08', padding: 72 }}>
+      <div style={{ position: 'absolute', width: 410, height: 410, borderRadius: 999, border: '82px solid #c9ff32', right: -90, top: -140, opacity: 0.78 }} />
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+          <div style={{ width: 62, height: 62, borderRadius: 17, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#090a08', color: '#c9ff32', fontSize: 23, fontWeight: 900 }}>GK</div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ color: '#000000', fontSize: 31, fontWeight: 900 }}>{APP_NAME}</span>
+            <span style={{ marginTop: 2, fontSize: 14, letterSpacing: '0.28em', color: '#5c6255' }}>PERFORMANCE SYSTEM</span>
+          </div>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span
-            style={{
-              fontSize: '148px',
-              fontWeight: 900,
-              letterSpacing: '-0.06em',
-              lineHeight: 1,
-            }}
-          >
-            {APP_NAME}
-          </span>
-          <span
-            style={{
-              marginTop: '28px',
-              fontSize: '40px',
-              lineHeight: 1.25,
-              color: 'rgba(255,255,255,0.72)',
-              maxWidth: '900px',
-            }}
-          >
-            {APP_SUBTITLE}
-          </span>
+        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 900 }}>
+          <span style={{ fontSize: 91, lineHeight: 0.86, letterSpacing: '-0.065em', fontWeight: 900 }}>FORÇA NA GESTÃO.</span>
+          <span style={{ marginTop: 12, fontSize: 91, lineHeight: 0.86, letterSpacing: '-0.065em', fontWeight: 900, color: '#668f00' }}>FOCO NO RESULTADO.</span>
         </div>
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            fontSize: '30px',
-            fontWeight: 700,
-            color: '#090a08',
-            background: '#c9ff32',
-            padding: '18px 32px',
-            borderRadius: '999px',
-            alignSelf: 'flex-start',
-          }}
-        >
-          Entre com seu nome e um código de 6 números
+        <div style={{ display: 'flex', gap: 14 }}>
+          <span style={{ borderRadius: 999, background: '#090a08', color: 'white', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Acesso por código</span>
+          <span style={{ borderRadius: 999, background: '#c9ff32', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Treinos e evolução</span>
         </div>
       </div>
-    ),
+    </div>,
     size,
   );
 }
