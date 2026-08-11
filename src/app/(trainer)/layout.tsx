@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Users, Dumbbell, BookOpen, ClipboardList,
   Calendar, MessageSquare, BarChart3, Bell, Settings,
-  LogOut, Menu, Moon, Sun, ChevronLeft, CircleHelp
+  LogOut, Menu, Moon, Sun, CircleHelp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -201,17 +201,17 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   return (
     <div className="dk-app flex h-screen overflow-hidden bg-[#090a08]">
       {/* Desktop Sidebar */}
-      <aside className={`relative hidden min-h-0 overflow-hidden border-r border-white/10 bg-[#090a08] text-white transition-all duration-300 lg:flex lg:flex-col
+      <aside className={`relative z-30 hidden min-h-0 overflow-visible border-r border-white/10 bg-[#090a08] text-white transition-all duration-300 lg:flex lg:flex-col
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}
       >
         {renderNavContent()}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute top-20 hidden size-10 items-center justify-center rounded-full border border-black bg-[#c9ff32] text-black shadow-sm transition-transform hover:scale-105 lg:flex"
-          style={{ left: collapsed ? '60px' : '248px' }}
+          className="absolute -right-5 top-20 z-30 hidden size-11 items-center justify-center rounded-2xl border-2 border-[#c9ff32] bg-white p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9ff32] focus-visible:ring-offset-2 focus-visible:ring-offset-black lg:flex"
           aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          title={collapsed ? 'Expandir menu' : 'Recolher menu'}
         >
-          <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
+          <BrandMark compact iconOnly className="pointer-events-none scale-90" />
         </button>
       </aside>
 
