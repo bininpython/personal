@@ -16,7 +16,7 @@ export async function GET() {
     const { startIso, nextStartIso } = getSaoPauloDayRange();
     const studentIds = analytics.students.map((student) => student.id);
 
-    const [todaySessions, todayAppointments, publishedPlans] = await Promise.all([
+    const [todaySessions, todayAppointments, firstPlan, signedInStudent] = await Promise.all([
       studentIds.length > 0
         ? admin
           .from('workout_sessions')
@@ -35,20 +35,26 @@ export async function GET() {
         .lt('start_time', nextStartIso),
       admin
         .from('workout_plans')
-        .select('id', { count: 'exact', head: true })
+        .select('id')
         .eq('trainer_id', session.trainer_id)
-        .eq('status', 'active'),
+        .limit(1),
+      admin
+        .from('students')
+        .select('id')
+        .eq('trainer_id', session.trainer_id)
+        .not('last_login_at', 'is', null)
+        .limit(1),
     ]);
     if (todaySessions.error) throw todaySessions.error;
     if (todayAppointments.error) throw todayAppointments.error;
-    if (publishedPlans.error) throw publishedPlans.error;
+    if (firstPlan.error) throw firstPlan.error;
+    if (signedInStudent.error) throw signedInStudent.error;
 
     const trainedToday = new Set((todaySessions.data ?? []).map((item) => item.student_id)).size;
     const activePerformance = analytics.students.filter((student) => student.status === 'active');
     const completionRate = activePerformance.length > 0
       ? Math.round(activePerformance.reduce((sum, student) => sum + student.completionAverage, 0) / activePerformance.length)
       : 0;
-    const chartColors = ['#c9ff32', '#090a08', '#7cae00', '#d68b00', '#b42318', '#557187'];
 
     return NextResponse.json({
       stats: {
@@ -60,11 +66,17 @@ export async function GET() {
         alerts: analytics.summary.atRisk + analytics.summary.attention,
         appointmentsToday: (todayAppointments.data ?? []).length,
       },
-      activation: {
-        hasStudent: analytics.summary.activeStudents > 0,
-        hasWorkoutPlan: (publishedPlans.count ?? 0) > 0,
+      // Estado dos três passos que tiram o personal do painel zerado.
+      // O terceiro é considerado concluído quando algum aluno de fato entrou,
+      // que é a única prova de que o código chegou até ele.
+      onboarding: {
+        hasStudent: analytics.students.length > 0,
+        hasPlan: (firstPlan.data ?? []).length > 0,
+        studentSignedIn: (signedInStudent.data ?? []).length > 0,
+        firstStudentId: analytics.students[0]?.id ?? null,
       },
-      goalDistribution: analytics.goalDistribution.map((goal, index) => ({ ...goal, color: chartColors[index % chartColors.length] })),
+      // A cor é decidida na interface, que é quem conhece o tema em uso.
+      goalDistribution: analytics.goalDistribution,
       studentRanking: analytics.students.slice().sort((left, right) => right.consistencyScore - left.consistencyScore).slice(0, 5).map((student) => ({
         id: student.id,
         name: student.name,

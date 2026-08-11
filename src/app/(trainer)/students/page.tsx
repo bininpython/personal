@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
+  Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
   ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -16,14 +17,11 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
 import { toast } from 'sonner';
-import { PageHeader } from '@/components/app/page-header';
-import { ContentSkeleton } from '@/components/app/content-skeleton';
 
 interface StudentSummary {
   id: string;
@@ -46,8 +44,6 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [studentLimit, setStudentLimit] = useState(MAX_STUDENTS_PER_TRAINER);
   const [loading, setLoading] = useState(true);
-  const [statusTarget, setStatusTarget] = useState<StudentSummary | null>(null);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -69,7 +65,7 @@ export default function StudentsPage() {
   const updateStudentStatus = async (student: StudentSummary) => {
     const nextStatus = student.status === 'active' ? 'inactive' : 'active';
     const action = nextStatus === 'inactive' ? 'arquivar' : 'reativar';
-    setUpdatingStatus(true);
+    if (!window.confirm(`Deseja ${action} ${student.name}?`)) return;
     try {
       const response = await fetch(`/api/students/${student.id}`, {
         method: 'PATCH',
@@ -79,12 +75,9 @@ export default function StudentsPage() {
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || `Não foi possível ${action} o aluno.`);
       setStudents((current) => current.map((item) => item.id === student.id ? { ...item, status: nextStatus } : item));
-      setStatusTarget(null);
       toast.success(nextStatus === 'inactive' ? 'Aluno arquivado.' : 'Aluno reativado.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `Não foi possível ${action} o aluno.`);
-    } finally {
-      setUpdatingStatus(false);
     }
   };
 
@@ -99,7 +92,7 @@ export default function StudentsPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px]">Ativo</Badge>;
+      case 'active': return <Badge className="border-ok/20 bg-ok-wash text-ok text-[10px]">Ativo</Badge>;
       case 'inactive': return <Badge variant="secondary" className="text-[10px]">Inativo</Badge>;
       case 'blocked': return <Badge variant="destructive" className="text-[10px]">Bloqueado</Badge>;
       default: return <Badge variant="outline" className="text-[10px]">Arquivado</Badge>;
@@ -107,27 +100,28 @@ export default function StudentsPage() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === 'up') return <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />;
-    if (trend === 'down') return <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />;
+    if (trend === 'up') return <ArrowUpRight className="w-3.5 h-3.5 text-ok" />;
+    if (trend === 'down') return <ArrowDownRight className="w-3.5 h-3.5 text-danger" />;
     return <Activity className="w-3.5 h-3.5 text-muted-foreground" />;
   };
 
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
-        eyebrow="Operação diária"
-        title="ALUNOS"
-        description={`${activeStudentCount} de ${studentLimit} alunos ativos · ${students.length} no total. Acompanhe acesso, frequência e evolução em um só lugar.`}
-        icon={Users}
-        actions={<Button
-          onClick={() => router.push('/students/new')}
-          className="shrink-0 bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black"
-          disabled={limitReached}
-          title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Novo aluno
-        </Button>}
+        kicker="Operação"
+        title="Alunos"
+        description={`${activeStudentCount} de ${studentLimit} alunos ativos · ${students.length} no total`}
+        actions={
+          <Button
+            onClick={() => router.push('/students/new')}
+            className="h-11"
+            disabled={limitReached}
+            title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo aluno
+          </Button>
+        }
       />
 
       {/* Filters */}
@@ -158,18 +152,16 @@ export default function StudentsPage() {
           <Button
             variant={view === 'grid' ? 'secondary' : 'ghost'}
             size="icon"
-            className="size-11"
+            className="h-8 w-8"
             onClick={() => setView('grid')}
-            aria-label="Visualização em cartões"
           >
             <Grid3X3 className="w-4 h-4" />
           </Button>
           <Button
             variant={view === 'list' ? 'secondary' : 'ghost'}
             size="icon"
-            className="size-11"
+            className="h-8 w-8"
             onClick={() => setView('list')}
-            aria-label="Visualização em lista"
           >
             <List className="w-4 h-4" />
           </Button>
@@ -180,7 +172,9 @@ export default function StudentsPage() {
       {view === 'grid' && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
-            <ContentSkeleton className="col-span-full" />
+            <div className="col-span-full py-12 text-center text-muted-foreground">
+              Carregando alunos...
+            </div>
           ) : filteredStudents.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted-foreground">
               Nenhum aluno encontrado.
@@ -189,7 +183,7 @@ export default function StudentsPage() {
             filteredStudents.map((student, i) => (
               <Card
                 key={student.id}
-                className="group border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer animate-slide-up"
+                className="group cursor-pointer transition-all duration-300 hover:border-volt-strong/40 hover:shadow-lg animate-slide-up"
                 style={{ animationDelay: `${0.05 * i}s` }}
                 onClick={() => router.push(`/students/${student.id}`)}
               >
@@ -197,7 +191,7 @@ export default function StudentsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                        <AvatarFallback className="bg-black font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
                           {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
@@ -214,14 +208,14 @@ export default function StudentsPage() {
                         <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}`)}><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}#edit`)}><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => setStatusTarget(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => void updateStudentStatus(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
 
                   <div className="space-y-3">
                     <div className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs">
-                      <span className="text-muted-foreground">Código protegido</span>
+                      <span className="text-muted-foreground">Últimos dígitos do código</span>
                       <span className="font-mono text-sm font-bold tracking-widest">{student.access_code}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -296,7 +290,7 @@ export default function StudentsPage() {
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9">
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                          <AvatarFallback className="bg-black text-xs font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
                             {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
@@ -330,29 +324,6 @@ export default function StudentsPage() {
           </div>
         </Card>
       )}
-
-      <Dialog open={Boolean(statusTarget)} onOpenChange={(open) => { if (!open && !updatingStatus) setStatusTarget(null); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{statusTarget?.status === 'active' ? 'Arquivar aluno?' : 'Reativar aluno?'}</DialogTitle>
-            <DialogDescription>
-              {statusTarget?.status === 'active'
-                ? `${statusTarget?.name} deixará de aparecer entre os alunos ativos, mas todo o histórico será preservado.`
-                : `${statusTarget?.name} voltará para sua operação e poderá usar o acesso normalmente.`}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setStatusTarget(null)} disabled={updatingStatus}>Cancelar</Button>
-            <Button
-              variant={statusTarget?.status === 'active' ? 'destructive' : 'default'}
-              onClick={() => statusTarget && void updateStudentStatus(statusTarget)}
-              disabled={updatingStatus}
-            >
-              {updatingStatus ? 'Atualizando...' : statusTarget?.status === 'active' ? 'Arquivar aluno' : 'Reativar aluno'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

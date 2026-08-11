@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, ClockAlert, Dumbbell, Pencil, Plus, Search, User } from 'lucide-react';
+import { Calendar, ClockAlert, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { PageHeader } from '@/components/app/page-header';
-import { ContentSkeleton } from '@/components/app/content-skeleton';
+import { PageHeader } from '@/components/ui/page-header';
 
 interface WorkoutPlanSummary {
   id: string;
@@ -60,13 +59,14 @@ export default function WorkoutsPage() {
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
       <PageHeader
-        eyebrow="Treinos · biblioteca"
-        title="FICHAS PUBLICADAS"
-        description="Acompanhe versões, prazos e estrutura das fichas entregues aos seus alunos."
-        icon={Dumbbell}
-        actions={<Button onClick={() => router.push('/exercises')} className="bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black">
-          <Plus className="mr-2 size-4" /> Nova ficha
-        </Button>}
+        kicker="Operação"
+        title="Fichas de treino"
+        description="Acompanhe as fichas publicadas para seus alunos."
+        actions={
+          <Button onClick={() => router.push('/exercises')} className="h-11">
+            <Plus className="mr-2 size-4" /> Nova ficha
+          </Button>
+        }
       />
 
       <div className="relative">
@@ -80,7 +80,9 @@ export default function WorkoutsPage() {
       </div>
 
       {loading ? (
-        <ContentSkeleton />
+        <div className="flex justify-center py-16 text-muted-foreground">
+          <Loader2 className="mr-2 size-5 animate-spin" /> Carregando fichas...
+        </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
       ) : filteredPlans.length === 0 ? (
@@ -93,14 +95,14 @@ export default function WorkoutsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredPlans.map((plan) => (
-            <Card key={plan.id} className={plan.isExpired ? 'border-red-500/40' : 'border-border/60'}>
+            <Card key={plan.id} className={plan.isExpired ? 'border-danger/40' : ''}>
               <CardHeader className="border-b border-border/40 pb-4">
                 <Badge
                   variant="outline"
                   className={plan.isExpired
-                    ? 'border-red-500/30 bg-red-500/5 text-red-600'
+                    ? 'border-danger/30 bg-danger-wash text-danger'
                     : plan.status === 'active'
-                    ? 'border-emerald-500/30 text-emerald-600'
+                    ? 'border-ok/30 text-ok'
                     : 'border-muted-foreground/30 text-muted-foreground'}
                 >
                   {plan.isExpired ? 'Prazo encerrado' : plan.status === 'active' ? 'Ativa' : plan.status === 'archived' ? 'Arquivada' : 'Rascunho'}
@@ -129,7 +131,7 @@ export default function WorkoutsPage() {
                     {plan.startDate ? new Date(`${plan.startDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Não informado'}
                   </span>
                 </div>
-                <div className={`flex items-center justify-between rounded-lg p-2 text-xs ${plan.isExpired ? 'bg-red-500/10 text-red-700' : 'bg-muted/50'}`}>
+                <div className={`flex items-center justify-between rounded-lg p-2 text-xs ${plan.isExpired ? 'bg-danger-wash text-danger' : 'bg-muted/50'}`}>
                   <span className="flex items-center gap-1.5"><ClockAlert className="size-3.5" /> {plan.isExpired ? 'Expirou em' : 'Válida até'}</span>
                   <span className="font-medium">
                     {plan.endDate ? new Date(`${plan.endDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Sem prazo'}

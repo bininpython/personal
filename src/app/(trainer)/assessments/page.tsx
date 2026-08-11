@@ -6,8 +6,7 @@ import { ClipboardList, Plus, Search, Calendar, TrendingUp, TrendingDown, Minus 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PageHeader } from '@/components/app/page-header';
-import { ContentSkeleton } from '@/components/app/content-skeleton';
+import { PageHeader } from '@/components/ui/page-header';
 
 import { useEffect } from 'react';
 
@@ -50,8 +49,8 @@ export default function AssessmentsPage() {
   const filtered = assessments.filter((assessment) => assessment.student.toLowerCase().includes(search.toLowerCase()));
 
   const getDiffIcon = (diff: number) => {
-    if (diff > 0) return <TrendingUp className="w-4 h-4 text-amber-500" />;
-    if (diff < 0) return <TrendingDown className="w-4 h-4 text-emerald-500" />;
+    if (diff > 0) return <TrendingUp className="w-4 h-4 text-warn" />;
+    if (diff < 0) return <TrendingDown className="w-4 h-4 text-ok" />;
     return <Minus className="w-4 h-4 text-muted-foreground" />;
   };
 
@@ -63,14 +62,15 @@ export default function AssessmentsPage() {
   return (
     <div className="space-y-6 animate-fade-in pb-10">
       <PageHeader
-        eyebrow="Gestão · evolução corporal"
-        title="AVALIAÇÕES"
-        description="Registre mudanças físicas e transforme medidas em uma linha do tempo clara para cada aluno."
-        icon={ClipboardList}
-        actions={<Button onClick={() => router.push('/assessments/new')} className="bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black">
-          <Plus className="w-4 h-4 mr-2" />
-          Nova avaliação
-        </Button>}
+        kicker="Análise"
+        title="Avaliações físicas"
+        description="Acompanhe a evolução corporal dos seus alunos."
+        actions={
+          <Button onClick={() => router.push('/assessments/new')} className="h-11">
+            <Plus className="w-4 h-4 mr-2" />
+            Nova avaliação
+          </Button>
+        }
       />
 
       <div className="relative max-w-md">
@@ -85,7 +85,9 @@ export default function AssessmentsPage() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? (
-          <ContentSkeleton className="col-span-full" />
+          <div className="col-span-full py-12 text-center text-muted-foreground">
+            Carregando avaliações...
+          </div>
         ) : error ? (
           <div className="col-span-full rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">
             {error}
@@ -106,8 +108,8 @@ export default function AssessmentsPage() {
                       {assessment.date} • {assessment.type}
                     </CardDescription>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <ClipboardList className="w-5 h-5 text-primary" />
+                  <div className="flex size-10 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                    <ClipboardList className="w-5 h-5" />
                   </div>
                 </div>
               </CardHeader>
@@ -117,7 +119,7 @@ export default function AssessmentsPage() {
                   <p className="text-xl font-bold">{assessment.weight} <span className="text-sm font-normal text-muted-foreground">kg</span></p>
                   <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
                     {getDiffIcon(assessment.weightDiff)}
-                    <span className={assessment.weightDiff < 0 ? 'text-emerald-500' : assessment.weightDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
+                    <span className={assessment.weightDiff < 0 ? 'text-ok' : assessment.weightDiff > 0 ? 'text-warn' : 'text-muted-foreground'}>
                       {formatDiff(assessment.weightDiff)} kg
                     </span>
                   </div>
@@ -127,7 +129,7 @@ export default function AssessmentsPage() {
                   <p className="text-xl font-bold">{assessment.bf} <span className="text-sm font-normal text-muted-foreground">%</span></p>
                   <div className="flex items-center justify-center gap-1 mt-1 text-xs font-medium">
                     {getDiffIcon(assessment.bfDiff)}
-                    <span className={assessment.bfDiff < 0 ? 'text-emerald-500' : assessment.bfDiff > 0 ? 'text-amber-500' : 'text-muted-foreground'}>
+                    <span className={assessment.bfDiff < 0 ? 'text-ok' : assessment.bfDiff > 0 ? 'text-warn' : 'text-muted-foreground'}>
                       {formatDiff(assessment.bfDiff)}%
                     </span>
                   </div>
