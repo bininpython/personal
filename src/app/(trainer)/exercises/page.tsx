@@ -35,6 +35,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { PageHeader } from '@/components/ui/page-header';
 import {
   EXERCISE_CATALOG,
   MUSCLE_REGIONS,
@@ -420,23 +421,22 @@ export default function ExercisesPage() {
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{editingPlanId ? 'Editar Ficha de Treino' : 'Montador de Fichas'}</h1>
-          <p className="mt-1 text-muted-foreground">
-            {editingPlanId
-              ? 'Personalize a ficha existente e publique uma nova versão para o aluno.'
-              : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
-          </p>
-        </div>
-        <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-10">
-          <Save className="mr-2 size-4" />
-          {editingPlanId ? 'Salvar alterações' : 'Publicar ficha'} ({totalSelected})
-        </Button>
-      </div>
+      <PageHeader
+        kicker="Operação"
+        title={editingPlanId ? 'Editar ficha' : 'Montar ficha'}
+        description={editingPlanId
+          ? 'Personalize a ficha existente e publique uma nova versão para o aluno.'
+          : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
+        actions={
+          <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-11">
+            <Save className="mr-2 size-4" />
+            {editingPlanId ? 'Salvar alterações' : 'Publicar ficha'} ({totalSelected})
+          </Button>
+        }
+      />
 
-      <div className="flex items-start gap-2 rounded-xl border border-blue-500/20 bg-blue-500/5 p-3 text-sm text-muted-foreground">
-        <Info className="mt-0.5 size-4 shrink-0 text-blue-500" />
+      <div className="flex items-start gap-2 rounded-xl border border-info/20 bg-info-wash p-3 text-sm text-muted-foreground">
+        <Info className="mt-0.5 size-4 shrink-0 text-info" />
         <span>
           Biblioteca com {EXERCISE_CATALOG.length} exercícios. Movimentos compostos aparecem em todos os músculos que ajudam a trabalhar.
           A prescrição deve respeitar a avaliação, as limitações e o nível do aluno.
@@ -485,9 +485,9 @@ export default function ExercisesPage() {
               style={{ width: '100%', maxWidth: '250px', cursor: 'pointer' }}
               svgStyle={{ height: 'auto' }}
               bodyColor="#cbd5e1"
-              highlightedColors={["#2563eb"]}
+              highlightedColors={["#7cae00"]}
             />
-            <p className="mt-3 text-center text-sm font-semibold text-blue-600 dark:text-blue-400">
+            <p className="mt-3 text-center text-sm font-bold text-volt-ink">
               {MUSCLE_REGIONS[activeMuscle]}
             </p>
             <div className="mt-4 flex w-full flex-wrap justify-center gap-1.5">
@@ -498,8 +498,8 @@ export default function ExercisesPage() {
                   onClick={() => void loadMuscle(muscle)}
                   className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
                     activeMuscle === muscle
-                      ? 'border-blue-500 bg-blue-500 text-white'
-                      : 'border-border bg-background text-muted-foreground hover:border-blue-400 hover:text-foreground'
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      : 'border-border bg-background text-muted-foreground hover:border-volt-strong hover:text-foreground'
                   }`}
                 >
                   {label}
@@ -552,7 +552,7 @@ export default function ExercisesPage() {
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               <Badge variant="outline">{exercise.equipment}</Badge>
                               <Badge variant="secondary">{DIFFICULTY_LABELS[exercise.difficulty]}</Badge>
-                              {exercise.videoUrl && <Badge className="bg-red-500/10 text-red-600">Com vídeo</Badge>}
+                              {exercise.videoUrl && <Badge className="bg-danger-wash text-danger">Com vídeo</Badge>}
                             </div>
                           </div>
                           <Button
@@ -573,7 +573,7 @@ export default function ExercisesPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => setPlayingVideo(exercise.videoUrl)}
-                            className="mt-2 h-7 px-2 text-xs text-blue-600"
+                            className="mt-2 h-8 px-2 text-xs text-info"
                           >
                             <PlayCircle className="mr-1.5 size-3.5" /> Ver execução
                           </Button>
@@ -606,7 +606,7 @@ export default function ExercisesPage() {
                   onClick={() => setActiveDayId(day.id)}
                   className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
                     activeDay.id === day.id
-                      ? 'border-blue-500 bg-blue-500 text-white'
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
                   }`}
                 >
@@ -649,7 +649,7 @@ export default function ExercisesPage() {
                     <div key={exercise.key} className="rounded-xl border border-border/60 bg-muted/20 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <span className="text-[10px] font-bold uppercase text-blue-500">{index + 1}º exercício</span>
+                          <span className="text-[10px] font-bold uppercase text-volt-ink">{index + 1}º exercício</span>
                           <h3 className="truncate text-sm font-semibold">{exercise.name}</h3>
                         </div>
                         <Button
@@ -736,7 +736,7 @@ export default function ExercisesPage() {
                 {students.map((student) => <option key={student.id} value={student.id}>{student.name}</option>)}
               </select>
               {students.length === 0 && (
-                <p className="text-xs text-amber-600">Cadastre um aluno ativo antes de publicar a ficha.</p>
+                <p className="text-xs text-warn">Cadastre um aluno ativo antes de publicar a ficha.</p>
               )}
             </div>
             <div className="space-y-1.5">
@@ -792,7 +792,7 @@ export default function ExercisesPage() {
                 </select>
               </div>
               <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-2.5 text-xs">
-                <CalendarClock className="size-4 text-primary" />
+                <CalendarClock className="size-4 text-volt-ink" />
                 <span>Nova versão válida de <strong>{formatPlanDate(startDate)}</strong> até <strong>{formatPlanDate(endDate)}</strong>.</span>
               </div>
             </div>

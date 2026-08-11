@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageHeader } from '@/components/ui/page-header';
 
 interface NotificationItem {
   id: string;
@@ -59,9 +60,18 @@ export default function AlertsPage() {
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h1 className="text-2xl font-bold tracking-tight">Alertas de acompanhamento</h1><p className="mt-1 text-muted-foreground">Risco calculado por frequência, conclusão e tempo sem treino.</p></div><Button variant="outline" onClick={() => void markRead()} disabled={updating || unread === 0}>{updating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <CheckCircle2 className="mr-2 size-4" />} Marcar todos como lidos</Button></div>
+      <PageHeader
+        kicker="Análise"
+        title="Alertas"
+        description="Risco calculado por frequência, conclusão e tempo sem treino."
+        actions={
+          <Button variant="outline" className="h-11" onClick={() => void markRead()} disabled={updating || unread === 0}>
+            {updating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <CheckCircle2 className="mr-2 size-4" />} Marcar todos como lidos
+          </Button>
+        }
+      />
       <div className="grid gap-3 sm:grid-cols-3"><Card><CardContent className="p-4"><p className="text-2xl font-bold">{unread}</p><p className="text-sm text-muted-foreground">não lidos</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{items.filter((item) => item.type === 'risk_high').length}</p><p className="text-sm text-muted-foreground">risco alto</p></CardContent></Card><Card><CardContent className="p-4"><p className="text-2xl font-bold">{items.length}</p><p className="text-sm text-muted-foreground">histórico</p></CardContent></Card></div>
-      {loading ? <div className="flex justify-center py-20 text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Analisando alunos...</div> : items.length === 0 ? <Card className="border-dashed"><CardContent className="flex flex-col items-center py-20 text-center"><Bell className="mb-3 size-12 text-muted-foreground/30" /><h2 className="font-semibold">Nenhum alerta gerado</h2><p className="mt-1 max-w-md text-sm text-muted-foreground">Os alertas aparecerão quando os dados indicarem queda de constância ou inatividade.</p></CardContent></Card> : <div className="space-y-3">{items.map((item) => <Card key={item.id} className={!item.read ? 'border-amber-500/30 bg-amber-500/[0.04]' : ''}><CardContent className="flex items-start gap-4 p-4"><div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${item.type === 'risk_high' ? 'bg-red-500/10 text-red-600' : 'bg-amber-500/10 text-amber-600'}`}><AlertTriangle className="size-5" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{item.title}</p>{!item.read && <Badge>Novo</Badge>}</div><p className="mt-1 text-sm text-muted-foreground">{item.message}</p><p className="mt-2 text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString('pt-BR')}</p></div><div className="flex gap-1">{!item.read && <Button variant="ghost" size="sm" onClick={() => void markRead(item.id)}>Lido</Button>}{item.action_url && <Button variant="ghost" size="icon" onClick={() => { void markRead(item.id); router.push(item.action_url!); }}><ChevronRight /></Button>}</div></CardContent></Card>)}</div>}
+      {loading ? <div className="flex justify-center py-20 text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Analisando alunos...</div> : items.length === 0 ? <Card className="border-dashed"><CardContent className="flex flex-col items-center py-20 text-center"><Bell className="mb-3 size-12 text-muted-foreground/30" /><h2 className="font-semibold">Nenhum alerta gerado</h2><p className="mt-1 max-w-md text-sm text-muted-foreground">Os alertas aparecerão quando os dados indicarem queda de constância ou inatividade.</p></CardContent></Card> : <div className="space-y-3">{items.map((item) => <Card key={item.id} className={!item.read ? 'border-warn/30 bg-warn-wash' : ''}><CardContent className="flex items-start gap-4 p-4"><div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${item.type === 'risk_high' ? 'bg-danger-wash text-danger' : 'bg-warn-wash text-warn'}`}><AlertTriangle className="size-5" /></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{item.title}</p>{!item.read && <Badge>Novo</Badge>}</div><p className="mt-1 text-sm text-muted-foreground">{item.message}</p><p className="mt-2 text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString('pt-BR')}</p></div><div className="flex gap-1">{!item.read && <Button variant="ghost" size="sm" onClick={() => void markRead(item.id)}>Lido</Button>}{item.action_url && <Button variant="ghost" size="icon" onClick={() => { void markRead(item.id); router.push(item.action_url!); }}><ChevronRight /></Button>}</div></CardContent></Card>)}</div>}
     </div>
   );
 }

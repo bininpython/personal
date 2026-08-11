@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PageHeader } from '@/components/ui/page-header';
 import type { StudentProgressData } from '@/types/student-progress';
 
 interface StudentOption {
@@ -76,17 +77,22 @@ export default function ReportsPage() {
 
   return (
     <div className="print-report space-y-6 pb-10 animate-fade-in">
-      <div className="no-print flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div><h1 className="text-2xl font-bold tracking-tight">Relatório individual de evolução</h1><p className="mt-1 text-muted-foreground">Acompanhamento de treinos, avaliações físicas e progresso de cada aluno.</p></div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <Select value={studentId} onValueChange={(value) => setStudentId(value ?? '')}>
-            <SelectTrigger className="w-full min-w-64 sm:w-72"><SelectValue placeholder="Selecione um aluno" /></SelectTrigger>
-            <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}{student.status !== 'active' ? ' (arquivado)' : ''}</SelectItem>)}</SelectContent>
-          </Select>
-          <Button variant="outline" disabled={!studentId || loadingReport} onClick={() => void loadReport(studentId)}><RefreshCw className={`mr-2 size-4 ${loadingReport ? 'animate-spin' : ''}`} /> Atualizar</Button>
-          <Button disabled={!report || loadingReport} onClick={() => window.print()}><Download className="mr-2 size-4" /> Salvar relatório em PDF</Button>
-        </div>
-      </div>
+      <PageHeader
+        kicker="Análise"
+        title="Relatórios"
+        description="Evolução de treinos, avaliações físicas e progresso de cada aluno."
+        className="no-print"
+        actions={
+          <>
+            <Select value={studentId} onValueChange={(value) => setStudentId(value ?? '')}>
+              <SelectTrigger className="h-11 w-full min-w-64 sm:w-72"><SelectValue placeholder="Selecione um aluno" /></SelectTrigger>
+              <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}{student.status !== 'active' ? ' (arquivado)' : ''}</SelectItem>)}</SelectContent>
+            </Select>
+            <Button variant="outline" className="h-11" disabled={!studentId || loadingReport} onClick={() => void loadReport(studentId)}><RefreshCw className={`mr-2 size-4 ${loadingReport ? 'animate-spin' : ''}`} /> Atualizar</Button>
+            <Button className="h-11" disabled={!report || loadingReport} onClick={() => window.print()}><Download className="mr-2 size-4" /> Salvar em PDF</Button>
+          </>
+        }
+      />
 
       {students.length === 0 ? <Card><CardContent className="py-16 text-center text-sm text-muted-foreground"><UserRound className="mx-auto mb-3 size-12 opacity-40" />Cadastre um aluno para gerar o primeiro relatório.</CardContent></Card> : loadingReport ? <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-6 animate-spin" /> Montando relatório detalhado...</div> : report ? <>
         <header className="rounded-2xl border bg-card p-6 print:border-black">
@@ -94,7 +100,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-4">
               <Avatar className="size-20">
                 {report.student.avatarUrl && <AvatarImage src={report.student.avatarUrl} alt={`Avatar de ${report.student.name}`} />}
-                <AvatarFallback className="bg-primary/10 text-xl font-bold text-primary">{initials(report.student.name)}</AvatarFallback>
+                <AvatarFallback className="bg-black text-xl font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">{initials(report.student.name)}</AvatarFallback>
               </Avatar>
               <div><div className="mb-1 flex flex-wrap items-center gap-2"><h2 className="text-2xl font-bold">{report.student.name}</h2><Badge variant="outline">{report.student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="text-sm text-muted-foreground">Acompanhado por {report.trainer.name}</p></div>
             </div>

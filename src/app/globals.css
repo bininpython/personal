@@ -39,6 +39,21 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  /* Marca e estados D KONG expostos como utilitários (text-volt, bg-ok-wash…). */
+  --color-volt: var(--dk-volt);
+  --color-volt-strong: var(--dk-volt-strong);
+  --color-volt-ink: var(--dk-volt-ink);
+  --color-volt-wash: var(--dk-volt-wash);
+  --color-ink: var(--dk-ink);
+  --color-panel: var(--dk-panel);
+  --color-ok: var(--dk-ok);
+  --color-ok-wash: var(--dk-ok-wash);
+  --color-warn: var(--dk-warn);
+  --color-warn-wash: var(--dk-warn-wash);
+  --color-danger: var(--dk-danger);
+  --color-danger-wash: var(--dk-danger-wash);
+  --color-info: var(--dk-info);
+  --color-info-wash: var(--dk-info-wash);
   --radius-sm: calc(var(--radius) * 0.5);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -237,6 +252,15 @@
   --dk-panel: #ffffff;
   --dk-volt: #c9ff32;
   --dk-volt-strong: #7cae00;
+
+  /* Volt legível como texto sobre fundo claro (mínimo 4.5:1). */
+  --dk-volt-ink: #5c7f00;
+
+  /* Cores de estado. Uma única definição por significado, nunca por tela. */
+  --dk-ok: #2e7d43;
+  --dk-warn: #8a5a00;
+  --dk-danger: #b3301c;
+  --dk-info: #3d6076;
 }
 
 .dark {
@@ -245,6 +269,24 @@
   --dk-panel: #151613;
   --dk-volt: #c9ff32;
   --dk-volt-strong: #a8dc1d;
+
+  --dk-volt-ink: #c9ff32;
+
+  --dk-ok: #7fc188;
+  --dk-warn: #e0a643;
+  --dk-danger: #f08472;
+  --dk-info: #8fb4cd;
+}
+
+/* Fundos de estado derivados da mesma cor, para não existir um segundo lugar
+   onde a paleta possa divergir. */
+:root,
+.dark {
+  --dk-ok-wash: color-mix(in oklab, var(--dk-ok) 12%, transparent);
+  --dk-warn-wash: color-mix(in oklab, var(--dk-warn) 12%, transparent);
+  --dk-danger-wash: color-mix(in oklab, var(--dk-danger) 12%, transparent);
+  --dk-info-wash: color-mix(in oklab, var(--dk-info) 12%, transparent);
+  --dk-volt-wash: color-mix(in oklab, var(--dk-volt) 16%, transparent);
 }
 
 .dk-app {
@@ -323,7 +365,7 @@
 
 .dk-display {
   font-weight: 950;
-  line-height: 0.92;
+  line-height: 1;
   letter-spacing: -0.06em;
   word-spacing: 0.08em;
 }

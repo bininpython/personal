@@ -18,7 +18,7 @@ export async function GET() {
     end.setDate(end.getDate() + 1);
     const studentIds = analytics.students.map((student) => student.id);
 
-    const [todaySessions, todayAppointments] = await Promise.all([
+    const [todaySessions, todayAppointments, firstPlan, signedInStudent] = await Promise.all([
       studentIds.length > 0
         ? admin
           .from('workout_sessions')
@@ -35,16 +35,28 @@ export async function GET() {
         .eq('status', 'scheduled')
         .gte('start_time', start.toISOString())
         .lt('start_time', end.toISOString()),
+      admin
+        .from('workout_plans')
+        .select('id')
+        .eq('trainer_id', session.trainer_id)
+        .limit(1),
+      admin
+        .from('students')
+        .select('id')
+        .eq('trainer_id', session.trainer_id)
+        .not('last_login_at', 'is', null)
+        .limit(1),
     ]);
     if (todaySessions.error) throw todaySessions.error;
     if (todayAppointments.error) throw todayAppointments.error;
+    if (firstPlan.error) throw firstPlan.error;
+    if (signedInStudent.error) throw signedInStudent.error;
 
     const trainedToday = new Set((todaySessions.data ?? []).map((item) => item.student_id)).size;
     const activePerformance = analytics.students.filter((student) => student.status === 'active');
     const completionRate = activePerformance.length > 0
       ? Math.round(activePerformance.reduce((sum, student) => sum + student.completionAverage, 0) / activePerformance.length)
       : 0;
-    const chartColors = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
 
     return NextResponse.json({
       stats: {
@@ -56,7 +68,17 @@ export async function GET() {
         alerts: analytics.summary.atRisk + analytics.summary.attention,
         appointmentsToday: (todayAppointments.data ?? []).length,
       },
-      goalDistribution: analytics.goalDistribution.map((goal, index) => ({ ...goal, color: chartColors[index % chartColors.length] })),
+      // Estado dos três passos que tiram o personal do painel zerado.
+      // O terceiro é considerado concluído quando algum aluno de fato entrou,
+      // que é a única prova de que o código chegou até ele.
+      onboarding: {
+        hasStudent: analytics.students.length > 0,
+        hasPlan: (firstPlan.data ?? []).length > 0,
+        studentSignedIn: (signedInStudent.data ?? []).length > 0,
+        firstStudentId: analytics.students[0]?.id ?? null,
+      },
+      // A cor é decidida na interface, que é quem conhece o tema em uso.
+      goalDistribution: analytics.goalDistribution,
       studentRanking: analytics.students.slice().sort((left, right) => right.consistencyScore - left.consistencyScore).slice(0, 5).map((student) => ({
         id: student.id,
         name: student.name,

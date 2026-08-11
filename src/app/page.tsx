@@ -71,7 +71,7 @@ export default function LandingPage() {
               <span className="size-2 rounded-full bg-[#9fdb00] shadow-[0_0_0_4px_rgba(159,219,0,0.14)]" />
               Performance management
             </div>
-            <h1 className="max-w-4xl text-[clamp(3.55rem,8.5vw,7.6rem)] font-black leading-[0.83] tracking-[-0.075em]">
+            <h1 className="max-w-4xl text-[clamp(3.55rem,8.5vw,7.6rem)] font-black leading-[1.08] tracking-[-0.075em]">
               FORÇA NA
               <span className="block text-[#7cae00]">GESTÃO.</span>
               FOCO NO
@@ -105,7 +105,7 @@ export default function LandingPage() {
           </div>
 
           <div className="relative z-10 mx-auto w-full max-w-[540px]">
-            <div className="absolute -left-5 top-12 hidden rounded-2xl bg-[#c9ff32] px-5 py-4 shadow-xl sm:block">
+            <div className="absolute -left-5 top-12 z-20 hidden rounded-2xl bg-[#c9ff32] px-5 py-4 shadow-xl sm:block">
               <p className="text-[0.62rem] font-black uppercase tracking-[0.22em]">Acesso simples</p>
               <p className="mt-1 font-mono text-xl font-black tracking-[0.12em]">564-625</p>
             </div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-8 border-b border-white/12 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
               <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#c9ff32]">Sistema completo</p>
-              <h2 className="max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-6xl">
+              <h2 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">
                 TUDO O QUE IMPORTA. SEM O QUE ATRAPALHA.
               </h2>
             </div>
@@ -171,7 +171,7 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-24">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.25em] text-[#668f00]">Acesso D KONG</p>
-              <h2 className="mt-5 text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
+              <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
               <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Um fluxo pensado para funcionar na academia, entre uma série e outra — rápido, legível e sem códigos desnecessários.</p>
             </div>
             <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function LandingPage() {
             <div className="absolute -right-20 -top-40 size-96 rounded-full border-[55px] border-black/[0.055]" />
             <div className="relative z-10 max-w-3xl">
               <p className="text-xs font-black uppercase tracking-[0.24em]">Sua próxima evolução começa aqui</p>
-              <h2 className="mt-5 text-4xl font-black leading-[0.9] tracking-[-0.06em] sm:text-6xl">GESTÃO FORTE. ALUNOS MAIS PERTO.</h2>
+              <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.06em] sm:text-6xl">GESTÃO FORTE. ALUNOS MAIS PERTO.</h2>
             </div>
             <Link href="/register" className="relative z-10 inline-flex h-14 shrink-0 items-center gap-3 rounded-full bg-black px-7 text-sm font-bold text-white transition-transform hover:-translate-y-1">
               Criar minha conta <ArrowUpRight className="size-4" />
