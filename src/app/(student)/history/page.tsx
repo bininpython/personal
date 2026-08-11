@@ -56,7 +56,7 @@ export default function HistoryPage() {
         <div className="space-y-3">
           {history.map((workout) => (
             <Card key={workout.id}><CardContent className="p-5">
-              <div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-semibold">{workout.name}</p><div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Calendar className="size-3" />{new Date(workout.date).toLocaleDateString('pt-BR')}</span><span className="flex items-center gap-1"><Clock className="size-3" />{formatDuration(workout.durationSeconds)}</span></div></div><Badge className="bg-emerald-500/10 text-emerald-600"><CheckCircle2 className="mr-1 size-3" /> {workout.completion}%</Badge></div>
+              <div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-semibold">{workout.name}</p><div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Calendar className="size-3" />{new Date(workout.date).toLocaleDateString('pt-BR')}</span><span className="flex items-center gap-1"><Clock className="size-3" />{formatDuration(workout.durationSeconds)}</span></div></div><Badge className="bg-ok-wash text-ok"><CheckCircle2 className="mr-1 size-3" /> {workout.completion}%</Badge></div>
               <Progress value={workout.completion} className="h-1.5" />
               {workout.volume > 0 && <p className="mt-2 text-xs text-muted-foreground">Volume: {workout.volume.toLocaleString('pt-BR')} kg</p>}
             </CardContent></Card>

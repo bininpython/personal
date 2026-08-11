@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
-  ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive
+  ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive, Loader2
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -44,6 +47,11 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [studentLimit, setStudentLimit] = useState(MAX_STUDENTS_PER_TRAINER);
   const [loading, setLoading] = useState(true);
+  // Arquivar derruba as sessões abertas do aluno. Isso merece um diálogo do
+  // próprio sistema visual, com o efeito escrito, e não a caixa nativa do
+  // navegador — que no celular aparece colada no topo, sem contexto.
+  const [statusChange, setStatusChange] = useState<StudentSummary | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -65,7 +73,8 @@ export default function StudentsPage() {
   const updateStudentStatus = async (student: StudentSummary) => {
     const nextStatus = student.status === 'active' ? 'inactive' : 'active';
     const action = nextStatus === 'inactive' ? 'arquivar' : 'reativar';
-    if (!window.confirm(`Deseja ${action} ${student.name}?`)) return;
+    setStatusChange(null);
+    setUpdatingStatus(true);
     try {
       const response = await fetch(`/api/students/${student.id}`, {
         method: 'PATCH',
@@ -78,6 +87,8 @@ export default function StudentsPage() {
       toast.success(nextStatus === 'inactive' ? 'Aluno arquivado.' : 'Aluno reativado.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `Não foi possível ${action} o aluno.`);
+    } finally {
+      setUpdatingStatus(false);
     }
   };
 
@@ -205,10 +216,10 @@ export default function StudentsPage() {
                         <MoreHorizontal className="w-4 h-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}`)}><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}#edit`)}><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/students/${student.id}`)}><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/students/${student.id}#edit`)}><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => void updateStudentStatus(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setStatusChange(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -324,6 +335,34 @@ export default function StudentsPage() {
           </div>
         </Card>
       )}
+
+      <Dialog open={Boolean(statusChange)} onOpenChange={(open) => !open && setStatusChange(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {statusChange?.status === 'active' ? 'Arquivar aluno' : 'Reativar aluno'}
+            </DialogTitle>
+            <DialogDescription>
+              {statusChange?.status === 'active'
+                ? `${statusChange?.name} deixa de contar no seu limite e perde o acesso ao app — as sessões abertas dele são encerradas. O histórico e as fichas continuam guardados.`
+                : `${statusChange?.name} volta a contar no seu limite de alunos ativos e recupera o acesso com o mesmo código.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setStatusChange(null)} disabled={updatingStatus}>
+              Cancelar
+            </Button>
+            <Button
+              variant={statusChange?.status === 'active' ? 'destructive' : 'default'}
+              onClick={() => statusChange && void updateStudentStatus(statusChange)}
+              disabled={updatingStatus}
+            >
+              {updatingStatus && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {statusChange?.status === 'active' ? 'Arquivar' : 'Reativar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

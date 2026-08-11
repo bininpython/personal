@@ -49,6 +49,12 @@ Continuam abertos, sem alteração: **C3, A2, A3, A4, A5, A6, A7, M1, M3, M4, M5
 Numeração nova (`B`) para não colidir com a análise anterior. Os itens que apenas confirmam um
 achado antigo estão marcados como tal.
 
+> **Estado em 11/08, fim do dia.** O primeiro bloco da ordem sugerida foi executado:
+> **B2, B3, B9, B4, B10, B11** e **B12** estão fechados, e a verificação em navegador
+> descobriu mais dois defeitos, também corrigidos: **B15** (o menu "..." da lista de alunos
+> nunca funcionou) e **B16** (as rotas de metadata eram redirecionadas para `/login`).
+> Continuam abertos: **B1, B5, B6, B7, B8, B13, B14**.
+
 ### Bloqueadores
 
 #### B1 · A tela de treino não sobrevive à academia — *confirma C3, A4, A5*
@@ -196,6 +202,33 @@ de 44px continuam nos chips de músculo, nas estrelas de avaliação e nos botõ
 `'use client'` + `useEffect` + `fetch`, com spinner e salto de layout quando os dados chegam.
 Com o App Router e as consultas já isoladas em `src/lib/`, as listas e o painel são conversão
 direta.
+
+### Descobertos ao verificar as correções
+
+#### B15 · O menu "..." da lista de alunos nunca funcionou
+
+`DropdownMenuItem` é um `Menu.Item` do Base UI, que expõe `onClick` — não `onSelect`. As três
+ações do menu (**Ver perfil**, **Editar**, **Arquivar**) estavam ligadas em `onSelect`, um
+evento de seleção de texto do DOM: os manipuladores nunca rodavam.
+
+E havia um segundo defeito embaixo do primeiro. O conteúdo do menu é renderizado num portal,
+mas o evento continua subindo pela árvore do React até o card que abriu o menu — e o card é
+clicável. Resultado: escolher qualquer item do menu valia como clique no card e navegava para
+o perfil do aluno. Com só um dos dois defeitos corrigido, "Arquivar" continuava levando para
+o perfil em vez de abrir a confirmação.
+
+Corrigido nos dois níveis: `onClick` nos itens e `stopPropagation` no conteúdo do menu — este
+no componente compartilhado, porque clique em menu nunca deveria contar como clique no que
+está atrás.
+
+#### B16 · As rotas de metadata caíam no `/login`
+
+O `matcher` do `src/proxy.ts` exclui `api`, `_next` e extensões de imagem, mas não os arquivos
+de metadata. Recém-criados, `robots.txt`, `sitemap.xml`, `opengraph-image` e `apple-icon`
+respondiam **307 para `/login`** — ou seja, o rastreador e a prévia do WhatsApp não
+alcançariam nenhum deles, e a correção B9 nasceria morta.
+
+Passam direto agora, com um desvio explícito no proxy.
 
 ---
 

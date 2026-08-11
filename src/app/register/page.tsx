@@ -92,7 +92,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <div className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/8 p-4 text-left text-xs leading-5 text-black/55">
+            <div className="mt-6 rounded-2xl border border-warn/25 bg-warn-wash p-4 text-left text-xs leading-5 text-black/55">
               Salve agora: por segurança, o código completo não ficará visível depois desta tela. Se esquecer, use nome, senha e idade para gerar outro.
             </div>
             <Button className="mt-7 h-14 w-full rounded-full bg-black text-white" onClick={() => { router.replace('/dashboard'); router.refresh(); }}>

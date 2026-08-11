@@ -32,11 +32,24 @@ export default function MessagesPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [activeContactId, setActiveContactId] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  // A rota devolve só a página mais recente da conversa. O que o usuário
+  // pediu para ver antes fica guardado à parte, senão a recarga automática
+  // de 3 em 3 segundos jogaria a leitura de volta para o fim.
+  const [olderMessages, setOlderMessages] = useState<ChatMessage[]>([]);
+  const [hasMoreBefore, setHasMoreBefore] = useState(false);
+  const [loadingOlder, setLoadingOlder] = useState(false);
   const [search, setSearch] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const activeContactRef = useRef('');
+  const olderMessagesRef = useRef<ChatMessage[]>([]);
+  const oldestVisibleRef = useRef<ChatMessage | null>(null);
+
+  const applyOlderMessages = useCallback((next: ChatMessage[]) => {
+    olderMessagesRef.current = next;
+    setOlderMessages(next);
+  }, []);
 
   const loadMessages = useCallback(async (silent = false, requestedId?: string) => {
     const contactId = requestedId ?? activeContactRef.current;
@@ -48,14 +61,22 @@ export default function MessagesPage() {
         contacts?: Contact[];
         activeContactId?: string | null;
         messages?: ChatMessage[];
+        hasMoreBefore?: boolean;
         error?: string;
       };
       if (!response.ok) throw new Error(data.error || 'Não foi possível carregar as mensagens.');
       setContacts(data.contacts ?? []);
       const nextContact = data.activeContactId || '';
+      const contactChanged = nextContact !== activeContactRef.current;
       setActiveContactId(nextContact);
       activeContactRef.current = nextContact;
-      setMessages(data.messages ?? []);
+      const page = data.messages ?? [];
+      setMessages(page);
+      oldestVisibleRef.current = page[0] ?? null;
+      if (contactChanged) applyOlderMessages([]);
+      if (contactChanged || olderMessagesRef.current.length === 0) {
+        setHasMoreBefore(Boolean(data.hasMoreBefore));
+      }
       if (nextContact) {
         void fetch('/api/messages', {
           method: 'PATCH',
@@ -68,7 +89,30 @@ export default function MessagesPage() {
     } finally {
       if (!silent) setLoading(false);
     }
-  }, []);
+  }, [applyOlderMessages]);
+
+  const loadOlderMessages = useCallback(async () => {
+    const contactId = activeContactRef.current;
+    const oldest = olderMessagesRef.current[0] ?? oldestVisibleRef.current;
+    if (!contactId || !oldest) return;
+    setLoadingOlder(true);
+    try {
+      const url = new URL('/api/messages', window.location.origin);
+      url.searchParams.set('contactId', contactId);
+      url.searchParams.set('before', oldest.created_at);
+      const response = await fetch(url, { cache: 'no-store' });
+      const data = await response.json() as { messages?: ChatMessage[]; hasMoreBefore?: boolean; error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível carregar as mensagens anteriores.');
+      const known = new Set(olderMessagesRef.current.map((message) => message.id));
+      const fetched = (data.messages ?? []).filter((message) => !known.has(message.id));
+      applyOlderMessages([...fetched, ...olderMessagesRef.current]);
+      setHasMoreBefore(Boolean(data.hasMoreBefore));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Não foi possível carregar as mensagens anteriores.');
+    } finally {
+      setLoadingOlder(false);
+    }
+  }, [applyOlderMessages]);
 
   useEffect(() => {
     const requestedContact = new URLSearchParams(window.location.search).get('contactId') || undefined;
@@ -100,6 +144,7 @@ export default function MessagesPage() {
     }
   }
 
+  const visibleMessages = olderMessages.length > 0 ? [...olderMessages, ...messages] : messages;
   const activeContact = contacts.find((contact) => contact.id === activeContactId);
   const filteredContacts = contacts.filter((contact) => contact.name.toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR')));
 
@@ -117,7 +162,7 @@ export default function MessagesPage() {
             {loading ? <div className="flex justify-center p-8 text-muted-foreground"><Loader2 className="size-5 animate-spin" /></div> : filteredContacts.length === 0 ? <div className="p-8 text-center text-sm text-muted-foreground">Nenhum aluno cadastrado.</div> : filteredContacts.map((contact) => (
               <button key={contact.id} type="button" onClick={() => { activeContactRef.current = contact.id; setActiveContactId(contact.id); void loadMessages(false, contact.id); }} className={`flex w-full gap-3 border-b p-4 text-left transition-colors hover:bg-muted/60 ${activeContactId === contact.id ? 'bg-muted' : ''}`}>
                 <Avatar><AvatarFallback>{contact.name.split(' ').map((name) => name[0]).join('').slice(0, 2)}</AvatarFallback></Avatar>
-                <div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="truncate text-sm font-semibold">{contact.name}</p>{contact.unread > 0 && <Badge className="h-5 min-w-5 justify-center rounded-full px-1.5">{contact.unread}</Badge>}</div><p className="truncate text-xs text-muted-foreground">{contact.lastMessage}</p></div>
+                <div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-2"><p className="truncate text-sm font-semibold">{contact.name}</p>{contact.unread > 0 && <Badge className="h-5 min-w-5 justify-center rounded-full px-1.5">{contact.unread}</Badge>}</div><p className="truncate text-xs text-muted-foreground">{contact.lastMessage || 'Abrir conversa'}</p></div>
               </button>
             ))}
           </ScrollArea>
@@ -127,7 +172,7 @@ export default function MessagesPage() {
           {activeContact ? (
             <>
               <header className="flex items-center gap-3 border-b p-4"><Avatar><AvatarFallback>{activeContact.name.split(' ').map((name) => name[0]).join('').slice(0, 2)}</AvatarFallback></Avatar><div><p className="font-semibold">{activeContact.name}</p><p className="text-xs text-ok">Conversa protegida</p></div></header>
-              <ScrollArea className="flex-1 bg-muted/20 p-4"><div className="space-y-3 pr-4">{messages.length === 0 ? <div className="py-16 text-center text-sm text-muted-foreground"><MessageSquare className="mx-auto mb-3 size-9 opacity-30" />Envie a primeira mensagem.</div> : messages.map((message) => {
+              <ScrollArea className="flex-1 bg-muted/20 p-4"><div className="space-y-3 pr-4">{hasMoreBefore && <div className="flex justify-center pb-1"><Button type="button" variant="outline" size="sm" onClick={() => void loadOlderMessages()} disabled={loadingOlder}>{loadingOlder && <Loader2 className="mr-2 size-3.5 animate-spin" />} Ver mensagens anteriores</Button></div>}{visibleMessages.length === 0 ? <div className="py-16 text-center text-sm text-muted-foreground"><MessageSquare className="mx-auto mb-3 size-9 opacity-30" />Envie a primeira mensagem.</div> : visibleMessages.map((message) => {
                 const mine = message.sender_type === 'trainer';
                 return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[82%] rounded-2xl px-4 py-2.5 ${mine ? 'bg-black text-white dark:bg-[#c9ff32] dark:text-black' : 'border bg-background'}`}><p className="whitespace-pre-wrap text-sm">{message.content}</p><span className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${mine ? 'opacity-70' : 'text-muted-foreground'}`}>{new Date(message.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}{mine && message.read_at && <CheckCheck className="size-3" />}</span></div></div>;
               })}</div></ScrollArea>

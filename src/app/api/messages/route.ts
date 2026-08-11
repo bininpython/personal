@@ -12,6 +12,14 @@ const readMessagesSchema = z.object({
   contactId: z.string().uuid().optional(),
 }).strict();
 
+// Esta rota é recarregada a cada 3 segundos pelas duas telas de conversa.
+// Nenhuma consulta aqui pode crescer com a história do relacionamento: a
+// conversa vem por página, a prévia da lista sai de uma janela recente e o
+// contador de não lidas se limita sozinho, porque não lida é sempre pouco.
+const CONVERSATION_PAGE_SIZE = 40;
+const MAX_CONTACTS = 100;
+const CONTACT_PREVIEW_WINDOW = 500;
+
 function json(body: Record<string, unknown>, status = 200) {
   return NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store' } });
 }
@@ -27,18 +35,34 @@ interface MessageRow {
   created_at: string;
 }
 
-function isConversationMessage(message: MessageRow, trainerId: string, studentId: string) {
-  return (
-    message.sender_id === trainerId
-    && message.sender_type === 'trainer'
-    && message.recipient_id === studentId
-    && message.recipient_type === 'student'
-  ) || (
-    message.sender_id === studentId
-    && message.sender_type === 'student'
-    && message.recipient_id === trainerId
-    && message.recipient_type === 'trainer'
-  );
+type AdminClient = ReturnType<typeof createAdminClient>;
+
+const MESSAGE_COLUMNS = 'id, sender_id, sender_type, recipient_id, recipient_type, content, read_at, created_at';
+
+/**
+ * Uma página da conversa entre duas pessoas, da mais nova para a mais antiga.
+ *
+ * O par é filtrado no banco: mensagem só existe entre personal e aluno, então
+ * quem tem remetente e destinatário dentro do par {a, b} é exatamente a
+ * conversa. Antes isso era feito em memória, sobre a tabela inteira.
+ */
+async function loadConversation(admin: AdminClient, a: string, b: string, before?: string) {
+  let query = admin
+    .from('messages')
+    .select(MESSAGE_COLUMNS)
+    .in('sender_id', [a, b])
+    .in('recipient_id', [a, b])
+    .order('created_at', { ascending: false })
+    .limit(CONVERSATION_PAGE_SIZE + 1);
+  if (before) query = query.lt('created_at', before);
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  const rows = (data ?? []) as MessageRow[];
+  const hasMore = rows.length > CONVERSATION_PAGE_SIZE;
+  const page = hasMore ? rows.slice(0, CONVERSATION_PAGE_SIZE) : rows;
+  return { messages: page.reverse(), hasMore };
 }
 
 export async function GET(request: Request) {
@@ -47,50 +71,72 @@ export async function GET(request: Request) {
     if (!session) return json({ error: 'Não autorizado.' }, 401);
 
     const admin = createAdminClient();
-    const actorId = session.role === 'trainer' ? session.trainer_id : session.sub;
-    const { data: messageRows, error: messageError } = await admin
-      .from('messages')
-      .select('id, sender_id, sender_type, recipient_id, recipient_type, content, read_at, created_at')
-      .or(`sender_id.eq.${actorId},recipient_id.eq.${actorId}`)
-      .order('created_at', { ascending: true });
-    if (messageError) throw messageError;
-    const allMessages = (messageRows ?? []) as MessageRow[];
+    const params = new URL(request.url).searchParams;
+    const before = params.get('before') || undefined;
 
     if (session.role === 'trainer') {
-      const { data: students, error } = await admin
-        .from('students')
-        .select('id, name, status')
-        .eq('trainer_id', session.trainer_id)
-        .order('name');
-      if (error) throw error;
+      const trainerId = session.trainer_id;
+      const [studentResult, previewResult, unreadResult] = await Promise.all([
+        admin
+          .from('students')
+          .select('id, name, status')
+          .eq('trainer_id', trainerId)
+          .is('deleted_at', null)
+          .order('name')
+          .limit(MAX_CONTACTS),
+        // Prévia da lista: só as mensagens recentes do personal. Uma conversa
+        // parada há mais de CONTACT_PREVIEW_WINDOW mensagens fica sem prévia,
+        // e é melhor não mostrar nada do que ler a tabela inteira por isso.
+        admin
+          .from('messages')
+          .select('sender_id, recipient_id, content, created_at')
+          .or(`sender_id.eq.${trainerId},recipient_id.eq.${trainerId}`)
+          .order('created_at', { ascending: false })
+          .limit(CONTACT_PREVIEW_WINDOW),
+        // Não lidas não precisam de recorte: o conjunto some conforme é lido.
+        admin
+          .from('messages')
+          .select('sender_id')
+          .eq('recipient_id', trainerId)
+          .eq('recipient_type', 'trainer')
+          .is('read_at', null),
+      ]);
+      if (studentResult.error) throw studentResult.error;
+      if (previewResult.error) throw previewResult.error;
+      if (unreadResult.error) throw unreadResult.error;
 
-      const requestedContact = new URL(request.url).searchParams.get('contactId');
-      const selected = (students ?? []).find((student) => student.id === requestedContact)
-        ?? (students ?? [])[0]
-        ?? null;
-      const contacts = (students ?? []).map((student) => {
-        const conversation = allMessages.filter((message) => isConversationMessage(message, session.trainer_id, student.id));
-        const last = conversation.at(-1);
+      const students = studentResult.data ?? [];
+      const previewRows = previewResult.data ?? [];
+      const unreadBySender = new Map<string, number>();
+      for (const row of unreadResult.data ?? []) {
+        unreadBySender.set(row.sender_id, (unreadBySender.get(row.sender_id) ?? 0) + 1);
+      }
+
+      const contacts = students.map((student) => {
+        const last = previewRows.find((message) => (
+          message.sender_id === student.id || message.recipient_id === student.id
+        ));
         return {
           id: student.id,
           name: student.name,
           status: student.status,
-          lastMessage: last?.content || 'Inicie uma conversa',
-          lastMessageAt: last?.created_at || null,
-          unread: conversation.filter((message) => (
-            message.recipient_id === session.trainer_id
-            && message.recipient_type === 'trainer'
-            && !message.read_at
-          )).length,
+          lastMessage: last?.content ?? '',
+          lastMessageAt: last?.created_at ?? null,
+          unread: unreadBySender.get(student.id) ?? 0,
         };
       });
+
+      const requestedContact = params.get('contactId');
+      const selected = students.find((student) => student.id === requestedContact) ?? students[0] ?? null;
+      const conversation = selected
+        ? await loadConversation(admin, trainerId, selected.id, before)
+        : { messages: [], hasMore: false };
 
       return json({
         contacts,
         activeContactId: selected?.id || null,
-        messages: selected
-          ? allMessages.filter((message) => isConversationMessage(message, session.trainer_id, selected.id))
-          : [],
+        messages: conversation.messages,
+        hasMoreBefore: conversation.hasMore,
       });
     }
 
@@ -102,10 +148,12 @@ export async function GET(request: Request) {
     if (error) throw error;
     if (!trainer) return json({ error: 'Personal não encontrado.' }, 404);
 
+    const conversation = await loadConversation(admin, trainer.id, session.sub, before);
     return json({
       contacts: [{ id: trainer.id, name: trainer.name, status: 'active' }],
       activeContactId: trainer.id,
-      messages: allMessages.filter((message) => isConversationMessage(message, trainer.id, session.sub)),
+      messages: conversation.messages,
+      hasMoreBefore: conversation.hasMore,
     });
   } catch (error) {
     console.error('[Messages] Get error:', error);
