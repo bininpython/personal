@@ -1,4 +1,5 @@
 import 'server-only';
+import { workoutHistoryStart } from '@/constants';
 import { createAdminClient } from '@/lib/supabase/admin';
 import {
   buildWeeklyWorkoutSeries,
@@ -26,6 +27,7 @@ export async function getTrainerAnalytics(trainerId: string) {
         .from('workout_sessions')
         .select('student_id, started_at, completed_at, completion_percentage, status, rating')
         .in('student_id', studentIds)
+        .gte('started_at', workoutHistoryStart())
         .order('started_at'),
       admin
         .from('physical_assessments')

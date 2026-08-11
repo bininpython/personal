@@ -17,6 +17,27 @@ export const SESSION_EXPIRY_DAYS = 7;
 export const REMEMBER_ME_EXPIRY_DAYS = 30;
 export const MAX_STUDENTS_PER_TRAINER = 10;
 
+// ---- Histórico ----
+
+/**
+ * Janela das consultas de treino realizado.
+ *
+ * Painel, lista de alunos e relatórios liam a história inteira desde o
+ * primeiro dia e recortavam 7, 14 e 30 dias em memória — uma leitura que só
+ * cresce. O cálculo mais longo do produto é a série de oito semanas, então um
+ * ano cobre tudo com folga e mantém a consulta com tamanho previsível.
+ *
+ * Efeito colateral aceito: constância, conclusão média e "dias sem treinar"
+ * passam a descrever os últimos doze meses, não a vida inteira do aluno.
+ */
+export const WORKOUT_HISTORY_WINDOW_DAYS = 365;
+
+export function workoutHistoryStart(now = new Date()) {
+  const start = new Date(now);
+  start.setDate(start.getDate() - WORKOUT_HISTORY_WINDOW_DAYS);
+  return start.toISOString();
+}
+
 // ---- Muscle Groups ----
 
 export const MUSCLE_GROUPS = {

@@ -1,4 +1,5 @@
 import 'server-only';
+import { workoutHistoryStart } from '@/constants';
 import { buildWeeklyWorkoutSeries, calculateStudentPerformance } from '@/lib/analytics/performance';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { StudentProgressData } from '@/types/student-progress';
@@ -40,7 +41,7 @@ export async function getStudentProgress(studentId: string): Promise<StudentProg
     admin.from('workout_sessions').select(`
       id, student_id, started_at, completed_at, duration_seconds, completion_percentage,
       status, rating, feedback, workout_days (name, day_label), workout_plans (name)
-    `).eq('student_id', studentId).order('started_at', { ascending: true }),
+    `).eq('student_id', studentId).gte('started_at', workoutHistoryStart()).order('started_at', { ascending: true }),
     admin.from('physical_assessments').select(`
       id, student_id, assessment_date, weight, height, body_fat_percentage, muscle_mass,
       blood_pressure_systolic, blood_pressure_diastolic, resting_heart_rate,

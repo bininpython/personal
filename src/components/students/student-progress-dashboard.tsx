@@ -66,7 +66,7 @@ function AssessmentDetails({ assessment }: { assessment: ProgressAssessment }) {
 export function StudentProgressDashboard({ data, showTimeline = true }: StudentProgressDashboardProps) {
   const latestAssessment = data.assessments.at(-1);
   const riskLabel = data.performance.risk === 'high' ? 'Precisa de atenção' : data.performance.risk === 'medium' ? 'Acompanhar' : 'Bom ritmo';
-  const riskClass = data.performance.risk === 'high' ? 'text-red-600 border-red-500/30' : data.performance.risk === 'medium' ? 'text-amber-600 border-amber-500/30' : 'text-emerald-600 border-emerald-500/30';
+  const riskClass = data.performance.risk === 'high' ? 'text-danger border-danger/30' : data.performance.risk === 'medium' ? 'text-warn border-warn/30' : 'text-ok border-ok/30';
 
   return (
     <div className="space-y-6">

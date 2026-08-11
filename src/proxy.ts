@@ -15,6 +15,18 @@ const PUBLIC_PATHS = new Set([
   '/help',
 ]);
 
+// Arquivos de metadata gerados pelo Next. Precisam responder ao rastreador e
+// à prévia do WhatsApp sem sessão — e sem serem desviados para o painel
+// quando quem pede está logado.
+const METADATA_PATHS = new Set([
+  '/robots.txt',
+  '/sitemap.xml',
+  '/opengraph-image',
+  '/twitter-image',
+  '/apple-icon',
+  '/icon',
+]);
+
 const TRAINER_PATHS = [
   '/dashboard',
   '/students',
@@ -52,7 +64,7 @@ export async function proxy(request: NextRequest) {
   const session = token ? await verifyToken(token) : null;
   const role = session?.role;
 
-  if (pathname.startsWith('/avatars/')) {
+  if (pathname.startsWith('/avatars/') || METADATA_PATHS.has(pathname)) {
     return NextResponse.next();
   }
 

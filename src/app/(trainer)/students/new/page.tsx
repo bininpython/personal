@@ -185,7 +185,7 @@ export default function NewStudentPage() {
       </div>
 
       {limitReached ? (
-        <Card className="border-amber-500/30 bg-amber-500/5">
+        <Card className="border-warn/30 bg-warn-wash">
           <CardContent className="p-6 text-center">
             <Shield className="mx-auto mb-3 h-8 w-8 text-warn" />
             <h2 className="font-semibold">Limite de alunos atingido</h2>
