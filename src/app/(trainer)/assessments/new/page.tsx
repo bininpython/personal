@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PageHeader } from '@/components/ui/page-header';
 import { toast } from 'sonner';
 import {
   physicalAssessmentSchema,
@@ -83,18 +84,20 @@ export default function NewAssessmentPage() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-20">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/assessments')} className="shrink-0">
+      <div className="flex items-start gap-3">
+        <Button variant="ghost" size="icon" onClick={() => router.push('/assessments')} className="mt-2 size-11 shrink-0">
           <ChevronLeft className="w-5 h-5" />
         </Button>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Nova Avaliação Física</h1>
-          <p className="text-muted-foreground mt-1">Registre as medidas e progresso do aluno</p>
-        </div>
+        <PageHeader
+          kicker="Análise"
+          title="Nova avaliação"
+          description="Registre as medidas e o progresso do aluno."
+          className="flex-1"
+        />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl">
-        <Card className="border-border/50 bg-gradient-to-r from-primary/5 to-transparent">
+        <Card>
           <CardContent className="p-6">
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -183,7 +186,7 @@ export default function NewAssessmentPage() {
           <Card className="border-border/50 md:col-span-2">
             <CardHeader className="pb-3 border-b border-border/30 flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Ruler className="w-5 h-5 text-amber-500" />
+                <Ruler className="w-5 h-5 text-volt-ink" />
                 Perimetria (cm)
               </CardTitle>
               <div className="text-xs text-muted-foreground flex items-center gap-1">

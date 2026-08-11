@@ -118,10 +118,10 @@ export default function NewStudentPage() {
   if (createdStudent) {
     return (
       <div className="mx-auto max-w-xl space-y-6 animate-fade-in pb-10">
-        <Card className="border-primary/20 shadow-lg shadow-primary/5">
+        <Card>
           <CardHeader className="text-center">
-            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10">
-              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+            <div className="mx-auto mb-2 flex size-14 items-center justify-center rounded-full bg-ok-wash">
+              <CheckCircle2 className="size-8 text-ok" />
             </div>
             <CardTitle>Aluno cadastrado!</CardTitle>
             <CardDescription>
@@ -129,7 +129,7 @@ export default function NewStudentPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center">
+            <div className="rounded-2xl border border-volt-strong/30 bg-volt-wash p-6 text-center">
               <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Código de acesso do aluno
               </p>
@@ -138,7 +138,7 @@ export default function NewStudentPage() {
                   {createdStudent.accessCode}
                 </span>
                 <Button type="button" variant="outline" size="icon" onClick={copyCode} aria-label="Copiar código">
-                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                  {copied ? <Check className="h-4 w-4 text-ok" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
@@ -172,7 +172,7 @@ export default function NewStudentPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">Novo Aluno</h1>
+          <h1 className="dk-display text-[clamp(2rem,4.5vw,2.75rem)]">Novo aluno</h1>
           <p className="mt-1 text-sm text-muted-foreground md:text-base">
             {studentCount === null
               ? 'Cadastre um aluno e gere seu código de acesso.'
@@ -184,7 +184,7 @@ export default function NewStudentPage() {
       {limitReached ? (
         <Card className="border-amber-500/30 bg-amber-500/5">
           <CardContent className="p-6 text-center">
-            <Shield className="mx-auto mb-3 h-8 w-8 text-amber-500" />
+            <Shield className="mx-auto mb-3 h-8 w-8 text-warn" />
             <h2 className="font-semibold">Limite de alunos atingido</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               Cada personal pode cadastrar no máximo {MAX_STUDENTS_PER_TRAINER} alunos.
@@ -201,7 +201,7 @@ export default function NewStudentPage() {
               <Card className="border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <User className="h-5 w-5 text-primary" />
+                    <User className="h-5 w-5 text-volt-ink" />
                     Informações do aluno
                   </CardTitle>
                   <CardDescription>O nome será usado junto com o código para entrar.</CardDescription>
@@ -224,7 +224,7 @@ export default function NewStudentPage() {
               <Card className="border-border/50">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <FileText className="h-5 w-5 text-primary" />
+                    <FileText className="h-5 w-5 text-volt-ink" />
                     Anotações internas
                   </CardTitle>
                   <CardDescription>O aluno não verá estas anotações.</CardDescription>
@@ -242,7 +242,7 @@ export default function NewStudentPage() {
             <Card className="h-fit border-primary/20 shadow-md shadow-primary/5">
               <CardHeader className="bg-primary/5">
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Shield className="h-5 w-5 text-primary" />
+                  <Shield className="h-5 w-5 text-volt-ink" />
                   Acesso do aluno
                 </CardTitle>
               </CardHeader>

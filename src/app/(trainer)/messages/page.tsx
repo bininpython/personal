@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { PageHeader } from '@/components/ui/page-header';
 
 interface Contact {
   id: string;
@@ -104,8 +105,12 @@ export default function MessagesPage() {
 
   return (
     <div className="space-y-4 pb-10 animate-fade-in">
-      <div><h1 className="text-2xl font-bold tracking-tight">Mensagens</h1><p className="mt-1 text-muted-foreground">Converse com seus alunos. Atualização automática a cada 3 segundos.</p></div>
-      <Card className="grid min-h-[650px] overflow-hidden border-border/60 md:grid-cols-[300px_1fr]">
+      <PageHeader
+        kicker="Operação"
+        title="Mensagens"
+        description="Converse com seus alunos. A conversa se atualiza sozinha."
+      />
+      <Card className="grid min-h-[650px] overflow-hidden md:grid-cols-[300px_1fr]">
         <aside className="border-b md:border-b-0 md:border-r">
           <div className="border-b p-4"><div className="relative"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar aluno..." className="pl-9" /></div></div>
           <ScrollArea className="h-[220px] md:h-[590px]">
@@ -121,10 +126,10 @@ export default function MessagesPage() {
         <section className="flex min-h-[430px] flex-col">
           {activeContact ? (
             <>
-              <header className="flex items-center gap-3 border-b p-4"><Avatar><AvatarFallback>{activeContact.name.split(' ').map((name) => name[0]).join('').slice(0, 2)}</AvatarFallback></Avatar><div><p className="font-semibold">{activeContact.name}</p><p className="text-xs text-emerald-600">Conversa protegida</p></div></header>
+              <header className="flex items-center gap-3 border-b p-4"><Avatar><AvatarFallback>{activeContact.name.split(' ').map((name) => name[0]).join('').slice(0, 2)}</AvatarFallback></Avatar><div><p className="font-semibold">{activeContact.name}</p><p className="text-xs text-ok">Conversa protegida</p></div></header>
               <ScrollArea className="flex-1 bg-muted/20 p-4"><div className="space-y-3 pr-4">{messages.length === 0 ? <div className="py-16 text-center text-sm text-muted-foreground"><MessageSquare className="mx-auto mb-3 size-9 opacity-30" />Envie a primeira mensagem.</div> : messages.map((message) => {
                 const mine = message.sender_type === 'trainer';
-                return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[82%] rounded-2xl px-4 py-2.5 ${mine ? 'bg-primary text-primary-foreground' : 'border bg-background'}`}><p className="whitespace-pre-wrap text-sm">{message.content}</p><span className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${mine ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>{new Date(message.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}{mine && message.read_at && <CheckCheck className="size-3" />}</span></div></div>;
+                return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[82%] rounded-2xl px-4 py-2.5 ${mine ? 'bg-black text-white dark:bg-[#c9ff32] dark:text-black' : 'border bg-background'}`}><p className="whitespace-pre-wrap text-sm">{message.content}</p><span className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${mine ? 'opacity-70' : 'text-muted-foreground'}`}>{new Date(message.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}{mine && message.read_at && <CheckCheck className="size-3" />}</span></div></div>;
               })}</div></ScrollArea>
               <form className="flex gap-2 border-t p-4" onSubmit={(event) => { event.preventDefault(); void sendMessage(); }}><Input value={content} onChange={(event) => setContent(event.target.value)} maxLength={2000} placeholder="Digite sua mensagem..." /><Button type="submit" size="icon" disabled={sending || !content.trim()}>{sending ? <Loader2 className="animate-spin" /> : <Send />}</Button></form>
             </>

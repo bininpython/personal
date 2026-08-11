@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Users, Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
+  Search, Filter, Grid3X3, List, Plus, MoreHorizontal,
   ArrowUpRight, ArrowDownRight, Activity, Eye, Edit, Archive
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -91,7 +92,7 @@ export default function StudentsPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px]">Ativo</Badge>;
+      case 'active': return <Badge className="border-ok/20 bg-ok-wash text-ok text-[10px]">Ativo</Badge>;
       case 'inactive': return <Badge variant="secondary" className="text-[10px]">Inativo</Badge>;
       case 'blocked': return <Badge variant="destructive" className="text-[10px]">Bloqueado</Badge>;
       default: return <Badge variant="outline" className="text-[10px]">Arquivado</Badge>;
@@ -99,34 +100,29 @@ export default function StudentsPage() {
   };
 
   const getTrendIcon = (trend: string) => {
-    if (trend === 'up') return <ArrowUpRight className="w-3.5 h-3.5 text-emerald-500" />;
-    if (trend === 'down') return <ArrowDownRight className="w-3.5 h-3.5 text-red-500" />;
+    if (trend === 'up') return <ArrowUpRight className="w-3.5 h-3.5 text-ok" />;
+    if (trend === 'down') return <ArrowDownRight className="w-3.5 h-3.5 text-danger" />;
     return <Activity className="w-3.5 h-3.5 text-muted-foreground" />;
   };
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Users className="w-6 h-6 text-primary" />
-            Alunos
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {activeStudentCount} de {studentLimit} alunos ativos · {students.length} no total
-          </p>
-        </div>
-        <Button
-          onClick={() => router.push('/students/new')}
-          className="bg-primary hover:bg-primary/90 shrink-0"
-          disabled={limitReached}
-          title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Cadastrar Aluno
-        </Button>
-      </div>
+      <PageHeader
+        kicker="Operação"
+        title="Alunos"
+        description={`${activeStudentCount} de ${studentLimit} alunos ativos · ${students.length} no total`}
+        actions={
+          <Button
+            onClick={() => router.push('/students/new')}
+            className="h-11"
+            disabled={limitReached}
+            title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo aluno
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -187,7 +183,7 @@ export default function StudentsPage() {
             filteredStudents.map((student, i) => (
               <Card
                 key={student.id}
-                className="group border-border/50 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer animate-slide-up"
+                className="group cursor-pointer transition-all duration-300 hover:border-volt-strong/40 hover:shadow-lg animate-slide-up"
                 style={{ animationDelay: `${0.05 * i}s` }}
                 onClick={() => router.push(`/students/${student.id}`)}
               >
@@ -195,7 +191,7 @@ export default function StudentsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                        <AvatarFallback className="bg-black font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
                           {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
@@ -219,7 +215,7 @@ export default function StudentsPage() {
 
                   <div className="space-y-3">
                     <div className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs">
-                      <span className="text-muted-foreground">Final do código</span>
+                      <span className="text-muted-foreground">Últimos dígitos do código</span>
                       <span className="font-mono text-sm font-bold tracking-widest">{student.access_code}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -294,7 +290,7 @@ export default function StudentsPage() {
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9">
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                          <AvatarFallback className="bg-black text-xs font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
                             {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>
