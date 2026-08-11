@@ -60,7 +60,7 @@ export function AccountControls({ name, trainer = false }: { name: string; train
         </Button>}
       </div>
       {newAccessCode && (
-        <div className="space-y-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
+        <div className="space-y-3 rounded-lg border border-warn/30 bg-warn-wash p-4">
           <p className="font-medium">Salve agora. Este código aparece uma única vez.</p>
           <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO PESSOAL</span><code className="mt-1 block font-mono text-2xl font-bold tracking-[0.16em]">{newAccessCode}</code></div>
           <p className="text-xs text-muted-foreground">Sua senha e idade continuam válidas para recuperação.</p>

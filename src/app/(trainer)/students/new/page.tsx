@@ -14,6 +14,7 @@ import {
   Shield,
   User,
 } from 'lucide-react';
+import { AccessInvite } from '@/components/students/access-invite';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -143,6 +144,8 @@ export default function NewStudentPage() {
               </div>
             </div>
 
+            <AccessInvite studentName={createdStudent.name} accessCode={createdStudent.accessCode} />
+
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
               O aluno entrará usando apenas o nome <strong>{createdStudent.name}</strong> e este código individual. Não precisa de e-mail, telefone ou senha.
             </div>
@@ -182,7 +185,7 @@ export default function NewStudentPage() {
       </div>
 
       {limitReached ? (
-        <Card className="border-amber-500/30 bg-amber-500/5">
+        <Card className="border-warn/30 bg-warn-wash">
           <CardContent className="p-6 text-center">
             <Shield className="mx-auto mb-3 h-8 w-8 text-warn" />
             <h2 className="font-semibold">Limite de alunos atingido</h2>

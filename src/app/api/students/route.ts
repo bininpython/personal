@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import {
   MAX_STUDENTS_PER_TRAINER,
+  workoutHistoryStart,
 } from '@/constants';
 import { studentCreateSchema } from '@/lib/validators';
 import { getSession } from '@/lib/auth/session';
@@ -174,6 +175,7 @@ export async function GET() {
         .from('workout_sessions')
         .select('student_id, started_at, completed_at, completion_percentage, status')
         .in('student_id', studentIds)
+        .gte('started_at', workoutHistoryStart())
         .order('started_at', { ascending: false })
       : { data: [], error: null };
 

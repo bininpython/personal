@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SITE_URL } from "@/lib/site";
+import { siteUrl } from "@/lib/site-url";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -19,15 +19,21 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+const TITLE = "G KONG — Performance e Gestão de Treinos";
+const DESCRIPTION = "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho. O aluno entra com o nome e um código de seis números — sem e-mail e sem senha.";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: siteUrl(),
   title: {
-    default: "G KONG — Performance e Gestão de Treinos",
+    default: TITLE,
     template: "%s | G KONG",
   },
-  description: "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho.",
+  description: DESCRIPTION,
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
+  applicationName: "G KONG",
   alternates: { canonical: "/" },
+  // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
+  // JPG como favicon, porque ele é muito maior do que os arquivos dedicados.
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -48,7 +54,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <AuthProvider>
             <TooltipProvider>
               {children}
-              <Toaster richColors position="top-right" />
+              {/*
+                O aviso nasce onde a ação acontece: no celular o polegar está
+                embaixo, e o canto superior direito era o ponto mais distante
+                dele. A margem inferior maior livra a navegação fixa.
+              */}
+              <Toaster
+                richColors
+                position="bottom-center"
+                mobileOffset={{ bottom: '5.5rem', left: '0.75rem', right: '0.75rem' }}
+              />
             </TooltipProvider>
           </AuthProvider>
         </ThemeProvider>

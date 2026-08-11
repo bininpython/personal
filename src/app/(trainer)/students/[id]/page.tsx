@@ -4,8 +4,8 @@ import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, KeyRound, Loader2, Mail, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { AccessInvite } from '@/components/students/access-invite';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
-import { StudentAccessCard } from '@/components/students/student-access-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -165,12 +165,29 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
         </div>
       </section>
 
-      {newAccessCode && <StudentAccessCard studentName={student.full_name} accessCode={newAccessCode} onDismiss={() => setNewAccessCode('')} />}
+      <Card className={newAccessCode ? 'border-[#9fdb00]/35 bg-[#c9ff32]/12' : undefined}>
+        <CardHeader><CardTitle className="text-lg">Entrega do acesso</CardTitle></CardHeader>
+        <CardContent className="space-y-4 p-5 pt-0">
+          {newAccessCode && (
+            <div>
+              <p className="font-black">Entregue este código ao aluno agora. Ele aparece uma única vez.</p>
+              <code className="mt-3 block break-all text-2xl font-black tracking-[0.15em]">{newAccessCode}</code>
+            </div>
+          )}
+          <AccessInvite
+            studentName={student.full_name}
+            accessCode={newAccessCode}
+            onGenerateCode={() => void rotateStudentCode()}
+            generatingCode={rotatingCode}
+          />
+          {newAccessCode && <Button variant="ghost" size="sm" onClick={() => setNewAccessCode('')}>Já entreguei, pode ocultar</Button>}
+        </CardContent>
+      </Card>
 
       {performance && <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[[`${performance.consistencyScore}%`, 'constância'], [`${performance.workouts7d}/${performance.plannedFrequency}`, 'meta semanal'], [`${performance.completionAverage}%`, 'conclusão média'], [performance.workouts30d, 'treinos em 30 dias']].map(([value, label]) => <Card key={label}><CardContent className="p-4"><p className="text-3xl font-black tracking-[-0.06em]">{value}</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p></CardContent></Card>)}<Card><CardContent className="p-4"><Badge variant="outline" className={performance.risk === 'high' ? 'text-danger' : performance.risk === 'medium' ? 'text-warn' : 'text-volt-ink'}>{performance.risk === 'high' ? 'Risco alto' : performance.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge><p className="mt-2 text-xs text-muted-foreground">{performance.daysSinceLastWorkout === null ? 'Sem treino' : `${performance.daysSinceLastWorkout} dia(s) desde o último`}</p></CardContent></Card></div>}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}><TabsList className="grid h-12 w-full grid-cols-4"><TabsTrigger value="overview"><User className="mr-2 hidden size-4 sm:inline" /> Visão geral</TabsTrigger><TabsTrigger value="workouts"><Dumbbell className="mr-2 hidden size-4 sm:inline" /> Fichas</TabsTrigger><TabsTrigger value="progress"><TrendingUp className="mr-2 hidden size-4 sm:inline" /> Evolução</TabsTrigger><TabsTrigger value="assessments"><ClipboardList className="mr-2 hidden size-4 sm:inline" /> Avaliações</TabsTrigger></TabsList>
-        <TabsContent value="overview" className="mt-6"><div className="grid gap-6 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle className="text-lg">Dados físicos</CardTitle></CardHeader><CardContent><div className="grid grid-cols-2 gap-4">{[['Peso', student.current_weight ? `${student.current_weight} kg` : '--'], ['Altura', student.height ? `${student.height} cm` : '--'], ['Nível', LEVEL_LABELS[student.experience_level]], ['Início', student.start_date ? new Date(`${student.start_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR') : '--']].map(([label, value]) => <div key={label} className="rounded-xl bg-muted/40 p-4"><p className="text-sm text-muted-foreground">{label}</p><p className="text-xl font-bold">{value}</p></div>)}</div></CardContent></Card><Card className="border-amber-500/20 bg-amber-500/5"><CardHeader><CardTitle className="text-lg text-amber-600">Observações</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{student.injuries || student.restrictions || student.notes || 'Nenhuma observação registrada.'}</p></CardContent></Card></div></TabsContent>
+        <TabsContent value="overview" className="mt-6"><div className="grid gap-6 md:grid-cols-3"><Card className="md:col-span-2"><CardHeader><CardTitle className="text-lg">Dados físicos</CardTitle></CardHeader><CardContent><div className="grid grid-cols-2 gap-4">{[['Peso', student.current_weight ? `${student.current_weight} kg` : '--'], ['Altura', student.height ? `${student.height} cm` : '--'], ['Nível', LEVEL_LABELS[student.experience_level]], ['Início', student.start_date ? new Date(`${student.start_date.slice(0, 10)}T12:00:00`).toLocaleDateString('pt-BR') : '--']].map(([label, value]) => <div key={label} className="rounded-xl bg-muted/40 p-4"><p className="text-sm text-muted-foreground">{label}</p><p className="text-xl font-bold">{value}</p></div>)}</div></CardContent></Card><Card className="border-warn/25 bg-warn-wash"><CardHeader><CardTitle className="text-lg text-warn">Observações</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">{student.injuries || student.restrictions || student.notes || 'Nenhuma observação registrada.'}</p></CardContent></Card></div></TabsContent>
         <TabsContent value="workouts"><Card className="py-12 text-center"><CardContent><Dumbbell className="mx-auto mb-4 size-12 text-muted-foreground/40" /><h3 className="font-bold">Fichas do aluno</h3><p className="mb-5 mt-1 text-sm text-muted-foreground">Consulte as fichas ou crie uma nova.</p><div className="flex justify-center gap-2"><Button variant="outline" onClick={() => router.push('/workouts')}>Ver fichas</Button><Button onClick={() => router.push('/exercises')}>Criar ficha</Button></div></CardContent></Card></TabsContent>
         <TabsContent value="progress" className="mt-6">{progressData ? <StudentProgressDashboard data={progressData} /> : <Card><CardContent className="py-12 text-center text-sm text-muted-foreground">Registre treinos e avaliações para calcular a evolução.</CardContent></Card>}</TabsContent>
         <TabsContent value="assessments" className="mt-6"><div className="mb-4 flex justify-end"><Button onClick={() => router.push(`/assessments/new?studentId=${params.id}`)}><ClipboardList className="mr-2 size-4" /> Nova avaliação</Button></div>{progressData?.assessments.length ? <div className="grid gap-4 md:grid-cols-2">{progressData.assessments.slice().reverse().map((assessment) => <Card key={assessment.id}><CardHeader><CardTitle className="flex items-center justify-between text-base"><span>Avaliação de {assessment.dateLabel}</span><Badge variant="secondary">{assessment.bmi === null ? 'IMC —' : `IMC ${assessment.bmi}`}</Badge></CardTitle></CardHeader><CardContent className="grid grid-cols-2 gap-3 text-sm">{[['Peso', assessment.weight === null ? '—' : `${assessment.weight} kg`], ['Gordura corporal', assessment.bodyFat === null ? '—' : `${assessment.bodyFat}%`], ['Massa muscular', assessment.muscleMass === null ? '—' : `${assessment.muscleMass} kg`], ['Pressão', assessment.bloodPressure || '—']].map(([label, value]) => <div key={label} className="rounded-lg bg-muted/50 p-3"><p className="text-xs text-muted-foreground">{label}</p><strong>{value}</strong></div>)}{assessment.notes && <p className="col-span-2 rounded-lg border p-3 text-muted-foreground">{assessment.notes}</p>}</CardContent></Card>)}</div> : <Card className="py-12 text-center"><CardContent><ClipboardList className="mx-auto mb-4 size-12 text-muted-foreground/40" /><p className="mb-5 text-sm text-muted-foreground">Nenhuma avaliação registrada para este aluno.</p><Button onClick={() => router.push(`/assessments/new?studentId=${params.id}`)}>Nova avaliação</Button></CardContent></Card>}</TabsContent>

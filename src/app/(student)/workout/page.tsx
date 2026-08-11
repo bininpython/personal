@@ -564,10 +564,10 @@ export default function StudentWorkoutPage() {
       </div>
 
       {plan.isExpired && (
-        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
-          <CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" />
+        <div className="flex items-start gap-3 rounded-xl border border-warn/30 bg-warn-wash p-4 text-sm">
+          <CalendarClock className="mt-0.5 size-5 shrink-0 text-warn" />
           <div>
-            <p className="font-semibold text-amber-800 dark:text-amber-300">O prazo desta ficha terminou</p>
+            <p className="font-semibold text-warn">O prazo desta ficha terminou</p>
             <p className="mt-1 text-muted-foreground">
               Ela continua disponível para consulta e execução. Seu personal recebeu um alerta para revisar ou renovar o treino.
             </p>
@@ -602,11 +602,11 @@ export default function StudentWorkoutPage() {
               activeDay?.id === day.id
                 ? 'border-black bg-black text-[#c9ff32] shadow-sm dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
                 : day.completedThisWeek
-                  ? 'border-emerald-500/40 bg-emerald-500/[0.06]'
+                  ? 'border-ok/40 bg-ok-wash'
                 : 'border-border bg-card hover:border-[#9fdb00]'
             }`}
           >
-            {day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-emerald-500'}`} />}
+            {day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-ok'}`} />}
             <span className="block text-[10px] font-bold uppercase opacity-75">Treino {day.label}</span>
             <span className="mt-0.5 block truncate text-sm font-semibold">{day.name}</span>
             <span className="mt-1 block text-[10px] opacity-70">{day.weeklyCompletions}/{day.weeklyAllowance} nesta semana</span>
@@ -645,7 +645,7 @@ export default function StudentWorkoutPage() {
               ));
 
               return (
-                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-emerald-500/40 bg-emerald-500/[0.03]' : ''} ${activeDayCompleted ? 'opacity-80' : ''}`}>
+                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-ok/40 bg-ok-wash' : ''} ${activeDayCompleted ? 'opacity-80' : ''}`}>
                   <CardHeader className="border-b border-border/40 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex min-w-0 gap-3">
@@ -671,7 +671,7 @@ export default function StudentWorkoutPage() {
                       </div>
                       {exercise.videoUrl && (
                         <Button type="button" size="icon" variant="outline" onClick={() => setPlayingVideo(exercise.videoUrl)}>
-                          <PlayCircle className="size-4 text-red-500" />
+                          <PlayCircle className="size-4 text-danger" />
                         </Button>
                       )}
                     </div>
@@ -681,7 +681,7 @@ export default function StudentWorkoutPage() {
                       <p className="text-sm leading-relaxed text-muted-foreground">{exercise.instructions}</p>
                     )}
                     {exercise.method && (
-                      <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-sm">
+                      <div className="rounded-lg border border-warn/25 bg-warn-wash px-3 py-2 text-sm">
                         <span className="font-semibold">Orientação do personal:</span> {exercise.method}
                       </div>
                     )}
@@ -728,14 +728,14 @@ export default function StudentWorkoutPage() {
           </div>
 
           {progress === 100 && (
-            <Card className="border-emerald-500/30 bg-emerald-500/[0.05]">
+            <Card className="border-ok/30 bg-ok-wash">
               <CardContent className="p-5 text-center">
-                <CheckCircle2 className="mx-auto mb-2 size-9 text-emerald-500" />
+                <CheckCircle2 className="mx-auto mb-2 size-9 text-ok" />
                 {activeDayCompleted ? <>
                   <h2 className="font-bold">{activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje'}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">O resultado está salvo no histórico e na evolução.</p>
                   {suggestedDay && suggestedDay.id !== activeDay.id && <Button className="mt-4" onClick={() => selectWorkoutDay(suggestedDay.id)}><Dumbbell className="mr-2 size-4" /> Ir para {suggestedDay.name}</Button>}
-                  {!suggestedDay && <Badge className="mt-4 bg-emerald-500/10 text-emerald-600">Ciclo semanal completo</Badge>}
+                  {!suggestedDay && <Badge className="mt-4 bg-ok-wash text-ok">Ciclo semanal completo</Badge>}
                 </> : <>
                   <h2 className="font-bold">Todas as séries foram marcadas</h2>
                   <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>

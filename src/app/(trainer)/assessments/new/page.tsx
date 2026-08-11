@@ -133,7 +133,7 @@ export default function NewAssessmentPage() {
           <Card className="border-border/50">
             <CardHeader className="pb-3 border-b border-border/30">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Scale className="w-5 h-5 text-blue-500" />
+                <Scale className="w-5 h-5 text-info" />
                 Composição Corporal
               </CardTitle>
             </CardHeader>

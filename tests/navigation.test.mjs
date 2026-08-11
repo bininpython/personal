@@ -64,8 +64,8 @@ test('trainer navigation exposes the primary task with clear hierarchy', () => {
 
 test('workout builder becomes a three-step flow below desktop width', () => {
   const builder = source('src/app/(trainer)/exercises/page.tsx');
-  assert.match(builder, /BUILDER_STEPS/);
+  assert.match(builder, /MOBILE_STEPS/);
   assert.match(builder, /aria-label="Etapas do montador"/);
-  assert.match(builder, /sticky bottom-20/);
+  assert.match(builder, /dk-step-bar/);
   assert.match(builder, /xl:hidden/);
 });
