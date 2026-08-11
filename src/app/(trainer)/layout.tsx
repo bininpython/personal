@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Users, Dumbbell, BookOpen, ClipboardList,
   Calendar, MessageSquare, BarChart3, Bell, Settings,
-  LogOut, Menu, Moon, Sun, CircleHelp
+  LogOut, Menu, Moon, Sun, CircleHelp, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -211,7 +211,9 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
           title={collapsed ? 'Expandir menu' : 'Recolher menu'}
         >
-          <BrandMark compact iconOnly className="pointer-events-none scale-90" />
+          {collapsed
+            ? <ChevronRight className="size-5 text-black" aria-hidden="true" />
+            : <ChevronLeft className="size-5 text-black" aria-hidden="true" />}
         </button>
       </aside>
 

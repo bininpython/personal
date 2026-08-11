@@ -69,12 +69,13 @@ test('trainer sidebar keeps its navigation scrollable at short viewport heights'
   assert.match(layout, /shrink-0 space-y-1 px-3 py-3/);
 });
 
-test('trainer sidebar collapse control stays visible and uses the gorilla mark', () => {
+test('trainer sidebar collapse control stays visible and uses directional arrows', () => {
   const layout = source('src/app/(trainer)/layout.tsx');
   assert.match(layout, /overflow-visible/);
   assert.match(layout, /absolute -right-5 top-20/);
-  assert.match(layout, /<BrandMark compact iconOnly/);
-  assert.doesNotMatch(layout, /ChevronLeft/);
+  assert.match(layout, /collapsed\s*\? <ChevronRight/);
+  assert.match(layout, /: <ChevronLeft/);
+  assert.doesNotMatch(layout, /<BrandMark compact iconOnly className="pointer-events-none scale-90"/);
 });
 
 test('workout builder becomes a three-step flow below desktop width', () => {
