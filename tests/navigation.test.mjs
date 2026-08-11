@@ -62,6 +62,13 @@ test('trainer navigation exposes the primary task with clear hierarchy', () => {
   assert.match(layout, /href: '\/exercises', label: 'Montar ficha'/);
 });
 
+test('trainer sidebar keeps its navigation scrollable at short viewport heights', () => {
+  const layout = source('src/app/(trainer)/layout.tsx');
+  assert.match(layout, /flex h-full min-h-0 flex-col overflow-hidden/);
+  assert.match(layout, /ScrollArea className="min-h-0 flex-1 overscroll-contain/);
+  assert.match(layout, /shrink-0 space-y-1 px-3 py-3/);
+});
+
 test('workout builder becomes a three-step flow below desktop width', () => {
   const builder = source('src/app/(trainer)/exercises/page.tsx');
   assert.match(builder, /MOBILE_STEPS/);

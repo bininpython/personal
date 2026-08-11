@@ -89,16 +89,16 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   };
 
   const renderNavContent = (mobile = false) => (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
       {/* Header */}
-      <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
+      <div className={`flex shrink-0 items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
         <BrandMark inverted compact={collapsed && !mobile} iconOnly={collapsed && !mobile} />
       </div>
 
       <Separator className="bg-white/10" />
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-3">
+      <ScrollArea className="min-h-0 flex-1 overscroll-contain px-3 py-3">
         <nav className="space-y-5" aria-label="Navegação principal do personal">
           {NAV_GROUPS.map((group) => <div key={group.label} className="space-y-1">
             {(!collapsed || mobile) && <p className="px-3 pb-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{group.label}</p>}
@@ -144,7 +144,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       <Separator className="bg-white/10" />
 
       {/* Footer */}
-      <div className="px-3 py-3 space-y-1">
+      <div className="shrink-0 space-y-1 px-3 py-3">
         <Link
           href="/help"
           className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/65 transition-colors hover:bg-white/8 hover:text-white ${collapsed && !mobile ? 'justify-center' : ''}`}
@@ -201,7 +201,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   return (
     <div className="dk-app flex h-screen overflow-hidden bg-[#090a08]">
       {/* Desktop Sidebar */}
-      <aside className={`relative hidden lg:flex flex-col border-r border-white/10 bg-[#090a08] text-white transition-all duration-300
+      <aside className={`relative hidden min-h-0 overflow-hidden border-r border-white/10 bg-[#090a08] text-white transition-all duration-300 lg:flex lg:flex-col
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}
       >
         {renderNavContent()}
