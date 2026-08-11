@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, KeyRound, Loader2, Mail, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { AccessInvite } from '@/components/students/access-invite';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -164,7 +165,24 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
         </div>
       </section>
 
-      {newAccessCode && <Card className="border-[#9fdb00]/35 bg-[#c9ff32]/12"><CardContent className="p-5"><p className="font-black">Entregue este código ao aluno agora. Ele aparece uma única vez.</p><code className="mt-3 block break-all text-2xl font-black tracking-[0.15em]">{newAccessCode}</code><Button variant="ghost" size="sm" className="mt-2" onClick={() => setNewAccessCode('')}>Já salvei</Button></CardContent></Card>}
+      <Card className={newAccessCode ? 'border-[#9fdb00]/35 bg-[#c9ff32]/12' : undefined}>
+        <CardHeader><CardTitle className="text-lg">Entrega do acesso</CardTitle></CardHeader>
+        <CardContent className="space-y-4 p-5 pt-0">
+          {newAccessCode && (
+            <div>
+              <p className="font-black">Entregue este código ao aluno agora. Ele aparece uma única vez.</p>
+              <code className="mt-3 block break-all text-2xl font-black tracking-[0.15em]">{newAccessCode}</code>
+            </div>
+          )}
+          <AccessInvite
+            studentName={student.full_name}
+            accessCode={newAccessCode}
+            onGenerateCode={() => void rotateStudentCode()}
+            generatingCode={rotatingCode}
+          />
+          {newAccessCode && <Button variant="ghost" size="sm" onClick={() => setNewAccessCode('')}>Já entreguei, pode ocultar</Button>}
+        </CardContent>
+      </Card>
 
       {performance && <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[[`${performance.consistencyScore}%`, 'constância'], [`${performance.workouts7d}/${performance.plannedFrequency}`, 'meta semanal'], [`${performance.completionAverage}%`, 'conclusão média'], [performance.workouts30d, 'treinos em 30 dias']].map(([value, label]) => <Card key={label}><CardContent className="p-4"><p className="text-3xl font-black tracking-[-0.06em]">{value}</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p></CardContent></Card>)}<Card><CardContent className="p-4"><Badge variant="outline" className={performance.risk === 'high' ? 'text-danger' : performance.risk === 'medium' ? 'text-warn' : 'text-volt-ink'}>{performance.risk === 'high' ? 'Risco alto' : performance.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge><p className="mt-2 text-xs text-muted-foreground">{performance.daysSinceLastWorkout === null ? 'Sem treino' : `${performance.daysSinceLastWorkout} dia(s) desde o último`}</p></CardContent></Card></div>}
 

@@ -398,6 +398,31 @@
   font-weight: 850;
 }
 
+/* Barra de etapas do montador de fichas no celular.
+   Abaixo de xl o montador vira um fluxo de três passos e esta barra carrega o
+   avanço, o contador e a publicação. Ela precisa flutuar acima da navegação
+   inferior do personal, que só existe abaixo de lg. */
+.dk-step-bar {
+  position: fixed;
+  right: 0;
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  z-index: 30;
+}
+
+@media (min-width: 64rem) {
+  .dk-step-bar {
+    bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+@media (min-width: 80rem) {
+  .dk-step-bar {
+    display: none;
+  }
+}
+
 .dk-metric {
   border-radius: 1.25rem;
   border: 1px solid rgb(9 10 8 / 0.09);

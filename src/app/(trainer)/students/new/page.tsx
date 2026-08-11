@@ -14,6 +14,7 @@ import {
   Shield,
   User,
 } from 'lucide-react';
+import { AccessInvite } from '@/components/students/access-invite';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -142,6 +143,8 @@ export default function NewStudentPage() {
                 </Button>
               </div>
             </div>
+
+            <AccessInvite studentName={createdStudent.name} accessCode={createdStudent.accessCode} />
 
             <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
               O aluno entrará usando apenas o nome <strong>{createdStudent.name}</strong> e este código individual. Não precisa de e-mail, telefone ou senha.
