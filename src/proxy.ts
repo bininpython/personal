@@ -7,7 +7,9 @@ const PUBLIC_PATHS = new Set([
   '/login',
   '/login/trainer',
   '/login/student',
+  '/login/individual',
   '/register',
+  '/register/individual',
   '/plans',
   '/terms',
   '/privacy',
@@ -58,6 +60,19 @@ const STUDENT_PATHS = [
   '/onboarding',
 ];
 
+const INDIVIDUAL_PATHS = [
+  '/my',
+  '/my-plans',
+  '/my-exercises',
+  '/my-profile',
+];
+
+function roleHome(role: 'trainer' | 'student' | 'individual' | undefined) {
+  if (role === 'trainer') return '/dashboard';
+  if (role === 'individual') return '/my';
+  return '/home';
+}
+
 function matchesRoute(pathname: string, route: string) {
   return pathname === route || pathname.startsWith(`${route}/`);
 }
@@ -74,8 +89,7 @@ export async function proxy(request: NextRequest) {
 
   if (PUBLIC_PATHS.has(pathname)) {
     if (session?.sub && pathname !== '/' && pathname !== '/help') {
-      const destination = role === 'trainer' ? '/dashboard' : '/home';
-      return NextResponse.redirect(new URL(destination, request.url));
+      return NextResponse.redirect(new URL(roleHome(role), request.url));
     }
     return NextResponse.next();
   }
@@ -86,13 +100,18 @@ export async function proxy(request: NextRequest) {
 
   const isTrainerPath = TRAINER_PATHS.some((route) => matchesRoute(pathname, route));
   const isStudentPath = STUDENT_PATHS.some((route) => matchesRoute(pathname, route));
+  const isIndividualPath = INDIVIDUAL_PATHS.some((route) => matchesRoute(pathname, route));
 
   if (isTrainerPath && role !== 'trainer') {
-    return NextResponse.redirect(new URL('/home', request.url));
+    return NextResponse.redirect(new URL(roleHome(role), request.url));
   }
 
   if (isStudentPath && role !== 'student') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL(roleHome(role), request.url));
+  }
+
+  if (isIndividualPath && role !== 'individual') {
+    return NextResponse.redirect(new URL(roleHome(role), request.url));
   }
 
   return NextResponse.next();

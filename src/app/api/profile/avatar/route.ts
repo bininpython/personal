@@ -19,9 +19,9 @@ function json(body: Record<string, unknown>, status = 200, headers?: HeadersInit
   return NextResponse.json(body, { status, headers: { 'Cache-Control': 'no-store', ...headers } });
 }
 
-async function saveAvatar(role: 'trainer' | 'student', actorId: string, avatarUrl: string) {
+async function saveAvatar(role: 'trainer' | 'student' | 'individual', actorId: string, avatarUrl: string) {
   const admin = createAdminClient();
-  const table = role === 'trainer' ? 'trainers' : 'students';
+  const table = role === 'trainer' ? 'trainers' : role === 'student' ? 'students' : 'individual_users';
   const { data: current, error: currentError } = await admin
     .from(table)
     .select('avatar_url')

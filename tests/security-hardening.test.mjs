@@ -63,3 +63,30 @@ test('cabeçalhos impedem framing e sniffing', () => {
   assert.match(config, /X-Content-Type-Options/);
   assert.match(config, /poweredByHeader: false/);
 });
+
+test('conta individual usa tabelas isoladas e não recebe recursos profissionais', () => {
+  const migration = read('supabase/migrations/20260811_individual_training.sql');
+  const proxy = read('src/proxy.ts');
+  const exercises = read('src/app/api/exercises/route.ts');
+  const sessionTypes = read('src/lib/auth/session-types.ts');
+  const studentProfile = read('src/app/api/students/[id]/route.ts');
+  for (const table of ['individual_users', 'individual_workout_plans', 'individual_workout_days', 'individual_workout_exercises']) {
+    assert.match(migration, new RegExp(table));
+  }
+  assert.match(migration, /role in \('trainer', 'student', 'individual'\)/);
+  assert.match(proxy, /INDIVIDUAL_PATHS/);
+  assert.match(exercises, /session\.role !== 'individual'/);
+  assert.match(sessionTypes, /session\.role === 'trainer'/);
+  assert.match(sessionTypes, /session\.role === 'student' && session\.onboarding_complete === true/);
+  assert.match(studentProfile, /session\.role !== 'trainer' && session\.role !== 'student'/);
+});
+
+test('PDF da ficha é privado, identificado e usa a marca G KONG', () => {
+  const route = read('src/app/api/individual/workout-plans/[id]/pdf/route.ts');
+  const generator = read('src/lib/pdf/workout-plan.ts');
+  assert.match(route, /session\.role !== 'individual'/);
+  assert.match(route, /Content-Type': 'application\/pdf'/);
+  assert.match(generator, /gkong-logo\.jpg/);
+  assert.match(generator, /PERFORMANCE SYSTEM/);
+  assert.match(generator, /exercise-thumbnails/);
+});

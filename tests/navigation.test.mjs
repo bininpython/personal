@@ -27,7 +27,9 @@ test('every public authentication page uses the protected return control', () =>
     ['src/app/login/page.tsx', '/'],
     ['src/app/login/trainer/page.tsx', '/login'],
     ['src/app/login/student/page.tsx', '/login'],
+    ['src/app/login/individual/page.tsx', '/login'],
     ['src/app/register/page.tsx', '/login'],
+    ['src/app/register/individual/page.tsx', '/login/individual'],
   ]);
 
   for (const [path, destination] of expected) {
@@ -79,9 +81,17 @@ test('trainer sidebar collapse control stays visible and uses directional arrows
 });
 
 test('workout builder becomes a three-step flow below desktop width', () => {
-  const builder = source('src/app/(trainer)/exercises/page.tsx');
+  const builder = source('src/components/workouts/workout-builder.tsx');
   assert.match(builder, /MOBILE_STEPS/);
   assert.match(builder, /aria-label="Etapas do montador"/);
   assert.match(builder, /dk-step-bar/);
   assert.match(builder, /xl:hidden/);
+});
+
+test('individual navigation exposes only self-service features', () => {
+  const layout = source('src/app/(individual)/layout.tsx');
+  for (const route of ['/my', '/my-exercises', '/my-plans', '/my-profile']) {
+    assert.match(layout, new RegExp(`href: '${route.replace('/', '\\/')}'`));
+  }
+  assert.doesNotMatch(layout, /\/messages|\/assessments|\/students|\/schedule/);
 });

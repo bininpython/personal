@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   let avatarUrl: string | null = null;
   if (requestedId === session.sub) {
-    const table = session.role === 'trainer' ? 'trainers' : 'students';
+    const table = session.role === 'trainer' ? 'trainers' : session.role === 'student' ? 'students' : 'individual_users';
     const { data } = await admin.from(table).select('avatar_url').eq('id', requestedId).maybeSingle();
     avatarUrl = data?.avatar_url || null;
   } else if (session.role === 'trainer') {

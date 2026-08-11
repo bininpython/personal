@@ -35,13 +35,20 @@ export async function DELETE(request: Request) {
       const { error } = await admin.from('trainers').delete().eq('id', session.sub);
       if (error) throw error;
       await admin.from('app_sessions').delete().in('actor_id', actorIds);
-    } else {
+    } else if (session.role === 'student') {
       const { data: student } = await admin.from('students').select('id, avatar_url').eq('id', session.sub).single();
       const avatar = parsePrivateAvatar(student?.avatar_url);
       if (avatar) avatarReferences.push(avatar);
       legacyAuthIds.push(session.sub);
       await admin.from('messages').delete().or(`sender_id.eq.${session.sub},recipient_id.eq.${session.sub}`);
       const { error } = await admin.from('students').delete().eq('id', session.sub);
+      if (error) throw error;
+      await admin.from('app_sessions').delete().eq('actor_id', session.sub);
+    } else {
+      const { data: individual } = await admin.from('individual_users').select('avatar_url').eq('id', session.sub).single();
+      const avatar = parsePrivateAvatar(individual?.avatar_url);
+      if (avatar) avatarReferences.push(avatar);
+      const { error } = await admin.from('individual_users').delete().eq('id', session.sub);
       if (error) throw error;
       await admin.from('app_sessions').delete().eq('actor_id', session.sub);
     }

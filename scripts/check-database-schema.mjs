@@ -26,6 +26,10 @@ if (!url || !key) {
     ['messages', 'id, sender_id, recipient_id, created_at'],
     ['notifications', 'id, user_id, user_type, created_at'],
     ['appointments', 'id, trainer_id, student_id, start_time'],
+    ['individual_users', 'id, name, email_normalized, password_hash, goal, level, terms_accepted_at, deleted_at'],
+    ['individual_workout_plans', 'id, user_id, name, status, start_date, end_date'],
+    ['individual_workout_days', 'id, plan_id, name, day_label, order_index'],
+    ['individual_workout_exercises', 'id, workout_day_id, exercise_key, name, video_url, sets, reps, rest_time'],
   ];
 
   let failed = false;

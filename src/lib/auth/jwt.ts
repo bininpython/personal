@@ -57,7 +57,7 @@ export async function verifyToken(token: string): Promise<TokenPayload | null> {
     if (
       typeof payload.sub !== 'string'
       || typeof payload.sid !== 'string'
-      || (payload.role !== 'trainer' && payload.role !== 'student')
+      || (payload.role !== 'trainer' && payload.role !== 'student' && payload.role !== 'individual')
       || typeof payload.trainer_id !== 'string'
     ) return null;
 

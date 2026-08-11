@@ -20,7 +20,7 @@ export const viewport: Viewport = {
 };
 
 const TITLE = "G KONG — Performance e Gestão de Treinos";
-const DESCRIPTION = "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho. O aluno entra com o nome e um código de seis números — sem e-mail e sem senha.";
+const DESCRIPTION = "Plataforma de treinos para personal trainers, alunos acompanhados e atletas independentes criarem fichas, explorarem exercícios e acompanharem sua rotina.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl(),
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | G KONG",
   },
   description: DESCRIPTION,
-  keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
+  keywords: ["personal trainer", "gestão de treinos", "montar ficha de treino", "exercícios com demonstração", "academia"],
   applicationName: "G KONG",
   alternates: { canonical: "/" },
   // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
@@ -40,10 +40,10 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "G KONG",
     title: "G KONG — Força na gestão. Foco no resultado.",
-    description: "Gestão profissional de alunos, fichas de treino e evolução física com acesso simples por código.",
+    description: "Gestão profissional e treino independente com anatomia, demonstrações e fichas em PDF.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "G KONG — Performance System" }],
   },
-  twitter: { card: "summary_large_image", title: "G KONG — Performance System", description: "Gestão de treinos com acesso simples e evolução visível.", images: ["/opengraph-image"] },
+  twitter: { card: "summary_large_image", title: "G KONG — Performance System", description: "Gestão profissional e fichas independentes com exercícios demonstrados.", images: ["/opengraph-image"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -186,12 +186,9 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             </div>
           )}
           {(!collapsed || mobile) && (
-            <Tooltip>
-              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/40 hover:text-[#c9ff32] transition-colors" />}>
-                <LogOut className="w-4 h-4" />
-              </TooltipTrigger>
-              <TooltipContent>Sair</TooltipContent>
-            </Tooltip>
+            <button type="button" aria-label="Sair da conta" title="Sair" onClick={handleLogout} className="text-white/40 hover:text-[#c9ff32] transition-colors">
+              <LogOut className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>

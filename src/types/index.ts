@@ -4,7 +4,7 @@
 
 // ---- Auth & Users ----
 
-export type UserRole = 'trainer' | 'student';
+export type UserRole = 'trainer' | 'student' | 'individual';
 
 export type TrainerStatus = 'active' | 'inactive' | 'suspended';
 export type StudentStatus = 'active' | 'inactive' | 'blocked' | 'archived';

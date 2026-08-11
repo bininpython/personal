@@ -50,6 +50,41 @@ export const studentLoginSchema = z.object({
 
 export type StudentLoginInput = z.infer<typeof studentLoginSchema>;
 
+// ---- Individual account ----
+
+export const individualRegisterSchema = z.object({
+  full_name: z.string().trim().min(3, 'Informe seu nome completo').max(160),
+  email: z.string().trim().toLowerCase().email('Informe um e-mail válido').max(254),
+  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres').max(72, 'Senha muito longa'),
+  goal: z.string().trim().max(200).optional(),
+  level: z.enum(['beginner', 'intermediate', 'advanced']),
+  terms_accepted: z.boolean().refine((value) => value, 'Aceite os Termos e a Política de Privacidade.'),
+}).strict();
+
+export const individualLoginSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Informe um e-mail válido').max(254),
+  password: z.string().min(8).max(72),
+  remember: z.boolean().optional(),
+}).strict();
+
+export const individualProfileSchema = z.object({
+  full_name: z.string().trim().min(3).max(160),
+  city: z.string().trim().max(100).optional(),
+  birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().or(z.literal('')),
+  gender: z.enum(['male', 'female', 'other']).optional(),
+  height: z.number().positive().max(300).optional(),
+  weight: z.number().positive().max(1000).optional(),
+  goal: z.string().trim().max(200).optional(),
+  level: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  available_days: z.array(z.string().trim().min(2).max(20)).max(7).optional(),
+  restrictions: z.string().trim().max(2000).optional(),
+  biography: z.string().trim().max(1000).optional(),
+}).strict();
+
+export type IndividualRegisterInput = z.infer<typeof individualRegisterSchema>;
+export type IndividualLoginInput = z.infer<typeof individualLoginSchema>;
+export type IndividualProfileInput = z.infer<typeof individualProfileSchema>;
+
 // ---- Student Registration (by trainer) ----
 
 export const studentCreateSchema = z.object({
@@ -199,6 +234,21 @@ export const trainerRecoverySchema = z.object({
   password: z.string().min(6).max(72),
   age: z.number().int().min(18).max(100),
 }).strict();
+
+export const individualWorkoutPlanSchema = z.object({
+  ...workoutPlanBuilderFields,
+}).strict().superRefine((value, context) => {
+  const totalExercises = value.days.reduce((total, day) => total + day.exercises.length, 0);
+  if (totalExercises > 300) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['days'],
+      message: 'Uma ficha pode ter no máximo 300 exercícios.',
+    });
+  }
+});
+
+export type IndividualWorkoutPlanInput = z.infer<typeof individualWorkoutPlanSchema>;
 
 // ---- Physical Assessment ----
 

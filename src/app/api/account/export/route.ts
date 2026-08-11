@@ -91,6 +91,23 @@ export async function GET() {
         assessments, workoutSessions, exerciseSessions, setRecords, appointments,
         messages, notifications, studentAchievements, achievements,
       };
+    } else if (session.role === 'individual') {
+      const profile = await dataOrThrow(admin
+        .from('individual_users')
+        .select('id, name, email, city, birth_date, gender, height, weight, goal, level, available_days, restrictions, biography, status, avatar_url, terms_accepted_at, terms_version, privacy_policy_version, created_at, last_login_at')
+        .eq('id', session.sub)
+        .single());
+      const workoutPlans = await fetchAll<{ id: string }>((from, to) => admin
+        .from('individual_workout_plans').select('*').eq('user_id', session.sub).order('created_at').range(from, to));
+      const planIds = rowIds(workoutPlans);
+      const workoutDays = planIds.length
+        ? await fetchAll<{ id: string }>((from, to) => admin.from('individual_workout_days').select('*').in('plan_id', planIds).order('created_at').range(from, to))
+        : [];
+      const dayIds = rowIds(workoutDays);
+      const workoutExercises = dayIds.length
+        ? await fetchAll<{ id: string }>((from, to) => admin.from('individual_workout_exercises').select('*').in('workout_day_id', dayIds).order('created_at').range(from, to))
+        : [];
+      exportData = { profile, workoutPlans, workoutDays, workoutExercises };
     } else {
       const profile = await dataOrThrow(admin
         .from('students')

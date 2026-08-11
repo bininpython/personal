@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-export function AccountControls({ name, trainer = false }: { name: string; trainer?: boolean }) {
+export function AccountControls({ name, trainer = false, individual = false }: { name: string; trainer?: boolean; individual?: boolean }) {
   const router = useRouter();
   const [showDelete, setShowDelete] = useState(false);
   const [confirmation, setConfirmation] = useState('');
@@ -52,7 +52,7 @@ export function AccountControls({ name, trainer = false }: { name: string; train
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-3">
-        <Button variant="outline" render={<a href="/api/account/export" download />}>
+        <Button nativeButton={false} variant="outline" render={<a href="/api/account/export" download />}>
           <Download className="mr-2 size-4" /> Exportar meus dados
         </Button>
         {trainer && <Button variant="outline" onClick={() => void rotateCodes()} disabled={rotating}>
@@ -70,7 +70,7 @@ export function AccountControls({ name, trainer = false }: { name: string; train
         <Button variant="destructive" onClick={() => setShowDelete(true)}><Trash2 className="mr-2 size-4" /> Excluir minha conta</Button>
       ) : (
         <div className="space-y-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-          <p className="text-sm"><strong>A exclusão é permanente.</strong> Treinos, avaliações e fotos serão removidos. Exporte seus dados primeiro.</p>
+          <p className="text-sm"><strong>A exclusão é permanente.</strong> {individual ? 'Seu perfil, fichas e foto serão removidos.' : 'Treinos, avaliações e fotos serão removidos.'} Exporte seus dados primeiro.</p>
           <p className="text-xs text-muted-foreground">Digite <strong>{name}</strong> para confirmar.</p>
           <Input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder={name} />
           <div className="flex gap-2">

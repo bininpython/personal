@@ -1,4 +1,4 @@
-export type SessionRole = 'trainer' | 'student';
+export type SessionRole = 'trainer' | 'student' | 'individual';
 export const SESSION_COOKIE_NAME = 'fitcontrol_session';
 
 export interface AuthSession {
@@ -12,5 +12,6 @@ export interface AuthSession {
 }
 
 export function canAccessStudentFeatures(session: AuthSession) {
-  return session.role !== 'student' || session.onboarding_complete === true;
+  return session.role === 'trainer'
+    || (session.role === 'student' && session.onboarding_complete === true);
 }

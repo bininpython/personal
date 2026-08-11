@@ -21,6 +21,9 @@ export async function GET(
   const session = await getSession();
 
   if (!session) return json({ error: 'Não autorizado.' }, 401);
+  if (session.role !== 'trainer' && session.role !== 'student') {
+    return json({ error: 'Não autorizado.' }, 403);
+  }
   if (session.role === 'student' && session.sub !== id) {
     return json({ error: 'Não autorizado.' }, 403);
   }

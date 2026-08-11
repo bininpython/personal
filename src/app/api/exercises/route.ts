@@ -16,7 +16,7 @@ function json(body: Record<string, unknown>, status = 200) {
 export async function GET(request: Request) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'trainer') {
+    if (!session || (session.role !== 'trainer' && session.role !== 'individual')) {
       return json({ error: 'Não autorizado.' }, 401);
     }
 

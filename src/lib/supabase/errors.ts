@@ -19,6 +19,8 @@ const COMMERCIAL_SCHEMA_MARKERS = [
   'age',
   'public_code',
   'deleted_at',
+  'individual_users',
+  'individual_workout_plans',
 ];
 
 export const DATABASE_UPDATE_REQUIRED = 'Atualização segura do sistema pendente. Tente novamente em alguns minutos.';

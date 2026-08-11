@@ -7,6 +7,7 @@ const PUBLIC_ROUTES = [
   { path: '/', priority: 1, changeFrequency: 'weekly' as const },
   { path: '/plans', priority: 0.8, changeFrequency: 'monthly' as const },
   { path: '/register', priority: 0.8, changeFrequency: 'monthly' as const },
+  { path: '/register/individual', priority: 0.8, changeFrequency: 'monthly' as const },
   { path: '/login', priority: 0.6, changeFrequency: 'monthly' as const },
   { path: '/help', priority: 0.5, changeFrequency: 'monthly' as const },
   { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },

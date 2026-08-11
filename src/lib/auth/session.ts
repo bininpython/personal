@@ -113,6 +113,24 @@ export async function getSession(): Promise<AuthSession | null> {
       };
     }
 
+    if (payload.role === 'individual') {
+      const { data: individual } = await admin
+        .from('individual_users')
+        .select('id, name, status, avatar_url, deleted_at')
+        .eq('id', payload.sub)
+        .maybeSingle();
+      if (!individual || individual.status !== 'active' || individual.deleted_at) return null;
+
+      return {
+        sub: individual.id,
+        session_id: payload.sid,
+        role: 'individual',
+        name: individual.name,
+        trainer_id: individual.id,
+        avatar_url: displayedAvatar(individual.avatar_url, individual.id),
+      };
+    }
+
     const { data: student } = await admin
       .from('students')
       .select('id, trainer_id, name, status, avatar_url, privacy_consent_at, terms_accepted_at, deleted_at')

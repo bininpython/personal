@@ -18,8 +18,8 @@ const capabilities = [
   {
     number: '01',
     icon: Users,
-    title: 'Alunos sob controle',
-    description: 'Perfis, avaliações, histórico e comunicação reunidos em uma visão limpa e acionável.',
+    title: 'Gestão ou autonomia',
+    description: 'Personal e atleta independente recebem áreas próprias, com apenas as ferramentas adequadas a cada perfil.',
   },
   {
     number: '02',
@@ -36,9 +36,9 @@ const capabilities = [
 ];
 
 const highlights = [
-  'Sem e-mail obrigatório',
-  'Códigos simples de 6 números',
-  'Experiência otimizada para celular',
+  '705 exercícios organizados',
+  'Anatomia e demonstrações',
+  'Fichas profissionais em PDF',
 ];
 
 export default function LandingPage() {
@@ -54,7 +54,7 @@ export default function LandingPage() {
               Já tenho acesso
             </Link>
             <Link
-              href="/register"
+              href="/login"
               className="inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             >
               Começar agora <ArrowUpRight className="size-4" />
@@ -78,7 +78,7 @@ export default function LandingPage() {
               <span className="block">RESULTADO.</span>
             </h1>
             <p className="mt-8 max-w-xl text-base leading-7 text-black/58 sm:text-lg">
-              G KONG transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
+              G KONG transforma o treino em um sistema direto: o personal gerencia seus alunos e quem treina sozinho cria as próprias fichas com autonomia.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -88,10 +88,10 @@ export default function LandingPage() {
                 Acessar plataforma <ArrowRight className="size-4" />
               </Link>
               <Link
-                href="/register"
+                href="/register/individual"
                 className="inline-flex h-14 items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
               >
-                Criar conta de personal
+                Montar meu próprio treino
               </Link>
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3">
@@ -127,7 +127,7 @@ export default function LandingPage() {
                 />
               </div>
               <div className="grid grid-cols-3 gap-2 border-t border-black/10 pt-5 text-center">
-                {[['254+', 'exercícios'], ['100%', 'mobile'], ['24/7', 'acesso']].map(([value, label]) => (
+                {[['705', 'exercícios'], ['490', 'demonstrações'], ['100%', 'mobile']].map(([value, label]) => (
                   <div key={label}>
                     <p className="text-lg font-black">{value}</p>
                     <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-black/38">{label}</p>
@@ -172,13 +172,14 @@ export default function LandingPage() {
             <div>
               <p className="text-xs font-black uppercase tracking-[0.25em] text-black">Acesso G KONG</p>
               <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
-              <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Um fluxo pensado para funcionar na academia, entre uma série e outra — rápido, legível e sem códigos desnecessários.</p>
+              <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Três acessos separados, cada um com segurança e recursos próprios para personal, aluno acompanhado e atleta independente.</p>
             </div>
             <div className="space-y-4">
               {[
                 { icon: ShieldCheck, tag: 'PERSONAL', title: 'Nome + código pessoal', text: 'Cadastre-se uma vez e receba um único código no formato 000-000.' },
                 { icon: KeyRound, tag: 'ALUNO', title: 'Nome + código do aluno', text: 'O personal cria o código no perfil do aluno e envia. Só isso.' },
-                { icon: Zap, tag: 'RECUPERAÇÃO', title: 'Nome + senha + idade', text: 'Valide seus dados e gere um novo código sem e-mail ou etapas confusas.' },
+                { icon: Sparkles, tag: 'INDEPENDENTE', title: 'E-mail + senha próprios', text: 'Crie suas fichas, gerencie o perfil e baixe o treino em PDF sem depender de um personal.' },
+                { icon: Zap, tag: 'RECUPERAÇÃO', title: 'Acesso protegido', text: 'Sessões revogáveis e bloqueio automático contra tentativas repetidas.' },
               ].map((step, index) => (
                 <div key={step.tag} className="grid gap-5 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:grid-cols-[56px_1fr_auto] sm:items-center">
                   <span className="flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><step.icon className="size-5" /></span>
@@ -199,10 +200,10 @@ export default function LandingPage() {
             <div className="absolute -right-20 -top-40 size-96 rounded-full border-[55px] border-black/[0.055]" />
             <div className="relative z-10 max-w-3xl">
               <p className="text-xs font-black uppercase tracking-[0.24em]">Sua próxima evolução começa aqui</p>
-              <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.06em] sm:text-6xl">GESTÃO FORTE. ALUNOS MAIS PERTO.</h2>
+              <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.06em] sm:text-6xl">GESTÃO FORTE. TREINO COM AUTONOMIA.</h2>
             </div>
-            <Link href="/register" className="relative z-10 inline-flex h-14 shrink-0 items-center gap-3 rounded-full bg-black px-7 text-sm font-bold text-white transition-transform hover:-translate-y-1">
-              Criar minha conta <ArrowUpRight className="size-4" />
+            <Link href="/login" className="relative z-10 inline-flex h-14 shrink-0 items-center gap-3 rounded-full bg-black px-7 text-sm font-bold text-white transition-transform hover:-translate-y-1">
+              Escolher meu acesso <ArrowUpRight className="size-4" />
             </Link>
           </div>
         </section>

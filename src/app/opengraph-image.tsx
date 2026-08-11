@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { APP_NAME } from '@/constants';
 
-export const alt = `${APP_NAME} — força na gestão, foco no resultado`;
+export const alt = `${APP_NAME} — gestão profissional e treino com autonomia`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -22,8 +22,8 @@ export default function OpenGraphImage() {
           <span style={{ marginTop: 12, fontSize: 91, lineHeight: 0.86, letterSpacing: '-0.065em', fontWeight: 900, color: '#668f00' }}>FOCO NO RESULTADO.</span>
         </div>
         <div style={{ display: 'flex', gap: 14 }}>
-          <span style={{ borderRadius: 999, background: '#090a08', color: 'white', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Acesso por código</span>
-          <span style={{ borderRadius: 999, background: '#c9ff32', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Treinos e evolução</span>
+          <span style={{ borderRadius: 999, background: '#090a08', color: 'white', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Personal + aluno</span>
+          <span style={{ borderRadius: 999, background: '#c9ff32', padding: '12px 20px', fontSize: 17, fontWeight: 700 }}>Treino independente</span>
         </div>
       </div>
     </div>,
