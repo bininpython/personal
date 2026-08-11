@@ -1,3 +1,9 @@
+import {
+  calendarDaysBetweenInSaoPaulo,
+  getTrailingSaoPauloDayRange,
+  getTrailingSaoPauloWeekRange,
+} from '../time/sao-paulo.ts';
+
 export interface PerformanceStudent {
   id: string;
   name: string;
@@ -50,18 +56,6 @@ export interface StudentPerformance {
   recommendation: string;
 }
 
-function startOfDay(date: Date) {
-  const value = new Date(date);
-  value.setHours(0, 0, 0, 0);
-  return value;
-}
-
-function daysBefore(reference: Date, amount: number) {
-  const value = startOfDay(reference);
-  value.setDate(value.getDate() - amount);
-  return value;
-}
-
 function completedDate(session: PerformanceSession) {
   return new Date(session.completed_at || session.started_at);
 }
@@ -90,19 +84,31 @@ export function calculateStudentPerformance(args: {
   now?: Date;
 }): StudentPerformance {
   const now = args.now ?? new Date();
-  const sevenDayWindowStart = daysBefore(now, 6);
-  const previousSevenDayWindowStart = daysBefore(now, 13);
-  const thirtyDayWindowStart = daysBefore(now, 29);
+  const currentWeek = getTrailingSaoPauloWeekRange(now);
+  const previousWeek = getTrailingSaoPauloWeekRange(now, 1);
+  const thirtyDays = getTrailingSaoPauloDayRange(now, 30);
+  const sevenDayWindowStart = new Date(currentWeek.startIso);
+  const sevenDayWindowEnd = new Date(currentWeek.nextStartIso);
+  const previousSevenDayWindowStart = new Date(previousWeek.startIso);
+  const previousSevenDayWindowEnd = new Date(previousWeek.nextStartIso);
+  const thirtyDayWindowStart = new Date(thirtyDays.startIso);
+  const thirtyDayWindowEnd = new Date(thirtyDays.nextStartIso);
   const completed = args.sessions
     .filter((item) => item.status === 'completed')
     .sort((left, right) => completedDate(left).getTime() - completedDate(right).getTime());
 
-  const workouts7d = completed.filter((item) => completedDate(item) >= sevenDayWindowStart).length;
+  const workouts7d = completed.filter((item) => {
+    const date = completedDate(item);
+    return date >= sevenDayWindowStart && date < sevenDayWindowEnd;
+  }).length;
   const workoutsPrevious7d = completed.filter((item) => {
     const date = completedDate(item);
-    return date >= previousSevenDayWindowStart && date < sevenDayWindowStart;
+    return date >= previousSevenDayWindowStart && date < previousSevenDayWindowEnd;
   }).length;
-  const workouts30d = completed.filter((item) => completedDate(item) >= thirtyDayWindowStart).length;
+  const workouts30d = completed.filter((item) => {
+    const date = completedDate(item);
+    return date >= thirtyDayWindowStart && date < thirtyDayWindowEnd;
+  }).length;
   const plannedFrequency = Math.max(1, args.plan?.days_per_week || 3);
   const completionAverage = completed.length > 0
     ? Math.round(completed.reduce((sum, item) => sum + (numeric(item.completion_percentage) ?? 0), 0) / completed.length)
@@ -111,7 +117,7 @@ export function calculateStudentPerformance(args: {
   const latestSession = completed.at(-1) ?? null;
   const lastWorkoutAt = latestSession?.completed_at || latestSession?.started_at || null;
   const daysSinceLastWorkout = lastWorkoutAt
-    ? Math.max(0, Math.floor((startOfDay(now).getTime() - startOfDay(new Date(lastWorkoutAt)).getTime()) / 86_400_000))
+    ? Math.max(0, calendarDaysBetweenInSaoPaulo(now, new Date(lastWorkoutAt)))
     : null;
 
   const adherence = Math.min(100, Math.round((workouts7d / plannedFrequency) * 100));
@@ -165,12 +171,12 @@ export function calculateStudentPerformance(args: {
 
 export function buildWeeklyWorkoutSeries(sessions: PerformanceSession[], now = new Date()) {
   return Array.from({ length: 8 }, (_, offset) => {
-    const end = daysBefore(now, offset * 7);
-    end.setHours(23, 59, 59, 999);
-    const start = daysBefore(end, 6);
+    const range = getTrailingSaoPauloWeekRange(now, offset);
+    const start = new Date(range.startIso);
+    const end = new Date(range.nextStartIso);
     const workouts = sessions.filter((item) => {
       const date = completedDate(item);
-      return item.status === 'completed' && date >= start && date <= end;
+      return item.status === 'completed' && date >= start && date < end;
     }).length;
     return {
       label: offset === 0 ? 'Atual' : `-${offset} sem`,

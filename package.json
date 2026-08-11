@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "node --experimental-strip-types --test --test-isolation=none tests/*.test.mjs",
     "test:auth": "node --test --test-isolation=none tests/auth-credentials.test.mjs",
     "test:catalog": "node --experimental-strip-types --test --test-isolation=none tests/exercise-catalog.test.mjs",
     "test:analytics": "node --experimental-strip-types --test --test-isolation=none tests/performance-analytics.test.mjs",
@@ -17,6 +18,8 @@
     "test:navigation": "node --test --test-isolation=none tests/navigation.test.mjs",
     "test:routes": "node --test --test-isolation=none tests/routes.test.mjs",
     "test:security": "node --test --test-isolation=none tests/security-hardening.test.mjs",
+    "check:database": "node scripts/check-database-schema.mjs",
+    "check:release": "node scripts/check-release-env.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },

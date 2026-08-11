@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { dateKeyInSaoPaulo } from '@/lib/time/sao-paulo';
 import {
   physicalAssessmentSchema,
   type PhysicalAssessmentFormInput,
@@ -34,7 +35,7 @@ export default function NewAssessmentPage() {
   } = useForm<PhysicalAssessmentFormInput, unknown, PhysicalAssessmentInput>({
     resolver: zodResolver(physicalAssessmentSchema),
     defaultValues: {
-      assessment_date: new Date().toISOString().split('T')[0],
+      assessment_date: dateKeyInSaoPaulo(),
     },
   });
 

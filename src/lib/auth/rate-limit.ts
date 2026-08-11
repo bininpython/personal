@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { createHash } from 'node:crypto';
+import { getRateLimitSecret } from '@/lib/auth/secrets';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 interface RateLimitResult {
@@ -16,13 +17,8 @@ function requestIp(request: Request) {
 }
 
 export function rateLimitKey(request: Request, scope: string, identifier = '') {
-  const pepper = process.env.RATE_LIMIT_SECRET
-    || process.env.SESSION_SECRET
-    || process.env.SUPABASE_SECRET_KEY
-    || process.env.SUPABASE_SERVICE_ROLE_KEY
-    || 'development-only-rate-limit-pepper';
   return createHash('sha256')
-    .update(`${pepper}|${scope}|${requestIp(request)}|${identifier}`)
+    .update(`${getRateLimitSecret()}|${scope}|${requestIp(request)}|${identifier}`)
     .digest('hex');
 }
 

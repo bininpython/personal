@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/use-auth';
+import { hourInSaoPaulo } from '@/lib/time/sao-paulo';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
@@ -39,7 +40,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [greeting] = useState(() => {
-    const hour = new Date().getHours();
+    const hour = hourInSaoPaulo();
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   });
   const [stats, setStats] = useState({

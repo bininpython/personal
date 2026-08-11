@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { workoutPlanCreateSchema } from '@/lib/validators';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
@@ -62,6 +63,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
 
     const admin = createAdminClient();
 

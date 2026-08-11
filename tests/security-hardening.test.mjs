@@ -31,9 +31,22 @@ test('migração inclui sessões revogáveis, bloqueio, consentimento e idempot�
 
 test('credenciais não têm fallback secreto fixo', () => {
   const jwt = read('src/lib/auth/jwt.ts');
-  assert.doesNotMatch(jwt, /dev-secret|change-in-production|fallback/i);
-  assert.match(jwt, /SESSION_SECRET/);
+  const secrets = read('src/lib/auth/secrets.ts');
+  assert.doesNotMatch(jwt, /dev-secret|change-in-production|SUPABASE_SECRET_KEY/i);
+  assert.match(jwt, /getSessionSecret/);
+  assert.match(secrets, /NODE_ENV === 'production'/);
+  assert.match(secrets, /configurationError\('SESSION_SECRET'\)/);
+  assert.match(secrets, /configurationError\('RATE_LIMIT_SECRET'\)/);
   assert.match(jwt, /algorithms: \['HS256'\]/);
+});
+
+test('exportação inclui toda a cadeia de dados e pagina resultados', () => {
+  const route = read('src/app/api/account/export/route.ts');
+  for (const required of [
+    'workoutDays', 'workoutExercises', 'exercises', 'exerciseSessions', 'setRecords',
+    'messages', 'notifications', 'studentAchievements', 'achievements', 'PAGE_SIZE', '.range(from, to)',
+  ]) assert.match(route, new RegExp(required.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.doesNotMatch(route, /access_code_hash|recovery_password_hash/);
 });
 
 test('falha de migração recebe resposta operacional sem expor detalhes internos', () => {

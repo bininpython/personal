@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
+import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 const sendMessageSchema = z.object({
@@ -45,6 +46,7 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
 
     const admin = createAdminClient();
     const actorId = session.role === 'trainer' ? session.trainer_id : session.sub;
@@ -117,6 +119,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
     const parsed = sendMessageSchema.safeParse(await request.json());
     if (!parsed.success) return json({ error: parsed.error.issues[0]?.message || 'Mensagem inválida.' }, 400);
 
@@ -171,6 +174,7 @@ export async function PATCH(request: Request) {
   try {
     const session = await getSession();
     if (!session) return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
     const parsed = readMessagesSchema.safeParse(await request.json());
     if (!parsed.success) return json({ error: 'Conversa inválida.' }, 400);
 

@@ -1,21 +1,11 @@
-export const WORKOUT_WEEK_TIME_ZONE = 'America/Sao_Paulo';
+import {
+  APP_TIME_ZONE,
+  addDateKeyDays,
+  dateKeyInSaoPaulo,
+  startOfSaoPauloDate,
+} from '../time/sao-paulo.ts';
 
-function dateKeyInSaoPaulo(date: Date) {
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: WORKOUT_WEEK_TIME_ZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  return `${values.year}-${values.month}-${values.day}`;
-}
-
-function addDateDays(dateKey: string, amount: number) {
-  const date = new Date(`${dateKey}T12:00:00Z`);
-  date.setUTCDate(date.getUTCDate() + amount);
-  return date.toISOString().slice(0, 10);
-}
+export const WORKOUT_WEEK_TIME_ZONE = APP_TIME_ZONE;
 
 export interface WorkoutWeekRange {
   startDate: string;
@@ -35,26 +25,26 @@ export function getWorkoutWeekRange(now = new Date()): WorkoutWeekRange {
   const today = dateKeyInSaoPaulo(now);
   const dayOfWeek = new Date(`${today}T12:00:00Z`).getUTCDay();
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  const startDate = addDateDays(today, -daysSinceMonday);
-  const nextStartDate = addDateDays(startDate, 7);
-  const endDate = addDateDays(nextStartDate, -1);
+  const startDate = addDateKeyDays(today, -daysSinceMonday);
+  const nextStartDate = addDateKeyDays(startDate, 7);
+  const endDate = addDateKeyDays(nextStartDate, -1);
 
   return {
     startDate,
     endDate,
     nextStartDate,
-    startIso: new Date(`${startDate}T00:00:00-03:00`).toISOString(),
-    nextStartIso: new Date(`${nextStartDate}T00:00:00-03:00`).toISOString(),
+    startIso: startOfSaoPauloDate(startDate).toISOString(),
+    nextStartIso: startOfSaoPauloDate(nextStartDate).toISOString(),
   };
 }
 
 export function getWorkoutDayRange(now = new Date()): WorkoutDayRange {
   const date = dateKeyInSaoPaulo(now);
-  const nextDate = addDateDays(date, 1);
+  const nextDate = addDateKeyDays(date, 1);
   return {
     date,
-    startIso: new Date(`${date}T00:00:00-03:00`).toISOString(),
-    nextStartIso: new Date(`${nextDate}T00:00:00-03:00`).toISOString(),
+    startIso: startOfSaoPauloDate(date).toISOString(),
+    nextStartIso: startOfSaoPauloDate(nextDate).toISOString(),
   };
 }
 

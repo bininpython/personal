@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
+import { APP_TIME_ZONE, hourInSaoPaulo } from '@/lib/time/sao-paulo';
 
 interface HomePlan {
   id: string;
@@ -44,7 +45,7 @@ export default function StudentHomePage() {
   const { user } = useAuth();
   const router = useRouter();
   const [greeting] = useState(() => {
-    const hour = new Date().getHours();
+    const hour = hourInSaoPaulo();
     return hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
   });
   const [plan, setPlan] = useState<HomePlan | null>(null);
@@ -186,7 +187,7 @@ export default function StudentHomePage() {
       {appointments.length > 0 && (
         <Card>
           <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Agenda</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><CalendarDays className="size-5" /> Próximos compromissos</CardTitle></CardHeader>
-          <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-2xl border p-4"><p className="font-bold">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</p></div>)}</CardContent>
+          <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-2xl border p-4"><p className="font-bold">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: APP_TIME_ZONE })}</p></div>)}</CardContent>
         </Card>
       )}
       </div>

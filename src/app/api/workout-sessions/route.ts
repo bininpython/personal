@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { completeWorkoutSchema } from '@/lib/validators';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
@@ -8,6 +9,7 @@ import {
   getWorkoutWeekRange,
   weeklyWorkoutAllowance,
 } from '@/lib/workouts/week-cycle';
+import { getTrailingSaoPauloWeekRange } from '@/lib/time/sao-paulo';
 
 type Related<T> = T | T[] | null;
 
@@ -40,6 +42,7 @@ export async function GET() {
   try {
     const session = await getSession();
     if (!session || session.role !== 'student') return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
 
     const admin = createAdminClient();
     const [{ data: sessions, error: sessionError }, { data: assessments, error: assessmentError }] = await Promise.all([
@@ -78,17 +81,13 @@ export async function GET() {
       };
     });
 
-    const now = new Date();
     const frequency = Array.from({ length: 4 }).map((_, index) => {
-      const end = new Date(now);
-      end.setHours(23, 59, 59, 999);
-      end.setDate(end.getDate() - index * 7);
-      const start = new Date(end);
-      start.setHours(0, 0, 0, 0);
-      start.setDate(start.getDate() - 6);
+      const range = getTrailingSaoPauloWeekRange(new Date(), index);
+      const start = new Date(range.startIso);
+      const end = new Date(range.nextStartIso);
       const count = history.filter((workout) => {
         const date = new Date(workout.date);
-        return workout.status === 'completed' && date >= start && date <= end;
+        return workout.status === 'completed' && date >= start && date < end;
       }).length;
       return { label: index === 0 ? 'Atual' : `-${index} sem`, workouts: count, order: 3 - index };
     }).sort((a, b) => a.order - b.order).map(({ label, workouts }) => ({ label, workouts }));
@@ -121,6 +120,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     if (!session || session.role !== 'student') return json({ error: 'Não autorizado.' }, 401);
+    if (!canAccessStudentFeatures(session)) return json({ error: 'Conclua o primeiro acesso para continuar.' }, 403);
 
     const parsed = completeWorkoutSchema.safeParse(await request.json());
     if (!parsed.success) return json({ error: 'Treino inválido.' }, 400);

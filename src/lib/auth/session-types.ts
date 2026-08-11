@@ -8,4 +8,9 @@ export interface AuthSession {
   name: string;
   trainer_id: string;
   avatar_url?: string;
+  onboarding_complete?: boolean;
+}
+
+export function canAccessStudentFeatures(session: AuthSession) {
+  return session.role !== 'student' || session.onboarding_complete === true;
 }

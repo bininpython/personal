@@ -200,7 +200,7 @@ export default function NewStudentPage() {
 
           <label className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4 text-sm">
             <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" {...register('privacy_consent')} />
-            <span>Confirmo que expliquei a finalidade do tratamento e que o aluno autorizou o cadastro destes dados, inclusive dados de saúde eventualmente informados. <a href="/privacy" target="_blank" className="text-primary underline">Ler a Política de Privacidade</a>.</span>
+            <span>Confirmo que expliquei a finalidade do cadastro e que tenho autorização para inserir estes dados. No primeiro acesso, o próprio aluno deverá aceitar os Termos e a Política de Privacidade para continuar. <a href="/privacy" target="_blank" className="text-primary underline">Ler a Política de Privacidade</a>.</span>
           </label>
           {errors.privacy_consent && <p className="text-sm text-destructive">{errors.privacy_consent.message}</p>}
 

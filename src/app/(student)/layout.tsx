@@ -12,6 +12,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { studentNeedsOnboarding } from '@/lib/profile/onboarding';
 import { useEffect, useState } from 'react';
 
 const BOTTOM_NAV = [
@@ -36,19 +37,26 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     let active = true;
 
     const checkProfile = async () => {
+      let redirecting = false;
       try {
         const res = await fetch(`/api/students/${user.id}`);
-        if (res.ok) {
-          const { student } = await res.json();
-          if (!student.privacy_consent_at) {
-            router.push('/onboarding');
-            return;
-          }
+        if (!res.ok) {
+          redirecting = true;
+          router.replace('/onboarding');
+          return;
+        }
+        const { student } = await res.json();
+        if (studentNeedsOnboarding(student)) {
+          redirecting = true;
+          router.replace('/onboarding');
+          return;
         }
       } catch (err) {
         console.error('Error checking profile', err);
+        redirecting = true;
+        router.replace('/onboarding');
       } finally {
-        if (active) setChecking(false);
+        if (active && !redirecting) setChecking(false);
       }
     };
 

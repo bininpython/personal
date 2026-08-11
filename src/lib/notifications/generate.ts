@@ -2,20 +2,20 @@ import 'server-only';
 import { getTrainerAnalytics } from '@/lib/analytics/trainer-analytics';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { brazilToday, formatPlanDate } from '@/lib/workouts/plan-validity';
+import { getTrailingSaoPauloDayRange } from '@/lib/time/sao-paulo';
 
 export async function generateTrainerNotifications(trainerId: string) {
   const admin = createAdminClient();
   const analytics = await getTrainerAnalytics(trainerId);
   const today = brazilToday();
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const thirtyDaysAgo = getTrailingSaoPauloDayRange(new Date(), 30).startIso;
 
   const { data: existing, error: existingError } = await admin
     .from('notifications')
     .select('metadata')
     .eq('user_id', trainerId)
     .eq('user_type', 'trainer')
-    .gte('created_at', thirtyDaysAgo.toISOString());
+    .gte('created_at', thirtyDaysAgo);
   if (existingError) throw existingError;
 
   const existingKeys = new Set((existing ?? []).map((item) => {
@@ -58,7 +58,7 @@ export async function generateTrainerNotifications(trainerId: string) {
       .select('id, student_id, rating, feedback, completed_at')
       .in('student_id', studentIds)
       .eq('status', 'completed')
-      .gte('completed_at', thirtyDaysAgo.toISOString())
+      .gte('completed_at', thirtyDaysAgo)
     : { data: [], error: null };
   if (recentSessionError) throw recentSessionError;
 
