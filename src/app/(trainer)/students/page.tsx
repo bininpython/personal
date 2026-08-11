@@ -16,11 +16,14 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/app/page-header';
+import { ContentSkeleton } from '@/components/app/content-skeleton';
 
 interface StudentSummary {
   id: string;
@@ -43,6 +46,8 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [studentLimit, setStudentLimit] = useState(MAX_STUDENTS_PER_TRAINER);
   const [loading, setLoading] = useState(true);
+  const [statusTarget, setStatusTarget] = useState<StudentSummary | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -64,7 +69,7 @@ export default function StudentsPage() {
   const updateStudentStatus = async (student: StudentSummary) => {
     const nextStatus = student.status === 'active' ? 'inactive' : 'active';
     const action = nextStatus === 'inactive' ? 'arquivar' : 'reativar';
-    if (!window.confirm(`Deseja ${action} ${student.name}?`)) return;
+    setUpdatingStatus(true);
     try {
       const response = await fetch(`/api/students/${student.id}`, {
         method: 'PATCH',
@@ -74,9 +79,12 @@ export default function StudentsPage() {
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error || `Não foi possível ${action} o aluno.`);
       setStudents((current) => current.map((item) => item.id === student.id ? { ...item, status: nextStatus } : item));
+      setStatusTarget(null);
       toast.success(nextStatus === 'inactive' ? 'Aluno arquivado.' : 'Aluno reativado.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `Não foi possível ${action} o aluno.`);
+    } finally {
+      setUpdatingStatus(false);
     }
   };
 
@@ -106,27 +114,21 @@ export default function StudentsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-            <Users className="w-6 h-6 text-primary" />
-            Alunos
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {activeStudentCount} de {studentLimit} alunos ativos · {students.length} no total
-          </p>
-        </div>
-        <Button
+      <PageHeader
+        eyebrow="Operação diária"
+        title="ALUNOS"
+        description={`${activeStudentCount} de ${studentLimit} alunos ativos · ${students.length} no total. Acompanhe acesso, frequência e evolução em um só lugar.`}
+        icon={Users}
+        actions={<Button
           onClick={() => router.push('/students/new')}
-          className="bg-primary hover:bg-primary/90 shrink-0"
+          className="shrink-0 bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black"
           disabled={limitReached}
           title={limitReached ? `Limite de ${studentLimit} alunos atingido` : undefined}
         >
           <Plus className="w-4 h-4 mr-2" />
-          Cadastrar Aluno
-        </Button>
-      </div>
+          Novo aluno
+        </Button>}
+      />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -156,16 +158,18 @@ export default function StudentsPage() {
           <Button
             variant={view === 'grid' ? 'secondary' : 'ghost'}
             size="icon"
-            className="h-8 w-8"
+            className="size-11"
             onClick={() => setView('grid')}
+            aria-label="Visualização em cartões"
           >
             <Grid3X3 className="w-4 h-4" />
           </Button>
           <Button
             variant={view === 'list' ? 'secondary' : 'ghost'}
             size="icon"
-            className="h-8 w-8"
+            className="size-11"
             onClick={() => setView('list')}
+            aria-label="Visualização em lista"
           >
             <List className="w-4 h-4" />
           </Button>
@@ -176,9 +180,7 @@ export default function StudentsPage() {
       {view === 'grid' && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {loading ? (
-            <div className="col-span-full py-12 text-center text-muted-foreground">
-              Carregando alunos...
-            </div>
+            <ContentSkeleton className="col-span-full" />
           ) : filteredStudents.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted-foreground">
               Nenhum aluno encontrado.
@@ -212,14 +214,14 @@ export default function StudentsPage() {
                         <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}`)}><Eye className="w-4 h-4 mr-2" /> Ver Perfil</DropdownMenuItem>
                         <DropdownMenuItem onSelect={() => router.push(`/students/${student.id}#edit`)}><Edit className="w-4 h-4 mr-2" /> Editar</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onSelect={() => void updateStudentStatus(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => setStatusTarget(student)}><Archive className="w-4 h-4 mr-2" /> {student.status === 'active' ? 'Arquivar' : 'Reativar'}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
 
                   <div className="space-y-3">
                     <div className="flex w-full items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-xs">
-                      <span className="text-muted-foreground">Final do código</span>
+                      <span className="text-muted-foreground">Código protegido</span>
                       <span className="font-mono text-sm font-bold tracking-widest">{student.access_code}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -328,6 +330,29 @@ export default function StudentsPage() {
           </div>
         </Card>
       )}
+
+      <Dialog open={Boolean(statusTarget)} onOpenChange={(open) => { if (!open && !updatingStatus) setStatusTarget(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{statusTarget?.status === 'active' ? 'Arquivar aluno?' : 'Reativar aluno?'}</DialogTitle>
+            <DialogDescription>
+              {statusTarget?.status === 'active'
+                ? `${statusTarget?.name} deixará de aparecer entre os alunos ativos, mas todo o histórico será preservado.`
+                : `${statusTarget?.name} voltará para sua operação e poderá usar o acesso normalmente.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setStatusTarget(null)} disabled={updatingStatus}>Cancelar</Button>
+            <Button
+              variant={statusTarget?.status === 'active' ? 'destructive' : 'default'}
+              onClick={() => statusTarget && void updateStudentStatus(statusTarget)}
+              disabled={updatingStatus}
+            >
+              {updatingStatus ? 'Atualizando...' : statusTarget?.status === 'active' ? 'Arquivar aluno' : 'Reativar aluno'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

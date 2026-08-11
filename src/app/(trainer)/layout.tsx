@@ -18,22 +18,37 @@ import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { BrandMark } from '@/components/brand/brand-mark';
 
-const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/students', label: 'Alunos', icon: Users },
-  { href: '/workouts', label: 'Fichas de Treino', icon: Dumbbell },
-  { href: '/exercises', label: 'Exercícios', icon: BookOpen },
-  { href: '/assessments', label: 'Avaliações', icon: ClipboardList },
-  { href: '/schedule', label: 'Agenda', icon: Calendar },
-  { href: '/messages', label: 'Mensagens', icon: MessageSquare },
-  { href: '/reports', label: 'Relatórios', icon: BarChart3 },
-  { href: '/alerts', label: 'Alertas', icon: Bell },
+const NAV_GROUPS = [
+  {
+    label: 'Operação',
+    items: [
+      { href: '/dashboard', label: 'Visão geral', icon: LayoutDashboard },
+      { href: '/students', label: 'Alunos', icon: Users },
+      { href: '/messages', label: 'Mensagens', icon: MessageSquare },
+    ],
+  },
+  {
+    label: 'Treinos',
+    items: [
+      { href: '/workouts', label: 'Fichas publicadas', icon: Dumbbell },
+      { href: '/exercises', label: 'Montar ficha', icon: BookOpen },
+    ],
+  },
+  {
+    label: 'Gestão',
+    items: [
+      { href: '/assessments', label: 'Avaliações', icon: ClipboardList },
+      { href: '/schedule', label: 'Agenda', icon: Calendar },
+      { href: '/alerts', label: 'Alertas', icon: Bell },
+      { href: '/reports', label: 'Relatórios', icon: BarChart3 },
+    ],
+  },
 ];
 
 const BOTTOM_NAV = [
   { href: '/dashboard', label: 'Início', icon: LayoutDashboard },
   { href: '/students', label: 'Alunos', icon: Users },
-  { href: '/workouts', label: 'Fichas', icon: Dumbbell },
+  { href: '/exercises', label: 'Montar', icon: Dumbbell },
   { href: '/messages', label: 'Chat', icon: MessageSquare },
   { href: '/alerts', label: 'Alertas', icon: Bell },
 ];
@@ -82,20 +97,22 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
       <Separator className="bg-white/10" />
 
-      {/* Nav Items */}
+      {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-3">
-        <nav className="space-y-1">
-          {NAV_ITEMS.map((item) => {
+        <nav className="space-y-5" aria-label="Navegação principal do personal">
+          {NAV_GROUPS.map((group) => <div key={group.label} className="space-y-1">
+            {(!collapsed || mobile) && <p className="px-3 pb-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/50">{group.label}</p>}
+            {group.items.map((item) => {
             const active = isActive(item.href);
             const link = (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => mobile && setMobileOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-200
                   ${active
                     ? 'bg-[#c9ff32] text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
-                    : 'text-white/55 hover:bg-white/8 hover:text-white'
+                    : 'text-white/65 hover:bg-white/8 hover:text-white'
                   }
                   ${collapsed && !mobile ? 'justify-center' : ''}
                 `}
@@ -119,7 +136,8 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               );
             }
             return link;
-          })}
+            })}
+          </div>)}
         </nav>
       </ScrollArea>
 
@@ -129,14 +147,14 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       <div className="px-3 py-3 space-y-1">
         <Link
           href="/help"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors ${collapsed && !mobile ? 'justify-center' : ''}`}
+          className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/65 transition-colors hover:bg-white/8 hover:text-white ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <CircleHelp className="w-4.5 h-4.5 flex-shrink-0" />
           {(!collapsed || mobile) && <span>Ajuda e tutoriais</span>}
         </Link>
         <Link
           href="/settings"
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors
+          className={`flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/65 transition-colors hover:bg-white/8 hover:text-white
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           <Settings className="w-4.5 h-4.5 flex-shrink-0" />
@@ -145,7 +163,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
         <button
           onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/50 hover:bg-white/8 hover:text-white transition-colors w-full
+          className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/65 transition-colors hover:bg-white/8 hover:text-white
             ${collapsed && !mobile ? 'justify-center' : ''}`}
         >
           {resolvedTheme === 'dark' ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -164,7 +182,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           {(!collapsed || mobile) && (
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-white truncate">{user?.name || 'Personal'}</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/35">Personal</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">Personal</p>
             </div>
           )}
           {(!collapsed || mobile) && (
@@ -189,8 +207,9 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         {renderNavContent()}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute top-20 -right-3 w-6 h-6 rounded-full border border-black bg-[#c9ff32] shadow-sm flex items-center justify-center text-black hover:scale-105 z-50 hidden lg:flex transition-transform"
+          className="absolute top-20 hidden size-10 items-center justify-center rounded-full border border-black bg-[#c9ff32] text-black shadow-sm transition-transform hover:scale-105 lg:flex"
           style={{ left: collapsed ? '60px' : '248px' }}
+          aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
         >
           <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
         </button>
@@ -239,8 +258,8 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors relative
-                  ${active ? 'text-[#c9ff32]' : 'text-white/40'}`}
+                className={`relative flex min-h-12 min-w-14 flex-col items-center gap-1 rounded-lg px-3 py-1.5 transition-colors
+                  ${active ? 'text-[#c9ff32]' : 'text-white/60'}`}
               >
                 <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>

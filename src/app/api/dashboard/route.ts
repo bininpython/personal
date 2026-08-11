@@ -18,7 +18,7 @@ export async function GET() {
     end.setDate(end.getDate() + 1);
     const studentIds = analytics.students.map((student) => student.id);
 
-    const [todaySessions, todayAppointments] = await Promise.all([
+    const [todaySessions, todayAppointments, publishedPlans] = await Promise.all([
       studentIds.length > 0
         ? admin
           .from('workout_sessions')
@@ -35,16 +35,22 @@ export async function GET() {
         .eq('status', 'scheduled')
         .gte('start_time', start.toISOString())
         .lt('start_time', end.toISOString()),
+      admin
+        .from('workout_plans')
+        .select('id', { count: 'exact', head: true })
+        .eq('trainer_id', session.trainer_id)
+        .eq('status', 'active'),
     ]);
     if (todaySessions.error) throw todaySessions.error;
     if (todayAppointments.error) throw todayAppointments.error;
+    if (publishedPlans.error) throw publishedPlans.error;
 
     const trainedToday = new Set((todaySessions.data ?? []).map((item) => item.student_id)).size;
     const activePerformance = analytics.students.filter((student) => student.status === 'active');
     const completionRate = activePerformance.length > 0
       ? Math.round(activePerformance.reduce((sum, student) => sum + student.completionAverage, 0) / activePerformance.length)
       : 0;
-    const chartColors = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'];
+    const chartColors = ['#c9ff32', '#090a08', '#7cae00', '#d68b00', '#b42318', '#557187'];
 
     return NextResponse.json({
       stats: {
@@ -55,6 +61,10 @@ export async function GET() {
         atRisk: analytics.summary.atRisk,
         alerts: analytics.summary.atRisk + analytics.summary.attention,
         appointmentsToday: (todayAppointments.data ?? []).length,
+      },
+      activation: {
+        hasStudent: analytics.summary.activeStudents > 0,
+        hasWorkoutPlan: (publishedPlans.count ?? 0) > 0,
       },
       goalDistribution: analytics.goalDistribution.map((goal, index) => ({ ...goal, color: chartColors[index % chartColors.length] })),
       studentRanking: analytics.students.slice().sort((left, right) => right.consistencyScore - left.consistencyScore).slice(0, 5).map((student) => ({

@@ -6,6 +6,8 @@ import { ClipboardList, Plus, Search, Calendar, TrendingUp, TrendingDown, Minus 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PageHeader } from '@/components/app/page-header';
+import { ContentSkeleton } from '@/components/app/content-skeleton';
 
 import { useEffect } from 'react';
 
@@ -60,16 +62,16 @@ export default function AssessmentsPage() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Avaliações Físicas</h1>
-          <p className="text-muted-foreground mt-1">Acompanhe a evolução corporal dos seus alunos</p>
-        </div>
-        <Button onClick={() => router.push('/assessments/new')} className="h-10">
+      <PageHeader
+        eyebrow="Gestão · evolução corporal"
+        title="AVALIAÇÕES"
+        description="Registre mudanças físicas e transforme medidas em uma linha do tempo clara para cada aluno."
+        icon={ClipboardList}
+        actions={<Button onClick={() => router.push('/assessments/new')} className="bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black">
           <Plus className="w-4 h-4 mr-2" />
-          Nova Avaliação
-        </Button>
-      </div>
+          Nova avaliação
+        </Button>}
+      />
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -83,9 +85,7 @@ export default function AssessmentsPage() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-muted-foreground">
-            Carregando avaliações...
-          </div>
+          <ContentSkeleton className="col-span-full" />
         ) : error ? (
           <div className="col-span-full rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">
             {error}

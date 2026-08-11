@@ -2,11 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, ClockAlert, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
+import { Calendar, ClockAlert, Dumbbell, Pencil, Plus, Search, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { PageHeader } from '@/components/app/page-header';
+import { ContentSkeleton } from '@/components/app/content-skeleton';
 
 interface WorkoutPlanSummary {
   id: string;
@@ -57,15 +59,15 @@ export default function WorkoutsPage() {
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Fichas de Treino</h1>
-          <p className="mt-1 text-muted-foreground">Acompanhe as fichas publicadas para seus alunos.</p>
-        </div>
-        <Button onClick={() => router.push('/exercises')} className="h-10">
+      <PageHeader
+        eyebrow="Treinos · biblioteca"
+        title="FICHAS PUBLICADAS"
+        description="Acompanhe versões, prazos e estrutura das fichas entregues aos seus alunos."
+        icon={Dumbbell}
+        actions={<Button onClick={() => router.push('/exercises')} className="bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black">
           <Plus className="mr-2 size-4" /> Nova ficha
-        </Button>
-      </div>
+        </Button>}
+      />
 
       <div className="relative">
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -78,9 +80,7 @@ export default function WorkoutsPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16 text-muted-foreground">
-          <Loader2 className="mr-2 size-5 animate-spin" /> Carregando fichas...
-        </div>
+        <ContentSkeleton />
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
       ) : filteredPlans.length === 0 ? (

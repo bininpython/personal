@@ -44,3 +44,19 @@ test('navigation never depends on browser history being available', () => {
   const offenders = files.filter((path) => /router\.back\(|history\.back\(|window\.history\.back\(/.test(readFileSync(path, 'utf8')));
   assert.deepEqual(offenders, []);
 });
+
+test('trainer navigation exposes the primary task with clear hierarchy', () => {
+  const layout = source('src/app/(trainer)/layout.tsx');
+  assert.match(layout, /label: 'Operação'/);
+  assert.match(layout, /label: 'Treinos'/);
+  assert.match(layout, /label: 'Gestão'/);
+  assert.match(layout, /href: '\/exercises', label: 'Montar ficha'/);
+});
+
+test('workout builder becomes a three-step flow below desktop width', () => {
+  const builder = source('src/app/(trainer)/exercises/page.tsx');
+  assert.match(builder, /BUILDER_STEPS/);
+  assert.match(builder, /aria-label="Etapas do montador"/);
+  assert.match(builder, /sticky bottom-20/);
+  assert.match(builder, /xl:hidden/);
+});

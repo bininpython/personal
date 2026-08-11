@@ -7,6 +7,8 @@ import Model, {
   type IMuscleStats,
 } from '@phelian/react-body-highlighter';
 import {
+  ArrowLeft,
+  ArrowRight,
   Check,
   CalendarClock,
   Dumbbell,
@@ -21,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/app/page-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -103,6 +106,12 @@ interface EditablePlanResponse {
 }
 
 const MAX_WORKOUT_DAYS = 30;
+type BuilderStep = 'muscle' | 'exercises' | 'plan';
+const BUILDER_STEPS: Array<{ id: BuilderStep; label: string }> = [
+  { id: 'muscle', label: 'Músculo' },
+  { id: 'exercises', label: 'Exercícios' },
+  { id: 'plan', label: 'Ficha' },
+];
 
 function workoutDayLabel(index: number) {
   let value = index + 1;
@@ -158,6 +167,7 @@ export default function ExercisesPage() {
   const [startDate, setStartDate] = useState(() => brazilToday());
   const [validityAmount, setValidityAmount] = useState(4);
   const [validityUnit, setValidityUnit] = useState<PlanValidityUnit>('weeks');
+  const [mobileStep, setMobileStep] = useState<BuilderStep>('muscle');
 
   const activeDay = days.find((day) => day.id === activeDayId) ?? days[0];
   const totalSelected = days.reduce((total, day) => total + day.exercises.length, 0);
@@ -266,6 +276,7 @@ export default function ExercisesPage() {
   const handleMuscleClick = useCallback((stats: IMuscleStats) => {
     if (isMuscleRegion(stats.muscle)) {
       void loadMuscle(stats.muscle);
+      setMobileStep('exercises');
     }
   }, [loadMuscle]);
 
@@ -337,6 +348,12 @@ export default function ExercisesPage() {
     setDays((current) => [...current, nextDay]);
     setActiveDayId(nextDay.id);
     setDaysPerWeek((current) => Math.max(current, days.length + 1));
+  }
+
+  function moveMobileStep(offset: -1 | 1) {
+    const currentIndex = BUILDER_STEPS.findIndex((step) => step.id === mobileStep);
+    const nextStep = BUILDER_STEPS[currentIndex + offset];
+    if (nextStep) setMobileStep(nextStep.id);
   }
 
   function removeDay(dayId: string) {
@@ -420,31 +437,35 @@ export default function ExercisesPage() {
 
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{editingPlanId ? 'Editar Ficha de Treino' : 'Montador de Fichas'}</h1>
-          <p className="mt-1 text-muted-foreground">
-            {editingPlanId
-              ? 'Personalize a ficha existente e publique uma nova versão para o aluno.'
-              : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
-          </p>
-        </div>
-        <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="h-10">
+      <PageHeader
+        eyebrow="Treinos · criação guiada"
+        title={editingPlanId ? 'EDITAR FICHA' : 'MONTAR FICHA'}
+        description={editingPlanId ? 'Revise a estrutura, ajuste a prescrição e publique uma nova versão sem perder o histórico.' : 'Escolha a região muscular, adicione exercícios e configure a ficha em três passos simples.'}
+        icon={Dumbbell}
+        actions={<Button onClick={openSaveDialog} disabled={totalSelected === 0} className="bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black">
           <Save className="mr-2 size-4" />
           {editingPlanId ? 'Salvar alterações' : 'Publicar ficha'} ({totalSelected})
-        </Button>
-      </div>
+        </Button>}
+      />
 
-      <div className="flex items-start gap-2 rounded-xl border border-blue-500/20 bg-blue-500/5 p-3 text-sm text-muted-foreground">
-        <Info className="mt-0.5 size-4 shrink-0 text-blue-500" />
+      <div className="flex items-start gap-3 rounded-2xl border border-[#9fdb00]/25 bg-[#c9ff32]/10 p-4 text-sm text-muted-foreground">
+        <Info className="mt-0.5 size-4 shrink-0 text-[#668f00]" />
         <span>
           Biblioteca com {EXERCISE_CATALOG.length} exercícios. Movimentos compostos aparecem em todos os músculos que ajudam a trabalhar.
           A prescrição deve respeitar a avaliação, as limitações e o nível do aluno.
         </span>
       </div>
 
+      <div className="grid grid-cols-3 gap-2 xl:hidden" aria-label="Etapas do montador">
+        {BUILDER_STEPS.map((step, index) => {
+          const active = mobileStep === step.id;
+          const complete = step.id === 'plan' ? totalSelected > 0 : BUILDER_STEPS.findIndex((item) => item.id === mobileStep) > index;
+          return <button key={step.id} type="button" onClick={() => setMobileStep(step.id)} className={`min-h-14 rounded-2xl border px-2 py-2 text-left transition-colors ${active ? 'border-black bg-black text-white dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black' : complete ? 'border-[#9fdb00]/30 bg-[#c9ff32]/12' : 'border-black/10 bg-background dark:border-white/10'}`} aria-current={active ? 'step' : undefined}><span className="block text-[10px] font-black uppercase tracking-[0.14em] opacity-65">0{index + 1}</span><span className="mt-1 block text-xs font-black sm:text-sm">{step.label}</span></button>;
+        })}
+      </div>
+
       <div className="grid gap-6 xl:grid-cols-[330px_minmax(360px,1fr)_minmax(390px,1fr)]">
-        <Card className="overflow-hidden border-border/60">
+        <Card className={`${mobileStep === 'muscle' ? 'block' : 'hidden'} overflow-hidden border-border/60 xl:block`}>
           <CardHeader className="border-b border-border/40 pb-3">
             <div className="flex items-center justify-between gap-3">
               <CardTitle className="text-base">Anatomia interativa</CardTitle>
@@ -485,9 +506,9 @@ export default function ExercisesPage() {
               style={{ width: '100%', maxWidth: '250px', cursor: 'pointer' }}
               svgStyle={{ height: 'auto' }}
               bodyColor="#cbd5e1"
-              highlightedColors={["#2563eb"]}
+              highlightedColors={["#c9ff32"]}
             />
-            <p className="mt-3 text-center text-sm font-semibold text-blue-600 dark:text-blue-400">
+            <p className="mt-3 text-center text-sm font-black text-[#668f00] dark:text-[#c9ff32]">
               {MUSCLE_REGIONS[activeMuscle]}
             </p>
             <div className="mt-4 flex w-full flex-wrap justify-center gap-1.5">
@@ -495,11 +516,11 @@ export default function ExercisesPage() {
                 <button
                   type="button"
                   key={muscle}
-                  onClick={() => void loadMuscle(muscle)}
-                  className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
+                  onClick={() => { void loadMuscle(muscle); setMobileStep('exercises'); }}
+                  className={`min-h-11 rounded-full border px-3 py-2 text-xs font-bold transition-colors ${
                     activeMuscle === muscle
-                      ? 'border-blue-500 bg-blue-500 text-white'
-                      : 'border-border bg-background text-muted-foreground hover:border-blue-400 hover:text-foreground'
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      : 'border-border bg-background text-muted-foreground hover:border-[#9fdb00] hover:text-foreground'
                   }`}
                 >
                   {label}
@@ -509,7 +530,7 @@ export default function ExercisesPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 border-border/60">
+        <Card className={`${mobileStep === 'exercises' ? 'block' : 'hidden'} min-w-0 border-border/60 xl:block`}>
           <CardHeader className="space-y-3 border-b border-border/40 pb-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-base">
@@ -531,7 +552,7 @@ export default function ExercisesPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[690px]">
+            <ScrollArea className="h-[56vh] min-h-[390px] xl:h-[690px]">
               {loading ? (
                 <div className="flex h-52 items-center justify-center text-muted-foreground">
                   <Loader2 className="mr-2 size-5 animate-spin" /> Carregando exercícios...
@@ -573,7 +594,7 @@ export default function ExercisesPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => setPlayingVideo(exercise.videoUrl)}
-                            className="mt-2 h-7 px-2 text-xs text-blue-600"
+                            className="mt-2 px-3 text-xs text-[#668f00]"
                           >
                             <PlayCircle className="mr-1.5 size-3.5" /> Ver execução
                           </Button>
@@ -587,7 +608,7 @@ export default function ExercisesPage() {
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 border-border/60">
+        <Card className={`${mobileStep === 'plan' ? 'block' : 'hidden'} min-w-0 border-border/60 xl:block`}>
           <CardHeader className="space-y-3 border-b border-border/40 pb-4">
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -604,9 +625,9 @@ export default function ExercisesPage() {
                   type="button"
                   key={day.id}
                   onClick={() => setActiveDayId(day.id)}
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                  className={`min-h-11 rounded-full border px-3 py-2 text-xs font-bold ${
                     activeDay.id === day.id
-                      ? 'border-blue-500 bg-blue-500 text-white'
+                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
                   }`}
                 >
@@ -636,7 +657,7 @@ export default function ExercisesPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <ScrollArea className="h-[690px]">
+            <ScrollArea className="h-[56vh] min-h-[390px] xl:h-[690px]">
               {activeDay.exercises.length === 0 ? (
                 <div className="flex h-64 flex-col items-center justify-center px-8 text-center text-muted-foreground">
                   <Dumbbell className="mb-3 size-9 opacity-30" />
@@ -649,7 +670,7 @@ export default function ExercisesPage() {
                     <div key={exercise.key} className="rounded-xl border border-border/60 bg-muted/20 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
-                          <span className="text-[10px] font-bold uppercase text-blue-500">{index + 1}º exercício</span>
+                          <span className="text-[11px] font-black uppercase tracking-[0.12em] text-[#668f00]">{index + 1}º exercício</span>
                           <h3 className="truncate text-sm font-semibold">{exercise.name}</h3>
                         </div>
                         <Button
@@ -657,50 +678,50 @@ export default function ExercisesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => removeExercise(activeDay.id, exercise.key)}
-                          className="size-8 shrink-0"
+                          className="size-11 shrink-0"
                         >
                           <X className="size-4" />
                         </Button>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-2">
                         <div>
-                          <Label className="text-[10px]">Séries</Label>
+                          <Label className="text-xs">Séries</Label>
                           <Input
                             type="number"
                             min={1}
                             max={20}
                             value={exercise.sets}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'sets', Number(event.target.value))}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                         <div>
-                          <Label className="text-[10px]">Repetições</Label>
+                          <Label className="text-xs">Repetições</Label>
                           <Input
                             value={exercise.reps}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'reps', event.target.value)}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                         <div>
-                          <Label className="text-[10px]">Descanso automático (s)</Label>
+                          <Label className="text-xs">Descanso automático (s)</Label>
                           <Input
                             type="number"
                             min={0}
                             max={900}
                             value={exercise.restTime}
                             onChange={(event) => updateExercise(activeDay.id, exercise.key, 'restTime', Number(event.target.value))}
-                            className="mt-1 h-8 px-2 text-sm"
+                            className="mt-1 px-2 text-sm"
                           />
                         </div>
                       </div>
                       <div className="mt-2">
-                        <Label className="text-[10px]">Método / observação</Label>
+                        <Label className="text-xs">Método / observação</Label>
                         <Input
                           value={exercise.method}
                           onChange={(event) => updateExercise(activeDay.id, exercise.key, 'method', event.target.value)}
                           placeholder="Ex.: drop-set na última série"
-                          className="mt-1 h-8 px-2 text-sm"
+                          className="mt-1 px-2 text-sm"
                         />
                       </div>
                     </div>
@@ -710,6 +731,14 @@ export default function ExercisesPage() {
             </ScrollArea>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="sticky bottom-20 z-30 flex items-center gap-2 rounded-2xl border border-white/10 bg-[#090a08]/96 p-2 text-white shadow-2xl backdrop-blur-xl lg:bottom-4 xl:hidden">
+        <Button type="button" variant="ghost" className="text-white hover:bg-white/10 hover:text-white" onClick={() => moveMobileStep(-1)} disabled={mobileStep === 'muscle'}>
+          <ArrowLeft className="mr-2 size-4" /> Voltar
+        </Button>
+        <div className="min-w-0 flex-1 text-center"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/65">{BUILDER_STEPS.find((step) => step.id === mobileStep)?.label}</p><p className="truncate text-xs text-white/70">{mobileStep === 'plan' ? `${totalSelected} exercício(s) na ficha` : mobileStep === 'exercises' ? MUSCLE_REGIONS[activeMuscle] : 'Escolha no mapa corporal'}</p></div>
+        {mobileStep === 'plan' ? <Button type="button" onClick={openSaveDialog} disabled={totalSelected === 0} className="bg-[#c9ff32] text-black hover:bg-[#b8ef22]"><Save className="mr-2 size-4" /> Publicar</Button> : <Button type="button" onClick={() => moveMobileStep(1)} className="bg-[#c9ff32] text-black hover:bg-[#b8ef22]">Avançar <ArrowRight className="ml-2 size-4" /></Button>}
       </div>
 
       <Dialog open={isSaveOpen} onOpenChange={setIsSaveOpen}>

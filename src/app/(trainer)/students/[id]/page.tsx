@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Activity, ChevronLeft, ClipboardList, Dumbbell, Edit3, KeyRound, Loader2, Mail, TrendingUp, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
+import { StudentAccessCard } from '@/components/students/student-access-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -158,13 +159,13 @@ export default function StudentProfilePage(props: { params: Promise<{ id: string
         <div className="relative z-10 flex flex-col items-start justify-between gap-7 sm:flex-row sm:items-center">
           <div className="flex items-center gap-4">
             <Avatar className="size-24 border-4 border-white/15">{student.avatar_url && <AvatarImage src={student.avatar_url} alt={`Avatar de ${student.full_name}`} />}<AvatarFallback className="bg-[#c9ff32] text-2xl font-black text-black">{student.full_name.split(' ').map((name) => name[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
-            <div><div className="mb-3 flex flex-wrap items-center gap-2"><span className="dk-kicker text-[#c9ff32]">Atleta D KONG</span><Badge className="dk-volt-chip border-0">{student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><h2 className="dk-display text-3xl sm:text-4xl">{student.full_name}</h2><p className="mt-3 flex items-center gap-1.5 text-sm text-white/48"><Activity className="size-3.5 text-[#c9ff32]" /> {student.goal || 'Sem objetivo'}</p></div>
+            <div><div className="mb-3 flex flex-wrap items-center gap-2"><span className="dk-kicker text-[#c9ff32]">Atleta D KONG</span><Badge className="dk-volt-chip border-0">{student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><h2 className="dk-display text-3xl sm:text-4xl">{student.full_name}</h2><p className="mt-3 flex items-center gap-1.5 text-sm text-white/70"><Activity className="size-3.5 text-[#c9ff32]" /> {student.goal || 'Sem objetivo'}</p></div>
           </div>
           <div className="flex w-full flex-wrap gap-2 sm:w-auto"><Button variant="outline" className="flex-1 border-white/15 bg-white/10 text-white hover:bg-white/20 hover:text-white" onClick={() => router.push(`/messages?contactId=${params.id}`)}><Mail className="mr-2 size-4" /> Mensagem</Button><Button variant="outline" className="flex-1 border-white/15 bg-white/10 text-white hover:bg-white/20 hover:text-white" onClick={() => void rotateStudentCode()} disabled={rotatingCode}>{rotatingCode ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Novo código</Button><Button className="flex-1 bg-[#c9ff32] text-black hover:bg-[#b8ef22]" onClick={openEdit}><Edit3 className="mr-2 size-4" /> Editar</Button></div>
         </div>
       </section>
 
-      {newAccessCode && <Card className="border-[#9fdb00]/35 bg-[#c9ff32]/12"><CardContent className="p-5"><p className="font-black">Entregue este código ao aluno agora. Ele aparece uma única vez.</p><code className="mt-3 block break-all text-2xl font-black tracking-[0.15em]">{newAccessCode}</code><Button variant="ghost" size="sm" className="mt-2" onClick={() => setNewAccessCode('')}>Já salvei</Button></CardContent></Card>}
+      {newAccessCode && <StudentAccessCard studentName={student.full_name} accessCode={newAccessCode} onDismiss={() => setNewAccessCode('')} />}
 
       {performance && <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">{[[`${performance.consistencyScore}%`, 'constância'], [`${performance.workouts7d}/${performance.plannedFrequency}`, 'meta semanal'], [`${performance.completionAverage}%`, 'conclusão média'], [performance.workouts30d, 'treinos em 30 dias']].map(([value, label]) => <Card key={label}><CardContent className="p-4"><p className="text-3xl font-black tracking-[-0.06em]">{value}</p><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{label}</p></CardContent></Card>)}<Card><CardContent className="p-4"><Badge variant="outline" className={performance.risk === 'high' ? 'text-red-600' : performance.risk === 'medium' ? 'text-amber-600' : 'text-[#668f00]'}>{performance.risk === 'high' ? 'Risco alto' : performance.risk === 'medium' ? 'Atenção' : 'Bom ritmo'}</Badge><p className="mt-2 text-xs text-muted-foreground">{performance.daysSinceLastWorkout === null ? 'Sem treino' : `${performance.daysSinceLastWorkout} dia(s) desde o último`}</p></CardContent></Card></div>}
 

@@ -37,6 +37,13 @@ interface StudentExercise {
   reps: string;
   restTime: number;
   method: string;
+  lastPerformance: {
+    sets: number;
+    repetitions: number | null;
+    load: number | null;
+    rpe: number | null;
+    completedAt: string | null;
+  } | null;
 }
 
 interface WorkoutDay {
@@ -121,6 +128,10 @@ const MUSCLE_LABELS: Record<string, string> = {
 };
 
 function progressStorageKey(planId: string, weekStart: string, currentDate: string) {
+  return `dkong-workout-progress:${planId}:${weekStart}:${currentDate}`;
+}
+
+function legacyProgressStorageKey(planId: string, weekStart: string, currentDate: string) {
   return `fitcontrol-workout-progress:${planId}:${weekStart}:${currentDate}`;
 }
 
@@ -136,6 +147,9 @@ function formatCountdown(seconds: number) {
 
 function notifyRestFinished(exerciseName: string) {
   if ('vibrate' in navigator) navigator.vibrate([180, 100, 180]);
+  if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
+    new Notification('Descanso finalizado', { body: `${exerciseName}: próxima série liberada.` });
+  }
   toast.success(`Descanso finalizado para ${exerciseName}. Próxima série liberada!`);
 }
 
@@ -154,6 +168,7 @@ export default function StudentWorkoutPage() {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
   const [restTimer, setRestTimer] = useState<RestTimerState | null>(null);
+  const [restAnnouncement, setRestAnnouncement] = useState('');
   const currentPlanCycleId = useRef('');
   const workoutStartedAtByDay = useRef<Record<string, number>>({});
   const clientSessionByDay = useRef<Record<string, string>>({});
@@ -191,7 +206,10 @@ export default function StudentWorkoutPage() {
               : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '');
           setSelectedDayId(initialDayId);
           try {
-            const saved = window.localStorage.getItem(progressStorageKey(nextPlan.id, nextPlan.week.startDate, nextPlan.week.currentDate));
+            const key = progressStorageKey(nextPlan.id, nextPlan.week.startDate, nextPlan.week.currentDate);
+            const legacyKey = legacyProgressStorageKey(nextPlan.id, nextPlan.week.startDate, nextPlan.week.currentDate);
+            const saved = window.localStorage.getItem(key) ?? window.localStorage.getItem(legacyKey);
+            if (saved && !window.localStorage.getItem(key)) window.localStorage.setItem(key, saved);
             const decoded = saved ? JSON.parse(saved) as SavedWorkoutProgress | string[] : [];
             const savedSets = Array.isArray(decoded) ? decoded : decoded.completedSets;
             if (!Array.isArray(decoded)) {
@@ -237,16 +255,20 @@ export default function StudentWorkoutPage() {
   useEffect(() => {
     const initialLoad = window.setTimeout(() => void loadPlan(), 0);
 
-    const interval = window.setInterval(() => void loadPlan(true), 10_000);
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === 'visible' && navigator.onLine) void loadPlan(true);
+    }, 60_000);
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') void loadPlan(true);
     };
     document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('online', handleVisibility);
 
     return () => {
       window.clearTimeout(initialLoad);
       window.clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('online', handleVisibility);
     };
   }, [loadPlan]);
 
@@ -280,10 +302,27 @@ export default function StudentWorkoutPage() {
     const exerciseName = restTimer.exerciseName;
     const timeout = window.setTimeout(() => {
       setRestTimer(null);
+      setRestAnnouncement(`Descanso finalizado para ${exerciseName}. Próxima série liberada.`);
       notifyRestFinished(exerciseName);
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [restTimer]);
+
+  useEffect(() => {
+    if (!restTimerActive || !('wakeLock' in navigator)) return;
+    let released = false;
+    let lock: { release: () => Promise<void> } | null = null;
+    void (navigator as Navigator & { wakeLock: { request: (type: 'screen') => Promise<{ release: () => Promise<void> }> } }).wakeLock.request('screen')
+      .then((sentinel) => {
+        if (released) void sentinel.release();
+        else lock = sentinel;
+      })
+      .catch(() => undefined);
+    return () => {
+      released = true;
+      if (lock) void lock.release();
+    };
+  }, [restTimerActive]);
 
   const activeDay = plan?.days.find((day) => day.id === selectedDayId) ?? plan?.days[0] ?? null;
   const suggestedDay = plan?.days.find((day) => day.id === plan.week.nextWorkoutDayId) ?? null;
@@ -320,9 +359,11 @@ export default function StudentWorkoutPage() {
       setSetDetails((current) => ({
         ...current,
         [key]: current[key] || {
-          repetitions: exercise && /^\d+$/.test(exercise.reps) ? exercise.reps : '',
-          load: '',
-          rpe: '',
+          repetitions: exercise?.lastPerformance?.repetitions !== null && exercise?.lastPerformance?.repetitions !== undefined
+            ? String(exercise.lastPerformance.repetitions)
+            : exercise && /^\d+$/.test(exercise.reps) ? exercise.reps : '',
+          load: exercise?.lastPerformance?.load !== null && exercise?.lastPerformance?.load !== undefined ? String(exercise.lastPerformance.load) : '',
+          rpe: exercise?.lastPerformance?.rpe !== null && exercise?.lastPerformance?.rpe !== undefined ? String(exercise.lastPerformance.rpe) : '',
         },
       }));
     }
@@ -335,6 +376,7 @@ export default function StudentWorkoutPage() {
 
     if (!wasChecked) {
       const exercise = activeDay?.exercises.find((item) => item.id === exerciseId);
+      if (typeof Notification !== 'undefined' && Notification.permission === 'default') void Notification.requestPermission();
       if (exercise && setIndex < exercise.sets - 1 && exercise.restTime > 0) {
         setRestTimer({
           exerciseId: exercise.id,
@@ -479,6 +521,7 @@ export default function StudentWorkoutPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-5 pb-12 animate-fade-in">
+      <p className="sr-only" aria-live="assertive">{restAnnouncement}</p>
       <div className="dk-hero-panel p-6 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -486,7 +529,7 @@ export default function StudentWorkoutPage() {
               Ficha sincronizada com seu personal
             </div>
             <h1 className="dk-display mt-5 text-3xl sm:text-4xl">{plan.name}</h1>
-            <p className="mt-2 text-sm text-white/50">{plan.goal}</p>
+            <p className="mt-2 text-sm text-white/70">{plan.goal}</p>
           </div>
           <Button
             variant="secondary"
@@ -503,17 +546,17 @@ export default function StudentWorkoutPage() {
           <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4">
             <Target className="mb-1 size-4 text-[#c9ff32]" />
             <p className="text-lg font-bold">{plan.daysPerWeek}x</p>
-            <p className="text-[11px] text-white/45">por semana</p>
+            <p className="text-[11px] text-white/65">por semana</p>
           </div>
           <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
             <Dumbbell className="mb-1 size-4" />
             <p className="text-lg font-bold">{plan.days.length}</p>
-            <p className="text-[11px] text-black/50">treinos diferentes</p>
+            <p className="text-[11px] text-black/65">treinos diferentes</p>
           </div>
           <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1">
             <CheckCircle2 className="mb-1 size-4 text-[#c9ff32]" />
             <p className="text-sm font-bold">{plan.week.completed}/{plan.week.target} na semana</p>
-            <p className="text-[11px] text-white/45">
+            <p className="text-[11px] text-white/65">
               {plan.week.isComplete ? 'Ciclo semanal concluído' : lastSync ? `Atualizado às ${lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronização ativa'}
             </p>
           </div>
@@ -616,6 +659,14 @@ export default function StudentWorkoutPage() {
                             <Badge variant="secondary">{exercise.sets} × {exercise.reps}</Badge>
                             <Badge variant="secondary"><Clock3 className="mr-1 size-3" /> {exercise.restTime}s</Badge>
                           </div>
+                          {exercise.lastPerformance && (
+                            <div className="mt-3 rounded-xl border border-[#9fdb00]/25 bg-[#c9ff32]/10 px-3 py-2 text-xs">
+                              <span className="font-black text-[#668f00]">Última vez:</span>{' '}
+                              <strong>{exercise.lastPerformance.sets}×{exercise.lastPerformance.repetitions ?? '—'}</strong>
+                              {exercise.lastPerformance.load !== null && <> com <strong>{exercise.lastPerformance.load} kg</strong></>}
+                              {exercise.lastPerformance.rpe !== null && <> · RPE {exercise.lastPerformance.rpe}</>}
+                            </div>
+                          )}
                         </div>
                       </div>
                       {exercise.videoUrl && (
@@ -646,23 +697,23 @@ export default function StudentWorkoutPage() {
                           const checked = completedSets.has(key);
                           const details = setDetails[key] || { repetitions: '', load: '', rpe: '' };
                           return (
-                            <div key={setIndex} className="grid grid-cols-[minmax(110px,1fr)_78px_78px_64px] items-end gap-2 rounded-lg border border-border/60 p-2">
+                            <div key={setIndex} className="grid grid-cols-[minmax(72px,1fr)_64px_64px_58px] items-end gap-1.5 rounded-xl border border-border/60 p-2 sm:grid-cols-[minmax(110px,1fr)_78px_78px_64px] sm:gap-2">
                               <button
                                 type="button"
                                 disabled={activeDayCompleted}
                                 onClick={() => toggleSet(exercise.id, setIndex)}
-                                className={`flex h-10 items-center justify-center gap-2 rounded-md border px-2 text-sm font-medium transition-colors ${checked ? 'border-[#9fdb00] bg-[#9fdb00] text-black' : setIndex === nextSetIndex ? 'border-black bg-black/[0.06] text-black dark:border-[#c9ff32] dark:bg-[#c9ff32]/10 dark:text-[#c9ff32]' : 'border-border bg-background hover:border-[#9fdb00]'}`}
+                                className={`flex min-h-11 items-center justify-center gap-1 rounded-xl border px-1.5 text-xs font-bold transition-colors sm:gap-2 sm:px-2 sm:text-sm ${checked ? 'border-[#9fdb00] bg-[#9fdb00] text-black' : setIndex === nextSetIndex ? 'border-black bg-black/[0.06] text-black dark:border-[#c9ff32] dark:bg-[#c9ff32]/10 dark:text-[#c9ff32]' : 'border-border bg-background hover:border-[#9fdb00]'}`}
                               >
                                 {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
                                 Série {setIndex + 1}
                               </button>
-                              <label className="text-[10px] text-muted-foreground">Reps
+                              <label className="text-[11px] text-muted-foreground">Reps
                                 <Input aria-label={`Repetições da série ${setIndex + 1}`} inputMode="numeric" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder={exercise.reps} value={details.repetitions} onChange={(event) => updateSetDetail(key, 'repetitions', event.target.value)} />
                               </label>
-                              <label className="text-[10px] text-muted-foreground">Carga kg
+                              <label className="text-[11px] text-muted-foreground">Carga
                                 <Input aria-label={`Carga da série ${setIndex + 1}`} inputMode="decimal" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder="0" value={details.load} onChange={(event) => updateSetDetail(key, 'load', event.target.value)} />
                               </label>
-                              <label className="text-[10px] text-muted-foreground">RPE
+                              <label className="text-[11px] text-muted-foreground">RPE
                                 <Input aria-label={`RPE da série ${setIndex + 1}`} inputMode="numeric" className="mt-1 h-9 px-2" disabled={activeDayCompleted} placeholder="1-10" value={details.rpe} onChange={(event) => updateSetDetail(key, 'rpe', event.target.value)} />
                               </label>
                             </div>
@@ -689,7 +740,7 @@ export default function StudentWorkoutPage() {
                   <h2 className="font-bold">Todas as séries foram marcadas</h2>
                   <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
                   <div className="mx-auto mt-4 max-w-sm space-y-3">
-                    <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} /></button>)}</div>
+                    <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" className="flex size-11 items-center justify-center rounded-full" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'}`} /></button>)}</div>
                     <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
                   </div>
                   <Button className="mt-4 bg-black text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" onClick={() => void completeWorkout()} disabled={completingWorkout}>

@@ -17,6 +17,7 @@ import {
   type PhysicalAssessmentFormInput,
   type PhysicalAssessmentInput,
 } from '@/lib/validators';
+import { PageHeader } from '@/components/app/page-header';
 
 export default function NewAssessmentPage() {
   const router = useRouter();
@@ -83,15 +84,7 @@ export default function NewAssessmentPage() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-20">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/assessments')} className="shrink-0">
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Nova Avaliação Física</h1>
-          <p className="text-muted-foreground mt-1">Registre as medidas e progresso do aluno</p>
-        </div>
-      </div>
+      <PageHeader eyebrow="Gestão · nova medição" title="NOVA AVALIAÇÃO" description="Registre medidas, composição corporal e observações para alimentar a evolução do aluno." icon={HeartPulse} actions={<Button variant="outline" onClick={() => router.push('/assessments')}><ChevronLeft className="mr-2 size-4" /> Voltar para avaliações</Button>} />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl">
         <Card className="border-border/50 bg-gradient-to-r from-primary/5 to-transparent">
@@ -129,7 +122,7 @@ export default function NewAssessmentPage() {
           <Card className="border-border/50">
             <CardHeader className="pb-3 border-b border-border/30">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Scale className="w-5 h-5 text-blue-500" />
+                <Scale className="w-5 h-5 text-[#668f00]" />
                 Composição Corporal
               </CardTitle>
             </CardHeader>

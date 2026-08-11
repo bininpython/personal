@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Check,
   CheckCircle2,
   ChevronLeft,
-  Copy,
   FileText,
   Loader2,
   Shield,
@@ -22,6 +20,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
 import { studentCreateSchema, type StudentCreateInput } from '@/lib/validators';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/app/page-header';
+import { StudentAccessCard } from '@/components/students/student-access-card';
 
 interface CreatedStudent {
   name: string;
@@ -33,7 +33,6 @@ export default function NewStudentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [studentCount, setStudentCount] = useState<number | null>(null);
   const [createdStudent, setCreatedStudent] = useState<CreatedStudent | null>(null);
-  const [copied, setCopied] = useState(false);
 
   const {
     register,
@@ -94,92 +93,37 @@ export default function NewStudentPage() {
     }
   };
 
-  const copyCode = async () => {
-    if (!createdStudent) return;
-
-    try {
-      await navigator.clipboard.writeText(createdStudent.accessCode);
-      setCopied(true);
-      toast.success('Código copiado!');
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error('Não foi possível copiar. Anote o código.');
-    }
-  };
-
   const startAnotherRegistration = () => {
     reset();
     setCreatedStudent(null);
-    setCopied(false);
   };
 
   const limitReached = (studentCount ?? 0) >= MAX_STUDENTS_PER_TRAINER;
 
   if (createdStudent) {
     return (
-      <div className="mx-auto max-w-xl space-y-6 animate-fade-in pb-10">
-        <Card className="border-primary/20 shadow-lg shadow-primary/5">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10">
-              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
-            </div>
-            <CardTitle>Aluno cadastrado!</CardTitle>
-            <CardDescription>
-              Passe o nome e o código abaixo para {createdStudent.name}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-6 text-center">
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Código de acesso do aluno
-              </p>
-              <div className="flex items-center justify-center gap-3">
-                <span className="break-all font-mono text-2xl font-bold tracking-wider sm:text-3xl">
-                  {createdStudent.accessCode}
-                </span>
-                <Button type="button" variant="outline" size="icon" onClick={copyCode} aria-label="Copiar código">
-                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
-              O aluno entrará usando apenas o nome <strong>{createdStudent.name}</strong> e este código individual. Não precisa de e-mail, telefone ou senha.
-            </div>
-
-            <p className="text-center text-sm text-muted-foreground">
-              {studentCount ?? 0} de {MAX_STUDENTS_PER_TRAINER} alunos cadastrados
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Button variant="outline" onClick={() => router.push('/students')}>
-                Voltar para alunos
-              </Button>
-              <Button onClick={startAnotherRegistration} disabled={limitReached}>
-                Cadastrar outro aluno
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-6 animate-fade-in pb-10">
+        <PageHeader
+          eyebrow="Ativação concluída"
+          title="ALUNO PRONTO"
+          description={`${createdStudent.name} já pode acessar o D KONG. O último passo é entregar o convite abaixo.`}
+          icon={CheckCircle2}
+        />
+        <StudentAccessCard studentName={createdStudent.name} accessCode={createdStudent.accessCode} />
+        <Card><CardContent className="flex flex-col items-center justify-between gap-4 p-5 text-center sm:flex-row sm:text-left"><p className="text-sm text-muted-foreground"><strong className="text-foreground">{studentCount ?? 0} de {MAX_STUDENTS_PER_TRAINER}</strong> alunos cadastrados</p><div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"><Button variant="outline" onClick={() => router.push('/students')}>Voltar para alunos</Button><Button onClick={startAnotherRegistration} disabled={limitReached}>Cadastrar outro aluno</Button></div></CardContent></Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-6 animate-fade-in pb-10">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => router.push('/students')} className="shrink-0">
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">Novo Aluno</h1>
-          <p className="mt-1 text-sm text-muted-foreground md:text-base">
-            {studentCount === null
-              ? 'Cadastre um aluno e gere seu código de acesso.'
-              : `${studentCount} de ${MAX_STUDENTS_PER_TRAINER} alunos cadastrados.`}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Operação · alunos"
+        title="NOVO ALUNO"
+        description={studentCount === null ? 'Cadastre o aluno e gere o acesso individual.' : `${studentCount} de ${MAX_STUDENTS_PER_TRAINER} alunos cadastrados. Nome e código serão suficientes para entrar.`}
+        icon={User}
+        actions={<Button variant="outline" onClick={() => router.push('/students')}><ChevronLeft className="mr-2 size-4" /> Voltar para alunos</Button>}
+      />
 
       {limitReached ? (
         <Card className="border-amber-500/30 bg-amber-500/5">

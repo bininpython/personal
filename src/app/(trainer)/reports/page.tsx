@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { StudentProgressData } from '@/types/student-progress';
+import { PageHeader } from '@/components/app/page-header';
 
 interface StudentOption {
   id: string;
@@ -76,16 +77,15 @@ export default function ReportsPage() {
 
   return (
     <div className="print-report space-y-6 pb-10 animate-fade-in">
-      <div className="no-print flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-        <div><h1 className="text-2xl font-bold tracking-tight">Relatório individual de evolução</h1><p className="mt-1 text-muted-foreground">Acompanhamento de treinos, avaliações físicas e progresso de cada aluno.</p></div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="no-print">
+        <PageHeader eyebrow="Análise · visão individual" title="RELATÓRIOS" description="Transforme treinos, avaliações físicas e consistência em uma leitura clara para o aluno." icon={FileText} actions={<div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <Select value={studentId} onValueChange={(value) => setStudentId(value ?? '')}>
             <SelectTrigger className="w-full min-w-64 sm:w-72"><SelectValue placeholder="Selecione um aluno" /></SelectTrigger>
             <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}{student.status !== 'active' ? ' (arquivado)' : ''}</SelectItem>)}</SelectContent>
           </Select>
           <Button variant="outline" disabled={!studentId || loadingReport} onClick={() => void loadReport(studentId)}><RefreshCw className={`mr-2 size-4 ${loadingReport ? 'animate-spin' : ''}`} /> Atualizar</Button>
           <Button disabled={!report || loadingReport} onClick={() => window.print()}><Download className="mr-2 size-4" /> Salvar relatório em PDF</Button>
-        </div>
+        </div>} />
       </div>
 
       {students.length === 0 ? <Card><CardContent className="py-16 text-center text-sm text-muted-foreground"><UserRound className="mx-auto mb-3 size-12 opacity-40" />Cadastre um aluno para gerar o primeiro relatório.</CardContent></Card> : loadingReport ? <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground"><Loader2 className="mr-2 size-6 animate-spin" /> Montando relatório detalhado...</div> : report ? <>

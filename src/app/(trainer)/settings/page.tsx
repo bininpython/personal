@@ -90,11 +90,11 @@ export default function TrainerSettingsPage() {
               }}
               sizeClassName="size-24 border-4 border-white/15"
             />
-            <div><p className="dk-kicker text-[#c9ff32]">D KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/48">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
+            <div><p className="dk-kicker text-[#c9ff32]">D KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/70">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35">Cidade</p><p className="mt-3 max-w-36 truncate text-lg font-black">{profile.city || '—'}</p></div>
-            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/45">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
+            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-white/65">Cidade</p><p className="mt-3 max-w-36 truncate text-lg font-black">{profile.city || '—'}</p></div>
+            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-black/65">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
           </div>
         </div>
       </section>

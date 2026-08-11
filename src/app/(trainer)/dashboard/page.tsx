@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
   Users, TrendingUp, AlertTriangle, CalendarDays,
   ChevronRight, Activity, Target,
-  ArrowUpRight, ArrowDownRight, ArrowRight
+  ArrowUpRight, ArrowDownRight, ArrowRight, CheckCircle2, Circle, Dumbbell, KeyRound
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/use-auth';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from 'recharts';
+import { ACTIVATION_SHARE_EVENT, hasSharedAccess } from '@/lib/activation';
 
 interface RankingStudent {
   id: string;
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   });
   const [ranking, setRanking] = useState<RankingStudent[]>([]);
   const [goalDist, setGoalDist] = useState<GoalDistribution[]>([]);
+  const [activation, setActivation] = useState({ hasStudent: false, hasWorkoutPlan: false, hasSharedAccess: false });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,12 +63,26 @@ export default function DashboardPage() {
         if (data.stats) setStats(data.stats);
         if (data.studentRanking) setRanking(data.studentRanking);
         if (data.goalDistribution) setGoalDist(data.goalDistribution);
+        if (data.activation) setActivation({ ...data.activation, hasSharedAccess: hasSharedAccess() });
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const syncSharedAccess = () => setActivation((current) => ({ ...current, hasSharedAccess: hasSharedAccess() }));
+    window.addEventListener(ACTIVATION_SHARE_EVENT, syncSharedAccess);
+    return () => window.removeEventListener(ACTIVATION_SHARE_EVENT, syncSharedAccess);
+  }, []);
+
+  const activationSteps = [
+    { label: 'Cadastrar o primeiro aluno', description: 'Crie o perfil e o código individual.', done: activation.hasStudent, href: '/students/new', action: 'Cadastrar aluno', icon: Users },
+    { label: 'Publicar a primeira ficha', description: 'Monte o treino e disponibilize para o aluno.', done: activation.hasWorkoutPlan, href: '/exercises', action: 'Montar ficha', icon: Dumbbell },
+    { label: 'Entregar o acesso', description: 'Envie nome e código pelo WhatsApp.', done: activation.hasStudent && activation.hasSharedAccess, href: '/students', action: 'Abrir alunos', icon: KeyRound },
+  ];
+  const activationCompleted = activationSteps.filter((step) => step.done).length;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -77,7 +93,7 @@ export default function DashboardPage() {
             {greeting.toUpperCase()},<br />
             <span className="text-[#c9ff32]">{user?.name?.split(' ')[0]?.toUpperCase() || 'PERSONAL'}.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
+          <p className="mt-6 max-w-xl text-sm leading-6 text-white/70 sm:text-base">
             Sua operação em uma visão direta: alunos, consistência, agenda e pontos que pedem ação.
           </p>
           <Button onClick={() => router.push('/students/new')} className="mt-7 h-12 bg-[#c9ff32] px-6 text-black hover:bg-[#b8ef22]">
@@ -86,19 +102,33 @@ export default function DashboardPage() {
         </div>
         <div className="relative z-10 grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4 backdrop-blur">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Alunos ativos</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/65">Alunos ativos</p>
             <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.activeStudents}</p>
           </div>
           <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Constância</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/65">Constância</p>
             <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.averageConsistency}%</p>
           </div>
           <div className="col-span-2 flex items-center justify-between rounded-2xl border border-white/12 bg-white/[0.06] p-4">
-            <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Hoje na agenda</p><p className="mt-1 text-xl font-black">{stats.appointmentsToday} compromisso(s)</p></div>
+            <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/65">Hoje na agenda</p><p className="mt-1 text-xl font-black">{stats.appointmentsToday} compromisso(s)</p></div>
             <CalendarDays className="size-6 text-[#c9ff32]" />
           </div>
         </div>
       </section>
+
+      {activationCompleted < activationSteps.length && (
+        <Card className="overflow-hidden border-[#9fdb00]/35">
+          <CardHeader className="border-b border-black/8 bg-[#c9ff32]/14 pb-5 dark:border-white/8">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+              <div><p className="dk-kicker text-muted-foreground">Primeiros passos</p><CardTitle className="mt-3 text-2xl font-black tracking-tight">Coloque sua operação em movimento</CardTitle><p className="mt-2 text-sm text-muted-foreground">Complete os três passos essenciais para o primeiro aluno começar a treinar.</p></div>
+              <div className="min-w-40"><div className="mb-2 flex justify-between text-xs font-bold"><span>Ativação</span><span>{activationCompleted}/3</span></div><Progress value={(activationCompleted / 3) * 100} /></div>
+            </div>
+          </CardHeader>
+          <CardContent className="grid gap-3 p-4 lg:grid-cols-3 lg:p-5">
+            {activationSteps.map((step, index) => <div key={step.label} className={`rounded-2xl border p-4 ${step.done ? 'border-[#7cae00]/25 bg-[#c9ff32]/8' : 'border-black/8 bg-background dark:border-white/8'}`}><div className="flex items-start gap-3"><span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${step.done ? 'bg-[#c9ff32] text-black' : 'bg-black text-[#c9ff32] dark:bg-white dark:text-black'}`}>{step.done ? <CheckCircle2 className="size-5" /> : <step.icon className="size-4" />}</span><div><p className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">Passo {index + 1}</p><h3 className="mt-1 font-black">{step.label}</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{step.description}</p></div></div>{step.done ? <p className="mt-4 flex items-center gap-2 text-xs font-bold text-[#668f00]"><CheckCircle2 className="size-4" /> Concluído</p> : <Button variant="outline" className="mt-4 w-full" onClick={() => router.push(step.href)}><Circle className="mr-2 size-3" /> {step.action}</Button>}</div>)}
+          </CardContent>
+        </Card>
+      )}
 
       <div>
         <p className="dk-kicker text-muted-foreground">Pulso da operação</p>
@@ -157,8 +187,8 @@ export default function DashboardPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        background: 'hsl(var(--card))',
-                        border: '1px solid hsl(var(--border))',
+                        background: 'var(--card)',
+                        border: '1px solid var(--border)',
                         borderRadius: '16px',
                         fontSize: '12px',
                       }}

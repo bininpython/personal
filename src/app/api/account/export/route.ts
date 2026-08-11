@@ -54,7 +54,7 @@ export async function GET() {
     return new Response(body, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Content-Disposition': `attachment; filename="fitcontrol-export-${new Date().toISOString().slice(0, 10)}.json"`,
+        'Content-Disposition': `attachment; filename="d-kong-export-${new Date().toISOString().slice(0, 10)}.json"`,
         'Cache-Control': 'no-store',
       },
     });

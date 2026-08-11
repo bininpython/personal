@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { BookOpen, Dumbbell, KeyRound, ShieldCheck, UserPlus } from 'lucide-react';
+import { ArrowLeft, Dumbbell, KeyRound, ShieldCheck, UserPlus } from 'lucide-react';
+import { BrandMark } from '@/components/brand/brand-mark';
 
 const trainerTutorials = [
   ['1. Salve seu código', 'No cadastro, guarde o código pessoal de 6 números. Sua senha e idade servem somente para recuperar o acesso.'],
   ['2. Cadastre um aluno', 'Abra Alunos → Novo aluno, confirme a autorização de privacidade e entregue ao aluno o nome cadastrado e o código individual.'],
-  ['3. Publique a ficha', 'Abra Fichas de Treino, escolha o aluno, adicione dias e exercícios, configure séries, repetições e descanso e publique.'],
-  ['4. Acompanhe resultados', 'Dashboard, Relatórios e perfil do aluno mostram frequência, conclusão, volume, avaliações e alertas.'],
+  ['3. Publique a ficha', 'Abra Montar ficha, escolha o aluno, adicione dias e exercícios, configure séries, repetições e descanso e publique.'],
+  ['4. Acompanhe resultados', 'Visão geral, Relatórios e o perfil do aluno mostram frequência, conclusão, volume, avaliações e alertas.'],
   ['5. Recupere ou troque acessos', 'Em Configurações, troque seu código pessoal. No perfil do aluno, gere um novo código individual quando ele perder o anterior.'],
 ];
 
@@ -18,13 +19,14 @@ const studentTutorials = [
 ];
 
 export default function HelpPage() {
-  return <main className="min-h-screen bg-background px-4 py-10"><div className="mx-auto max-w-5xl space-y-8">
-    <div><Link href="/" className="text-sm text-primary hover:underline">← Voltar</Link><div className="mt-5 flex items-center gap-3"><BookOpen className="h-8 w-8 text-primary" /><div><h1 className="text-3xl font-bold">Ajuda e tutoriais</h1><p className="text-muted-foreground">Primeiros passos claros para personal e aluno.</p></div></div></div>
+  return <main className="dk-app dk-app-surface min-h-screen px-4 py-6 sm:py-10"><div className="relative z-10 mx-auto max-w-6xl space-y-8">
+    <nav className="flex items-center justify-between"><BrandMark /><Link href="/" className="flex min-h-11 items-center gap-2 rounded-full border bg-background px-4 text-sm font-bold"><ArrowLeft className="size-4" /> Voltar</Link></nav>
+    <header className="dk-hero-panel p-7 sm:p-10"><div className="relative z-10"><p className="dk-kicker text-[#c9ff32]">Suporte D KONG</p><h1 className="dk-display mt-6 text-[clamp(3rem,8vw,6rem)]">AJUDA DIRETA.</h1><p className="mt-5 max-w-2xl text-base leading-7 text-white/70">Encontre o próximo passo para cadastrar, treinar, acompanhar e recuperar seu acesso.</p></div></header>
     <div className="grid gap-6 lg:grid-cols-2">
-      <section className="rounded-2xl border bg-card p-6"><div className="mb-5 flex items-center gap-2"><UserPlus className="h-5 w-5 text-emerald-600" /><h2 className="text-xl font-bold">Tutorial do personal</h2></div><ol className="space-y-4">{trainerTutorials.map(([title, text]) => <li key={title} className="rounded-lg bg-muted/30 p-4"><h3 className="font-semibold">{title}</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{text}</p></li>)}</ol></section>
-      <section className="rounded-2xl border bg-card p-6"><div className="mb-5 flex items-center gap-2"><Dumbbell className="h-5 w-5 text-blue-600" /><h2 className="text-xl font-bold">Tutorial do aluno</h2></div><ol className="space-y-4">{studentTutorials.map(([title, text]) => <li key={title} className="rounded-lg bg-muted/30 p-4"><h3 className="font-semibold">{title}</h3><p className="mt-1 text-sm leading-relaxed text-muted-foreground">{text}</p></li>)}</ol></section>
+      <section className="rounded-[1.75rem] border bg-card p-5 shadow-sm sm:p-7"><div className="mb-6 flex items-center gap-3"><span className="flex size-11 items-center justify-center rounded-full bg-black text-[#c9ff32]"><UserPlus className="size-5" /></span><div><p className="dk-kicker text-muted-foreground">Operação</p><h2 className="mt-1 text-2xl font-black">Para o personal</h2></div></div><ol className="space-y-3">{trainerTutorials.map(([title, text]) => <li key={title} className="rounded-2xl border border-black/8 bg-muted/25 p-4"><h3 className="font-black">{title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{text}</p></li>)}</ol></section>
+      <section className="rounded-[1.75rem] border bg-card p-5 shadow-sm sm:p-7"><div className="mb-6 flex items-center gap-3"><span className="flex size-11 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Dumbbell className="size-5" /></span><div><p className="dk-kicker text-muted-foreground">Performance</p><h2 className="mt-1 text-2xl font-black">Para o aluno</h2></div></div><ol className="space-y-3">{studentTutorials.map(([title, text]) => <li key={title} className="rounded-2xl border border-black/8 bg-muted/25 p-4"><h3 className="font-black">{title}</h3><p className="mt-1 text-sm leading-6 text-muted-foreground">{text}</p></li>)}</ol></section>
     </div>
-    <section className="grid gap-4 sm:grid-cols-2"><div className="rounded-xl border p-5"><KeyRound className="mb-2 h-5 w-5 text-amber-600" /><h2 className="font-bold">Perdeu o acesso?</h2><p className="mt-2 text-sm text-muted-foreground">Personal: use nome, senha e idade em <Link href="/recover" className="text-primary underline">Recuperar acesso</Link>. Aluno: peça ao personal um novo código.</p></div><div className="rounded-xl border p-5"><ShieldCheck className="mb-2 h-5 w-5 text-emerald-600" /><h2 className="font-bold">Boas práticas</h2><p className="mt-2 text-sm text-muted-foreground">Não envie códigos em grupos. Troque o código se houver suspeita de acesso e nunca compartilhe sua senha de recuperação.</p></div></section>
-    <div className="flex gap-4 text-sm"><Link href="/privacy" className="text-primary underline">Privacidade</Link><Link href="/terms" className="text-primary underline">Termos de uso</Link></div>
+    <section className="grid gap-4 sm:grid-cols-2"><div className="rounded-2xl border bg-card p-5"><KeyRound className="mb-3 size-5 text-[#9a5d00]" /><h2 className="font-black">Perdeu o acesso?</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Personal: use nome, senha e idade em <Link href="/recover" className="font-bold text-foreground underline">Recuperar acesso</Link>. Aluno: peça ao personal um novo código.</p></div><div className="rounded-2xl border bg-card p-5"><ShieldCheck className="mb-3 size-5 text-[#147a42]" /><h2 className="font-black">Boas práticas</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Não envie códigos em grupos. Troque o código se houver suspeita de acesso e nunca compartilhe sua senha de recuperação.</p></div></section>
+    <div className="flex gap-4 pb-6 text-sm"><Link href="/privacy" className="font-bold underline">Privacidade</Link><Link href="/terms" className="font-bold underline">Termos de uso</Link></div>
   </div></main>;
 }
