@@ -72,14 +72,14 @@ export default function RegisterPage() {
       <AuthScene
         eyebrow="Novo personal"
         title="COMECE FORTE. CRESÇA ORGANIZADO."
-        description="Crie sua conta profissional e receba um único código para acessar toda a operação D KONG."
+        description="Crie sua conta profissional e receba um único código para acessar toda a operação G KONG."
         wide
       >
         {accessCode ? (
           <div className="mx-auto max-w-lg text-center">
             <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#c9ff32]"><CheckCircle2 className="size-8" /></div>
             <p className="mt-7 text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Cadastro concluído</p>
-            <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Seu código D KONG</h1>
+            <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Seu código G KONG</h1>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/50">Use este código com seu nome para entrar. Sua senha e idade servem somente para recuperar o acesso.</p>
 
             <div className="mt-8 rounded-3xl bg-black p-7 text-white shadow-2xl">

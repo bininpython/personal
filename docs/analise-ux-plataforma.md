@@ -1,4 +1,4 @@
-# Análise da plataforma D KONG
+# Análise da plataforma G KONG
 
 Auditoria de produto, design e experiência de uso — 10 de agosto de 2026
 Base: `main` no commit `93ea9f8`, ~9.300 linhas de interface em 30 telas.
@@ -7,14 +7,14 @@ Base: `main` no commit `93ea9f8`, ~9.300 linhas de interface em 30 telas.
 
 ## Resumo executivo
 
-O D KONG tem uma coisa que a maioria dos concorrentes não tem: **uma ideia forte e um
+O G KONG tem uma coisa que a maioria dos concorrentes não tem: **uma ideia forte e um
 diferencial real**. Entrar sem e-mail, com nome e um código de seis números, elimina o maior
 atrito de adoção do segmento — aluno de academia não cria conta, não confirma e-mail, não
 lembra senha. E a identidade visual nova (preto, volt, tipografia display) é a primeira coisa
 nesse mercado que não parece um sistema de gestão de clínica.
 
 O problema é que **essa ideia só chegou em um terço do produto**. Nove telas falam a língua
-D KONG. As outras vinte ainda são o app genérico anterior. O usuário atravessa duas
+G KONG. As outras vinte ainda são o app genérico anterior. O usuário atravessa duas
 plataformas diferentes usando o mesmo login, e a promessa da landing se desfaz no segundo
 clique.
 
@@ -75,7 +75,7 @@ Cada achado tem um identificador para referência nas tarefas.
 
 #### C1 · Duas linguagens visuais dentro do mesmo produto
 
-Apenas nove arquivos usam o sistema D KONG (`dk-hero-panel`, `dk-kicker`, `dk-display`,
+Apenas nove arquivos usam o sistema G KONG (`dk-hero-panel`, `dk-kicker`, `dk-display`,
 `dk-metric`, volt). São eles: painel do personal, configurações, perfil do aluno visto pelo
 personal, e todas as telas do aluno.
 
@@ -108,7 +108,7 @@ Essa é a tarefa central do produto e ela só existe de verdade no desktop.
 #### C3 · Não é instalável e não funciona offline
 
 Não há `manifest`, nem service worker, nem ícone maskable. O favicon é o
-`public/dkong-logo.jpg` de 161 KB servido também como ícone de iOS.
+`public/gkong-logo.jpg` de 161 KB servido também como ícone de iOS.
 
 Consequências no uso real:
 
@@ -341,7 +341,7 @@ Baixo esforço, efeito imediato:
 | 4 | Elevar opacidades de texto abaixo de 45% | telas com `text-white/35`, `text-black/25` |
 | 5 | Toasts para baixo no celular (perto do polegar) | `src/app/layout.tsx:39` |
 | 6 | Remover código morto | `src/components/ui/muscle-anatomy.tsx`, `src/lib/demo-data.ts` |
-| 7 | Renomear o pacote de `fitcontrol-pro` para `d-kong` | `package.json:2` |
+| 7 | Renomear o pacote de `fitcontrol-pro` para `g-kong` | `package.json:2` |
 | 8 | Ícone e favicon em PNG/SVG otimizado no lugar do JPG de 161 KB | `src/app/layout.tsx:25` |
 | 9 | `metadataBase` + imagem OG | `src/app/layout.tsx:21` |
 | 10 | Padronizar rótulos de ação em minúsculas de frase | telas do personal |

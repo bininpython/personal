@@ -1,10 +1,10 @@
 // ============================================
-// D KONG — Constants
+// G KONG — Constants
 // ============================================
 
 // ---- App Config ----
 
-export const APP_NAME = 'D KONG';
+export const APP_NAME = 'G KONG';
 export const APP_SUBTITLE = 'Treino forte. Gestão inteligente. Evolução real.';
 export const APP_VERSION = '1.0.0';
 

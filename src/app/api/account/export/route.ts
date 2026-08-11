@@ -138,7 +138,7 @@ export async function GET() {
 
     const exportedAt = new Date().toISOString();
     const body = JSON.stringify({
-      product: 'D KONG',
+      product: 'G KONG',
       schemaVersion: 2,
       exportedAt,
       subjectType: session.role,
@@ -147,7 +147,7 @@ export async function GET() {
     return new Response(body, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Content-Disposition': `attachment; filename="d-kong-export-${dateKeyInSaoPaulo()}.json"`,
+        'Content-Disposition': `attachment; filename="g-kong-export-${dateKeyInSaoPaulo()}.json"`,
         'Cache-Control': 'no-store',
       },
     });

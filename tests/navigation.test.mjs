@@ -39,6 +39,15 @@ test('every public authentication page uses the protected return control', () =>
   }
 });
 
+test('public metadata routes bypass the authentication proxy', () => {
+  const proxy = source('src/proxy.ts');
+  const publicMetadataRoutes = ['/icon', '/opengraph-image', '/robots.txt', '/sitemap.xml'];
+
+  for (const route of publicMetadataRoutes) {
+    assert.match(proxy, new RegExp(`['"]${route.replace('.', '\\.')}['"]`), `${route} must remain publicly accessible.`);
+  }
+});
+
 test('navigation never depends on browser history being available', () => {
   const files = filesBelow(join(projectRoot, 'src'));
   const offenders = files.filter((path) => /router\.back\(|history\.back\(|window\.history\.back\(/.test(readFileSync(path, 'utf8')));

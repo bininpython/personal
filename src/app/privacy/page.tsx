@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const sections = [
-  ['1. Quem trata os dados', 'A D KONG opera a plataforma e trata os dados necessários à conta, segurança e funcionamento do serviço. O personal trainer é responsável pelas decisões profissionais e pelos dados de seus alunos que cadastra ou utiliza no acompanhamento. Cada parte deve cumprir suas obrigações conforme a atividade que realiza.'],
+  ['1. Quem trata os dados', 'A G KONG opera a plataforma e trata os dados necessários à conta, segurança e funcionamento do serviço. O personal trainer é responsável pelas decisões profissionais e pelos dados de seus alunos que cadastra ou utiliza no acompanhamento. Cada parte deve cumprir suas obrigações conforme a atividade que realiza.'],
   ['2. Dados tratados', 'Podemos tratar nome, código protegido, dados profissionais do personal, configurações da conta, registros de acesso e segurança, fichas, execuções, agenda, mensagens, fotos e, quando informados, medidas, avaliações, lesões, restrições e outros dados de saúde. E-mail e telefone não são exigidos para autenticação.'],
   ['3. Finalidades e bases legais', 'Os dados são usados para autenticar usuários, entregar e registrar treinos, permitir acompanhamento, comunicação e suporte, prevenir fraude, manter a segurança e cumprir obrigações. O tratamento pode se apoiar na execução do serviço, consentimento — especialmente para dados sensíveis quando aplicável —, cumprimento legal e exercício regular de direitos. Não vendemos dados pessoais.'],
   ['4. Consentimento e dados opcionais', 'O personal declara possuir autorização para o cadastro inicial; isso não substitui a escolha do aluno. No primeiro acesso, o aluno confirma diretamente a Política e os Termos. Medidas e informações de saúde opcionais podem ser omitidas. O consentimento pode ser revogado, sem afetar tratamentos anteriores legítimos, mas algumas funções podem deixar de operar.'],
@@ -18,7 +18,7 @@ const sections = [
 export default function PrivacyPage() {
   return <main className="min-h-screen bg-background px-4 py-12"><article className="mx-auto max-w-3xl space-y-8">
     <div><Link href="/" className="text-sm font-medium text-primary hover:underline">← Voltar ao início</Link><h1 className="mt-6 text-3xl font-bold">Política de Privacidade</h1><p className="mt-2 text-sm text-muted-foreground">Última atualização: 8 de agosto de 2026 · versão 2026-08-08</p></div>
-    <p className="rounded-lg border bg-muted/20 p-4 leading-relaxed text-muted-foreground">Esta Política explica como a plataforma D KONG trata dados pessoais de personal trainers, alunos e responsáveis, em conformidade com a legislação brasileira de proteção de dados.</p>
+    <p className="rounded-lg border bg-muted/20 p-4 leading-relaxed text-muted-foreground">Esta Política explica como a plataforma G KONG trata dados pessoais de personal trainers, alunos e responsáveis, em conformidade com a legislação brasileira de proteção de dados.</p>
     {sections.map(([title, text]) => <section key={title} className="space-y-3"><h2 className="text-xl font-semibold">{title}</h2><p className="leading-relaxed text-muted-foreground">{text}</p></section>)}
     <p className="text-sm text-muted-foreground">Consulte também os <Link href="/terms" className="text-primary underline">Termos de Uso</Link>.</p>
   </article></main>;

@@ -59,7 +59,7 @@ export default function RecoverPage() {
       <AuthScene
         eyebrow="Recuperação simples"
         title="VOLTE AO JOGO EM POUCOS SEGUNDOS."
-        description="Confirme três dados pessoais e a D KONG substitui o código esquecido por um novo."
+        description="Confirme três dados pessoais e a G KONG substitui o código esquecido por um novo."
       >
         {newCode ? (
           <div className="text-center">

@@ -16,7 +16,7 @@ interface StudentAccessCardProps {
 function accessMessage(studentName: string, accessCode: string) {
   const origin = typeof window === 'undefined' ? '' : window.location.origin;
   return [
-    'Seu acesso ao D KONG está pronto.',
+    'Seu acesso ao G KONG está pronto.',
     '',
     `Nome: ${studentName}`,
     `Código: ${accessCode}`,

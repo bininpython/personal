@@ -1,5 +1,5 @@
 // ============================================
-// D KONG — JWT Token Management
+// G KONG — JWT Token Management
 // ============================================
 
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose';

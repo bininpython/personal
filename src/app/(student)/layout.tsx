@@ -132,7 +132,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
             </Tooltip>
             <div className="ml-1 hidden text-right xl:block">
               <p className="max-w-28 truncate text-xs font-bold">{user?.name || 'Aluno'}</p>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/65">Atleta D KONG</p>
+              <p className="rounded-md bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black">Atleta G KONG</p>
             </div>
             <Avatar className="w-9 h-9 ring-2 ring-[#c9ff32]/30">
               {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}

@@ -22,8 +22,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "D KONG — Performance e Gestão de Treinos",
-    template: "%s | D KONG",
+    default: "G KONG — Performance e Gestão de Treinos",
+    template: "%s | G KONG",
   },
   description: "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho.",
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: "/",
-    siteName: "D KONG",
-    title: "D KONG — Força na gestão. Foco no resultado.",
+    siteName: "G KONG",
+    title: "G KONG — Força na gestão. Foco no resultado.",
     description: "Gestão profissional de alunos, fichas de treino e evolução física com acesso simples por código.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "D KONG — Performance System" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "G KONG — Performance System" }],
   },
-  twitter: { card: "summary_large_image", title: "D KONG — Performance System", description: "Gestão de treinos com acesso simples e evolução visível.", images: ["/opengraph-image"] },
+  twitter: { card: "summary_large_image", title: "G KONG — Performance System", description: "Gestão de treinos com acesso simples e evolução visível.", images: ["/opengraph-image"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

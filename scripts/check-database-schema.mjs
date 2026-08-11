@@ -49,5 +49,5 @@ if (!url || !key) {
   }
 
   if (failed) process.exitCode = 1;
-  else console.log('Banco compatível com a versão atual da D KONG.');
+  else console.log('Banco compatível com a versão atual da G KONG.');
 }

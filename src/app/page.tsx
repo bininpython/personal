@@ -46,7 +46,7 @@ export default function LandingPage() {
     <div className="min-h-screen overflow-hidden bg-[#f6f6f1] text-[#0a0a0a]">
       <header className="border-b border-black/10 bg-[#f6f6f1]/90 backdrop-blur-xl">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" aria-label="D KONG — início">
+          <Link href="/" aria-label="G KONG — início">
             <BrandMark priority />
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -78,7 +78,7 @@ export default function LandingPage() {
               <span className="block">RESULTADO.</span>
             </h1>
             <p className="mt-8 max-w-xl text-base leading-7 text-black/58 sm:text-lg">
-              D KONG transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
+              G KONG transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -117,8 +117,8 @@ export default function LandingPage() {
               </div>
               <div className="relative mx-auto aspect-square max-w-[430px]">
                 <Image
-                  src="/dkong-logo.jpg"
-                  alt="Gorila com boné, símbolo da D KONG"
+                  src="/gkong-logo.jpg"
+                  alt="Gorila com boné, símbolo da G KONG"
                   fill
                   sizes="(max-width: 640px) 85vw, 430px"
                   className="object-contain mix-blend-multiply"
@@ -170,7 +170,7 @@ export default function LandingPage() {
         <section className="px-5 py-20 sm:px-8 sm:py-28">
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-24">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-[#668f00]">Acesso D KONG</p>
+              <p className="text-xs font-black uppercase tracking-[0.25em] text-black">Acesso G KONG</p>
               <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
               <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Um fluxo pensado para funcionar na academia, entre uma série e outra — rápido, legível e sem códigos desnecessários.</p>
             </div>
@@ -216,7 +216,7 @@ export default function LandingPage() {
             <Link href="/privacy" className="hover:text-black">Privacidade</Link>
             <Link href="/help" className="hover:text-black">Ajuda</Link>
           </div>
-          <p className="text-xs text-black/35">© {new Date().getFullYear()} D KONG</p>
+          <p className="text-xs text-black">© {new Date().getFullYear()} G KONG</p>
         </div>
       </footer>
     </div>

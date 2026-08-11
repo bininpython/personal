@@ -10,7 +10,7 @@ test('ciclo real: cadastro, sessão, rota protegida, exportação e exclusão', 
   await page.getByLabel('Senha de recuperação').fill('senha-e2e-segura');
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: 'Criar conta e gerar código' }).click();
-  await expect(page.getByRole('heading', { name: 'Seu código D KONG' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Seu código G KONG' })).toBeVisible();
   await page.getByRole('button', { name: 'Acessar meu painel' }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   const exportResponse = await page.request.get('/api/account/export');

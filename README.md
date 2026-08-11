@@ -1,4 +1,4 @@
-# D KONG
+# G KONG
 
 Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanharem a execução e a evolução dos treinos.
 
