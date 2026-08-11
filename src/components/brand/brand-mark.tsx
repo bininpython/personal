@@ -1,31 +1,30 @@
-import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import { APP_NAME } from '@/constants';
+import { BRAND } from '@/lib/brand';
+import { BrandLogo } from './brand-logo';
 
 interface BrandMarkProps {
   className?: string;
   compact?: boolean;
+  /** Mantido por compatibilidade: o símbolo vetorial não precisa de prioridade de carga. */
   priority?: boolean;
   inverted?: boolean;
   iconOnly?: boolean;
 }
 
-export function BrandMark({ className, compact = false, priority = false, inverted = false, iconOnly = false }: BrandMarkProps) {
+/**
+ * A assinatura da marca: símbolo + nome + descritor.
+ *
+ * Nome e descritor vêm de `src/lib/brand.ts`; o desenho, de `BrandLogo`.
+ * Nenhum texto de marca é escrito aqui.
+ */
+export function BrandMark({ className, compact = false, inverted = false, iconOnly = false }: BrandMarkProps) {
   return (
     <div className={cn('inline-flex items-center gap-3', className)}>
       <div className={cn(
-        'relative shrink-0 overflow-hidden rounded-[0.9rem] bg-white ring-1 ring-black/10',
+        'relative flex shrink-0 items-center justify-center rounded-[0.9rem] bg-brand-surface text-white ring-1 ring-white/10',
         compact ? 'size-9' : 'size-12',
       )}>
-        <Image
-          src="/dkong-logo.jpg"
-          alt="Logo D KONG"
-          fill
-          sizes={compact ? '36px' : '48px'}
-          className="object-cover mix-blend-multiply"
-          priority={priority}
-          loading={priority ? 'eager' : 'lazy'}
-        />
+        <BrandLogo className={compact ? 'size-6' : 'size-8'} title={`Símbolo ${BRAND.name}`} />
       </div>
       {!iconOnly && <div className="min-w-0">
         <span className={cn(
@@ -33,14 +32,14 @@ export function BrandMark({ className, compact = false, priority = false, invert
           compact ? 'text-base' : 'text-xl',
           inverted ? 'text-white' : 'text-black dark:text-white',
         )}>
-          {APP_NAME}
+          {BRAND.name}
         </span>
         {!compact && (
           <span className={cn(
             'mt-1 block text-[0.62rem] font-semibold uppercase tracking-[0.24em]',
-            inverted ? 'text-white/50' : 'text-black/45 dark:text-white/45',
+            inverted ? 'text-white/55' : 'text-black/55 dark:text-white/55',
           )}>
-            Performance system
+            {BRAND.wordmarkSubtitle}
           </span>
         )}
       </div>}

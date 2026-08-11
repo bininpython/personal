@@ -33,7 +33,7 @@ function Tutorial({
   return (
     <section className="rounded-[1.75rem] border border-black/10 bg-white p-6 shadow-sm sm:p-8">
       <div className="flex items-center gap-3">
-        <span className="flex size-12 items-center justify-center rounded-2xl bg-black text-[#c9ff32]">
+        <span className="flex size-12 items-center justify-center rounded-2xl bg-black text-brand-accent">
           <Icon className="size-5" />
         </span>
         <div>
@@ -44,7 +44,7 @@ function Tutorial({
       <ol className="mt-6 space-y-3">
         {steps.map(([title, text], index) => (
           <li key={title} className="grid grid-cols-[2rem_1fr] gap-3 rounded-2xl bg-[#f6f6f1] p-4">
-            <span className="font-mono text-sm font-black text-[#5c7f00]">
+            <span className="font-mono text-sm font-black text-brand-accent-text-dark">
               {String(index + 1).padStart(2, '0')}
             </span>
             <div>
@@ -64,7 +64,7 @@ export default function HelpPage() {
       <PublicBackLink href="/" />
       <main className="mx-auto w-full max-w-6xl flex-1 px-5 pb-16 sm:px-8">
         <div className="max-w-2xl">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#5c7f00]">Ajuda</p>
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-brand-accent-text-dark">Ajuda</p>
           <h1 className="mt-4 text-[clamp(2.5rem,6vw,4rem)] font-black leading-[1.02] tracking-[-0.06em]">
             PRIMEIROS PASSOS,<br />SEM ENROLAÇÃO.
           </h1>

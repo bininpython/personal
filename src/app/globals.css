@@ -44,6 +44,14 @@
   --color-volt-strong: var(--dk-volt-strong);
   --color-volt-ink: var(--dk-volt-ink);
   --color-volt-wash: var(--dk-volt-wash);
+  /* Marca trocável: ver src/lib/brand.ts e o bloco --brand-* abaixo. */
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-hover: var(--brand-accent-hover);
+  --color-brand-accent-deep: var(--brand-accent-deep);
+  --color-brand-accent-strong: var(--brand-accent-strong);
+  --color-brand-accent-text: var(--brand-accent-text);
+  --color-brand-accent-text-dark: var(--brand-accent-text-dark);
+  --color-brand-surface: var(--brand-surface);
   --color-ink: var(--dk-ink);
   --color-panel: var(--dk-panel);
   --color-ok: var(--dk-ok);
@@ -245,7 +253,25 @@
   filter: brightness(1.2);
 }
 
-/* ---- D KONG authenticated experience ---- */
+/* ---- Marca ----------------------------------------------------------------
+ * Estas sete cores são a identidade, e por isso NÃO mudam com o tema claro ou
+ * escuro — ao contrário das variáveis de interface logo abaixo, que invertem.
+ * Trocar a marca do produto é reescrever este bloco e o `src/lib/brand.ts`.
+ * As telas nunca repetem hexadecimal: usam bg-brand-accent, text-brand-accent-text
+ * e as demais utilitárias derivadas daqui.
+ */
+:root,
+.dark {
+  --brand-accent: #c9ff32;
+  --brand-accent-hover: #b8ef22;
+  --brand-accent-deep: #9fdb00;
+  --brand-accent-strong: #7cae00;
+  --brand-accent-text: #668f00;
+  --brand-accent-text-dark: #5c7f00;
+  --brand-surface: #090a08;
+}
+
+/* ---- Experiência autenticada ---- */
 :root {
   --dk-ink: #090a08;
   --dk-paper: #f5f5ef;

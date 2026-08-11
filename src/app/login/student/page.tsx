@@ -55,7 +55,7 @@ export default function StudentLoginPage() {
         title="SEU TREINO. SEU RITMO. SUA EVOLUÇÃO."
         description="Abra o treino do dia, registre suas séries e acompanhe cada conquista sem distrações."
       >
-        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><Dumbbell className="size-6" /></div>
+        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-brand-accent"><Dumbbell className="size-6" /></div>
         <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Acesso do aluno</p>
         <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Pronto para treinar?</h1>
         <p className="mt-3 text-sm leading-6 text-black/50">Você só precisa do seu nome e do código enviado pelo personal.</p>

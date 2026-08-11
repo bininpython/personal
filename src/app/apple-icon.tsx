@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { BRAND, BRAND_COLORS } from '@/lib/brand';
 
 // Substitui o dkong-logo.jpg de 158 KB que era servido como ícone de iOS.
 export const size = { width: 180, height: 180 };
@@ -14,15 +15,15 @@ export default function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#090a08',
-          color: '#c9ff32',
+          background: BRAND_COLORS.surface,
+          color: BRAND_COLORS.accent,
           fontSize: '86px',
           fontWeight: 900,
           letterSpacing: '-0.06em',
           fontFamily: 'sans-serif',
         }}
       >
-        DK
+        {BRAND.monogram}
       </div>
     ),
     size,

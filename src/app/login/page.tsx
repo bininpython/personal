@@ -20,17 +20,17 @@ export default function LoginPage() {
 
         <div className="space-y-3">
           <Link href="/login/trainer" className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-black p-5 text-white shadow-xl transition-transform hover:-translate-y-0.5">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[#c9ff32] text-black"><ShieldCheck className="size-6" /></span>
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-brand-accent text-black"><ShieldCheck className="size-6" /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-[0.6rem] font-black uppercase tracking-[0.2em] text-white/40">Profissional</span>
               <span className="mt-1 block text-lg font-black">Sou personal trainer</span>
               <span className="mt-1 block text-xs text-white/48">Gerenciar alunos e treinos</span>
             </span>
-            <ArrowRight className="size-5 text-[#c9ff32] transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="size-5 text-brand-accent transition-transform group-hover:translate-x-1" />
           </Link>
 
           <Link href="/login/student" className="group flex items-center gap-4 rounded-3xl border border-black/10 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><UserRound className="size-6" /></span>
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-black text-brand-accent"><UserRound className="size-6" /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-[0.6rem] font-black uppercase tracking-[0.2em] text-black/35">Treino</span>
               <span className="mt-1 block text-lg font-black">Sou aluno</span>

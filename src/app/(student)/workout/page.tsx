@@ -482,7 +482,7 @@ export default function StudentWorkoutPage() {
       <div className="dk-hero-panel p-6 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="dk-kicker text-[#c9ff32]">
+            <div className="dk-kicker text-brand-accent">
               Ficha sincronizada com seu personal
             </div>
             <h1 className="dk-display mt-5 text-3xl sm:text-4xl">{plan.name}</h1>
@@ -501,17 +501,17 @@ export default function StudentWorkoutPage() {
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4">
-            <Target className="mb-1 size-4 text-[#c9ff32]" />
+            <Target className="mb-1 size-4 text-brand-accent" />
             <p className="text-lg font-bold">{plan.daysPerWeek}x</p>
             <p className="text-[11px] text-white/45">por semana</p>
           </div>
-          <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
+          <div className="rounded-2xl bg-brand-accent p-4 text-black">
             <Dumbbell className="mb-1 size-4" />
             <p className="text-lg font-bold">{plan.days.length}</p>
             <p className="text-[11px] text-black/50">treinos diferentes</p>
           </div>
           <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1">
-            <CheckCircle2 className="mb-1 size-4 text-[#c9ff32]" />
+            <CheckCircle2 className="mb-1 size-4 text-brand-accent" />
             <p className="text-sm font-bold">{plan.week.completed}/{plan.week.target} na semana</p>
             <p className="text-[11px] text-white/45">
               {plan.week.isComplete ? 'Ciclo semanal concluído' : lastSync ? `Atualizado às ${lastSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Sincronização ativa'}
@@ -532,7 +532,7 @@ export default function StudentWorkoutPage() {
         </div>
       )}
 
-      <Card className={plan.week.isComplete ? 'border-[#9fdb00]/30 bg-[#c9ff32]/10' : ''}>
+      <Card className={plan.week.isComplete ? 'border-brand-accent-deep/30 bg-brand-accent/10' : ''}>
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
@@ -543,7 +543,7 @@ export default function StudentWorkoutPage() {
                   : `${plan.week.completed} de ${plan.week.target} treino(s) concluído(s). Continue pelo treino destacado.`}
               </p>
             </div>
-            <span className="text-2xl font-black text-[#668f00]">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</span>
+            <span className="text-2xl font-black text-brand-accent-text">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</span>
           </div>
           <Progress value={(plan.week.completed / Math.max(1, plan.week.target)) * 100} className="mt-3" />
         </CardContent>
@@ -557,10 +557,10 @@ export default function StudentWorkoutPage() {
             onClick={() => selectWorkoutDay(day.id)}
             className={`relative min-w-[130px] rounded-xl border px-4 py-3 text-left transition-colors ${
               activeDay?.id === day.id
-                ? 'border-black bg-black text-[#c9ff32] shadow-sm dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                ? 'border-black bg-black text-brand-accent shadow-sm dark:border-brand-accent dark:bg-brand-accent dark:text-black'
                 : day.completedThisWeek
                   ? 'border-ok/40 bg-ok-wash'
-                : 'border-border bg-card hover:border-[#9fdb00]'
+                : 'border-border bg-card hover:border-brand-accent-deep'
             }`}
           >
             {day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-ok'}`} />}
@@ -580,7 +580,7 @@ export default function StudentWorkoutPage() {
                   <p className="text-sm font-semibold">Progresso de hoje</p>
                   <p className="text-xs text-muted-foreground">{activeDayCompleted ? activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje; a próxima repetição será em outro dia' : `${completedInDay} de ${totalSets} séries concluídas neste treino`}</p>
                 </div>
-                <span className="text-2xl font-black text-[#668f00]">{progress}%</span>
+                <span className="text-2xl font-black text-brand-accent-text">{progress}%</span>
               </div>
               <Progress value={progress} className="mt-3" />
               {progress > 0 && !activeDayCompleted && (
@@ -606,7 +606,7 @@ export default function StudentWorkoutPage() {
                   <CardHeader className="border-b border-border/40 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex min-w-0 gap-3">
-                        <div className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${isComplete ? 'bg-[#9fdb00] text-black' : 'bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'}`}>
+                        <div className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${isComplete ? 'bg-brand-accent-deep text-black' : 'bg-black text-brand-accent dark:bg-brand-accent dark:text-black'}`}>
                           {isComplete ? <Check className="size-4" /> : exerciseIndex + 1}
                         </div>
                         <div className="min-w-0">
@@ -651,7 +651,7 @@ export default function StudentWorkoutPage() {
                                 type="button"
                                 disabled={activeDayCompleted}
                                 onClick={() => toggleSet(exercise.id, setIndex)}
-                                className={`flex h-10 items-center justify-center gap-2 rounded-md border px-2 text-sm font-medium transition-colors ${checked ? 'border-[#9fdb00] bg-[#9fdb00] text-black' : setIndex === nextSetIndex ? 'border-black bg-black/[0.06] text-black dark:border-[#c9ff32] dark:bg-[#c9ff32]/10 dark:text-[#c9ff32]' : 'border-border bg-background hover:border-[#9fdb00]'}`}
+                                className={`flex h-10 items-center justify-center gap-2 rounded-md border px-2 text-sm font-medium transition-colors ${checked ? 'border-brand-accent-deep bg-brand-accent-deep text-black' : setIndex === nextSetIndex ? 'border-black bg-black/[0.06] text-black dark:border-brand-accent dark:bg-brand-accent/10 dark:text-brand-accent' : 'border-border bg-background hover:border-brand-accent-deep'}`}
                               >
                                 {checked ? <CheckCircle2 className="size-4" /> : <span className="flex size-5 items-center justify-center rounded-full border text-[10px]">{setIndex + 1}</span>}
                                 Série {setIndex + 1}
@@ -692,7 +692,7 @@ export default function StudentWorkoutPage() {
                     <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30'}`} /></button>)}</div>
                     <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
                   </div>
-                  <Button className="mt-4 bg-black text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" onClick={() => void completeWorkout()} disabled={completingWorkout}>
+                  <Button className="mt-4 bg-black text-white hover:bg-black/80 dark:bg-brand-accent dark:text-black" onClick={() => void completeWorkout()} disabled={completingWorkout}>
                     {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
                     Concluir e salvar treino
                   </Button>
@@ -704,11 +704,11 @@ export default function StudentWorkoutPage() {
       )}
 
       {restTimer && (
-        <div className="fixed bottom-20 left-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-2xl border border-[#9fdb00]/40 bg-background/95 p-4 shadow-2xl backdrop-blur lg:bottom-6">
+        <div className="fixed bottom-20 left-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-2xl border border-brand-accent-deep/40 bg-background/95 p-4 shadow-2xl backdrop-blur lg:bottom-6">
           <div className="flex items-center gap-4">
-            <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Timer className="size-6" /></div>
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-full bg-brand-accent text-black"><Timer className="size-6" /></div>
             <div className="min-w-0 flex-1">
-              <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-wide text-[#668f00]">Tempo de descanso</p><p className="truncate font-semibold">{restTimer.exerciseName} · próxima série {restTimer.nextSet}</p></div><strong className="font-mono text-2xl text-[#668f00]">{formatCountdown(restTimer.remainingSeconds)}</strong></div>
+              <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-wide text-brand-accent-text">Tempo de descanso</p><p className="truncate font-semibold">{restTimer.exerciseName} · próxima série {restTimer.nextSet}</p></div><strong className="font-mono text-2xl text-brand-accent-text">{formatCountdown(restTimer.remainingSeconds)}</strong></div>
               <Progress value={((restTimer.totalSeconds - restTimer.remainingSeconds) / Math.max(1, restTimer.totalSeconds)) * 100} className="mt-2 h-2" />
               <div className="mt-3 flex gap-2"><Button type="button" size="sm" variant="outline" onClick={addRestTime}><Plus className="mr-1 size-3.5" /> 15s</Button><Button type="button" size="sm" variant="ghost" onClick={() => setRestTimer(null)}><SkipForward className="mr-1 size-3.5" /> Pular descanso</Button></div>
             </div>

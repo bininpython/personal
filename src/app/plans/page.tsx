@@ -21,7 +21,7 @@ export default function PlansPage() {
       <PublicBackLink href="/" />
       <main className="mx-auto w-full max-w-5xl flex-1 px-5 pb-16 sm:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#5c7f00]">Planos</p>
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-brand-accent-text-dark">Planos</p>
           <h1 className="mt-4 text-[clamp(2.5rem,6vw,4rem)] font-black leading-[1.02] tracking-[-0.06em]">
             TUDO LIBERADO<br />ENQUANTO VOCÊ CRESCE.
           </h1>
@@ -33,13 +33,13 @@ export default function PlansPage() {
 
         <div className="mx-auto mt-12 grid max-w-4xl gap-5 lg:grid-cols-[1.1fr_0.9fr]">
           <section className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white p-7 shadow-[0_28px_70px_rgba(0,0,0,0.08)] sm:p-9">
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-[#c9ff32]" />
+            <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-accent" />
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-black/40">Plano atual</p>
                 <h2 className="mt-2 text-4xl font-black tracking-[-0.05em]">Gratuito</h2>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#c9ff32] px-3 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.14em]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-accent px-3 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.14em]">
                 <Sparkles className="size-3.5" /> Sem cartão
               </span>
             </div>
@@ -67,7 +67,7 @@ export default function PlansPage() {
             </Link>
             <Link
               href="/login"
-              className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
+              className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-brand-accent"
             >
               Já tenho acesso
             </Link>
@@ -75,7 +75,7 @@ export default function PlansPage() {
 
           <aside className="flex flex-col gap-4">
             <div className="rounded-[1.75rem] bg-[#0a0a0a] p-7 text-white">
-              <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-[#c9ff32]">Próximo degrau</p>
+              <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-brand-accent">Próximo degrau</p>
               <h3 className="mt-3 text-2xl font-black tracking-[-0.03em]">Passou de {MAX_STUDENTS_PER_TRAINER} alunos?</h3>
               <p className="mt-3 text-sm leading-6 text-white/55">
                 O limite vale para alunos <strong className="text-white">ativos</strong>. Aluno

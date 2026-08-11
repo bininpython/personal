@@ -81,17 +81,17 @@ export default function StudentHomePage() {
       <section className="dk-hero-panel p-6 sm:p-8 lg:p-10">
         <div className="relative z-10 grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-end">
           <div>
-            <p className="dk-kicker text-[#c9ff32]">Painel do atleta</p>
+            <p className="dk-kicker text-brand-accent">Painel do atleta</p>
             <h1 className="dk-display mt-6 text-[clamp(2.8rem,7vw,5.4rem)]">
               {greeting.toUpperCase()},<br />
-              <span className="text-[#c9ff32]">{user?.name?.split(' ')[0]?.toUpperCase() || 'ALUNO'}.</span>
+              <span className="text-brand-accent">{user?.name?.split(' ')[0]?.toUpperCase() || 'ALUNO'}.</span>
             </h1>
             <p className="mt-5 max-w-lg text-sm leading-6 text-white/52 sm:text-base">Sua ficha, seu ritmo e sua evolução em um só lugar.</p>
           </div>
           {plan && (
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Meta semanal</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.target}</p></div>
-              <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Concluídos</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.completed}</p></div>
+              <div className="rounded-2xl bg-brand-accent p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Concluídos</p><p className="mt-4 text-4xl font-black tracking-[-0.06em]">{plan.week.completed}</p></div>
             </div>
           )}
         </div>
@@ -99,11 +99,11 @@ export default function StudentHomePage() {
 
       {loading ? (
         <div className="flex justify-center rounded-3xl border border-black/8 bg-white/70 py-16 text-muted-foreground dark:border-white/8 dark:bg-white/[0.04]">
-          <Loader2 className="mr-2 size-5 animate-spin text-[#7cae00]" /> Buscando sua ficha...
+          <Loader2 className="mr-2 size-5 animate-spin text-brand-accent-strong" /> Buscando sua ficha...
         </div>
       ) : plan && nextWorkout ? (
         <Card className="relative overflow-hidden bg-white dark:bg-[#151613]">
-          <div className="absolute inset-y-0 left-0 w-1.5 bg-[#c9ff32]" />
+          <div className="absolute inset-y-0 left-0 w-1.5 bg-brand-accent" />
           <CardContent className="p-6 sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -111,7 +111,7 @@ export default function StudentHomePage() {
                 <h2 className="text-2xl font-black tracking-[-0.04em] sm:text-3xl">{plan.week.isComplete ? 'Parabéns, ciclo finalizado!' : nextWorkout.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.name} · {plan.goal}</p>
               </div>
-              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-black text-brand-accent dark:bg-brand-accent dark:text-black">
                 <Dumbbell className="size-6" />
               </div>
             </div>
@@ -122,12 +122,12 @@ export default function StudentHomePage() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Treino {nextWorkout.label}</p>
               </div>
               <div className="dk-metric p-4">
-                <Target className="mb-2 size-4 text-[#7cae00]" />
+                <Target className="mb-2 size-4 text-brand-accent-strong" />
                 <p className="text-lg font-black">{plan.daysPerWeek}x por semana</p>
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Frequência prescrita</p>
               </div>
             </div>
-            <Button className="mt-5 h-12 w-full bg-black text-base text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black dark:hover:bg-[#b8ef22]" onClick={() => router.push(`/workout?day=${nextWorkout.id}`)}>
+            <Button className="mt-5 h-12 w-full bg-black text-base text-white hover:bg-black/80 dark:bg-brand-accent dark:text-black dark:hover:bg-brand-accent-hover" onClick={() => router.push(`/workout?day=${nextWorkout.id}`)}>
               <Zap className="mr-2 size-5" /> {plan.week.isComplete ? 'Consultar minha ficha' : 'Começar próximo treino'}
             </Button>
           </CardContent>
@@ -135,7 +135,7 @@ export default function StudentHomePage() {
       ) : (
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center p-8 text-center">
-            <div className="mb-3 rounded-full bg-black p-4 text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black"><Dumbbell className="size-8" /></div>
+            <div className="mb-3 rounded-full bg-black p-4 text-brand-accent dark:bg-brand-accent dark:text-black"><Dumbbell className="size-8" /></div>
             <h2 className="text-xl font-black">Aguardando sua primeira ficha</h2>
             <p className="mt-1 max-w-sm text-sm text-muted-foreground">
               Quando o personal publicar seu treino, ele aparecerá automaticamente aqui.
@@ -151,7 +151,7 @@ export default function StudentHomePage() {
       {plan && plan.days.length > 1 && (
         <Card>
           <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Sua semana</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent-text">Sua semana</p>
             <CardTitle className="mt-1 text-xl font-black tracking-tight">Treinos da ficha</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -160,10 +160,10 @@ export default function StudentHomePage() {
                 type="button"
                 key={day.id}
                 onClick={() => router.push(`/workout?day=${day.id}`)}
-                className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-colors hover:border-[#9fdb00] hover:bg-[#c9ff32]/10 ${day.completedThisWeek ? 'border-[#9fdb00]/40 bg-[#c9ff32]/10' : ''}`}
+                className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-colors hover:border-brand-accent-deep hover:bg-brand-accent/10 ${day.completedThisWeek ? 'border-brand-accent-deep/40 bg-brand-accent/10' : ''}`}
               >
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#668f00]">Treino {day.label}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-brand-accent-text">Treino {day.label}</p>
                   <p className="font-medium">{day.name}</p>
                   <p className="text-xs text-muted-foreground">{day.exercises.length} exercícios</p>
                 </div>
@@ -176,7 +176,7 @@ export default function StudentHomePage() {
 
       {appointments.length > 0 && (
         <Card>
-          <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Agenda</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><CalendarDays className="size-5" /> Próximos compromissos</CardTitle></CardHeader>
+          <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent-text">Agenda</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><CalendarDays className="size-5" /> Próximos compromissos</CardTitle></CardHeader>
           <CardContent className="space-y-2">{appointments.map((appointment) => <div key={appointment.id} className="rounded-2xl border p-4"><p className="font-bold">{appointment.type === 'assessment' ? 'Avaliação física' : appointment.type === 'training' ? 'Treino acompanhado' : 'Acompanhamento'}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(appointment.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</p></div>)}</CardContent>
         </Card>
       )}

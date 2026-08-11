@@ -114,7 +114,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                     onClick={() => mobile && setMobileOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                       ${active
-                        ? 'bg-[#c9ff32] text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
+                        ? 'bg-brand-accent text-black shadow-[0_12px_28px_rgba(201,255,50,0.16)]'
                         : 'text-white/60 hover:bg-white/8 hover:text-white'
                       }
                       ${collapsed && !mobile ? 'justify-center' : item.child ? 'ml-3' : ''}
@@ -179,7 +179,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-3 py-2`}>
           <Avatar className="w-8 h-8 flex-shrink-0">
             {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-            <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
+            <AvatarFallback className="bg-brand-accent text-black text-xs font-black">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>
           </Avatar>
@@ -191,7 +191,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           )}
           {(!collapsed || mobile) && (
             <Tooltip>
-              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/60 hover:text-[#c9ff32] transition-colors" />}>
+              <TooltipTrigger render={<button onClick={handleLogout} className="text-white/60 hover:text-brand-accent transition-colors" />}>
                 <LogOut className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>Sair</TooltipContent>
@@ -203,15 +203,15 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   );
 
   return (
-    <div className="dk-app flex h-screen overflow-hidden bg-[#090a08]">
+    <div className="dk-app flex h-screen overflow-hidden bg-brand-surface">
       {/* Desktop Sidebar */}
-      <aside className={`relative hidden lg:flex flex-col border-r border-white/10 bg-[#090a08] text-white transition-all duration-300
+      <aside className={`relative hidden lg:flex flex-col border-r border-white/10 bg-brand-surface text-white transition-all duration-300
         ${collapsed ? 'w-[72px]' : 'w-[260px]'}`}
       >
         {renderNavContent()}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute top-20 -right-3 w-6 h-6 rounded-full border border-black bg-[#c9ff32] shadow-sm flex items-center justify-center text-black hover:scale-105 z-50 hidden lg:flex transition-transform"
+          className="absolute top-20 -right-3 w-6 h-6 rounded-full border border-black bg-brand-accent shadow-sm flex items-center justify-center text-black hover:scale-105 z-50 hidden lg:flex transition-transform"
           style={{ left: collapsed ? '60px' : '248px' }}
         >
           <ChevronLeft className={`w-3.5 h-3.5 transition-transform ${collapsed ? 'rotate-180' : ''}`} />
@@ -219,13 +219,13 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-[#090a08]/95 text-white backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-brand-surface/95 text-white backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white hover:bg-white/10 hover:text-white" />}>
               <Menu className="w-5 h-5" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] border-white/10 bg-[#090a08] p-0 text-white">
+            <SheetContent side="left" className="w-[280px] border-white/10 bg-brand-surface p-0 text-white">
               {renderNavContent(true)}
             </SheetContent>
           </Sheet>
@@ -238,7 +238,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           </Button>
           <Avatar className="w-8 h-8">
             {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-            <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
+            <AvatarFallback className="bg-brand-accent text-black text-xs font-black">
               {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PT'}
             </AvatarFallback>
           </Avatar>
@@ -253,7 +253,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#090a08]/95 text-white backdrop-blur-xl border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-surface/95 text-white backdrop-blur-xl border-t border-white/10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex items-center justify-around h-16 px-2">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.href);
@@ -262,12 +262,12 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition-colors relative
-                  ${active ? 'text-[#c9ff32]' : 'text-white/60'}`}
+                  ${active ? 'text-brand-accent' : 'text-white/60'}`}
               >
-                <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
+                <item.icon className={`w-5 h-5 ${active ? 'text-brand-accent' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
                 {active && (
-                  <div className="absolute -top-0.5 w-5 h-0.5 bg-[#c9ff32] rounded-full shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
+                  <div className="absolute -top-0.5 w-5 h-0.5 bg-brand-accent rounded-full shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
                 )}
               </Link>
             );

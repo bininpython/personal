@@ -72,7 +72,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   if (checking && !isOnboarding) {
     return (
       <div className="dk-app dk-app-surface flex h-screen items-center justify-center">
-        <div className="size-9 animate-spin rounded-full border-4 border-[#c9ff32] border-t-black" />
+        <div className="size-9 animate-spin rounded-full border-4 border-brand-accent border-t-black" />
       </div>
     );
   }
@@ -83,9 +83,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="dk-app flex min-h-screen flex-col bg-[#090a08]">
+    <div className="dk-app flex min-h-screen flex-col bg-brand-surface">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-surface/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <BrandMark compact inverted />
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação do aluno">
@@ -95,7 +95,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${active ? 'bg-[#c9ff32] text-black' : 'text-white/50 hover:bg-white/8 hover:text-white'}`}
+                  className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold transition-colors ${active ? 'bg-brand-accent text-black' : 'text-white/50 hover:bg-white/8 hover:text-white'}`}
                 >
                   <item.icon className="size-4" />
                   {item.label}
@@ -126,9 +126,9 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
               <p className="max-w-28 truncate text-xs font-bold">{user?.name || 'Aluno'}</p>
               <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">Atleta D KONG</p>
             </div>
-            <Avatar className="w-9 h-9 ring-2 ring-[#c9ff32]/30">
+            <Avatar className="w-9 h-9 ring-2 ring-brand-accent/30">
               {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-              <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
+              <AvatarFallback className="bg-brand-accent text-black text-xs font-black">
                 {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AL'}
               </AvatarFallback>
             </Avatar>
@@ -144,7 +144,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-brand-surface/95 text-white backdrop-blur-xl lg:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="mx-auto flex h-16 max-w-2xl items-center justify-around px-1">
           {BOTTOM_NAV.map((item) => {
             const active = isActive(item.href);
@@ -153,12 +153,12 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
                 key={item.href}
                 href={item.href}
                 className={`relative flex flex-col items-center gap-1 rounded-lg px-2 py-1.5 transition-colors
-                  ${active ? 'text-[#c9ff32]' : 'text-white/38'}`}
+                  ${active ? 'text-brand-accent' : 'text-white/38'}`}
               >
-                <item.icon className={`w-5 h-5 ${active ? 'text-[#c9ff32]' : ''}`} />
+                <item.icon className={`w-5 h-5 ${active ? 'text-brand-accent' : ''}`} />
                 <span className="text-[10px] font-medium">{item.label}</span>
                 {active && (
-                  <div className="absolute -top-0.5 h-0.5 w-5 rounded-full bg-[#c9ff32] shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
+                  <div className="absolute -top-0.5 h-0.5 w-5 rounded-full bg-brand-accent shadow-[0_0_12px_rgba(201,255,50,0.7)]" />
                 )}
               </Link>
             );

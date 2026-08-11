@@ -77,7 +77,7 @@ export default function RegisterPage() {
       >
         {accessCode ? (
           <div className="mx-auto max-w-lg text-center">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#c9ff32]"><CheckCircle2 className="size-8" /></div>
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-brand-accent"><CheckCircle2 className="size-8" /></div>
             <p className="mt-7 text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Cadastro concluído</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Seu código D KONG</h1>
             <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/50">Use este código com seu nome para entrar. Sua senha e idade servem somente para recuperar o acesso.</p>
@@ -85,9 +85,9 @@ export default function RegisterPage() {
             <div className="mt-8 rounded-3xl bg-black p-7 text-white shadow-2xl">
               <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-white/40">Código pessoal</p>
               <div className="mt-3 flex items-center justify-center gap-4">
-                <code className="font-mono text-4xl font-black tracking-[0.18em] text-[#c9ff32] sm:text-5xl">{accessCode}</code>
+                <code className="font-mono text-4xl font-black tracking-[0.18em] text-brand-accent sm:text-5xl">{accessCode}</code>
                 <Button type="button" size="icon" variant="outline" onClick={() => void copyCode()} aria-label="Copiar código" className="border-white/20 bg-white/10 text-white hover:bg-white/20">
-                  {copied ? <Check className="size-4 text-[#c9ff32]" /> : <Copy className="size-4" />}
+                  {copied ? <Check className="size-4 text-brand-accent" /> : <Copy className="size-4" />}
                 </Button>
               </div>
             </div>

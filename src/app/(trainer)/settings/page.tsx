@@ -90,18 +90,18 @@ export default function TrainerSettingsPage() {
               }}
               sizeClassName="size-24 border-4 border-white/15"
             />
-            <div><p className="dk-kicker text-[#c9ff32]">D KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/48">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
+            <div><p className="dk-kicker text-brand-accent">D KONG ID · Personal</p><h1 className="dk-display mt-4 text-4xl sm:text-5xl">{profile.nickname || profile.name || 'SEU PERFIL'}</h1><p className="mt-3 max-w-xl text-sm leading-6 text-white/48">Sua identidade profissional, seus acessos e a segurança da operação.</p></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35">Cidade</p><p className="mt-3 max-w-36 truncate text-lg font-black">{profile.city || '—'}</p></div>
-            <div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/45">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
+            <div className="rounded-2xl bg-brand-accent p-4 text-black"><p className="text-[10px] font-black uppercase tracking-[0.16em] text-black/45">Idade</p><p className="mt-3 text-lg font-black">{profile.age || '—'} anos</p></div>
           </div>
         </div>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
-        <nav className="h-fit space-y-2 rounded-[1.5rem] bg-black p-3 text-white lg:sticky lg:top-8 dark:bg-[#c9ff32] dark:text-black" aria-label="Seções das configurações">
-          <a href="#perfil" className="flex items-center rounded-full bg-[#c9ff32] px-4 py-3 text-sm font-black text-black dark:bg-black dark:text-white"><User className="mr-2 size-4" /> Perfil</a>
+        <nav className="h-fit space-y-2 rounded-[1.5rem] bg-black p-3 text-white lg:sticky lg:top-8 dark:bg-brand-accent dark:text-black" aria-label="Seções das configurações">
+          <a href="#perfil" className="flex items-center rounded-full bg-brand-accent px-4 py-3 text-sm font-black text-black dark:bg-black dark:text-white"><User className="mr-2 size-4" /> Perfil</a>
           <a href="#acessos" className="flex items-center rounded-full px-4 py-3 text-sm text-white/55 hover:bg-white/10 hover:text-white dark:text-black/55 dark:hover:bg-black/10 dark:hover:text-black"><KeyRound className="mr-2 size-4" /> Acessos</a>
           <a href="#aparencia" className="flex items-center rounded-full px-4 py-3 text-sm text-white/55 hover:bg-white/10 hover:text-white dark:text-black/55 dark:hover:bg-black/10 dark:hover:text-black"><Paintbrush className="mr-2 size-4" /> Aparência</a>
           <a href="#privacidade" className="flex items-center rounded-full px-4 py-3 text-sm text-white/55 hover:bg-white/10 hover:text-white dark:text-black/55 dark:hover:bg-black/10 dark:hover:text-black"><ShieldCheck className="mr-2 size-4" /> Segurança</a>
@@ -110,7 +110,7 @@ export default function TrainerSettingsPage() {
         <div className="space-y-6">
           <Card id="perfil" className="scroll-mt-20">
             <CardHeader className="border-b border-black/8 dark:border-white/8">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Identidade</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent-text">Identidade</p>
               <CardTitle className="mt-1 text-2xl font-black tracking-tight">Perfil profissional</CardTitle>
               <CardDescription>Informações usadas na sua conta D KONG.</CardDescription>
             </CardHeader>
@@ -119,14 +119,14 @@ export default function TrainerSettingsPage() {
                 <div className="flex py-8 text-muted-foreground"><Loader2 className="mr-2 size-5 animate-spin" /> Carregando perfil...</div>
               ) : (
                 <>
-                  <div className="rounded-2xl border border-[#9fdb00]/25 bg-[#c9ff32]/10 p-4 text-sm"><p className="font-black">Foto e avatar no cartão acima</p><p className="mt-1 text-xs text-muted-foreground">Toque na imagem para enviar uma foto ou escolher entre {AVATAR_COUNT} opções.</p></div>
+                  <div className="rounded-2xl border border-brand-accent-deep/25 bg-brand-accent/10 p-4 text-sm"><p className="font-black">Foto e avatar no cartão acima</p><p className="mt-1 text-xs text-muted-foreground">Toque na imagem para enviar uma foto ou escolher entre {AVATAR_COUNT} opções.</p></div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2 sm:col-span-2"><Label htmlFor="trainer-name">Nome completo</Label><Input id="trainer-name" value={profile.name} onChange={(event) => setProfile({ ...profile, name: event.target.value })} maxLength={100} /></div>
                     <div className="space-y-2"><Label htmlFor="trainer-nickname">Apelido <span className="text-muted-foreground">(opcional)</span></Label><Input id="trainer-nickname" value={profile.nickname} onChange={(event) => setProfile({ ...profile, nickname: event.target.value })} maxLength={50} /></div>
                     <div className="space-y-2"><Label htmlFor="trainer-city">Cidade</Label><Input id="trainer-city" value={profile.city} onChange={(event) => setProfile({ ...profile, city: event.target.value })} maxLength={100} /></div>
                     <div className="space-y-2"><Label htmlFor="trainer-age">Idade</Label><Input id="trainer-age" type="number" min={18} max={100} value={profile.age} onChange={(event) => setProfile({ ...profile, age: Number(event.target.value) })} /></div>
                   </div>
-                  <Button className="h-11 bg-black px-5 text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" onClick={() => void saveProfile()} disabled={saving || profile.name.trim().length < 2 || profile.city.trim().length < 2}>
+                  <Button className="h-11 bg-black px-5 text-white hover:bg-black/80 dark:bg-brand-accent dark:text-black" onClick={() => void saveProfile()} disabled={saving || profile.name.trim().length < 2 || profile.city.trim().length < 2}>
                     {saving && <Loader2 className="mr-2 size-4 animate-spin" />} Salvar alterações
                   </Button>
                 </>
@@ -135,7 +135,7 @@ export default function TrainerSettingsPage() {
           </Card>
 
           <Card id="acessos" className="scroll-mt-20 overflow-hidden">
-            <CardHeader className="bg-black text-white dark:bg-[#c9ff32] dark:text-black">
+            <CardHeader className="bg-black text-white dark:bg-brand-accent dark:text-black">
               <CardTitle className="flex items-center gap-2"><Users className="size-5" /> Códigos dos alunos</CardTitle>
               <CardDescription className="text-white/55 dark:text-black/55">Cada aluno acessa usando apenas o nome e o código individual que você gerar.</CardDescription>
             </CardHeader>

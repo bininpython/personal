@@ -202,7 +202,7 @@ export default function StudentsPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-black font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                        <AvatarFallback className="bg-black font-black text-brand-accent dark:bg-brand-accent dark:text-black">
                           {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
@@ -301,7 +301,7 @@ export default function StudentsPage() {
                     <td className="p-4">
                       <div className="flex items-center gap-3">
                         <Avatar className="w-9 h-9">
-                          <AvatarFallback className="bg-black text-xs font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                          <AvatarFallback className="bg-black text-xs font-black text-brand-accent dark:bg-brand-accent dark:text-black">
                             {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                           </AvatarFallback>
                         </Avatar>

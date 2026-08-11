@@ -108,7 +108,7 @@ export default function AssessmentsPage() {
                       {assessment.date} • {assessment.type}
                     </CardDescription>
                   </div>
-                  <div className="flex size-10 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-black text-brand-accent dark:bg-brand-accent dark:text-black">
                     <ClipboardList className="w-5 h-5" />
                   </div>
                 </div>

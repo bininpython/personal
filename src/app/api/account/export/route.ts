@@ -1,5 +1,6 @@
 import { getSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { BRAND } from '@/lib/brand';
 
 async function dataOrThrow<T>(promise: PromiseLike<{ data: T; error: unknown }>) {
   const { data, error } = await promise;
@@ -46,7 +47,7 @@ export async function GET() {
     }
 
     const body = JSON.stringify({
-      product: 'D KONG',
+      product: BRAND.name,
       exportedAt: new Date().toISOString(),
       subjectType: session.role,
       data: exportData,

@@ -79,15 +79,15 @@ export default function DashboardPage() {
     <div className="space-y-8 animate-fade-in">
       <section className="dk-hero-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end lg:p-10">
         <div className="relative z-10">
-          <p className="dk-kicker text-[#c9ff32]">Central de performance</p>
+          <p className="dk-kicker text-brand-accent">Central de performance</p>
           <h1 className="dk-display mt-6 max-w-4xl text-[clamp(2.8rem,6vw,5.8rem)]">
             {greeting.toUpperCase()},<br />
-            <span className="text-[#c9ff32]">{user?.name?.split(' ')[0]?.toUpperCase() || 'PERSONAL'}.</span>
+            <span className="text-brand-accent">{user?.name?.split(' ')[0]?.toUpperCase() || 'PERSONAL'}.</span>
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-6 text-white/52 sm:text-base">
             Sua operação em uma visão direta: alunos, consistência, agenda e pontos que pedem ação.
           </p>
-          <Button onClick={() => router.push('/students/new')} className="mt-7 h-12 bg-[#c9ff32] px-6 text-black hover:bg-[#b8ef22]">
+          <Button onClick={() => router.push('/students/new')} className="mt-7 h-12 bg-brand-accent px-6 text-black hover:bg-brand-accent-hover">
             <Users className="mr-2 size-4" /> Novo aluno
           </Button>
         </div>
@@ -96,13 +96,13 @@ export default function DashboardPage() {
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Alunos ativos</p>
             <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.activeStudents}</p>
           </div>
-          <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
+          <div className="rounded-2xl bg-brand-accent p-4 text-black">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-black/45">Constância</p>
             <p className="mt-5 text-4xl font-black tracking-[-0.06em]">{stats.averageConsistency}%</p>
           </div>
           <div className="col-span-2 flex items-center justify-between rounded-2xl border border-white/12 bg-white/[0.06] p-4">
             <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/38">Hoje na agenda</p><p className="mt-1 text-xl font-black">{stats.appointmentsToday} compromisso(s)</p></div>
-            <CalendarDays className="size-6 text-[#c9ff32]" />
+            <CalendarDays className="size-6 text-brand-accent" />
           </div>
         </div>
       </section>
@@ -122,7 +122,7 @@ export default function DashboardPage() {
         ].map((stat, i) => (
           <Card key={stat.label} className="group animate-slide-up transition-transform hover:-translate-y-1" style={{ animationDelay: `${0.05 * i}s` }}>
             <CardContent className="p-4 sm:p-5">
-              <div className="mb-5 flex size-10 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+              <div className="mb-5 flex size-10 items-center justify-center rounded-full bg-black text-brand-accent dark:bg-brand-accent dark:text-black">
                 <stat.icon className="size-4" />
               </div>
               <div className="text-3xl font-black tracking-[-0.06em]">{stat.value}</div>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Distribuição</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent-text">Distribuição</p>
             <CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight">
               <Target className="size-5" /> Foco dos alunos
             </CardTitle>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader className="border-b border-black/8 pb-4 dark:border-white/8">
             <div className="flex items-center justify-between">
-              <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Performance</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><TrendingUp className="size-5" /> Ranking de engajamento</CardTitle></div>
+              <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-accent-text">Performance</p><CardTitle className="mt-1 flex items-center gap-2 text-xl font-black tracking-tight"><TrendingUp className="size-5" /> Ranking de engajamento</CardTitle></div>
               <Button variant="outline" size="sm" onClick={() => router.push('/students')} className="text-xs">Ver todos <ChevronRight className="ml-0.5 size-3.5" /></Button>
             </div>
           </CardHeader>
@@ -206,14 +206,14 @@ export default function DashboardPage() {
               ranking.slice(0, 5).map((student, i) => (
                 <div
                   key={i}
-                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-black/8 hover:bg-[#c9ff32]/10 dark:hover:border-white/8"
+                  className="flex cursor-pointer items-center gap-3 rounded-2xl border border-transparent p-3 transition-colors hover:border-black/8 hover:bg-brand-accent/10 dark:hover:border-white/8"
                   onClick={() => router.push(`/students/${student.id}`)}
                 >
                   <div className="w-5 text-center font-mono text-xs font-bold text-muted-foreground">
                     {i + 1}
                   </div>
                   <Avatar className="w-10 h-10">
-                    <AvatarFallback className="bg-black text-sm font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
+                    <AvatarFallback className="bg-black text-sm font-black text-brand-accent dark:bg-brand-accent dark:text-black">
                       {student.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>

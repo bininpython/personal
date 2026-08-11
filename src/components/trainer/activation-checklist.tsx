@@ -83,7 +83,7 @@ export function ActivationChecklist({ state }: { state: OnboardingState }) {
                     step.done
                       ? 'bg-ok text-white'
                       : isNext
-                        ? 'bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                        ? 'bg-black text-brand-accent dark:bg-brand-accent dark:text-black'
                         : 'bg-muted text-muted-foreground'
                   }`}
                 >

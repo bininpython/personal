@@ -45,6 +45,7 @@ import {
   type ExerciseCatalogItem,
   type MuscleRegion,
 } from '@/lib/exercises/catalog';
+import { BRAND_COLORS } from '@/lib/brand';
 import {
   addPlanValidity,
   brazilToday,
@@ -477,7 +478,7 @@ export default function ExercisesPage() {
                   aria-current={current ? 'step' : undefined}
                   className={`w-full rounded-xl border px-2 py-2 text-left transition-colors ${
                     current
-                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      ? 'border-black bg-black text-brand-accent dark:border-brand-accent dark:bg-brand-accent dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
                   }`}
                 >
@@ -543,7 +544,7 @@ export default function ExercisesPage() {
               style={{ width: '100%', maxWidth: '250px', cursor: 'pointer' }}
               svgStyle={{ height: 'auto' }}
               bodyColor="#cbd5e1"
-              highlightedColors={["#7cae00"]}
+              highlightedColors={[BRAND_COLORS.accentStrong]}
             />
             <p className="mt-3 text-center text-sm font-bold text-volt-ink">
               {MUSCLE_REGIONS[activeMuscle]}
@@ -556,7 +557,7 @@ export default function ExercisesPage() {
                   onClick={() => selectMuscle(muscle)}
                   className={`rounded-full border px-2 py-1 text-[11px] transition-colors ${
                     activeMuscle === muscle
-                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      ? 'border-black bg-black text-brand-accent dark:border-brand-accent dark:bg-brand-accent dark:text-black'
                       : 'border-border bg-background text-muted-foreground hover:border-volt-strong hover:text-foreground'
                   }`}
                 >
@@ -598,7 +599,7 @@ export default function ExercisesPage() {
                   onClick={() => setActiveDayId(day.id)}
                   className={`rounded-lg border px-2.5 py-1 text-xs font-medium ${
                     activeDay.id === day.id
-                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      ? 'border-black bg-black text-brand-accent dark:border-brand-accent dark:bg-brand-accent dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
                   }`}
                 >
@@ -683,7 +684,7 @@ export default function ExercisesPage() {
                   onClick={() => setActiveDayId(day.id)}
                   className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
                     activeDay.id === day.id
-                      ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'
+                      ? 'border-black bg-black text-brand-accent dark:border-brand-accent dark:bg-brand-accent dark:text-black'
                       : 'border-border bg-background text-muted-foreground'
                   }`}
                 >

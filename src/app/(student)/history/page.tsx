@@ -47,7 +47,7 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div><p className="dk-kicker text-muted-foreground">Memória de treino</p><h1 className="dk-display mt-3 flex items-center gap-3 text-4xl"><History className="size-7 text-[#7cae00]" /> HISTÓRICO</h1><p className="mt-2 text-muted-foreground">{history.length} treino(s) registrado(s)</p></div>
+      <div><p className="dk-kicker text-muted-foreground">Memória de treino</p><h1 className="dk-display mt-3 flex items-center gap-3 text-4xl"><History className="size-7 text-brand-accent-strong" /> HISTÓRICO</h1><p className="mt-2 text-muted-foreground">{history.length} treino(s) registrado(s)</p></div>
       {error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
       ) : history.length === 0 ? (

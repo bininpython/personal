@@ -1,10 +1,11 @@
 import { ImageResponse } from 'next/og';
-import { APP_NAME, APP_SUBTITLE } from '@/constants';
+
+import { BRAND, BRAND_COLORS } from '@/lib/brand';
 
 // O produto se propaga por indicação e WhatsApp. Sem esta imagem o link
 // colado numa conversa chega como texto cru — e o botão de convite do aluno
 // manda exatamente esse link.
-export const alt = `${APP_NAME} — plataforma de treino para personal trainers`;
+export const alt = `${BRAND.name} — plataforma de treino para personal trainers`;
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -18,7 +19,7 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: '#090a08',
+          background: BRAND_COLORS.surface,
           color: '#ffffff',
           padding: '72px',
           fontFamily: 'sans-serif',
@@ -30,7 +31,7 @@ export default function OpengraphImage() {
               width: '20px',
               height: '20px',
               borderRadius: '999px',
-              background: '#c9ff32',
+              background: BRAND_COLORS.accent,
             }}
           />
           <span
@@ -38,7 +39,7 @@ export default function OpengraphImage() {
               fontSize: '26px',
               fontWeight: 800,
               letterSpacing: '0.22em',
-              color: '#c9ff32',
+              color: BRAND_COLORS.accent,
             }}
           >
             PERFORMANCE SYSTEM
@@ -54,7 +55,7 @@ export default function OpengraphImage() {
               lineHeight: 1,
             }}
           >
-            {APP_NAME}
+            {BRAND.name}
           </span>
           <span
             style={{
@@ -65,7 +66,7 @@ export default function OpengraphImage() {
               maxWidth: '900px',
             }}
           >
-            {APP_SUBTITLE}
+            {BRAND.tagline}
           </span>
         </div>
 
@@ -76,8 +77,8 @@ export default function OpengraphImage() {
             gap: '16px',
             fontSize: '30px',
             fontWeight: 700,
-            color: '#090a08',
-            background: '#c9ff32',
+            color: BRAND_COLORS.surface,
+            background: BRAND_COLORS.accent,
             padding: '18px 32px',
             borderRadius: '999px',
             alignSelf: 'flex-start',

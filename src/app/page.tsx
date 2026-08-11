@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -13,6 +12,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { BRAND } from '@/lib/brand';
+import { BrandLogo } from '@/components/brand/brand-logo';
 
 const capabilities = [
   {
@@ -46,7 +47,7 @@ export default function LandingPage() {
     <div className="min-h-screen overflow-hidden bg-[#f6f6f1] text-[#0a0a0a]">
       <header className="border-b border-black/10 bg-[#f6f6f1]/90 backdrop-blur-xl">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" aria-label="D KONG — início">
+          <Link href="/" aria-label={`${BRAND.name} — início`}>
             <BrandMark priority />
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -65,20 +66,20 @@ export default function LandingPage() {
 
       <main>
         <section className="relative mx-auto grid max-w-7xl gap-10 px-5 pb-16 pt-12 sm:px-8 sm:pb-24 sm:pt-20 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-16">
-          <div className="absolute left-1/2 top-24 -z-0 size-[520px] -translate-x-1/2 rounded-full bg-[#c9ff32]/12 blur-3xl" />
+          <div className="absolute left-1/2 top-24 -z-0 size-[520px] -translate-x-1/2 rounded-full bg-brand-accent/12 blur-3xl" />
           <div className="relative z-10">
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-[0.7rem] font-bold uppercase tracking-[0.2em] shadow-sm">
-              <span className="size-2 rounded-full bg-[#9fdb00] shadow-[0_0_0_4px_rgba(159,219,0,0.14)]" />
+              <span className="size-2 rounded-full bg-brand-accent-deep shadow-[0_0_0_4px_rgba(159,219,0,0.14)]" />
               Performance management
             </div>
             <h1 className="max-w-4xl text-[clamp(3.55rem,8.5vw,7.6rem)] font-black leading-[1.08] tracking-[-0.075em]">
               FORÇA NA
-              <span className="block text-[#7cae00]">GESTÃO.</span>
+              <span className="block text-brand-accent-strong">GESTÃO.</span>
               FOCO NO
               <span className="block">RESULTADO.</span>
             </h1>
             <p className="mt-8 max-w-xl text-base leading-7 text-black/58 sm:text-lg">
-              D KONG transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
+              {BRAND.name} transforma a rotina do personal em um sistema direto: menos operação, mais presença e evolução visível para cada aluno.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -89,7 +90,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/register"
-                className="inline-flex h-14 items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
+                className="inline-flex h-14 items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-brand-accent"
               >
                 Criar conta de personal
               </Link>
@@ -105,26 +106,20 @@ export default function LandingPage() {
           </div>
 
           <div className="relative z-10 mx-auto w-full max-w-[540px]">
-            <div className="absolute -left-5 top-12 z-20 hidden rounded-2xl bg-[#c9ff32] px-5 py-4 shadow-xl sm:block">
+            <div className="absolute -left-5 top-12 z-20 hidden rounded-2xl bg-brand-accent px-5 py-4 shadow-xl sm:block">
               <p className="text-[0.62rem] font-black uppercase tracking-[0.22em]">Acesso simples</p>
               <p className="mt-1 font-mono text-xl font-black tracking-[0.12em]">564-625</p>
             </div>
             <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white p-5 shadow-[0_40px_100px_rgba(0,0,0,0.14)] sm:p-8">
-              <div className="absolute inset-x-0 top-0 h-1.5 bg-[#c9ff32]" />
+              <div className="absolute inset-x-0 top-0 h-1.5 bg-brand-accent" />
               <div className="flex items-center justify-between border-b border-black/10 pb-5">
                 <span className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-black/40">The training OS</span>
-                <Sparkles className="size-4 text-[#7cae00]" />
+                <Sparkles className="size-4 text-brand-accent-strong" />
               </div>
-              <div className="relative mx-auto aspect-square max-w-[430px]">
-                <Image
-                  src="/dkong-logo.jpg"
-                  alt="Gorila com boné, símbolo da D KONG"
-                  fill
-                  sizes="(max-width: 640px) 85vw, 430px"
-                  className="object-contain mix-blend-multiply"
-                  priority
-                  loading="eager"
-                />
+              <div className="relative mx-auto flex aspect-square max-w-[430px] items-center justify-center">
+                <div className="flex size-full items-center justify-center rounded-[1.75rem] bg-brand-surface">
+                  <BrandLogo className="size-1/2 text-white" title={`Símbolo ${BRAND.name}`} />
+                </div>
               </div>
               <div className="grid grid-cols-3 gap-2 border-t border-black/10 pt-5 text-center">
                 {[['254+', 'exercícios'], ['100%', 'mobile'], ['24/7', 'acesso']].map(([value, label]) => (
@@ -137,7 +132,7 @@ export default function LandingPage() {
             </div>
             <div className="absolute -bottom-6 -right-3 rounded-2xl bg-black px-5 py-4 text-white shadow-2xl sm:-right-8">
               <div className="flex items-center gap-3">
-                <span className="flex size-9 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Zap className="size-4 fill-current" /></span>
+                <span className="flex size-9 items-center justify-center rounded-full bg-brand-accent text-black"><Zap className="size-4 fill-current" /></span>
                 <div><p className="text-xs font-bold">Operação rápida</p><p className="text-[0.65rem] text-white/50">do cadastro ao treino</p></div>
               </div>
             </div>
@@ -147,7 +142,7 @@ export default function LandingPage() {
         <section className="bg-[#0a0a0a] px-5 py-20 text-white sm:px-8 sm:py-28">
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-8 border-b border-white/12 pb-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#c9ff32]">Sistema completo</p>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-brand-accent">Sistema completo</p>
               <h2 className="max-w-3xl text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">
                 TUDO O QUE IMPORTA. SEM O QUE ATRAPALHA.
               </h2>
@@ -157,7 +152,7 @@ export default function LandingPage() {
                 <article key={item.number} className="group border-b border-white/12 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-12 first:lg:pl-0 last:lg:border-r-0 last:lg:pr-0">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs text-white/35">/{item.number}</span>
-                    <item.icon className="size-5 text-[#c9ff32] transition-transform group-hover:scale-110" />
+                    <item.icon className="size-5 text-brand-accent transition-transform group-hover:scale-110" />
                   </div>
                   <h3 className="mt-20 text-2xl font-black tracking-[-0.035em]">{item.title}</h3>
                   <p className="mt-4 max-w-sm text-sm leading-6 text-white/48">{item.description}</p>
@@ -170,7 +165,7 @@ export default function LandingPage() {
         <section className="px-5 py-20 sm:px-8 sm:py-28">
           <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-24">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.25em] text-[#668f00]">Acesso D KONG</p>
+              <p className="text-xs font-black uppercase tracking-[0.25em] text-brand-accent-text">Acesso {BRAND.name}</p>
               <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-6xl">ENTRAR NÃO PRECISA SER UM TREINO.</h2>
               <p className="mt-6 max-w-lg text-base leading-7 text-black/55">Um fluxo pensado para funcionar na academia, entre uma série e outra — rápido, legível e sem códigos desnecessários.</p>
             </div>
@@ -181,7 +176,7 @@ export default function LandingPage() {
                 { icon: Zap, tag: 'RECUPERAÇÃO', title: 'Nome + senha + idade', text: 'Valide seus dados e gere um novo código sem e-mail ou etapas confusas.' },
               ].map((step, index) => (
                 <div key={step.tag} className="grid gap-5 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:grid-cols-[56px_1fr_auto] sm:items-center">
-                  <span className="flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><step.icon className="size-5" /></span>
+                  <span className="flex size-14 items-center justify-center rounded-2xl bg-black text-brand-accent"><step.icon className="size-5" /></span>
                   <div>
                     <p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-black/38">{step.tag}</p>
                     <h3 className="mt-1 text-lg font-black">{step.title}</h3>
@@ -195,7 +190,7 @@ export default function LandingPage() {
         </section>
 
         <section className="px-5 pb-8 sm:px-8 sm:pb-12">
-          <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 overflow-hidden rounded-[2.2rem] bg-[#c9ff32] p-8 sm:p-12 lg:flex-row lg:items-end lg:p-16">
+          <div className="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 overflow-hidden rounded-[2.2rem] bg-brand-accent p-8 sm:p-12 lg:flex-row lg:items-end lg:p-16">
             <div className="absolute -right-20 -top-40 size-96 rounded-full border-[55px] border-black/[0.055]" />
             <div className="relative z-10 max-w-3xl">
               <p className="text-xs font-black uppercase tracking-[0.24em]">Sua próxima evolução começa aqui</p>
@@ -216,7 +211,7 @@ export default function LandingPage() {
             <Link href="/privacy" className="hover:text-black">Privacidade</Link>
             <Link href="/help" className="hover:text-black">Ajuda</Link>
           </div>
-          <p className="text-xs text-black/35">© {new Date().getFullYear()} D KONG</p>
+          <p className="text-xs text-black/35">© {new Date().getFullYear()} {BRAND.name}</p>
         </div>
       </footer>
     </div>

@@ -56,7 +56,7 @@ export default function TrainerLoginPage() {
         title="CONTROLE TOTAL. ACESSO DIRETO."
         description="Seu painel profissional com todos os alunos, treinos, avaliações e indicadores em um só lugar."
       >
-        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><ShieldCheck className="size-6" /></div>
+        <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-brand-accent"><ShieldCheck className="size-6" /></div>
         <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Personal trainer</p>
         <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Entre no seu painel</h1>
         <p className="mt-3 text-sm leading-6 text-black/50">Use seu nome e o código de 6 números.</p>

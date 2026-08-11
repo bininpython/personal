@@ -100,7 +100,7 @@ export default function ReportsPage() {
             <div className="flex items-center gap-4">
               <Avatar className="size-20">
                 {report.student.avatarUrl && <AvatarImage src={report.student.avatarUrl} alt={`Avatar de ${report.student.name}`} />}
-                <AvatarFallback className="bg-black text-xl font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">{initials(report.student.name)}</AvatarFallback>
+                <AvatarFallback className="bg-black text-xl font-black text-brand-accent dark:bg-brand-accent dark:text-black">{initials(report.student.name)}</AvatarFallback>
               </Avatar>
               <div><div className="mb-1 flex flex-wrap items-center gap-2"><h2 className="text-2xl font-bold">{report.student.name}</h2><Badge variant="outline">{report.student.status === 'active' ? 'Ativo' : 'Arquivado'}</Badge></div><p className="text-sm text-muted-foreground">Acompanhado por {report.trainer.name}</p></div>
             </div>

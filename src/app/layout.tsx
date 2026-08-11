@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { siteUrl } from "@/lib/site-url";
+import { BRAND } from "@/lib/brand";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -19,7 +20,7 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const TITLE = "D KONG — Performance e Gestão de Treinos";
+const TITLE = BRAND.metaTitle;
 const DESCRIPTION = "Plataforma profissional para personal trainers gerenciarem alunos, treinos, evolução física e desempenho. O aluno entra com o nome e um código de seis números — sem e-mail e sem senha.";
 
 export const metadata: Metadata = {
@@ -27,12 +28,12 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   keywords: ["personal trainer", "gestão de treinos", "fichas de treino", "evolução física", "academia"],
-  applicationName: "D KONG",
+  applicationName: BRAND.name,
   // O ícone vem de src/app/favicon.ico, icon e apple-icon. Declarar o logo
   // JPG aqui servia 158 KB como favicon.
   openGraph: {
     type: "website",
-    siteName: "D KONG",
+    siteName: BRAND.name,
     locale: "pt_BR",
     title: TITLE,
     description: DESCRIPTION,

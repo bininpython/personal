@@ -63,16 +63,16 @@ export default function RecoverPage() {
       >
         {newCode ? (
           <div className="text-center">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#c9ff32]"><ShieldCheck className="size-8" /></div>
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-brand-accent"><ShieldCheck className="size-8" /></div>
             <p className="mt-7 text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Acesso recuperado</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Novo código gerado</h1>
             <p className="mt-3 text-sm leading-6 text-black/50">O código antigo foi invalidado.</p>
             <div className="mt-8 rounded-3xl bg-black p-7 text-white shadow-2xl">
               <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-white/40">Seu novo código</p>
               <div className="mt-3 flex items-center justify-center gap-4">
-                <code className="font-mono text-4xl font-black tracking-[0.18em] text-[#c9ff32]">{newCode}</code>
+                <code className="font-mono text-4xl font-black tracking-[0.18em] text-brand-accent">{newCode}</code>
                 <Button type="button" size="icon" variant="outline" onClick={() => void copyCode()} aria-label="Copiar código" className="border-white/20 bg-white/10 text-white hover:bg-white/20">
-                  {copied ? <Check className="size-4 text-[#c9ff32]" /> : <Copy className="size-4" />}
+                  {copied ? <Check className="size-4 text-brand-accent" /> : <Copy className="size-4" />}
                 </Button>
               </div>
             </div>
@@ -82,7 +82,7 @@ export default function RecoverPage() {
           </div>
         ) : (
           <div>
-            <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-[#c9ff32]"><KeyRound className="size-6" /></div>
+            <div className="mb-8 flex size-14 items-center justify-center rounded-2xl bg-black text-brand-accent"><KeyRound className="size-6" /></div>
             <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Recuperar código</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Confirme sua identidade</h1>
             <p className="mt-3 text-sm leading-6 text-black/50">Informe os mesmos dados usados no cadastro.</p>
