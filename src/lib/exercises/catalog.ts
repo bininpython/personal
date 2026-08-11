@@ -1,3 +1,5 @@
+import { IMPORTED_EXERCISES } from './imported-media.ts';
+
 export const MUSCLE_REGIONS = {
   chest: 'Peito',
   'upper-back': 'Costas',
@@ -17,6 +19,7 @@ export const MUSCLE_REGIONS = {
   abductors: 'Abdutores',
   gluteal: 'Glúteos',
   calves: 'Panturrilhas',
+  cardio: 'Cardio',
 } as const;
 
 export type MuscleRegion = keyof typeof MUSCLE_REGIONS;
@@ -342,6 +345,7 @@ const DEFINITIONS: Record<MuscleRegion, ExerciseDefinition[]> = {
     x('Pular corda', 'Corda', 'Realize saltos baixos e ritmados aterrissando suavemente sobre o antepé.', ['quadriceps'], 'intermediate'),
     x('Pogo jumps', 'Peso corporal', 'Faça saltos curtos usando principalmente os tornozelos e aterrissagem elástica.', ['quadriceps'], 'advanced'),
   ],
+  cardio: [],
 };
 
 function slugify(value: string): string {
@@ -353,7 +357,7 @@ function slugify(value: string): string {
     .replace(/(^-|-$)/g, '');
 }
 
-export const EXERCISE_CATALOG: ExerciseCatalogItem[] = Object.entries(DEFINITIONS)
+const CURATED_CATALOG: ExerciseCatalogItem[] = Object.entries(DEFINITIONS)
   .flatMap(([muscle, definitions]) => definitions.map((definition) => ({
     key: `${muscle}:${slugify(definition.name)}`,
     name: definition.name,
@@ -365,6 +369,59 @@ export const EXERCISE_CATALOG: ExerciseCatalogItem[] = Object.entries(DEFINITION
     videoUrl: definition.video || null,
   })))
   .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+function exerciseIdentity(value: string): string {
+  return slugify(value
+    .replace(/\s+—\s+variação\s+\d+$/iu, '')
+    .replace(/\s*\(\d+\)\s*$/u, ''));
+}
+
+export const EXERCISE_CATALOG: ExerciseCatalogItem[] = (() => {
+  const curated = CURATED_CATALOG.map((exercise) => ({ ...exercise }));
+  const curatedByIdentity = new Map<string, number[]>();
+  const consumedCuratedIndexes = new Set<number>();
+  const importedAdditions: ExerciseCatalogItem[] = [];
+
+  curated.forEach((exercise, index) => {
+    const identity = `${exercise.primaryMuscle}:${exerciseIdentity(exercise.name)}`;
+    curatedByIdentity.set(identity, [...(curatedByIdentity.get(identity) ?? []), index]);
+  });
+
+  for (const definition of IMPORTED_EXERCISES) {
+    if (!Object.hasOwn(MUSCLE_REGIONS, definition.primaryMuscle)) {
+      throw new Error(`Grupo muscular inválido na importação: ${definition.primaryMuscle}`);
+    }
+
+    const primaryMuscle = definition.primaryMuscle as MuscleRegion;
+    const identity = `${primaryMuscle}:${exerciseIdentity(definition.name)}`;
+    const curatedIndex = curatedByIdentity
+      .get(identity)
+      ?.find((index) => !consumedCuratedIndexes.has(index));
+
+    if (curatedIndex !== undefined) {
+      curated[curatedIndex] = {
+        ...curated[curatedIndex],
+        videoUrl: definition.videoUrl,
+      };
+      consumedCuratedIndexes.add(curatedIndex);
+      continue;
+    }
+
+    importedAdditions.push({
+      key: definition.key,
+      name: definition.name,
+      primaryMuscle,
+      secondaryMuscles: definition.secondaryMuscles as MuscleRegion[],
+      equipment: definition.equipment,
+      difficulty: definition.difficulty,
+      instructions: definition.instructions,
+      videoUrl: definition.videoUrl,
+    });
+  }
+
+  return [...curated, ...importedAdditions]
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+})();
 
 const CATALOG_BY_KEY = new Map(EXERCISE_CATALOG.map((exercise) => [exercise.key, exercise]));
 

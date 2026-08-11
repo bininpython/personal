@@ -308,10 +308,12 @@ export default function ExercisesPage() {
     ));
   }, [exercises, search]);
 
-  const modelData: IExerciseData[] = [{
-    name: 'Músculo selecionado',
-    muscles: [activeMuscle],
-  }];
+  const modelData: IExerciseData[] = activeMuscle === 'cardio'
+    ? []
+    : [{
+        name: 'Músculo selecionado',
+        muscles: [activeMuscle],
+      }];
 
   function addExercise(exercise: ExerciseCatalogItem) {
     if (activeDay.exercises.some((item) => item.key === exercise.key)) {
