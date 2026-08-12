@@ -423,6 +423,34 @@
   }
 }
 
+/* Faixa da barra de status no app instalado.
+   Com `viewport-fit=cover` e a barra translúcida do iOS, a tela do app começa
+   atrás da ilha, do relógio e dos ícones de bateria e sinal. Sem devolver essa
+   faixa ao layout, o cabeçalho nasce embaixo deles. No navegador e no desktop
+   o `env()` vale zero e nada disto muda. */
+.dk-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Cabeçalho fixo do celular: o recuo empurra o conteúdo para baixo da faixa e
+   a altura cresce junto, para que a barra continue com 4rem úteis. */
+.dk-app-header {
+  height: calc(4rem + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Compensação no conteúdo que corre por baixo desse cabeçalho fixo. */
+.dk-app-header-offset {
+  padding-top: calc(4rem + env(safe-area-inset-top, 0px));
+}
+
+@media (min-width: 64rem) {
+  /* A partir de lg o cabeçalho do celular some e quem manda é a barra lateral. */
+  .dk-app-header-offset {
+    padding-top: 0;
+  }
+}
+
 .dk-metric {
   border-radius: 1.25rem;
   border: 1px solid rgb(9 10 8 / 0.09);

@@ -39,7 +39,9 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
   }
 
   const navigation = (mobile = false) => (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+    // A gaveta cobre a tela toda, então no celular ela também nasce atrás da
+    // barra de status. Na barra lateral do desktop não há faixa a devolver.
+    <div className={`flex h-full min-h-0 flex-col overflow-hidden${mobile ? ' dk-safe-top' : ''}`}>
       <div className={`flex shrink-0 items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
         <BrandMark inverted compact={collapsed && !mobile} iconOnly={collapsed && !mobile} />
       </div>
@@ -94,7 +96,7 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
         </button>
       </aside>
 
-      <header className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-white/10 bg-[#090a08]/95 px-4 text-white backdrop-blur-xl lg:hidden">
+      <header className="dk-app-header fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-white/10 bg-[#090a08]/95 px-4 text-white backdrop-blur-xl lg:hidden">
         <div className="flex items-center gap-2">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger render={<Button variant="ghost" size="icon" className="size-10 text-white hover:bg-white/10 hover:text-white" />}><Menu className="size-5" /></SheetTrigger>
@@ -105,7 +107,7 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
         <Avatar className="size-9 ring-2 ring-[#c9ff32]/25">{user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}<AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback></Avatar>
       </header>
 
-      <main className="dk-app-surface flex-1 overflow-y-auto pb-20 pt-16 lg:pb-0 lg:pt-0">
+      <main className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0">
         <div className="relative z-10 mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 xl:p-10">{children}</div>
       </main>
 
