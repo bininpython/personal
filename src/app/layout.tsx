@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
+import { InstallHint } from "@/components/pwa/install-hint";
 import { siteUrl } from "@/lib/site-url";
 
 const inter = Inter({
@@ -17,6 +19,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Pinta a barra de status do app instalado com o fundo da tela, para que a
+  // janela não tenha uma faixa de cor estranha no topo.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#090a08" },
+  ],
 };
 
 const TITLE = "G KONG — Performance e Gestão de Treinos";
@@ -32,6 +40,14 @@ export const metadata: Metadata = {
   keywords: ["personal trainer", "gestão de treinos", "montar ficha de treino", "exercícios com demonstração", "academia"],
   applicationName: "G KONG",
   alternates: { canonical: "/" },
+  // O Safari ignora boa parte do manifest e lê estas tags próprias. Sem elas o
+  // atalho do iPhone abre dentro do navegador, com barra de endereço e tudo.
+  // O link do manifest o Next injeta sozinho a partir de src/app/manifest.ts.
+  appleWebApp: {
+    capable: true,
+    title: "G KONG",
+    statusBarStyle: "black-translucent",
+  },
   // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
   // JPG como favicon, porque ele é muito maior do que os arquivos dedicados.
   openGraph: {
@@ -53,7 +69,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <AuthProvider>
             <TooltipProvider>
+              <ServiceWorkerRegistrar />
               {children}
+              <InstallHint />
               {/*
                 O aviso nasce onde a ação acontece: no celular o polegar está
                 embaixo, e o canto superior direito era o ponto mais distante

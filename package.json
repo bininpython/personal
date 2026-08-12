@@ -18,6 +18,7 @@
     "test:navigation": "node --test --test-isolation=none tests/navigation.test.mjs",
     "test:routes": "node --test --test-isolation=none tests/routes.test.mjs",
     "test:security": "node --test --test-isolation=none tests/security-hardening.test.mjs",
+    "test:pwa": "node --experimental-strip-types --test --test-isolation=none tests/pwa.test.mjs",
     "check:database": "node scripts/check-database-schema.mjs",
     "check:release": "node scripts/check-release-env.mjs",
     "test:e2e": "playwright test",

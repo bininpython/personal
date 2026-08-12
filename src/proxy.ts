@@ -31,7 +31,14 @@ const METADATA_PATHS = new Set([
   '/twitter-image',
   '/apple-icon',
   '/icon',
+  '/manifest.webmanifest',
 ]);
+
+// A tela de offline responde igual para todo mundo, logado ou não. Ela não
+// pode entrar em PUBLIC_PATHS: de lá quem tem sessão seria redirecionado para
+// o painel, e o service worker acabaria guardando o HTML do painel sob a chave
+// `/offline` ao pré-cachear a página na instalação.
+const ALWAYS_PUBLIC_PATHS = new Set(['/offline']);
 
 const TRAINER_PATHS = [
   '/dashboard',
@@ -83,7 +90,7 @@ export async function proxy(request: NextRequest) {
   const session = token ? await verifyToken(token) : null;
   const role = session?.role;
 
-  if (pathname.startsWith('/avatars/') || METADATA_PATHS.has(pathname)) {
+  if (pathname.startsWith('/avatars/') || METADATA_PATHS.has(pathname) || ALWAYS_PUBLIC_PATHS.has(pathname)) {
     return NextResponse.next();
   }
 
