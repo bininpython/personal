@@ -46,7 +46,11 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "G KONG",
-    statusBarStyle: "black-translucent",
+    // `black-translucent` jogaria o conteúdo por baixo da ilha e ainda pintaria
+    // o relógio de branco — ilegível sobre o login, que é claro. Com `black` o
+    // iOS reserva a faixa, pinta de preto e mantém os ícones brancos: combina
+    // com o cabeçalho #090a08 do app e continua legível nas páginas claras.
+    statusBarStyle: "black",
   },
   // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
   // JPG como favicon, porque ele é muito maior do que os arquivos dedicados.
