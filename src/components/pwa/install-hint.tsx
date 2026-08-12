@@ -139,7 +139,8 @@ export function InstallHint() {
             <span className="font-bold text-white/80">Compartilhar</span>
             e depois em
             <SquarePlus className="size-3.5 text-[#c9ff32]" aria-hidden />
-            <span className="font-bold text-white/80">Adicionar à Tela de Início</span>.
+            {/* Sem ponto final: o `gap` do flex o deixaria solto da última palavra. */}
+            <span className="font-bold text-white/80">Adicionar à Tela de Início</span>
           </p>
         </>
       )}
