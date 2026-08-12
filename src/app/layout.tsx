@@ -69,6 +69,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full antialiased`} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        {/*
+          O Chrome dispara `beforeinstallprompt` cedo, normalmente antes de o
+          React montar — e o evento só serve se for guardado na hora. Este
+          script roda antes de tudo e segura a referência para o InstallHint.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.__gkInstallPrompt=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__gkInstallPrompt=e});addEventListener('appinstalled',function(){window.__gkInstallPrompt=null})",
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <AuthProvider>
