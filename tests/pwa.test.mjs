@@ -77,6 +77,28 @@ test('registro do service worker pede escopo raiz e não confia no cache HTTP', 
   assert.ok(existsSync(new URL('../src/lib/service-worker.js', import.meta.url)));
 });
 
+test('o convite de instalação cobre Android, não só iOS', () => {
+  const hint = read('src/components/pwa/install-hint.tsx');
+
+  // No Android a instalação vive num item escondido do menu do Chrome. Sem
+  // abrir o diálogo nativo daqui, o app fica sem caminho de instalação visível.
+  assert.match(hint, /window\.__gkInstallPrompt/);
+  assert.match(hint, /prompt\.prompt\(\)/);
+  assert.match(hint, /mode === 'prompt'/);
+  // O prompt vale uma vez só; segurá-lo depois de usado deixaria um botão morto.
+  assert.match(hint, /window\.__gkInstallPrompt = null/);
+});
+
+test('o prompt de instalação é capturado antes do React montar', () => {
+  const layout = read('src/app/layout.tsx');
+
+  // O evento dispara cedo demais para um useEffect: sem este script no head, o
+  // convite do Android nunca aparece.
+  assert.match(layout, /addEventListener\('beforeinstallprompt'/);
+  assert.match(layout, /e\.preventDefault\(\)/);
+  assert.match(layout, /addEventListener\('appinstalled'/);
+});
+
 test('iOS recebe as tags que o Safari lê no lugar do manifest', () => {
   const layout = read('src/app/layout.tsx');
 
