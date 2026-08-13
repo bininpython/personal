@@ -8,7 +8,7 @@ const trainerTutorials = [
   ['Salve seu acesso', 'No cadastro, guarde o código pessoal de 6 números. Sua senha e idade servem somente para recuperar o acesso.'],
   ['Cadastre o aluno', 'Abra Alunos → Novo aluno, confirme a autorização e entregue ao aluno exatamente o nome cadastrado e o código individual gerado.'],
   ['Oriente o primeiro acesso', 'O aluno entra sem e-mail, lê os documentos e confirma diretamente os Termos e a Política de Privacidade antes de usar a ficha.'],
-  ['Monte e publique', 'Abra Montar ficha, escolha o aluno, crie os dias, adicione exercícios, configure séries, repetições, carga e descanso e publique.'],
+  ['Monte e publique', 'Abra Montar ficha, escolha o aluno, crie os dias, adicione exercícios, configure séries, repetições, carga, descanso e o método de treino e publique.'],
   ['Baixe o PDF completo', 'Em Gerenciar fichas, use Baixar PDF para gerar uma versão pronta para consulta ou impressão. Baixe novamente depois de alterar o plano.'],
   ['Envie a ficha para outro aluno', 'Na ficha pronta, escolha Enviar para outro aluno, selecione o destino e confirme. O app cria uma cópia independente para você personalizar.'],
   ['Acompanhe e ajuste', 'Início, Relatórios, Avaliações e o perfil do aluno mostram frequência, conclusão, volume e alertas para orientar mudanças.'],
@@ -19,7 +19,7 @@ const studentTutorials = [
   ['Entre sem dados de contato', 'Informe somente seu nome e o código individual enviado pelo personal. Nenhum e-mail ou telefone é solicitado.'],
   ['Conclua o primeiro acesso', 'Leia e confirme os documentos. Peso, altura, gênero e restrições podem ser omitidos quando não forem necessários ao acompanhamento.'],
   ['Confira a ficha ativa', 'Em Início, confirme o plano e o treino do dia. Se uma atualização não aparecer, recarregue a tela e fale com o personal.'],
-  ['Registre o treino', 'Em Treino, informe repetições, carga e esforço de cada série, marque o que concluiu e use o temporizador de descanso.'],
+  ['Registre o treino', 'Em Treino, confira o método e a orientação do personal, informe repetições, carga e esforço de cada série, marque o que concluiu e use o temporizador de descanso.'],
   ['Baixe sua ficha', 'Use Baixar ficha em PDF para consultar dias, exercícios e orientações. Para registrar a execução, continue usando o app.'],
   ['Conclua e acompanhe', 'Ao finalizar, avalie o treino. O Histórico guarda duração, conclusão e volume; Evolução mostra sua constância.'],
   ['Peça orientação', 'Use Mensagens para dúvidas. Se sentir dor, pare o exercício e informe qual movimento, região e momento causaram o desconforto.'],
@@ -28,7 +28,7 @@ const studentTutorials = [
 
 const individualTutorials = [
   ['Confira sua área', 'A Visão geral reúne suas fichas pessoais e os atalhos para continuar organizando a própria rotina.'],
-  ['Monte e salve sua ficha', 'Abra Montar ficha, dê um nome ao plano, distribua os dias e configure exercícios, séries, repetições, carga e descanso.'],
+  ['Monte e salve sua ficha', 'Abra Montar ficha, dê um nome ao plano, distribua os dias e configure exercícios, séries, repetições, carga, descanso e o método de treino.'],
   ['Organize seus planos', 'Em Minhas fichas, confira os dias e a validade e mantenha sua rotina atual fácil de encontrar.'],
   ['Baixe o PDF completo', 'Na ficha desejada, use Baixar PDF. Gere uma nova versão sempre que atualizar exercícios ou orientações.'],
   ['Cuide da conta', 'Em Meu perfil, atualize os dados, exporte uma cópia das informações e encontre os controles de privacidade e acesso.'],

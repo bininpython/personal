@@ -85,20 +85,7 @@ export const EQUIPMENT = {
 
 // ---- Training Methods ----
 
-export const TRAINING_METHODS = {
-  standard: { id: 'standard', name: 'Série Simples' },
-  biset: { id: 'biset', name: 'Bi-set' },
-  triset: { id: 'triset', name: 'Tri-set' },
-  dropset: { id: 'dropset', name: 'Drop-set' },
-  rest_pause: { id: 'rest_pause', name: 'Rest-pause' },
-  pyramid_ascending: { id: 'pyramid_ascending', name: 'Pirâmide Crescente' },
-  pyramid_descending: { id: 'pyramid_descending', name: 'Pirâmide Decrescente' },
-  superset: { id: 'superset', name: 'Supersérie' },
-  circuit: { id: 'circuit', name: 'Circuito' },
-  isometric: { id: 'isometric', name: 'Isometria' },
-  to_failure: { id: 'to_failure', name: 'Até a Falha' },
-  time_under_tension: { id: 'time_under_tension', name: 'Tempo sob Tensão' },
-} as const;
+export { TRAINING_METHODS } from '@/lib/workouts/training-methods';
 
 // ---- Exercise Categories ----
 

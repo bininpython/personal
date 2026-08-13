@@ -1,4 +1,4 @@
-export const PRODUCT_TUTORIAL_VERSION = 2;
+export const PRODUCT_TUTORIAL_VERSION = 3;
 export const PRODUCT_TUTORIAL_OPEN_EVENT = 'g-kong:open-product-tutorial';
 
 export type TutorialRole = import('@/types').UserRole;
@@ -83,10 +83,11 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
       {
         id: 'trainer-workout',
         title: 'Monte e publique a ficha',
-        description: 'Escolha o aluno, organize os dias e configure exercícios, séries, repetições, carga e descanso.',
+        description: 'Escolha o aluno, organize os dias e configure exercícios, séries, repetições, carga, descanso e o método de treino.',
         checklist: [
           'Abra Montar ficha e selecione o aluno.',
           'Adicione os dias e exercícios na ordem desejada.',
+          'Escolha o método de cada exercício e registre uma orientação personalizada quando necessário.',
           'Revise a validade e publique a ficha.',
         ],
         tip: 'A ficha só aparece para o aluno depois de ser publicada.',
@@ -204,9 +205,9 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
       {
         id: 'student-workout',
         title: 'Registre cada série',
-        description: 'Durante o treino, informe repetições e carga, marque as séries concluídas e use o descanso cronometrado.',
+        description: 'Durante o treino, confira o método orientado, informe repetições e carga, marque as séries concluídas e use o descanso cronometrado.',
         checklist: [
-          'Abra o exercício e confira as orientações.',
+          'Abra o exercício e confira o método e as orientações do personal.',
           'Preencha repetições, carga e esforço percebido.',
           'Marque cada série concluída antes de avançar.',
         ],
@@ -310,10 +311,11 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
       {
         id: 'individual-builder',
         title: 'Monte sua ficha',
-        description: 'Escolha os exercícios, distribua os dias e defina séries, repetições, carga e descanso.',
+        description: 'Escolha os exercícios, distribua os dias e defina séries, repetições, carga, descanso e o método de treino.',
         checklist: [
           'Abra Montar ficha e dê um nome ao plano.',
           'Crie os dias e adicione os exercícios na ordem desejada.',
+          'Escolha o método de cada exercício e ajuste a orientação personalizada.',
           'Revise os dados antes de salvar.',
         ],
         tip: 'Dê nomes claros aos dias para encontrar rapidamente o treino certo.',

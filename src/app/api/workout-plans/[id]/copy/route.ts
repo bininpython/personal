@@ -62,6 +62,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
             reps: exercise.reps,
             restTime: exercise.restTime,
             method: exercise.method,
+            methodNotes: exercise.methodNotes,
           })),
         })),
       },

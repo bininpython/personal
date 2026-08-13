@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import { formatPlanDate } from '@/lib/workouts/plan-validity';
+import { trainingMethodDetails } from '@/lib/workouts/training-methods';
 
 const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
@@ -37,6 +38,7 @@ export interface PrintableWorkoutPlan {
       reps: string;
       restTime: number;
       method: string;
+      methodNotes: string;
     }>;
   }>;
 }
@@ -170,7 +172,7 @@ export async function createWorkoutPlanPdf(args: {
     cursor -= 20;
 
     for (const [exerciseIndex, exercise] of day.exercises.entries()) {
-      const cardHeight = 116;
+      const cardHeight = 140;
       if (cursor - cardHeight < 42) {
         page = newPage();
         cursor = PAGE_HEIGHT - 56;
@@ -184,7 +186,7 @@ export async function createWorkoutPlanPdf(args: {
       page.drawRectangle({ x: MARGIN, y: cardY, width: PAGE_WIDTH - MARGIN * 2, height: cardHeight - 4, color: LIGHT, borderColor: LINE, borderWidth: 0.7 });
       page.drawRectangle({ x: MARGIN, y: cardY, width: 7, height: cardHeight - 4, color: VOLT });
       const thumbX = MARGIN + 18;
-      const thumbY = cardY + 20;
+      const thumbY = cardY + 32;
       const thumbWidth = 112;
       const thumbHeight = 75;
       const assetUrl = thumbnailUrl(exercise.videoUrl);
@@ -222,8 +224,13 @@ export async function createWorkoutPlanPdf(args: {
       page.drawText(details, { x: contentX, y: detailsY, size: 8, font: bold, color: INK });
       const tags = `${clean(exercise.primaryMuscleLabel)}  |  ${clean(exercise.equipment)}`;
       page.drawText(tags, { x: contentX, y: detailsY - 14, size: 7, font: regular, color: GRAY });
-      const method = exercise.method ? `Metodo: ${exercise.method}` : exercise.instructions;
-      wrap(method, regular, 7.2, contentWidth, 2).forEach((line, index) => page.drawText(line, { x: contentX, y: detailsY - 29 - index * 10, size: 7.2, font: regular, color: GRAY }));
+      const method = trainingMethodDetails(exercise.method);
+      page.drawText(clean(`METODO: ${method.label}`), { x: contentX, y: detailsY - 29, size: 7.2, font: bold, color: rgb(0.37, 0.52, 0) });
+      wrap(method.instruction, regular, 6.8, contentWidth, 2).forEach((line, index) => page.drawText(line, { x: contentX, y: detailsY - 41 - index * 9, size: 6.8, font: regular, color: GRAY }));
+      if (exercise.methodNotes) {
+        const notePrefix = args.professionalName ? 'Personal' : 'Orientacao';
+        wrap(`${notePrefix}: ${exercise.methodNotes}`, bold, 6.8, contentWidth, 2).forEach((line, index) => page.drawText(line, { x: contentX, y: detailsY - 61 - index * 9, size: 6.8, font: bold, color: INK }));
+      }
       if (exercise.videoUrl) {
         const url = `${args.baseUrl}${args.planPath || `/my-plans/${args.plan.id}`}#exercise-${exercise.id}`;
         page.drawText(clean(url), { x: thumbX, y: cardY + 8, size: 5.5, font: regular, color: GRAY });

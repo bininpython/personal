@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { TrainingMethodGuidance } from '@/components/workouts/training-method-guidance';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -52,6 +53,7 @@ interface StudentExercise {
   reps: string;
   restTime: number;
   method: string;
+  methodNotes: string;
   lastPerformance: {
     sets: number;
     repetitions: number | null;
@@ -944,11 +946,7 @@ export default function StudentWorkoutPage() {
                     {exercise.instructions && (
                       <p className="text-sm leading-relaxed text-muted-foreground">{exercise.instructions}</p>
                     )}
-                    {exercise.method && (
-                      <div className="rounded-lg border border-warn/25 bg-warn-wash px-3 py-2 text-sm">
-                        <span className="font-semibold">Orientação do personal:</span> {exercise.method}
-                      </div>
-                    )}
+                    <TrainingMethodGuidance method={exercise.method} methodNotes={exercise.methodNotes} />
                     <div>
                       <p className="mb-2 text-xs font-medium text-muted-foreground">
                         {activeDayPending

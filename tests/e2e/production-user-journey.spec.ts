@@ -176,7 +176,8 @@ test('jornada real de personal, aluno vinculado e atleta individual', async ({ b
           sets: 1,
           reps: '8',
           restTime: 0,
-          method: 'Execução controlada para teste.',
+          method: 'dropset',
+          methodNotes: 'Reduzir 20% da carga na última série.',
         }],
       }],
     } });
@@ -324,7 +325,7 @@ test('jornada real de personal, aluno vinculado e atleta individual', async ({ b
       days: [{
         label: 'A',
         name: 'Treino Individual QA',
-        exercises: [{ exerciseKey, sets: 1, reps: '10', restTime: 0, method: 'Teste individual.' }],
+        exercises: [{ exerciseKey, sets: 1, reps: '10', restTime: 0, method: 'rest_pause', methodNotes: 'Pausa curta entre os miniblocos.' }],
       }],
     } });
     expect(individualPlanResponse.status()).toBe(201);

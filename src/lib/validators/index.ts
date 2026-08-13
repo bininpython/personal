@@ -152,7 +152,8 @@ export const workoutBuilderExerciseSchema = z.object({
   sets: z.number().int().min(1, 'Mínimo de 1 série').max(20, 'Máximo de 20 séries'),
   reps: z.string().trim().min(1, 'Informe as repetições').max(50),
   restTime: z.number().int().min(0).max(900),
-  method: z.string().trim().max(100).optional(),
+  method: z.string().trim().max(100).default('standard'),
+  methodNotes: z.string().trim().max(500, 'Orientação do método muito longa').optional(),
 }).strict();
 
 export const workoutBuilderDaySchema = z.object({

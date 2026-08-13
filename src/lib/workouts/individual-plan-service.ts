@@ -3,6 +3,7 @@ import { getCatalogExercises, MUSCLE_REGIONS } from '@/lib/exercises/catalog';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { IndividualWorkoutPlanInput } from '@/lib/validators';
 import { brazilToday, isPlanExpired } from './plan-validity';
+import { normalizeTrainingMethod } from './training-methods';
 
 export class IndividualPlanError extends Error {
   constructor(message: string, public readonly status: number) {
@@ -23,6 +24,7 @@ interface RawExercise {
   reps: string;
   rest_time: number;
   method: string | null;
+  method_notes: string | null;
   order_index: number;
 }
 
@@ -54,7 +56,7 @@ const PLAN_SELECT = `
     id, name, day_label, order_index,
     individual_workout_exercises (
       id, exercise_key, name, primary_muscle, equipment, instructions, video_url,
-      sets, reps, rest_time, method, order_index
+      sets, reps, rest_time, method, method_notes, order_index
     )
   )
 `;
@@ -72,20 +74,23 @@ function normalizePlan(plan: RawPlan) {
       exercises: (day.individual_workout_exercises ?? [])
         .slice()
         .sort((a, b) => a.order_index - b.order_index)
-        .map((exercise) => ({
-          id: exercise.id,
-          exerciseKey: exercise.exercise_key,
-          name: exercise.name,
-          primaryMuscle: exercise.primary_muscle,
-          primaryMuscleLabel: MUSCLE_REGIONS[exercise.primary_muscle as keyof typeof MUSCLE_REGIONS] || exercise.primary_muscle,
-          equipment: exercise.equipment,
-          instructions: exercise.instructions,
-          videoUrl: exercise.video_url,
-          sets: exercise.sets,
-          reps: exercise.reps,
-          restTime: exercise.rest_time,
-          method: exercise.method || '',
-        })),
+        .map((exercise) => {
+          const trainingMethod = normalizeTrainingMethod(exercise.method, exercise.method_notes);
+          return {
+            id: exercise.id,
+            exerciseKey: exercise.exercise_key,
+            name: exercise.name,
+            primaryMuscle: exercise.primary_muscle,
+            primaryMuscleLabel: MUSCLE_REGIONS[exercise.primary_muscle as keyof typeof MUSCLE_REGIONS] || exercise.primary_muscle,
+            equipment: exercise.equipment,
+            instructions: exercise.instructions,
+            videoUrl: exercise.video_url,
+            sets: exercise.sets,
+            reps: exercise.reps,
+            restTime: exercise.rest_time,
+            ...trainingMethod,
+          };
+        }),
     }));
 
   return {
@@ -180,6 +185,7 @@ export async function publishIndividualPlan(args: {
     const dayIdByIndex = new Map((insertedDays ?? []).map((day) => [day.order_index, day.id]));
     const exercises = input.days.flatMap((day, dayIndex) => day.exercises.map((saved, exerciseIndex) => {
       const catalogExercise = catalogByKey.get(saved.exerciseKey);
+      const trainingMethod = normalizeTrainingMethod(saved.method, saved.methodNotes);
       return {
         workout_day_id: dayIdByIndex.get(dayIndex),
         exercise_key: saved.exerciseKey,
@@ -191,7 +197,8 @@ export async function publishIndividualPlan(args: {
         sets: saved.sets,
         reps: saved.reps,
         rest_time: saved.restTime,
-        method: saved.method || null,
+        method: trainingMethod.method,
+        method_notes: trainingMethod.methodNotes || null,
         order_index: exerciseIndex,
       };
     }));

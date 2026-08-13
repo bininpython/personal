@@ -143,10 +143,7 @@ export type ExerciseCategory =
   | 'abductors' | 'mobility' | 'stretching' | 'functional'
   | 'cardio';
 
-export type TrainingMethod =
-  | 'standard' | 'biset' | 'triset' | 'dropset' | 'rest_pause'
-  | 'pyramid_ascending' | 'pyramid_descending' | 'superset'
-  | 'circuit' | 'isometric' | 'to_failure' | 'time_under_tension';
+export type TrainingMethod = import('@/lib/workouts/training-methods').TrainingMethodId;
 
 export interface Exercise {
   id: string;

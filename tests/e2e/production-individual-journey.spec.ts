@@ -84,7 +84,8 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
           sets: 1,
           reps: '10',
           restTime: 0,
-          method: 'Teste individual.',
+          method: 'rest_pause',
+          methodNotes: 'Pausa curta entre os miniblocos.',
         }],
       }],
     } });

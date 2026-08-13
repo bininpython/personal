@@ -15,6 +15,7 @@ import {
   publishWorkoutPlanRevision,
   WorkoutPlanPublishError,
 } from '@/lib/workouts/plan-service';
+import { normalizeTrainingMethod } from '@/lib/workouts/training-methods';
 
 type Related<T> = T | T[] | null;
 
@@ -36,6 +37,7 @@ interface RelatedWorkoutExercise {
   reps: string;
   rest_time: number;
   method: string | null;
+  method_notes: string | null;
   order_index: number;
   exercises: Related<RelatedExercise>;
 }
@@ -118,7 +120,7 @@ export async function GET() {
         workout_days (
           id, name, day_label, order_index,
           workout_exercises (
-            id, sets, reps, rest_time, method, order_index,
+            id, sets, reps, rest_time, method, method_notes, order_index,
             exercises (id, name, target_muscle, video_url, instructions)
           )
         )
@@ -246,6 +248,7 @@ export async function GET() {
             .sort((a, b) => a.order_index - b.order_index)
             .map((item) => {
               const exercise = one(item.exercises);
+              const trainingMethod = normalizeTrainingMethod(item.method, item.method_notes);
               return {
                 id: item.id,
                 exerciseId: exercise?.id ?? '',
@@ -256,7 +259,7 @@ export async function GET() {
                 sets: item.sets,
                 reps: item.reps,
                 restTime: item.rest_time,
-                method: item.method || '',
+                ...trainingMethod,
                 lastPerformance: exercise?.id ? lastPerformanceByExercise.get(exercise.id) ?? null : null,
               };
             }),

@@ -3,6 +3,7 @@ import { getCatalogExercises } from '@/lib/exercises/catalog';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type { WorkoutPlanCreateInput } from '@/lib/validators';
 import { brazilToday } from './plan-validity';
+import { normalizeTrainingMethod } from './training-methods';
 
 export class WorkoutPlanPublishError extends Error {
   constructor(message: string, public readonly status: number) {
@@ -106,15 +107,19 @@ export async function publishWorkoutPlanRevision(args: {
       (insertedDays ?? []).map((day) => [day.order_index, day.id]),
     );
     const workoutExercises = input.days.flatMap((day, dayIndex) => (
-      day.exercises.map((exercise, exerciseIndex) => ({
-        workout_day_id: dayIdByIndex.get(dayIndex),
-        exercise_id: exerciseIdByKey.get(exercise.exerciseKey),
-        sets: exercise.sets,
-        reps: exercise.reps,
-        rest_time: exercise.restTime,
-        method: exercise.method || null,
-        order_index: exerciseIndex,
-      }))
+      day.exercises.map((exercise, exerciseIndex) => {
+        const trainingMethod = normalizeTrainingMethod(exercise.method, exercise.methodNotes);
+        return {
+          workout_day_id: dayIdByIndex.get(dayIndex),
+          exercise_id: exerciseIdByKey.get(exercise.exerciseKey),
+          sets: exercise.sets,
+          reps: exercise.reps,
+          rest_time: exercise.restTime,
+          method: trainingMethod.method,
+          method_notes: trainingMethod.methodNotes || null,
+          order_index: exerciseIndex,
+        };
+      })
     ));
     if (workoutExercises.some((exercise) => !exercise.workout_day_id || !exercise.exercise_id)) {
       throw new Error('Could not resolve workout relationships.');

@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/ui/page-header';
+import { TrainingMethodFields } from '@/components/workouts/training-method-fields';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -52,6 +53,10 @@ import {
   inferPlanValidity,
   type PlanValidityUnit,
 } from '@/lib/workouts/plan-validity';
+import {
+  normalizeTrainingMethod,
+  type TrainingMethodId,
+} from '@/lib/workouts/training-methods';
 
 interface StudentOption {
   id: string;
@@ -63,7 +68,8 @@ interface BuilderExercise extends ExerciseCatalogItem {
   sets: number;
   reps: string;
   restTime: number;
-  method: string;
+  method: TrainingMethodId;
+  methodNotes: string;
 }
 
 interface BuilderDay {
@@ -99,6 +105,7 @@ interface EditablePlanResponse {
         reps: string;
         restTime: number;
         method: string;
+        methodNotes?: string;
       }>;
     }>;
   };
@@ -225,12 +232,13 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
             missingExerciseCount += 1;
             return [];
           }
+          const trainingMethod = normalizeTrainingMethod(savedExercise.method, savedExercise.methodNotes);
           return [{
             ...catalogExercise,
             sets: savedExercise.sets,
             reps: savedExercise.reps,
             restTime: savedExercise.restTime,
-            method: savedExercise.method,
+            ...trainingMethod,
           }];
         }),
       }));
@@ -332,7 +340,8 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
             sets: 3,
             reps: '10–12',
             restTime: 60,
-            method: '',
+            method: 'standard',
+            methodNotes: '',
           }],
         }
         : day
@@ -350,7 +359,7 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
   function updateExercise(
     dayId: string,
     exerciseKey: string,
-    field: 'sets' | 'reps' | 'restTime' | 'method',
+    field: 'sets' | 'reps' | 'restTime' | 'method' | 'methodNotes',
     value: string | number,
   ) {
     setDays((current) => current.map((day) => (
@@ -429,7 +438,8 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
               sets: exercise.sets,
               reps: exercise.reps,
               restTime: exercise.restTime,
-              method: exercise.method || undefined,
+              method: exercise.method,
+              methodNotes: exercise.methodNotes || undefined,
             })),
           })),
         }),
@@ -777,15 +787,12 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
                           />
                         </div>
                       </div>
-                      <div className="mt-2">
-                        <Label className="text-xs">Método / observação</Label>
-                        <Input
-                          value={exercise.method}
-                          onChange={(event) => updateExercise(activeDay.id, exercise.key, 'method', event.target.value)}
-                          placeholder="Ex.: drop-set na última série"
-                          className="mt-1 px-2 text-sm"
-                        />
-                      </div>
+                      <TrainingMethodFields
+                        method={exercise.method}
+                        methodNotes={exercise.methodNotes}
+                        onMethodChange={(method) => updateExercise(activeDay.id, exercise.key, 'method', method)}
+                        onMethodNotesChange={(notes) => updateExercise(activeDay.id, exercise.key, 'methodNotes', notes)}
+                      />
                     </div>
                   ))}
                 </div>

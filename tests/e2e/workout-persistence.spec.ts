@@ -23,7 +23,7 @@ test.beforeEach(async ({ context, page }) => {
       isExpired: false,
       updatedAt: '2026-08-08T10:00:00Z',
       week: { currentDate: '2026-08-08', startDate: '2026-08-03', endDate: '2026-08-09', target: 1, completed: 0, isComplete: false, nextWorkoutDayId: dayId },
-      days: [{ id: dayId, label: 'A', name: 'Treino A', weeklyAllowance: 1, weeklyCompletions: 0, completedThisWeek: false, completedToday: false, lastCompletedAt: null, exercises: [{ id: exerciseId, exerciseId, name: 'Agachamento', muscle: 'quadriceps', instructions: 'Execução controlada', videoUrl: null, sets: 1, reps: '10', restTime: 0, method: '' }] }],
+      days: [{ id: dayId, label: 'A', name: 'Treino A', weeklyAllowance: 1, weeklyCompletions: 0, completedThisWeek: false, completedToday: false, lastCompletedAt: null, exercises: [{ id: exerciseId, exerciseId, name: 'Agachamento', muscle: 'quadriceps', instructions: 'Execução controlada', videoUrl: null, sets: 1, reps: '10', restTime: 0, method: 'dropset', methodNotes: 'Reduzir 20% da carga na última série.' }] }],
     },
   } }));
 });
@@ -39,6 +39,8 @@ test('envia séries, repetições, carga, RPE, duração e idempotência', async
 
   await page.goto('/workout');
   await expect(page.locator(`a[download][href="/api/workout-plans/${planId}/pdf"]`)).toBeVisible();
+  await expect(page.getByText('Drop-set', { exact: true })).toBeVisible();
+  await expect(page.getByText('Reduzir 20% da carga na última série.')).toBeVisible();
   await page.getByLabel('Repetições da série 1').fill('10');
   await page.getByLabel('Carga da série 1').fill('42.5');
   await page.getByLabel('RPE da série 1').fill('8');

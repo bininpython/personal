@@ -155,7 +155,8 @@ create table public.workout_exercises (
     sets integer not null default 3,
     reps text not null default '10',
     rest_time integer not null default 60, -- Segundos
-    method text,
+    method text default 'standard',
+    method_notes text,
     order_index integer not null default 0,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

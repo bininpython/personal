@@ -21,6 +21,7 @@ test('personal abre uma demonstração importada no catálogo', async ({ context
   } }));
   await page.route('**/api/students**', (route) => route.fulfill({ json: { students: [] } }));
   await page.route('**/api/notifications', (route) => route.fulfill({ json: { notifications: [], unread: 0 } }));
+  await page.route('**/api/tutorial-progress', (route) => route.fulfill({ json: { status: 'completed' } }));
   await page.route('**/api/exercises?muscle=chest', (route) => route.fulfill({ json: {
     exercises: [demonstration],
     total: 1,
@@ -45,6 +46,19 @@ test('personal abre uma demonstração importada no catálogo', async ({ context
   await expect.poll(() => video.evaluate(
     (element) => (element as HTMLVideoElement).readyState,
   )).toBeGreaterThan(0);
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('button', { name: `Adicionar ${demonstration.name}` }).click();
+  if ((page.viewportSize()?.width ?? 1280) < 1280) {
+    await page.getByRole('button', { name: /Passo 3 Ficha/ }).click();
+  }
+  await page.getByLabel('Método de treino').click();
+  await page.getByRole('option', { name: 'Drop-set' }).click();
+  await expect(page.getByText('Continue a série após reduzir a carga.')).toBeVisible();
+  const methodNotes = page.getByLabel(/Orientação personalizada/);
+  await methodNotes.fill('Na última série, reduzir 20% da carga duas vezes.');
+  await expect(methodNotes).toHaveValue('Na última série, reduzir 20% da carga duas vezes.');
+
   await expect(page.locator('[data-nextjs-dialog]')).toHaveCount(0);
   expect(browserErrors).toEqual([]);
 

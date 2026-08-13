@@ -11,6 +11,7 @@ export interface IndividualPlanExercise {
   reps: string;
   restTime: number;
   method: string;
+  methodNotes: string;
 }
 
 export interface IndividualPlanDay {
