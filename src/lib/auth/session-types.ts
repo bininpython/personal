@@ -8,6 +8,7 @@ export interface AuthSession {
   name: string;
   trainer_id: string;
   avatar_url?: string;
+  background_url?: string;
   onboarding_complete?: boolean;
 }
 

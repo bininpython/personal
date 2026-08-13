@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -244,7 +244,11 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Main Content */}
-      <main className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0">
+      <main
+        className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0"
+        data-custom-bg={user?.background_url ? 'true' : undefined}
+        style={user?.background_url ? { '--dk-custom-bg-image': `url(${user.background_url})` } as CSSProperties : undefined}
+      >
         <div className="relative z-10 mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 xl:p-10">
           {children}
         </div>

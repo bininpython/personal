@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, Dumbbell, LayoutDashboard, LogOut, Menu, Moon, Sun, UserRound } from 'lucide-react';
@@ -107,7 +107,11 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
         <Avatar className="size-9 ring-2 ring-[#c9ff32]/25">{user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}<AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback></Avatar>
       </header>
 
-      <main className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0">
+      <main
+        className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0"
+        data-custom-bg={user?.background_url ? 'true' : undefined}
+        style={user?.background_url ? { '--dk-custom-bg-image': `url(${user.background_url})` } as CSSProperties : undefined}
+      >
         <div className="relative z-10 mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 xl:p-10">{children}</div>
       </main>
 

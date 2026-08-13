@@ -12,6 +12,7 @@
     "test:catalog": "node --experimental-strip-types --test --test-isolation=none tests/exercise-catalog.test.mjs",
     "test:analytics": "node --experimental-strip-types --test --test-isolation=none tests/performance-analytics.test.mjs",
     "test:plans": "node --experimental-strip-types --test --test-isolation=none tests/plan-validity.test.mjs",
+    "test:levels": "node --experimental-strip-types --test --test-isolation=none tests/student-level.test.mjs",
     "test:avatars": "node --experimental-strip-types --test --test-isolation=none tests/avatars.test.mjs",
     "test:avatar-persistence": "node --experimental-strip-types --test --test-isolation=none tests/avatar-persistence.test.mjs",
     "test:week-cycle": "node --experimental-strip-types --test --test-isolation=none tests/week-cycle.test.mjs",

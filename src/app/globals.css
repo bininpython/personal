@@ -312,6 +312,33 @@
     linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px);
 }
 
+/* Fundo enviado pelo usuário. Fica preso à viewport com pseudo-elementos em
+   position: fixed — `background-attachment: fixed` não é confiável dentro de um
+   container que rola (iOS) e esticaria a imagem em páginas longas. */
+.dk-app-surface[data-custom-bg="true"]::before,
+.dk-app-surface[data-custom-bg="true"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.dk-app-surface[data-custom-bg="true"]::before {
+  background-image: var(--dk-custom-bg-image);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Camada de leitura: mantém textos e ícones legíveis sobre qualquer foto. */
+.dk-app-surface[data-custom-bg="true"]::after {
+  background-color: rgb(255 255 255 / 0.8);
+}
+
+.dark .dk-app-surface[data-custom-bg="true"]::after {
+  background-color: rgb(9 10 8 / 0.82);
+}
+
 .dk-app [data-slot="card"] {
   border-radius: 1.5rem;
   border: 1px solid rgb(9 10 8 / 0.1);

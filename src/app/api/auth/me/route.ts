@@ -19,6 +19,7 @@ export async function GET() {
       name: session.name,
       trainer_id: session.trainer_id,
       avatar_url: session.avatar_url,
+      background_url: session.background_url,
     },
   });
 }

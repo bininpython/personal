@@ -396,6 +396,7 @@ export interface AuthUser {
   trainer_id: string;
   trainer_code?: string;
   avatar_url?: string;
+  background_url?: string;
 }
 
 export interface AuthState {

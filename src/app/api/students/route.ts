@@ -8,6 +8,7 @@ import { getSession } from '@/lib/auth/session';
 import { generateStudentPrivateCode, getCodeHint, normalizeAuthCode } from '@/lib/auth/credentials';
 import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { studentLevelLabel } from '@/lib/students/level';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import {
   formatDateInSaoPaulo,
@@ -211,11 +212,7 @@ export async function GET() {
         name: student.name,
         access_code: student.access_code_hint || 'Não disponível',
         goal: student.goal || 'Não definido',
-        level: student.level === 'beginner'
-          ? 'Iniciante'
-          : student.level === 'intermediate'
-            ? 'Intermediário'
-            : 'Avançado',
+        level: studentLevelLabel(student.level),
         lastWorkout: lastWorkoutDate
           ? formatDateInSaoPaulo(lastWorkoutDate)
           : 'Sem treino registrado',

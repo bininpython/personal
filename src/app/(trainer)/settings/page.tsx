@@ -6,6 +6,7 @@ import { KeyRound, Loader2, Paintbrush, ShieldCheck, User, Users } from 'lucide-
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { AvatarPicker } from '@/components/profile/avatar-picker';
+import { BackgroundPicker } from '@/components/profile/background-picker';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -146,10 +147,20 @@ export default function TrainerSettingsPage() {
           </Card>
 
           <Card id="aparencia" className="scroll-mt-20 border-border/60">
-            <CardHeader><CardTitle>Aparência</CardTitle><CardDescription>Escolha o tema usado neste dispositivo.</CardDescription></CardHeader>
-            <CardContent className="flex gap-3">
-              <Button variant={resolvedTheme === 'light' ? 'default' : 'outline'} onClick={() => setTheme('light')}>Claro</Button>
-              <Button variant={resolvedTheme === 'dark' ? 'default' : 'outline'} onClick={() => setTheme('dark')}>Escuro</Button>
+            <CardHeader><CardTitle>Aparência</CardTitle><CardDescription>Escolha o tema e personalize o fundo da sua área.</CardDescription></CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex gap-3">
+                <Button variant={resolvedTheme === 'light' ? 'default' : 'outline'} onClick={() => setTheme('light')}>Claro</Button>
+                <Button variant={resolvedTheme === 'dark' ? 'default' : 'outline'} onClick={() => setTheme('dark')}>Escuro</Button>
+              </div>
+              <div className="space-y-2 border-t border-border/60 pt-5">
+                <Label>Fundo personalizado</Label>
+                <p className="text-xs text-muted-foreground">Envie uma foto sua para substituir o fundo padrão da sua área.</p>
+                <BackgroundPicker
+                  backgroundUrl={user?.background_url}
+                  onChange={async () => { await refreshUser(); }}
+                />
+              </div>
             </CardContent>
           </Card>
 
