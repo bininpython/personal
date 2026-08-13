@@ -16,7 +16,7 @@ Plataforma para personal trainers cadastrarem alunos, montarem fichas e acompanh
 
 1. Copie `.env.example` para `.env.local`.
 2. Preencha as chaves públicas do Supabase e a chave secreta usada apenas no servidor.
-3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo `20260808_commercial_security.sql`, `20260810_d_kong_auth.sql` e `20260811_student_consent_attestation.sql`.
+3. Aplique `supabase_schema.sql` em um banco novo e depois todas as migrações em `supabase/migrations` na ordem. Em banco existente, aplique somente as migrações pendentes, incluindo `20260808_commercial_security.sql`, `20260810_d_kong_auth.sql`, `20260811_student_consent_attestation.sql` e `20260813_background_customization.sql`. Rode as migrações **antes** de publicar o código: a resolução de sessão lê `background_url`, então subir o app sem a migração `20260813` derruba o login de todos os perfis. Confira com `npm run check:database`.
 4. Instale as dependências e inicie o projeto:
 
 ```bash

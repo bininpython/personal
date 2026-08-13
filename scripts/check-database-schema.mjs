@@ -15,8 +15,8 @@ if (!url || !key) {
     auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
   });
   const checks = [
-    ['trainers', 'id, login_name_normalized, access_code_hash, recovery_password_hash, terms_accepted_at, privacy_policy_version, deleted_at'],
-    ['students', 'id, trainer_id, login_name_normalized, access_code_hash, privacy_consent_at, terms_accepted_at, trainer_privacy_attested_at, trainer_privacy_attested_by, trainer_privacy_policy_version, deleted_at'],
+    ['trainers', 'id, login_name_normalized, access_code_hash, recovery_password_hash, terms_accepted_at, privacy_policy_version, background_url, deleted_at'],
+    ['students', 'id, trainer_id, login_name_normalized, access_code_hash, privacy_consent_at, terms_accepted_at, trainer_privacy_attested_at, trainer_privacy_attested_by, trainer_privacy_policy_version, background_url, deleted_at'],
     ['app_sessions', 'id, actor_id, role, trainer_id, expires_at, revoked_at'],
     ['auth_rate_limits', 'key_hash, attempts, window_started_at, blocked_until'],
     ['workout_plans', 'id, student_id, trainer_id, end_date'],
@@ -26,7 +26,7 @@ if (!url || !key) {
     ['messages', 'id, sender_id, recipient_id, created_at'],
     ['notifications', 'id, user_id, user_type, created_at'],
     ['appointments', 'id, trainer_id, student_id, start_time'],
-    ['individual_users', 'id, name, email_normalized, password_hash, goal, level, terms_accepted_at, deleted_at'],
+    ['individual_users', 'id, name, email_normalized, password_hash, goal, level, terms_accepted_at, background_url, deleted_at'],
     ['individual_workout_plans', 'id, user_id, name, status, start_date, end_date'],
     ['individual_workout_days', 'id, plan_id, name, day_label, order_index'],
     ['individual_workout_exercises', 'id, workout_day_id, exercise_key, name, video_url, sets, reps, rest_time'],
@@ -43,13 +43,19 @@ if (!url || !key) {
     }
   }
 
+  const privateBuckets = [
+    ['profile-images-private', 'armazenamento privado de fotos'],
+    ['background-images-private', 'armazenamento privado de fundos'],
+  ];
   const { data: buckets, error: bucketError } = await admin.storage.listBuckets();
-  const privateBucket = buckets?.find((bucket) => bucket.name === 'profile-images-private');
-  if (bucketError || !privateBucket || privateBucket.public) {
-    failed = true;
-    console.error('FALHA: o bucket profile-images-private não existe ou não está privado.');
-  } else {
-    console.log('OK: armazenamento privado de fotos');
+  for (const [name, label] of privateBuckets) {
+    const bucket = buckets?.find((item) => item.name === name);
+    if (bucketError || !bucket || bucket.public) {
+      failed = true;
+      console.error(`FALHA: o bucket ${name} não existe ou não está privado.`);
+    } else {
+      console.log(`OK: ${label}`);
+    }
   }
 
   if (failed) process.exitCode = 1;
