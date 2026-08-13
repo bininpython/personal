@@ -51,9 +51,9 @@ test('all associated workout demonstrations exist in public storage', () => {
 
   for (const exercise of videos) {
     assert.ok(!exercise.videoUrl.startsWith('/public/'));
-    const relativePath = exercise.videoUrl.slice(1).replaceAll('/', '\\');
+    const relativePathSegments = exercise.videoUrl.slice(1).split('/');
     assert.ok(
-      existsSync(join(process.cwd(), 'public', relativePath.replace(/^public\\/, ''))),
+      existsSync(join(process.cwd(), 'public', ...relativePathSegments)),
       `Missing video for ${exercise.name}: ${exercise.videoUrl}`,
     );
   }
