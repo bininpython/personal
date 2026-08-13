@@ -2,17 +2,28 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, ClockAlert, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
+import { Calendar, ClockAlert, Copy, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/ui/page-header';
 
 interface WorkoutPlanSummary {
   id: string;
+  studentId: string;
   name: string;
   student: string;
+  studentLevel: string | null;
   goal: string;
   days: number;
   workoutDayCount: number;
@@ -23,12 +34,25 @@ interface WorkoutPlanSummary {
   isExpired: boolean;
 }
 
+interface StudentOption {
+  id: string;
+  name: string;
+  level: string;
+  status: string;
+}
+
 export default function WorkoutsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [plans, setPlans] = useState<WorkoutPlanSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [students, setStudents] = useState<StudentOption[]>([]);
+  const [duplicatingPlan, setDuplicatingPlan] = useState<WorkoutPlanSummary | null>(null);
+  const [targetStudentId, setTargetStudentId] = useState('');
+  const [sameLevelOnly, setSameLevelOnly] = useState(true);
+  const [duplicating, setDuplicating] = useState(false);
+  const [duplicateError, setDuplicateError] = useState('');
 
   useEffect(() => {
     const loadPlans = async () => {
@@ -44,8 +68,58 @@ export default function WorkoutsPage() {
       }
     };
 
+    const loadStudents = async () => {
+      try {
+        const response = await fetch('/api/students', { cache: 'no-store' });
+        const data = await response.json() as { students?: StudentOption[] };
+        if (response.ok) setStudents(data.students ?? []);
+      } catch (loadError) {
+        console.error('[Workouts] Student list error:', loadError);
+      }
+    };
+
     void loadPlans();
+    void loadStudents();
   }, []);
+
+  const openDuplicateDialog = (plan: WorkoutPlanSummary) => {
+    setDuplicatingPlan(plan);
+    setTargetStudentId('');
+    setSameLevelOnly(true);
+    setDuplicateError('');
+  };
+
+  const duplicateCandidates = useMemo(() => {
+    if (!duplicatingPlan) return [];
+    return students.filter((student) => (
+      student.status === 'active'
+      && student.id !== duplicatingPlan.studentId
+      && (!sameLevelOnly || !duplicatingPlan.studentLevel || student.level === duplicatingPlan.studentLevel)
+    ));
+  }, [students, duplicatingPlan, sameLevelOnly]);
+
+  const submitDuplicate = async () => {
+    if (!duplicatingPlan || !targetStudentId) return;
+    setDuplicating(true);
+    setDuplicateError('');
+    try {
+      const response = await fetch(`/api/workout-plans/${duplicatingPlan.id}/duplicate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetStudentId }),
+      });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível duplicar a ficha.');
+      setDuplicatingPlan(null);
+      const refreshed = await fetch('/api/workout-plans', { cache: 'no-store' });
+      const refreshedData = await refreshed.json() as { plans?: WorkoutPlanSummary[] };
+      setPlans(refreshedData.plans ?? []);
+    } catch (submitError) {
+      setDuplicateError(submitError instanceof Error ? submitError.message : 'Não foi possível duplicar a ficha.');
+    } finally {
+      setDuplicating(false);
+    }
+  };
 
   const filteredPlans = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR');
@@ -137,18 +211,74 @@ export default function WorkoutsPage() {
                     {plan.endDate ? new Date(`${plan.endDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Sem prazo'}
                   </span>
                 </div>
-                <Button
-                  variant={plan.isExpired ? 'default' : 'outline'}
-                  className="w-full"
-                  onClick={() => router.push(`/exercises?planId=${plan.id}`)}
-                >
-                  <Pencil className="mr-2 size-4" /> Editar e personalizar
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant={plan.isExpired ? 'default' : 'outline'}
+                    className="flex-1"
+                    onClick={() => router.push(`/exercises?planId=${plan.id}`)}
+                  >
+                    <Pencil className="mr-2 size-4" /> Editar
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={() => openDuplicateDialog(plan)}
+                  >
+                    <Copy className="mr-2 size-4" /> Duplicar
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
+
+      <Dialog open={Boolean(duplicatingPlan)} onOpenChange={(open) => { if (!open) setDuplicatingPlan(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Duplicar ficha para outro aluno</DialogTitle>
+            <DialogDescription>
+              Reaproveite &quot;{duplicatingPlan?.name}&quot; e atribua uma cópia diretamente a outro aluno.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={sameLevelOnly}
+                onChange={(event) => { setSameLevelOnly(event.target.checked); setTargetStudentId(''); }}
+                className="size-4 rounded border-input"
+              />
+              Mostrar apenas alunos do mesmo nível ({duplicatingPlan?.studentLevel ?? 'não definido'})
+            </label>
+            <div className="space-y-1.5">
+              <Label htmlFor="target-student">Aluno de destino</Label>
+              <select
+                id="target-student"
+                value={targetStudentId}
+                onChange={(event) => setTargetStudentId(event.target.value)}
+                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
+              >
+                <option value="">Selecione um aluno</option>
+                {duplicateCandidates.map((student) => (
+                  <option key={student.id} value={student.id}>{student.name} · {student.level}</option>
+                ))}
+              </select>
+              {duplicateCandidates.length === 0 && (
+                <p className="text-xs text-amber-600">Nenhum aluno ativo disponível com esse filtro.</p>
+              )}
+            </div>
+            {duplicateError && <p className="text-sm text-destructive">{duplicateError}</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDuplicatingPlan(null)}>Cancelar</Button>
+            <Button onClick={submitDuplicate} disabled={!targetStudentId || duplicating}>
+              {duplicating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Copy className="mr-2 size-4" />}
+              Duplicar ficha
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

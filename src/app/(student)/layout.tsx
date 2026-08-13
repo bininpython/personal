@@ -13,7 +13,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { studentNeedsOnboarding } from '@/lib/profile/onboarding';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 
 const BOTTOM_NAV = [
   { href: '/home', label: 'Início', icon: Home },
@@ -145,7 +145,11 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       </header>
 
       {/* Main Content */}
-      <main className="dk-app-surface flex-1 pb-24 lg:pb-0">
+      <main
+        className="dk-app-surface flex-1 pb-24 lg:pb-0"
+        data-custom-bg={user?.background_url ? 'true' : undefined}
+        style={user?.background_url ? { '--dk-custom-bg-image': `url(${user.background_url})` } as CSSProperties : undefined}
+      >
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8 lg:py-10">
           {children}
         </div>

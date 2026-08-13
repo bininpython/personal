@@ -20,6 +20,7 @@ type Related<T> = T | T[] | null;
 
 interface RelatedStudent {
   name: string;
+  level: string | null;
 }
 
 interface RelatedExercise {
@@ -71,8 +72,8 @@ export async function GET() {
       const { data, error } = await admin
         .from('workout_plans')
         .select(`
-          id, name, goal, days_per_week, status, start_date, end_date, created_at,
-          students (name),
+          id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at,
+          students (name, level),
           workout_days (id, workout_exercises (id))
         `)
         .eq('trainer_id', session.trainer_id)
@@ -93,8 +94,10 @@ export async function GET() {
 
         return {
           id: plan.id,
+          studentId: plan.student_id,
           name: plan.name,
           student: student?.name ?? 'Aluno',
+          studentLevel: student?.level ?? null,
           goal: plan.goal || 'Geral',
           days: plan.days_per_week || days.length,
           workoutDayCount: days.length,

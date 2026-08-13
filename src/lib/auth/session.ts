@@ -8,6 +8,7 @@ import { getRateLimitSecret } from '@/lib/auth/secrets';
 import { SESSION_COOKIE_NAME, type AuthSession, type SessionRole } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isPrivateAvatar } from '@/lib/profile/private-avatar';
+import { isPrivateBackground } from '@/lib/profile/private-background';
 
 export type { AuthSession, SessionRole } from '@/lib/auth/session-types';
 
@@ -18,6 +19,11 @@ function displayedAvatar(value: string | null | undefined, actorId: string) {
   return isPrivateAvatar(value)
     ? `/api/profile/avatar/image?user=${encodeURIComponent(actorId)}`
     : value;
+}
+
+function displayedBackground(value: string | null | undefined) {
+  if (!value) return undefined;
+  return isPrivateBackground(value) ? '/api/profile/background/image' : value;
 }
 
 export async function createSession(input: {
@@ -98,7 +104,7 @@ export async function getSession(): Promise<AuthSession | null> {
     if (payload.role === 'trainer') {
       const { data: trainer } = await admin
         .from('trainers')
-        .select('id, name, avatar_url, deleted_at')
+        .select('id, name, avatar_url, background_url, deleted_at')
         .eq('id', payload.sub)
         .maybeSingle();
       if (!trainer || trainer.deleted_at) return null;
@@ -110,13 +116,14 @@ export async function getSession(): Promise<AuthSession | null> {
         name: trainer.name,
         trainer_id: trainer.id,
         avatar_url: displayedAvatar(trainer.avatar_url, trainer.id),
+        background_url: displayedBackground(trainer.background_url),
       };
     }
 
     if (payload.role === 'individual') {
       const { data: individual } = await admin
         .from('individual_users')
-        .select('id, name, status, avatar_url, deleted_at')
+        .select('id, name, status, avatar_url, background_url, deleted_at')
         .eq('id', payload.sub)
         .maybeSingle();
       if (!individual || individual.status !== 'active' || individual.deleted_at) return null;
@@ -128,12 +135,13 @@ export async function getSession(): Promise<AuthSession | null> {
         name: individual.name,
         trainer_id: individual.id,
         avatar_url: displayedAvatar(individual.avatar_url, individual.id),
+        background_url: displayedBackground(individual.background_url),
       };
     }
 
     const { data: student } = await admin
       .from('students')
-      .select('id, trainer_id, name, status, avatar_url, privacy_consent_at, terms_accepted_at, deleted_at')
+      .select('id, trainer_id, name, status, avatar_url, background_url, privacy_consent_at, terms_accepted_at, deleted_at')
       .eq('id', payload.sub)
       .maybeSingle();
     if (!student || student.status !== 'active' || student.deleted_at) return null;
@@ -145,6 +153,7 @@ export async function getSession(): Promise<AuthSession | null> {
       name: student.name,
       trainer_id: student.trainer_id,
       avatar_url: displayedAvatar(student.avatar_url, student.id),
+      background_url: displayedBackground(student.background_url),
       onboarding_complete: Boolean(student.privacy_consent_at && student.terms_accepted_at),
     };
   } catch (error) {
