@@ -30,14 +30,18 @@ function source(path) {
 test('offers a complete tutorial for every account role', () => {
   assert.deepEqual(Object.keys(PRODUCT_TUTORIALS).sort(), ['individual', 'student', 'trainer']);
 
+  const minimumSteps = { trainer: 8, student: 8, individual: 5 };
+
   for (const [role, tutorial] of Object.entries(PRODUCT_TUTORIALS)) {
-    assert.ok(tutorial.steps.length >= 4, `${role} should have at least four useful steps`);
+    assert.ok(tutorial.steps.length >= minimumSteps[role], `${role} should have a complete guided journey`);
     assert.ok(tutorial.startHref.startsWith('/'));
     assert.equal(new Set(tutorial.steps.map((step) => step.id)).size, tutorial.steps.length);
     for (const step of tutorial.steps) {
       assert.ok(step.href.startsWith('/'));
       assert.ok(step.title.length > 0);
       assert.ok(step.description.length > 0);
+      assert.ok(step.checklist.length >= 2, `${step.id} should contain practical actions`);
+      assert.equal(new Set(step.checklist).size, step.checklist.length);
       assert.ok(step.tip.length > 0);
     }
   }

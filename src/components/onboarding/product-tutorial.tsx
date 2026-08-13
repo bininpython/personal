@@ -8,13 +8,16 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  ClipboardCheck,
   CircleHelp,
+  Download,
   Dumbbell,
   History,
   Home,
   LayoutDashboard,
   MessageSquare,
   PlayCircle,
+  Send,
   ShieldCheck,
   UserPlus,
   UserRound,
@@ -52,6 +55,10 @@ const ICONS = {
   history: History,
   profile: UserRound,
   'book-open': BookOpen,
+  download: Download,
+  send: Send,
+  'clipboard-check': ClipboardCheck,
+  shield: ShieldCheck,
 } satisfies Record<TutorialIcon, typeof LayoutDashboard>;
 
 async function saveRemoteStatus(status: TutorialStatus) {
@@ -236,6 +243,25 @@ export function ProductTutorialHost() {
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#5c7f00] dark:text-[#c9ff32]" />
               <p className="text-sm leading-6"><span className="font-black">Dica:</span> {step.tip}</p>
             </div>
+          </div>
+
+          <div className="mt-5 rounded-2xl bg-muted/60 p-4">
+            <p className="text-[0.62rem] font-black uppercase tracking-[0.16em] text-muted-foreground">
+              Faça assim
+            </p>
+            <ol className="mt-3 space-y-2">
+              {step.checklist.map((item, index) => (
+                <li key={item} className="grid grid-cols-[1.5rem_1fr] gap-2 text-sm leading-6">
+                  <span
+                    className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-black text-[0.6rem] font-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ol>
           </div>
 
           <Button variant="outline" className="mt-5 h-11 w-full" onClick={() => visit(step.href)}>

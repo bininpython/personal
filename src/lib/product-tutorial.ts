@@ -1,4 +1,4 @@
-export const PRODUCT_TUTORIAL_VERSION = 1;
+export const PRODUCT_TUTORIAL_VERSION = 2;
 export const PRODUCT_TUTORIAL_OPEN_EVENT = 'g-kong:open-product-tutorial';
 
 export type TutorialRole = import('@/types').UserRole;
@@ -19,12 +19,17 @@ export type TutorialIcon =
   | 'home'
   | 'history'
   | 'profile'
-  | 'book-open';
+  | 'book-open'
+  | 'download'
+  | 'send'
+  | 'clipboard-check'
+  | 'shield';
 
 export interface ProductTutorialStep {
   id: string;
   title: string;
   description: string;
+  checklist: readonly string[];
   tip: string;
   href: string;
   actionLabel: string;
@@ -44,7 +49,7 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
   trainer: {
     roleLabel: 'Personal',
     title: 'Coloque sua operação para rodar',
-    description: 'Conheça o caminho mais curto entre cadastrar um aluno e acompanhar sua evolução.',
+    description: 'Do primeiro aluno ao acompanhamento: siga as ações na ordem e deixe o app pronto para sua rotina.',
     startHref: '/students/new',
     startLabel: 'Cadastrar primeiro aluno',
     steps: [
@@ -52,7 +57,11 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'trainer-dashboard',
         title: 'Comece pela visão geral',
         description: 'O painel reúne alunos ativos, treinos concluídos, mensagens e situações que precisam da sua atenção.',
-        tip: 'Use os atalhos do painel para agir sem procurar a mesma informação em várias telas.',
+        checklist: [
+          'Confira os números e avisos do dia.',
+          'Use os atalhos para abrir rapidamente a tarefa prioritária.',
+        ],
+        tip: 'Comece o atendimento diário pelo painel para não deixar alertas importantes para trás.',
         href: '/dashboard',
         actionLabel: 'Abrir visão geral',
         icon: 'dashboard',
@@ -60,8 +69,13 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
       {
         id: 'trainer-students',
         title: 'Cadastre e convide seu aluno',
-        description: 'Informe os dados essenciais. O sistema gera um código individual para o aluno entrar sem e-mail e sem senha.',
-        tip: 'Entregue ao aluno exatamente o nome cadastrado e o código gerado.',
+        description: 'Informe apenas os dados necessários. O sistema gera um código individual para o aluno entrar sem e-mail e sem senha.',
+        checklist: [
+          'Abra Alunos e escolha Novo aluno.',
+          'Confirme a autorização para realizar o cadastro.',
+          'Entregue ao aluno o nome cadastrado e o código gerado.',
+        ],
+        tip: 'No primeiro acesso, o próprio aluno confirma os Termos e a Política de Privacidade.',
         href: '/students/new',
         actionLabel: 'Cadastrar aluno',
         icon: 'user-plus',
@@ -70,16 +84,68 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'trainer-workout',
         title: 'Monte e publique a ficha',
         description: 'Escolha o aluno, organize os dias e configure exercícios, séries, repetições, carga e descanso.',
+        checklist: [
+          'Abra Montar ficha e selecione o aluno.',
+          'Adicione os dias e exercícios na ordem desejada.',
+          'Revise a validade e publique a ficha.',
+        ],
         tip: 'A ficha só aparece para o aluno depois de ser publicada.',
         href: '/exercises',
         actionLabel: 'Abrir montador',
         icon: 'dumbbell',
       },
       {
+        id: 'trainer-pdf',
+        title: 'Baixe a ficha completa em PDF',
+        description: 'Gere uma versão pronta para imprimir ou compartilhar quando o aluno precisar consultar a rotina fora do app.',
+        checklist: [
+          'Abra Gerenciar fichas e localize o plano.',
+          'Use a opção Baixar PDF no cartão da ficha.',
+          'Confira aluno, dias, exercícios e orientações no arquivo.',
+        ],
+        tip: 'Baixe novamente após alterações para garantir que o PDF represente a versão mais recente.',
+        href: '/workouts',
+        actionLabel: 'Gerenciar fichas',
+        icon: 'download',
+      },
+      {
+        id: 'trainer-share',
+        title: 'Reutilize a ficha com outro aluno',
+        description: 'Envie uma cópia de uma ficha pronta para outro aluno e ajuste somente o que for individual, sem começar do zero.',
+        checklist: [
+          'Em Gerenciar fichas, escolha Enviar para outro aluno.',
+          'Selecione o aluno que receberá a cópia.',
+          'Confirme o envio e revise a nova ficha antes de usar.',
+        ],
+        tip: 'A cópia fica separada da original: mudanças posteriores não alteram a ficha do primeiro aluno.',
+        href: '/workouts',
+        actionLabel: 'Reutilizar uma ficha',
+        icon: 'send',
+      },
+      {
+        id: 'trainer-assessments',
+        title: 'Registre avaliações com contexto',
+        description: 'Centralize medidas e observações para comparar períodos e apoiar ajustes de treino com informação organizada.',
+        checklist: [
+          'Abra Avaliações e escolha o aluno.',
+          'Registre somente as informações realmente coletadas.',
+          'Compare a evolução antes de alterar o planejamento.',
+        ],
+        tip: 'Dados de saúde são sensíveis. Evite anotações desnecessárias e mantenha apenas o que ajuda no acompanhamento.',
+        href: '/assessments',
+        actionLabel: 'Abrir avaliações',
+        icon: 'clipboard-check',
+      },
+      {
         id: 'trainer-contact',
         title: 'Mantenha o acompanhamento próximo',
-        description: 'Use as mensagens para orientar, corrigir e responder sem misturar o atendimento com conversas pessoais.',
-        tip: 'Alertas de dor ou dificuldade ajudam a priorizar quem precisa de contato.',
+        description: 'Use mensagens e alertas para orientar, responder dúvidas e identificar alunos que precisam de atenção.',
+        checklist: [
+          'Confira mensagens não lidas.',
+          'Priorize relatos de dor ou dificuldade.',
+          'Registre a orientação no próprio atendimento do app.',
+        ],
+        tip: 'Em caso de relato de dor, oriente o aluno a interromper o exercício e avalie a conduta adequada.',
         href: '/messages',
         actionLabel: 'Abrir mensagens',
         icon: 'message',
@@ -88,7 +154,12 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'trainer-results',
         title: 'Acompanhe os resultados',
         description: 'Relatórios e perfis mostram frequência, conclusão, volume e avaliações para apoiar suas decisões.',
-        tip: 'Revise os relatórios com frequência e ajuste a ficha quando a evolução pedir.',
+        checklist: [
+          'Compare frequência e conclusão ao longo das semanas.',
+          'Observe volume, avaliações e alertas em conjunto.',
+          'Ajuste a ficha quando a evolução ou a dificuldade pedir.',
+        ],
+        tip: 'Use tendências de várias semanas; um treino isolado raramente conta toda a história.',
         href: '/reports',
         actionLabel: 'Ver relatórios',
         icon: 'chart',
@@ -98,14 +169,33 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
   student: {
     roleLabel: 'Aluno',
     title: 'Seu treino, passo a passo',
-    description: 'Veja onde encontrar a ficha, registrar cada série e acompanhar sua evolução com o personal.',
+    description: 'Do primeiro acesso à evolução: veja exatamente onde tocar e o que registrar em cada momento.',
     startHref: '/workout',
     startLabel: 'Abrir meu treino',
     steps: [
       {
+        id: 'student-access',
+        title: 'Conclua seu primeiro acesso',
+        description: 'Entre com o nome e o código enviados pelo personal. Na primeira vez, confirme os documentos e complete somente os dados necessários.',
+        checklist: [
+          'Digite seu nome da mesma forma usada no cadastro.',
+          'Informe o código individual recebido do personal.',
+          'Leia e confirme os Termos e a Política de Privacidade.',
+        ],
+        tip: 'Seu código é pessoal. Se perdê-lo, peça ao personal para gerar outro.',
+        href: '/profile',
+        actionLabel: 'Abrir meu perfil',
+        icon: 'shield',
+      },
+      {
         id: 'student-home',
         title: 'Confira o treino do dia',
         description: 'A tela inicial mostra a ficha ativa, o próximo treino e um resumo da sua rotina recente.',
+        checklist: [
+          'Confirme o nome da ficha ativa.',
+          'Veja qual dia de treino será executado.',
+          'Abra o treino quando estiver pronto para começar.',
+        ],
         tip: 'Se uma ficha nova não aparecer, atualize a tela e confirme com seu personal se ela já foi publicada.',
         href: '/home',
         actionLabel: 'Abrir início',
@@ -115,15 +205,39 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'student-workout',
         title: 'Registre cada série',
         description: 'Durante o treino, informe repetições e carga, marque as séries concluídas e use o descanso cronometrado.',
+        checklist: [
+          'Abra o exercício e confira as orientações.',
+          'Preencha repetições, carga e esforço percebido.',
+          'Marque cada série concluída antes de avançar.',
+        ],
         tip: 'Se a conexão cair, o G KONG guarda a conclusão neste aparelho e sincroniza quando a internet voltar.',
         href: '/workout',
         actionLabel: 'Abrir treino',
         icon: 'dumbbell',
       },
       {
+        id: 'student-pdf',
+        title: 'Leve sua ficha em PDF',
+        description: 'Baixe a ficha completa para consultar os dias, exercícios e orientações mesmo quando preferir usar um arquivo.',
+        checklist: [
+          'Abra seu treino ativo.',
+          'Toque em Baixar ficha em PDF.',
+          'Guarde apenas a versão mais recente da ficha.',
+        ],
+        tip: 'O app continua sendo o melhor lugar para registrar séries e conclusão; o PDF serve como consulta.',
+        href: '/workout',
+        actionLabel: 'Abrir ficha ativa',
+        icon: 'download',
+      },
+      {
         id: 'student-history',
-        title: 'Consulte o histórico',
-        description: 'Treinos finalizados ficam registrados com duração, percentual concluído e volume realizado.',
+        title: 'Finalize e consulte o histórico',
+        description: 'Ao concluir, avalie o treino. A sessão fica registrada com duração, percentual concluído e volume realizado.',
+        checklist: [
+          'Revise se as séries realizadas foram marcadas.',
+          'Conclua o treino e informe sua avaliação.',
+          'Abra o Histórico para consultar a sessão salva.',
+        ],
         tip: 'O histórico ajuda você e seu personal a comparar treinos sem depender da memória.',
         href: '/history',
         actionLabel: 'Ver histórico',
@@ -133,6 +247,11 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'student-progress',
         title: 'Acompanhe sua evolução',
         description: 'Veja consistência, volume e outros indicadores para entender seu ritmo ao longo das semanas.',
+        checklist: [
+          'Abra Evolução após acumular alguns treinos.',
+          'Compare semanas e observe sua constância.',
+          'Converse com o personal antes de mudar a ficha por conta própria.',
+        ],
         tip: 'Resultado vem da tendência. Compare períodos, não apenas um treino isolado.',
         href: '/progress',
         actionLabel: 'Ver evolução',
@@ -141,18 +260,37 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
       {
         id: 'student-support',
         title: 'Fale com seu personal',
-        description: 'Envie dúvidas e observações pelo chat. Em caso de dor, pare o exercício e relate o ocorrido.',
-        tip: 'Seu perfil também permite exportar seus dados ou solicitar a exclusão da conta.',
+        description: 'Envie dúvidas e observações pelo chat. O histórico da conversa fica junto da sua rotina de acompanhamento.',
+        checklist: [
+          'Abra Mensagens e escolha a conversa com o personal.',
+          'Explique a dúvida com detalhes objetivos.',
+          'Em caso de dor, pare o exercício e relate o ocorrido.',
+        ],
+        tip: 'Informe qual exercício, região e momento causaram desconforto para facilitar a orientação.',
         href: '/student-messages',
         actionLabel: 'Abrir mensagens',
         icon: 'message',
+      },
+      {
+        id: 'student-data',
+        title: 'Controle seus dados',
+        description: 'No perfil você revisa seus dados, exporta uma cópia das informações e pode solicitar a exclusão da conta.',
+        checklist: [
+          'Mantenha somente os dados úteis ao acompanhamento.',
+          'Use Exportar meus dados quando quiser uma cópia.',
+          'Leia os avisos antes de confirmar uma exclusão permanente.',
+        ],
+        tip: 'Para trocar o código individual, peça ao personal para gerar um novo acesso.',
+        href: '/profile',
+        actionLabel: 'Abrir meu perfil',
+        icon: 'profile',
       },
     ],
   },
   individual: {
     roleLabel: 'Atleta independente',
     title: 'Monte sua própria rotina',
-    description: 'Aprenda a criar fichas pessoais, consultar seus planos e manter os dados da conta em ordem.',
+    description: 'Crie, organize e baixe suas fichas pessoais com um caminho simples do início ao controle da conta.',
     startHref: '/my-exercises',
     startLabel: 'Montar minha primeira ficha',
     steps: [
@@ -160,6 +298,10 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'individual-home',
         title: 'Use sua visão geral',
         description: 'A página inicial reúne suas fichas e os atalhos principais da área individual.',
+        checklist: [
+          'Confira qual ficha representa sua rotina atual.',
+          'Use os atalhos para montar ou consultar um plano.',
+        ],
         tip: 'Esta conta é de uso próprio e não inclui gestão de alunos ou recursos de personal.',
         href: '/my',
         actionLabel: 'Abrir visão geral',
@@ -169,6 +311,11 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'individual-builder',
         title: 'Monte sua ficha',
         description: 'Escolha os exercícios, distribua os dias e defina séries, repetições, carga e descanso.',
+        checklist: [
+          'Abra Montar ficha e dê um nome ao plano.',
+          'Crie os dias e adicione os exercícios na ordem desejada.',
+          'Revise os dados antes de salvar.',
+        ],
         tip: 'Dê nomes claros aos dias para encontrar rapidamente o treino certo.',
         href: '/my-exercises',
         actionLabel: 'Abrir montador',
@@ -178,16 +325,40 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         id: 'individual-plans',
         title: 'Organize suas fichas',
         description: 'Consulte os planos criados e mantenha ativa a ficha que representa sua rotina atual.',
-        tip: 'Revise sua seleção de exercícios quando objetivo, disponibilidade ou limitações mudarem.',
+        checklist: [
+          'Abra Minhas fichas e localize o plano desejado.',
+          'Confira os dias, a validade e o conteúdo.',
+          'Atualize a rotina quando seu objetivo ou disponibilidade mudar.',
+        ],
+        tip: 'Faça ajustes graduais e procure orientação profissional quando tiver dúvidas ou limitações.',
         href: '/my-plans',
         actionLabel: 'Ver minhas fichas',
         icon: 'dumbbell',
       },
       {
+        id: 'individual-pdf',
+        title: 'Baixe sua ficha em PDF',
+        description: 'Gere um arquivo completo com os dias, exercícios e orientações da ficha para consultar ou imprimir.',
+        checklist: [
+          'Abra Minhas fichas e escolha o plano.',
+          'Use a opção Baixar PDF.',
+          'Baixe outra vez sempre que atualizar a ficha.',
+        ],
+        tip: 'Evite acumular versões antigas para não seguir orientações desatualizadas.',
+        href: '/my-plans',
+        actionLabel: 'Baixar uma ficha',
+        icon: 'download',
+      },
+      {
         id: 'individual-profile',
         title: 'Cuide da sua conta',
-        description: 'No perfil você atualiza seus dados e encontra os controles de privacidade e acesso.',
-        tip: 'Nunca compartilhe seu código. Troque-o se houver qualquer suspeita de acesso indevido.',
+        description: 'No perfil você atualiza seus dados e encontra os controles de privacidade, exportação e acesso.',
+        checklist: [
+          'Mantenha o nome da conta atualizado.',
+          'Exporte seus dados quando quiser uma cópia.',
+          'Troque o código se houver suspeita de acesso indevido.',
+        ],
+        tip: 'Nunca compartilhe seu código pessoal com terceiros.',
         href: '/my-profile',
         actionLabel: 'Abrir meu perfil',
         icon: 'profile',

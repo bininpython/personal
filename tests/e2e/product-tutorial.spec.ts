@@ -42,6 +42,9 @@ test('trainer can complete every step of the first-access tutorial', async ({ pa
     'Comece pela visão geral',
     'Cadastre e convide seu aluno',
     'Monte e publique a ficha',
+    'Baixe a ficha completa em PDF',
+    'Reutilize a ficha com outro aluno',
+    'Registre avaliações com contexto',
     'Mantenha o acompanhamento próximo',
     'Acompanhe os resultados',
   ];
@@ -67,6 +70,9 @@ test('student can dismiss and reopen the tutorial on a phone', async ({ page }) 
   await expect(dialog).toBeHidden();
 
   await page.getByRole('button', { name: 'Abrir tutorial guiado' }).click();
+  await expect(dialog.getByRole('heading', { name: 'Conclua seu primeiro acesso' })).toBeVisible();
+  await expect(dialog.getByText('Digite seu nome da mesma forma', { exact: false })).toBeVisible();
+  await dialog.getByRole('button', { name: 'Próximo' }).click();
   await expect(dialog.getByRole('heading', { name: 'Confira o treino do dia' })).toBeVisible();
   await dialog.getByRole('button', { name: 'Próximo' }).click();
   await expect(dialog.getByText('Se a conexão cair', { exact: false })).toBeVisible();
