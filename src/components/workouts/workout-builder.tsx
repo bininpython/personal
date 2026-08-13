@@ -169,6 +169,7 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
   const [submitting, setSubmitting] = useState(false);
   const [playingVideo, setPlayingVideo] = useState<string | null>(null);
   const [editingPlanId, setEditingPlanId] = useState('');
+  const [editingStudentName, setEditingStudentName] = useState('');
   const [editingPlanLoading, setEditingPlanLoading] = useState(false);
   const [startDate, setStartDate] = useState(() => brazilToday());
   const [validityAmount, setValidityAmount] = useState(4);
@@ -242,6 +243,7 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
       }
 
       setEditingPlanId(data.plan.id);
+      setEditingStudentName(data.plan.studentName || '');
       if (data.plan.studentId) setSelectedStudentId(data.plan.studentId);
       setPlanName(data.plan.name);
       setGoal(data.plan.goal);
@@ -459,9 +461,13 @@ export function WorkoutBuilder({ mode }: { mode: 'trainer' | 'individual' }) {
     <div ref={builderRef} className="space-y-6 pb-28 animate-fade-in xl:pb-10">
       <PageHeader
         kicker={isIndividual ? 'Meu treino' : 'Operação'}
-        title={editingPlanId ? 'Editar ficha' : 'Montar ficha'}
+        title={editingPlanId && editingStudentName ? `Editar ficha de ${editingStudentName}` : editingPlanId ? 'Editar ficha' : 'Montar ficha'}
         description={editingPlanId
-          ? isIndividual ? 'Personalize sua ficha. A versão anterior continuará disponível no histórico.' : 'Personalize a ficha existente e publique uma nova versão para o aluno.'
+          ? isIndividual
+            ? 'Personalize sua ficha. A versão anterior continuará disponível no histórico.'
+            : editingStudentName
+              ? `As alterações valem apenas para ${editingStudentName}. Ao salvar, uma nova versão é publicada para esse aluno.`
+              : 'Personalize a ficha existente e publique uma nova versão para o aluno.'
           : isIndividual ? 'Clique em um músculo, escolha os exercícios e crie uma ficha completa para você.' : 'Clique em um músculo, escolha os exercícios e publique para o aluno.'}
         actions={
           <Button onClick={openSaveDialog} disabled={totalSelected === 0} className="hidden h-11 xl:inline-flex">
