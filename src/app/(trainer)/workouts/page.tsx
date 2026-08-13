@@ -2,15 +2,19 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, ClockAlert, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
+import { Calendar, ClockAlert, Download, Dumbbell, Loader2, Pencil, Plus, Search, Send, User } from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { PageHeader } from '@/components/ui/page-header';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface WorkoutPlanSummary {
   id: string;
+  studentId: string;
   name: string;
   student: string;
   goal: string;
@@ -23,20 +27,39 @@ interface WorkoutPlanSummary {
   isExpired: boolean;
 }
 
+interface StudentSummary {
+  id: string;
+  name: string;
+  status: string;
+}
+
 export default function WorkoutsPage() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [plans, setPlans] = useState<WorkoutPlanSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [students, setStudents] = useState<StudentSummary[]>([]);
+  const [copyPlan, setCopyPlan] = useState<WorkoutPlanSummary | null>(null);
+  const [destinationStudentId, setDestinationStudentId] = useState('');
+  const [copying, setCopying] = useState(false);
+
+  async function loadPlans() {
+    const response = await fetch('/api/workout-plans', { cache: 'no-store' });
+    const data = await response.json() as { plans?: WorkoutPlanSummary[]; error?: string };
+    if (!response.ok) throw new Error(data.error || 'Não foi possível carregar as fichas.');
+    setPlans(data.plans ?? []);
+  }
 
   useEffect(() => {
-    const loadPlans = async () => {
+    const loadPage = async () => {
       try {
-        const response = await fetch('/api/workout-plans', { cache: 'no-store' });
-        const data = await response.json() as { plans?: WorkoutPlanSummary[]; error?: string };
-        if (!response.ok) throw new Error(data.error || 'Não foi possível carregar as fichas.');
-        setPlans(data.plans ?? []);
+        const [, studentResponse] = await Promise.all([
+          loadPlans(),
+          fetch('/api/students', { cache: 'no-store' }),
+        ]);
+        const studentData = await studentResponse.json() as { students?: StudentSummary[] };
+        if (studentResponse.ok) setStudents(studentData.students ?? []);
       } catch (loadError) {
         setError(loadError instanceof Error ? loadError.message : 'Não foi possível carregar as fichas.');
       } finally {
@@ -44,8 +67,39 @@ export default function WorkoutsPage() {
       }
     };
 
-    void loadPlans();
+    void loadPage();
   }, []);
+
+  const availableStudents = useMemo(() => students.filter((student) => (
+    student.status === 'active' && student.id !== copyPlan?.studentId
+  )), [copyPlan?.studentId, students]);
+
+  function openCopyDialog(plan: WorkoutPlanSummary) {
+    setCopyPlan(plan);
+    setDestinationStudentId('');
+  }
+
+  async function sendCopy() {
+    if (!copyPlan || !destinationStudentId) return;
+    setCopying(true);
+    try {
+      const response = await fetch(`/api/workout-plans/${copyPlan.id}/copy`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: destinationStudentId }),
+      });
+      const data = await response.json() as { error?: string; message?: string };
+      if (!response.ok) throw new Error(data.error || 'Não foi possível enviar a ficha.');
+      toast.success(data.message || 'Ficha enviada para o aluno.');
+      setCopyPlan(null);
+      setDestinationStudentId('');
+      await loadPlans();
+    } catch (copyError) {
+      toast.error(copyError instanceof Error ? copyError.message : 'Não foi possível enviar a ficha.');
+    } finally {
+      setCopying(false);
+    }
+  }
 
   const filteredPlans = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR');
@@ -137,6 +191,18 @@ export default function WorkoutsPage() {
                     {plan.endDate ? new Date(`${plan.endDate}T12:00:00`).toLocaleDateString('pt-BR') : 'Sem prazo'}
                   </span>
                 </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    nativeButton={false}
+                    variant="outline"
+                    render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+                  >
+                    <Download className="mr-2 size-4" /> PDF
+                  </Button>
+                  <Button variant="outline" onClick={() => openCopyDialog(plan)}>
+                    <Send className="mr-2 size-4" /> Enviar
+                  </Button>
+                </div>
                 <Button
                   variant={plan.isExpired ? 'default' : 'outline'}
                   className="w-full"
@@ -149,6 +215,40 @@ export default function WorkoutsPage() {
           ))}
         </div>
       )}
+
+      <Dialog open={Boolean(copyPlan)} onOpenChange={(open) => { if (!open && !copying) setCopyPlan(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enviar ficha para outro aluno</DialogTitle>
+            <DialogDescription>
+              Uma cópia de “{copyPlan?.name}” será publicada para o aluno escolhido, com a validade reiniciada. A ficha ativa atual dele ficará no histórico.
+            </DialogDescription>
+          </DialogHeader>
+          {availableStudents.length > 0 ? (
+            <Select value={destinationStudentId} onValueChange={(value) => setDestinationStudentId(value ?? '')}>
+              <SelectTrigger className="h-11 w-full">
+                <SelectValue placeholder="Selecione o aluno" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableStudents.map((student) => (
+                  <SelectItem key={student.id} value={student.id}>{student.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+              Não há outro aluno ativo disponível para receber esta ficha.
+            </p>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCopyPlan(null)} disabled={copying}>Cancelar</Button>
+            <Button onClick={() => void sendCopy()} disabled={!destinationStudentId || copying}>
+              {copying ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Send className="mr-2 size-4" />}
+              Enviar e publicar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

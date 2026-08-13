@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       let page = admin
         .from('trainers')
         .select('id')
-        .eq('status', 'active')
+        .is('deleted_at', null)
         .order('id')
         .limit(PAGE_SIZE);
       if (cursor) page = page.gt('id', cursor);

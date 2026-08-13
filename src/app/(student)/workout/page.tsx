@@ -8,6 +8,7 @@ import {
   CloudOff,
   CloudUpload,
   Clock3,
+  Download,
   Dumbbell,
   Loader2,
   PlayCircle,
@@ -735,16 +736,27 @@ export default function StudentWorkoutPage() {
             <h1 className="dk-display mt-5 text-3xl sm:text-4xl">{plan.name}</h1>
             <p className="mt-2 text-sm text-white/70">{plan.goal}</p>
           </div>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => void loadPlan(true)}
-            disabled={refreshing}
-            className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
-          >
-            <RefreshCw className={`mr-2 size-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-            Atualizar
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              nativeButton={false}
+              variant="secondary"
+              size="sm"
+              render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+              className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
+            >
+              <Download className="mr-2 size-3.5" /> Baixar PDF
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void loadPlan(true)}
+              disabled={refreshing}
+              className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
+            >
+              <RefreshCw className={`mr-2 size-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4">
@@ -897,7 +909,7 @@ export default function StudentWorkoutPage() {
               ));
 
               return (
-                <Card key={exercise.id} className={`overflow-hidden border-border/60 ${isComplete ? 'border-ok/40 bg-ok-wash' : ''} ${activeDayCompleted ? 'opacity-80' : ''}`}>
+                <Card id={`exercise-${exercise.id}`} key={exercise.id} className={`scroll-mt-24 overflow-hidden border-border/60 ${isComplete ? 'border-ok/40 bg-ok-wash' : ''} ${activeDayCompleted ? 'opacity-80' : ''}`}>
                   <CardHeader className="border-b border-border/40 pb-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex min-w-0 gap-3">

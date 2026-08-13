@@ -178,8 +178,13 @@ export const workoutPlanUpdateSchema = z.object({
   ...workoutPlanBuilderFields,
 }).strict();
 
+export const workoutPlanCopySchema = z.object({
+  studentId: z.string().uuid('Aluno inválido'),
+}).strict();
+
 export type WorkoutPlanCreateInput = z.infer<typeof workoutPlanCreateSchema>;
 export type WorkoutPlanUpdateInput = z.infer<typeof workoutPlanUpdateSchema>;
+export type WorkoutPlanCopyInput = z.infer<typeof workoutPlanCopySchema>;
 
 // ---- Workout Exercise ----
 

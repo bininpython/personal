@@ -1,13 +1,8 @@
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
-import { createWorkoutPlanPdf } from '@/lib/pdf/workout-plan';
+import { createWorkoutPlanPdf, workoutPlanPdfFilename } from '@/lib/pdf/workout-plan';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getIndividualPlan } from '@/lib/workouts/individual-plan-service';
-
-function filename(value: string) {
-  const slug = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
-  return `g-kong-ficha-${slug || 'treino'}.pdf`;
-}
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -26,7 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     return new Response(Buffer.from(bytes), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${filename(plan.name)}"`,
+        'Content-Disposition': `attachment; filename="${workoutPlanPdfFilename(plan.name)}"`,
         'Cache-Control': 'private, no-store',
         'X-Content-Type-Options': 'nosniff',
       },

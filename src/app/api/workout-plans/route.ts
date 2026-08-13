@@ -71,7 +71,7 @@ export async function GET() {
       const { data, error } = await admin
         .from('workout_plans')
         .select(`
-          id, name, goal, days_per_week, status, start_date, end_date, created_at,
+          id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at,
           students (name),
           workout_days (id, workout_exercises (id))
         `)
@@ -93,6 +93,7 @@ export async function GET() {
 
         return {
           id: plan.id,
+          studentId: plan.student_id,
           name: plan.name,
           student: student?.name ?? 'Aluno',
           goal: plan.goal || 'Geral',

@@ -2,7 +2,6 @@ import 'server-only';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
-import type { IndividualPlan } from '@/lib/workouts/individual-plan-service';
 import { formatPlanDate } from '@/lib/workouts/plan-validity';
 
 const PAGE_WIDTH = 595.28;
@@ -13,6 +12,34 @@ const VOLT = rgb(201 / 255, 1, 50 / 255);
 const GRAY = rgb(98 / 255, 104 / 255, 110 / 255);
 const LIGHT = rgb(244 / 255, 245 / 255, 239 / 255);
 const LINE = rgb(224 / 255, 226 / 255, 220 / 255);
+
+export interface PrintableWorkoutPlan {
+  id: string;
+  name: string;
+  goal: string;
+  daysPerWeek: number;
+  startDate: string | null;
+  endDate: string | null;
+  workoutDayCount: number;
+  exerciseCount: number;
+  days: Array<{
+    id: string;
+    label: string;
+    name: string;
+    exercises: Array<{
+      id: string;
+      name: string;
+      primaryMuscleLabel: string;
+      equipment: string;
+      instructions: string;
+      videoUrl: string | null;
+      sets: number;
+      reps: string;
+      restTime: number;
+      method: string;
+    }>;
+  }>;
+}
 
 function clean(value: string) {
   return value
@@ -65,9 +92,11 @@ function drawFooter(page: PDFPage, regular: PDFFont, pageNumber: number) {
 }
 
 export async function createWorkoutPlanPdf(args: {
-  plan: IndividualPlan;
+  plan: PrintableWorkoutPlan;
   userName: string;
   baseUrl: string;
+  professionalName?: string;
+  planPath?: string;
 }) {
   const pdf = await PDFDocument.create();
   const regular = await pdf.embedFont(StandardFonts.Helvetica);
@@ -96,7 +125,14 @@ export async function createWorkoutPlanPdf(args: {
 
   let y = PAGE_HEIGHT - 260;
   cover.drawText('ATLETA', { x: MARGIN, y, size: 8, font: bold, color: GRAY });
-  cover.drawText(clean(args.userName), { x: MARGIN, y: y - 24, size: 20, font: bold, color: INK });
+  wrap(args.userName, bold, 18, args.professionalName ? 240 : PAGE_WIDTH - MARGIN * 2, 2)
+    .forEach((line, index) => cover.drawText(line, { x: MARGIN, y: y - 24 - index * 19, size: 18, font: bold, color: INK }));
+  if (args.professionalName) {
+    const professionalX = 316;
+    cover.drawText('PERSONAL RESPONSÁVEL', { x: professionalX, y, size: 8, font: bold, color: GRAY });
+    wrap(args.professionalName, bold, 13, PAGE_WIDTH - MARGIN - professionalX, 2)
+      .forEach((line, index) => cover.drawText(line, { x: professionalX, y: y - 22 - index * 15, size: 13, font: bold, color: INK }));
+  }
   y -= 72;
 
   const metrics = [
@@ -189,7 +225,7 @@ export async function createWorkoutPlanPdf(args: {
       const method = exercise.method ? `Metodo: ${exercise.method}` : exercise.instructions;
       wrap(method, regular, 7.2, contentWidth, 2).forEach((line, index) => page.drawText(line, { x: contentX, y: detailsY - 29 - index * 10, size: 7.2, font: regular, color: GRAY }));
       if (exercise.videoUrl) {
-        const url = `${args.baseUrl}/my-plans/${args.plan.id}#exercise-${exercise.id}`;
+        const url = `${args.baseUrl}${args.planPath || `/my-plans/${args.plan.id}`}#exercise-${exercise.id}`;
         page.drawText(clean(url), { x: thumbX, y: cardY + 8, size: 5.5, font: regular, color: GRAY });
       }
       cursor = cardY - 10;
@@ -202,4 +238,15 @@ export async function createWorkoutPlanPdf(args: {
   pdf.setCreator('G KONG');
   pdf.setProducer('G KONG Performance System');
   return pdf.save();
+}
+
+export function workoutPlanPdfFilename(value: string) {
+  const slug = value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 60);
+  return `g-kong-ficha-${slug || 'treino'}.pdf`;
 }

@@ -127,7 +127,7 @@ export default function LandingPage() {
                 />
               </div>
               <div className="grid grid-cols-3 gap-2 border-t border-black/10 pt-5 text-center">
-                {[['705', 'exercícios'], ['490', 'demonstrações'], ['100%', 'mobile']].map(([value, label]) => (
+                {[['705', 'exercícios'], ['490', 'demonstrações'], ['Layout', 'responsivo']].map(([value, label]) => (
                   <div key={label}>
                     <p className="text-lg font-black">{value}</p>
                     <p className="text-[0.6rem] font-bold uppercase tracking-[0.14em] text-black/38">{label}</p>

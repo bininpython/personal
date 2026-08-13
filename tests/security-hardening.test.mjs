@@ -83,10 +83,41 @@ test('conta individual usa tabelas isoladas e não recebe recursos profissionais
 
 test('PDF da ficha é privado, identificado e usa a marca G KONG', () => {
   const route = read('src/app/api/individual/workout-plans/[id]/pdf/route.ts');
+  const managedRoute = read('src/app/api/workout-plans/[id]/pdf/route.ts');
   const generator = read('src/lib/pdf/workout-plan.ts');
   assert.match(route, /session\.role !== 'individual'/);
   assert.match(route, /Content-Type': 'application\/pdf'/);
+  assert.match(managedRoute, /session\.role !== 'trainer' && session\.role !== 'student'/);
+  assert.match(managedRoute, /studentId: session\.role === 'student' \? session\.sub : undefined/);
+  assert.match(managedRoute, /activeOnly: session\.role === 'student'/);
+  assert.match(managedRoute, /Content-Type': 'application\/pdf'/);
   assert.match(generator, /gkong-logo\.jpg/);
   assert.match(generator, /PERFORMANCE SYSTEM/);
+  assert.match(generator, /PERSONAL RESPONSÁVEL/);
   assert.match(generator, /exercise-thumbnails/);
+});
+
+test('cópia de ficha respeita propriedade, troca o aluno e preserva a validade', () => {
+  const route = read('src/app/api/workout-plans/[id]/copy/route.ts');
+  assert.match(route, /session\.role !== 'trainer'/);
+  assert.match(route, /trainerId: session\.trainer_id/);
+  assert.match(route, /source\.studentId === parsed\.data\.studentId/);
+  assert.match(route, /studentId: parsed\.data\.studentId/);
+  assert.match(route, /inferPlanValidity/);
+  assert.match(route, /publishWorkoutPlanRevision/);
+});
+
+test('migração restringe funções privilegiadas e cobre chaves estrangeiras', () => {
+  const migration = read('supabase/migrations/20260813132126_harden_database_functions_and_indexes.sql');
+  assert.match(migration, /revoke execute on function public\.consume_auth_rate_limit.*public, anon, authenticated/);
+  assert.match(migration, /grant execute on function public\.consume_auth_rate_limit.*service_role/);
+  assert.match(migration, /workout_plans_student_id_idx/);
+  assert.match(migration, /exercise_sessions_workout_session_id_idx/);
+  assert.match(migration, /Students and trainers can read authorized profiles/);
+});
+
+test('alertas automáticos filtram personais existentes sem depender de coluna ausente', () => {
+  const route = read('src/app/api/cron/alerts/route.ts');
+  assert.match(route, /\.is\('deleted_at', null\)/);
+  assert.doesNotMatch(route, /\.eq\('status', 'active'\)/);
 });

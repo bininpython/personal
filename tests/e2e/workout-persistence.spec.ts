@@ -38,6 +38,7 @@ test('envia séries, repetições, carga, RPE, duração e idempotência', async
   });
 
   await page.goto('/workout');
+  await expect(page.locator(`a[download][href="/api/workout-plans/${planId}/pdf"]`)).toBeVisible();
   await page.getByLabel('Repetições da série 1').fill('10');
   await page.getByLabel('Carga da série 1').fill('42.5');
   await page.getByLabel('RPE da série 1').fill('8');

@@ -7,7 +7,7 @@ import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
 const included = [
   'Acesso por nome e código, sem e-mail',
   `Até ${MAX_STUDENTS_PER_TRAINER} alunos ativos ao mesmo tempo`,
-  'Biblioteca com 254 exercícios e vídeos de execução',
+  'Biblioteca com 705 exercícios, incluindo 490 demonstrações',
   'Montador de fichas pelo diagrama muscular',
   'Registro de série, carga e RPE com histórico',
   'Alertas de constância, risco e inatividade',
@@ -83,8 +83,8 @@ export default function PlansPage() {
                 carteira sem perder dado nenhum.
               </p>
               <p className="mt-4 text-sm leading-6 text-white/55">
-                Precisa de mais vagas ao mesmo tempo? Fale com a gente pela própria plataforma que
-                ampliamos seu limite.
+                Novos limites ainda não estão disponíveis. A página será atualizada quando houver
+                uma oferta comercial pronta, com preço e canal de atendimento definidos.
               </p>
             </div>
 
