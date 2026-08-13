@@ -8,7 +8,7 @@ import { getRateLimitSecret } from '@/lib/auth/secrets';
 import { SESSION_COOKIE_NAME, type AuthSession, type SessionRole } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { isPrivateAvatar } from '@/lib/profile/private-avatar';
-import { isPrivateBackground } from '@/lib/profile/private-background';
+import { parsePrivateBackground } from '@/lib/profile/private-background';
 
 export type { AuthSession, SessionRole } from '@/lib/auth/session-types';
 
@@ -23,7 +23,14 @@ function displayedAvatar(value: string | null | undefined, actorId: string) {
 
 function displayedBackground(value: string | null | undefined) {
   if (!value) return undefined;
-  return isPrivateBackground(value) ? '/api/profile/background/image' : value;
+  const reference = parsePrivateBackground(value);
+  if (!reference) return value;
+  // Cada upload grava um arquivo com UUID novo. Usar esse UUID como versão faz
+  // a imagem trocar na hora mesmo com a resposta cacheada pelo navegador.
+  const version = reference.path.split('/').pop()?.split('.')[0];
+  return version
+    ? `/api/profile/background/image?v=${encodeURIComponent(version)}`
+    : '/api/profile/background/image';
 }
 
 export async function createSession(input: {

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, ClockAlert, Copy, Dumbbell, Loader2, Pencil, Plus, Search, User } from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,7 +50,7 @@ export default function WorkoutsPage() {
   const [error, setError] = useState('');
   const [students, setStudents] = useState<StudentOption[]>([]);
   const [duplicatingPlan, setDuplicatingPlan] = useState<WorkoutPlanSummary | null>(null);
-  const [targetStudentId, setTargetStudentId] = useState('');
+  const [targetStudentIds, setTargetStudentIds] = useState<string[]>([]);
   const [sameLevelOnly, setSameLevelOnly] = useState(true);
   const [duplicating, setDuplicating] = useState(false);
   const [duplicateError, setDuplicateError] = useState('');
@@ -84,36 +85,63 @@ export default function WorkoutsPage() {
 
   const openDuplicateDialog = (plan: WorkoutPlanSummary) => {
     setDuplicatingPlan(plan);
-    setTargetStudentId('');
+    setTargetStudentIds([]);
     setSameLevelOnly(true);
     setDuplicateError('');
   };
+
+  // Alunos que já treinam com uma ficha ativa: receber a cópia arquiva a ficha
+  // atual deles, então o personal precisa ver isso antes de confirmar.
+  const studentsWithActivePlan = useMemo(
+    () => new Set(plans.filter((plan) => plan.status === 'active').map((plan) => plan.studentId)),
+    [plans],
+  );
 
   const duplicateCandidates = useMemo(() => {
     if (!duplicatingPlan) return [];
     return students.filter((student) => (
       student.status === 'active'
       && student.id !== duplicatingPlan.studentId
-      && (!sameLevelOnly || !duplicatingPlan.studentLevel || student.level === duplicatingPlan.studentLevel)
+      && (!sameLevelOnly || student.level === duplicatingPlan.studentLevel)
     ));
   }, [students, duplicatingPlan, sameLevelOnly]);
 
+  const toggleTargetStudent = (studentId: string) => {
+    setTargetStudentIds((current) => (
+      current.includes(studentId)
+        ? current.filter((id) => id !== studentId)
+        : [...current, studentId]
+    ));
+  };
+
+  const replacedCount = targetStudentIds.filter((id) => studentsWithActivePlan.has(id)).length;
+
   const submitDuplicate = async () => {
-    if (!duplicatingPlan || !targetStudentId) return;
+    if (!duplicatingPlan || targetStudentIds.length === 0) return;
     setDuplicating(true);
     setDuplicateError('');
     try {
       const response = await fetch(`/api/workout-plans/${duplicatingPlan.id}/duplicate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ targetStudentId }),
+        body: JSON.stringify({ targetStudentIds }),
       });
-      const data = await response.json() as { error?: string };
+      const data = await response.json() as {
+        error?: string;
+        message?: string;
+        failed?: Array<{ studentName: string; error: string }>;
+      };
       if (!response.ok) throw new Error(data.error || 'Não foi possível duplicar a ficha.');
+
       setDuplicatingPlan(null);
+      toast.success(data.message || 'Ficha duplicada.');
+      if (data.failed?.length) {
+        toast.error(`Não foi possível atribuir a: ${data.failed.map((item) => item.studentName).join(', ')}.`);
+      }
+
       const refreshed = await fetch('/api/workout-plans', { cache: 'no-store' });
       const refreshedData = await refreshed.json() as { plans?: WorkoutPlanSummary[] };
-      setPlans(refreshedData.plans ?? []);
+      if (refreshed.ok) setPlans(refreshedData.plans ?? []);
     } catch (submitError) {
       setDuplicateError(submitError instanceof Error ? submitError.message : 'Não foi possível duplicar a ficha.');
     } finally {
@@ -234,47 +262,91 @@ export default function WorkoutsPage() {
       )}
 
       <Dialog open={Boolean(duplicatingPlan)} onOpenChange={(open) => { if (!open) setDuplicatingPlan(null); }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Duplicar ficha para outro aluno</DialogTitle>
+            <DialogTitle>Reaproveitar ficha</DialogTitle>
             <DialogDescription>
-              Reaproveite &quot;{duplicatingPlan?.name}&quot; e atribua uma cópia diretamente a outro aluno.
+              Envie uma cópia de &quot;{duplicatingPlan?.name}&quot; para um ou mais alunos. Marque quantos quiser.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <label className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={sameLevelOnly}
-                onChange={(event) => { setSameLevelOnly(event.target.checked); setTargetStudentId(''); }}
+                onChange={(event) => { setSameLevelOnly(event.target.checked); setTargetStudentIds([]); }}
                 className="size-4 rounded border-input"
               />
-              Mostrar apenas alunos do mesmo nível ({duplicatingPlan?.studentLevel ?? 'não definido'})
+              Somente alunos do nível <strong>{duplicatingPlan?.studentLevel}</strong>
             </label>
+
             <div className="space-y-1.5">
-              <Label htmlFor="target-student">Aluno de destino</Label>
-              <select
-                id="target-student"
-                value={targetStudentId}
-                onChange={(event) => setTargetStudentId(event.target.value)}
-                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 text-sm outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
-              >
-                <option value="">Selecione um aluno</option>
-                {duplicateCandidates.map((student) => (
-                  <option key={student.id} value={student.id}>{student.name} · {student.level}</option>
-                ))}
-              </select>
-              {duplicateCandidates.length === 0 && (
-                <p className="text-xs text-amber-600">Nenhum aluno ativo disponível com esse filtro.</p>
+              <div className="flex items-center justify-between">
+                <Label>Enviar para</Label>
+                {duplicateCandidates.length > 0 && (
+                  <button
+                    type="button"
+                    className="text-xs font-medium text-primary underline-offset-2 hover:underline"
+                    onClick={() => setTargetStudentIds(
+                      targetStudentIds.length === duplicateCandidates.length
+                        ? []
+                        : duplicateCandidates.map((student) => student.id),
+                    )}
+                  >
+                    {targetStudentIds.length === duplicateCandidates.length ? 'Limpar seleção' : 'Selecionar todos'}
+                  </button>
+                )}
+              </div>
+              {duplicateCandidates.length === 0 ? (
+                <p className="rounded-lg border border-dashed p-4 text-center text-xs text-muted-foreground">
+                  Nenhum outro aluno ativo{sameLevelOnly ? ` no nível ${duplicatingPlan?.studentLevel}` : ''}.
+                  {sameLevelOnly && ' Desmarque o filtro acima para ver todos.'}
+                </p>
+              ) : (
+                <div className="max-h-56 space-y-1 overflow-y-auto rounded-lg border p-1">
+                  {duplicateCandidates.map((student) => (
+                    <label
+                      key={student.id}
+                      className="flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm hover:bg-muted/60"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={targetStudentIds.includes(student.id)}
+                        onChange={() => toggleTargetStudent(student.id)}
+                        className="size-4 rounded border-input"
+                      />
+                      <span className="flex-1 truncate font-medium">{student.name}</span>
+                      <span className="shrink-0 text-xs text-muted-foreground">{student.level}</span>
+                      {studentsWithActivePlan.has(student.id) && (
+                        <Badge variant="outline" className="shrink-0 border-amber-500/40 text-[10px] text-amber-600">
+                          tem ficha ativa
+                        </Badge>
+                      )}
+                    </label>
+                  ))}
+                </div>
               )}
             </div>
+
+            {replacedCount > 0 && (
+              <p className="flex items-start gap-2 rounded-lg bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+                <ClockAlert className="mt-0.5 size-3.5 shrink-0" />
+                {replacedCount === 1
+                  ? '1 aluno selecionado já tem uma ficha ativa. Ela será arquivada e substituída por esta cópia.'
+                  : `${replacedCount} alunos selecionados já têm ficha ativa. Elas serão arquivadas e substituídas por esta cópia.`}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              A cópia começa hoje e mantém a mesma duração da ficha original. Depois é só abrir cada ficha em
+              &quot;Editar&quot; para ajustar cargas e exercícios individualmente.
+            </p>
             {duplicateError && <p className="text-sm text-destructive">{duplicateError}</p>}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDuplicatingPlan(null)}>Cancelar</Button>
-            <Button onClick={submitDuplicate} disabled={!targetStudentId || duplicating}>
+            <Button onClick={submitDuplicate} disabled={targetStudentIds.length === 0 || duplicating}>
               {duplicating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Copy className="mr-2 size-4" />}
-              Duplicar ficha
+              {targetStudentIds.length > 1 ? `Enviar para ${targetStudentIds.length} alunos` : 'Enviar ficha'}
             </Button>
           </DialogFooter>
         </DialogContent>

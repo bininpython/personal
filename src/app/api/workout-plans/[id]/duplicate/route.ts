@@ -32,7 +32,7 @@ interface RelatedWorkoutDay {
 }
 
 const duplicateSchema = z.object({
-  targetStudentId: z.string().uuid('Aluno inválido'),
+  targetStudentIds: z.array(z.string().uuid('Aluno inválido')).min(1, 'Selecione ao menos um aluno').max(30),
 }).strict();
 
 function json(body: Record<string, unknown>, status = 200) {
@@ -53,8 +53,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
     const parsed = duplicateSchema.safeParse(await request.json());
     if (!parsed.success) {
-      return json({ error: 'Selecione um aluno de destino.', details: parsed.error.flatten() }, 400);
+      return json({ error: 'Selecione ao menos um aluno de destino.', details: parsed.error.flatten() }, 400);
     }
+    const targetStudentIds = [...new Set(parsed.data.targetStudentIds)];
 
     const { id } = await context.params;
     const admin = createAdminClient();
@@ -96,22 +97,64 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
           })),
       }));
 
-    const plan = await publishWorkoutPlanRevision({
-      trainerId: session.trainer_id,
-      input: {
-        studentId: parsed.data.targetStudentId,
-        name: sourcePlan.name,
-        goal: sourcePlan.goal || undefined,
-        daysPerWeek: sourcePlan.days_per_week || days.length,
-        endDate,
-        days,
-      },
-    });
+    if (days.length === 0 || days.some((day) => day.exercises.length === 0)) {
+      return json({ error: 'Esta ficha está incompleta e não pode ser reaproveitada.' }, 400);
+    }
+
+    const { data: targetStudents, error: targetsError } = await admin
+      .from('students')
+      .select('id, name')
+      .in('id', targetStudentIds)
+      .eq('trainer_id', session.trainer_id)
+      .is('deleted_at', null);
+    if (targetsError) throw targetsError;
+    const nameById = new Map((targetStudents ?? []).map((student) => [student.id, student.name]));
+
+    const assigned: Array<{ studentId: string; studentName: string; planId: string }> = [];
+    const failed: Array<{ studentId: string; studentName: string; error: string }> = [];
+
+    // Cada aluno é publicado isoladamente: um destino inválido não pode
+    // impedir que os demais recebam a ficha.
+    for (const studentId of targetStudentIds) {
+      const studentName = nameById.get(studentId) || 'Aluno';
+      try {
+        const plan = await publishWorkoutPlanRevision({
+          trainerId: session.trainer_id,
+          input: {
+            studentId,
+            name: sourcePlan.name,
+            goal: sourcePlan.goal || undefined,
+            daysPerWeek: sourcePlan.days_per_week || days.length,
+            endDate,
+            days,
+          },
+        });
+        assigned.push({ studentId, studentName, planId: plan.id });
+      } catch (publishError) {
+        if (publishError instanceof WorkoutPlanPublishError) {
+          failed.push({ studentId, studentName, error: publishError.message });
+          continue;
+        }
+        throw publishError;
+      }
+    }
+
+    if (assigned.length === 0) {
+      return json({
+        error: failed[0]?.error || 'Não foi possível duplicar a ficha.',
+        assigned,
+        failed,
+      }, 400);
+    }
 
     return json({
       success: true,
-      plan,
-      message: 'Ficha duplicada e atribuída ao aluno.',
+      assigned,
+      failed,
+      endDate,
+      message: assigned.length === 1
+        ? `Ficha atribuída a ${assigned[0].studentName}.`
+        : `Ficha atribuída a ${assigned.length} alunos.`,
     }, 201);
   } catch (error) {
     if (error instanceof SupabaseConfigurationError) {

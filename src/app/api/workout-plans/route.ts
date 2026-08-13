@@ -4,6 +4,7 @@ import { canAccessStudentFeatures } from '@/lib/auth/session-types';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { workoutPlanCreateSchema } from '@/lib/validators';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
+import { studentLevelLabel } from '@/lib/students/level';
 import { isPlanExpired } from '@/lib/workouts/plan-validity';
 import {
   getWorkoutDayRange,
@@ -60,6 +61,7 @@ function one<T>(related: Related<T>): T | null {
   return Array.isArray(related) ? (related[0] ?? null) : related;
 }
 
+
 export async function GET() {
   try {
     const session = await getSession();
@@ -97,7 +99,7 @@ export async function GET() {
           studentId: plan.student_id,
           name: plan.name,
           student: student?.name ?? 'Aluno',
-          studentLevel: student?.level ?? null,
+          studentLevel: studentLevelLabel(student?.level),
           goal: plan.goal || 'Geral',
           days: plan.days_per_week || days.length,
           workoutDayCount: days.length,
