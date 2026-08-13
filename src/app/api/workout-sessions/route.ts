@@ -10,6 +10,7 @@ import {
   weeklyWorkoutAllowance,
 } from '@/lib/workouts/week-cycle';
 import { getTrailingSaoPauloWeekRange } from '@/lib/time/sao-paulo';
+import { resolveWorkoutCompletionTiming } from '@/lib/workouts/completion-time';
 
 type Related<T> = T | T[] | null;
 
@@ -124,6 +125,8 @@ export async function POST(request: Request) {
 
     const parsed = completeWorkoutSchema.safeParse(await request.json());
     if (!parsed.success) return json({ error: 'Treino inválido.' }, 400);
+    const timing = resolveWorkoutCompletionTiming(parsed.data);
+    if (!timing.success) return json({ error: timing.error }, 400);
 
     const admin = createAdminClient();
     const { data: idempotentSession, error: idempotencyError } = await admin
@@ -145,7 +148,14 @@ export async function POST(request: Request) {
 
     if (dayError) throw dayError;
     const plan = day ? one(day.workout_plans as Related<RelatedPlan>) : null;
-    if (!day || !plan || plan.student_id !== session.sub || plan.trainer_id !== session.trainer_id || plan.status !== 'active') {
+    const acceptsOfflineCompletion = plan?.status === 'archived' && Boolean(parsed.data.completedAt);
+    if (
+      !day
+      || !plan
+      || plan.student_id !== session.sub
+      || plan.trainer_id !== session.trainer_id
+      || (plan.status !== 'active' && !acceptsOfflineCompletion)
+    ) {
       return json({ error: 'Este treino não pertence à sua ficha ativa.' }, 403);
     }
 
@@ -155,8 +165,9 @@ export async function POST(request: Request) {
       .eq('plan_id', plan.id);
     if (dayCountError) throw dayCountError;
 
-    const weekRange = getWorkoutWeekRange();
-    const dayRange = getWorkoutDayRange();
+    const { startedAt, completedAt, durationSeconds } = timing;
+    const weekRange = getWorkoutWeekRange(completedAt);
+    const dayRange = getWorkoutDayRange(completedAt);
     const { data: existingSessions, error: existingError } = await admin
       .from('workout_sessions')
       .select('id, completed_at')
@@ -228,17 +239,6 @@ export async function POST(request: Request) {
     const completionPercentage = expectedSets > 0
       ? Math.round((completedSets / expectedSets) * 10000) / 100
       : 0;
-    const completedAt = new Date();
-    const startedAt = new Date(parsed.data.startedAt);
-    if (startedAt > new Date(completedAt.getTime() + 60_000)) {
-      return json({ error: 'O horário inicial do treino é inválido.' }, 400);
-    }
-    const measuredDuration = Math.max(0, Math.min(
-      21_600,
-      Math.floor((completedAt.getTime() - startedAt.getTime()) / 1000),
-    ));
-    const durationSeconds = Math.min(parsed.data.durationSeconds, measuredDuration + 60);
-
     const { data: workoutSession, error } = await admin
       .from('workout_sessions')
       .insert({

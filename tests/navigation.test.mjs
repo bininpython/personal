@@ -43,11 +43,20 @@ test('every public authentication page uses the protected return control', () =>
 
 test('public metadata routes bypass the authentication proxy', () => {
   const proxy = source('src/proxy.ts');
-  const publicMetadataRoutes = ['/icon', '/opengraph-image', '/robots.txt', '/sitemap.xml'];
+  const publicMetadataRoutes = ['/icon', '/opengraph-image', '/robots.txt', '/sitemap.xml', '/manifest.webmanifest'];
 
   for (const route of publicMetadataRoutes) {
     assert.match(proxy, new RegExp(`['"]${route.replace('.', '\\.')}['"]`), `${route} must remain publicly accessible.`);
   }
+});
+
+test('installable metadata uses the current G KONG brand', () => {
+  const manifest = source('src/app/manifest.ts');
+  assert.match(manifest, /name: 'G KONG/);
+  assert.match(manifest, /display: 'standalone'/);
+  assert.match(manifest, /sizes: '192x192'/);
+  assert.match(manifest, /sizes: '512x512'/);
+  assert.doesNotMatch(`${source('src/app/icon.tsx')}\n${source('src/app/apple-icon.tsx')}`, />DK</);
 });
 
 test('navigation never depends on browser history being available', () => {

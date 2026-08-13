@@ -214,6 +214,7 @@ export const completeWorkoutSchema = z.object({
   clientSessionId: z.string().uuid(),
   workoutDayId: z.string().uuid(),
   startedAt: z.string().datetime(),
+  completedAt: z.string().datetime().optional(),
   durationSeconds: z.number().int().min(0).max(21_600),
   rating: z.number().int().min(1).max(5).optional(),
   feedback: z.string().trim().max(1000).optional(),

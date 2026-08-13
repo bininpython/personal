@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Dumbbell, KeyRound, ShieldCheck, UserPlus } from 'lucide-react';
+import { Dumbbell, KeyRound, PlayCircle, ShieldCheck, UserPlus, UserRound } from 'lucide-react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { PublicBackLink } from '@/components/navigation/public-back-link';
+import { GuidedTutorialButton } from '@/components/onboarding/product-tutorial';
 
 const trainerTutorials = [
   ['Salve seu código', 'No cadastro, guarde o código pessoal de 6 números. Sua senha e idade servem somente para recuperar o acesso.'],
@@ -17,6 +18,13 @@ const studentTutorials = [
   ['Execute o treino', 'Em Treino, informe repetições e carga de cada série, marque-a como concluída e use o temporizador de descanso.'],
   ['Conclua e acompanhe', 'Ao finalizar, avalie o treino. O Histórico guarda duração, conclusão e volume; Evolução mostra sua constância.'],
   ['Controle seus dados', 'Em Perfil, exporte uma cópia ou exclua permanentemente sua conta. Para trocar o código, fale com seu personal.'],
+];
+
+const individualTutorials = [
+  ['Confira sua área', 'A Visão geral reúne suas fichas pessoais e os atalhos para continuar organizando a própria rotina.'],
+  ['Monte sua ficha', 'Abra Montar ficha, distribua os dias e configure exercícios, séries, repetições, carga e descanso.'],
+  ['Organize seus planos', 'Em Minhas fichas, consulte o que já foi criado e mantenha sua rotina atual fácil de encontrar.'],
+  ['Cuide da conta', 'Em Meu perfil, atualize os dados necessários e encontre os controles de privacidade e acesso.'],
 ];
 
 function Tutorial({
@@ -69,13 +77,30 @@ export default function HelpPage() {
             PRIMEIROS PASSOS,<br />SEM ENROLAÇÃO.
           </h1>
           <p className="mt-5 text-base leading-7 text-black/60">
-            Dois caminhos curtos: um para quem treina os outros, outro para quem treina.
+            Três caminhos curtos para aprender somente as ferramentas disponíveis no seu tipo de conta.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+        <section className="mt-8 flex flex-col gap-5 rounded-[1.75rem] bg-[#090a08] p-6 text-white shadow-[0_20px_60px_rgba(0,0,0,0.14)] sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="flex max-w-2xl items-start gap-4">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#c9ff32] text-black">
+              <PlayCircle className="size-5" />
+            </span>
+            <div>
+              <p className="text-[0.62rem] font-black uppercase tracking-[0.2em] text-[#c9ff32]">Tour interativo</p>
+              <h2 className="mt-1 text-xl font-black tracking-[-0.03em]">Prefere aprender dentro do sistema?</h2>
+              <p className="mt-2 text-sm leading-6 text-white/60">
+                Entre na sua conta e percorra um tutorial preparado para o seu perfil. Você pode fechá-lo e voltar aqui quando quiser.
+              </p>
+            </div>
+          </div>
+          <GuidedTutorialButton className="shrink-0 bg-[#c9ff32] px-4 text-black hover:bg-[#d7ff65]" />
+        </section>
+
+        <div className="mt-10 grid gap-5 xl:grid-cols-3">
           <Tutorial eyebrow="Personal" title="Como colocar sua operação de pé" icon={UserPlus} steps={trainerTutorials} />
           <Tutorial eyebrow="Aluno" title="Como usar seu treino" icon={Dumbbell} steps={studentTutorials} />
+          <Tutorial eyebrow="Atleta independente" title="Como montar sua rotina" icon={UserRound} steps={individualTutorials} />
         </div>
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">

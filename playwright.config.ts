@@ -9,7 +9,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // O catálogo importa centenas de demonstrações. Muitos workers forçam o
+  // servidor de desenvolvimento a compilar várias rotas pesadas ao mesmo
+  // tempo e tornam os testes locais intermitentes sem acelerar a suíte.
+  workers: process.env.CI ? 1 : 2,
   reporter: [['list'], ['html', { open: 'never', outputFolder: 'playwright-report' }]],
   use: {
     baseURL,

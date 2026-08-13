@@ -20,6 +20,7 @@ test('personal abre uma demonstração importada no catálogo', async ({ context
     user: { id: trainerId, role: 'trainer', name: 'Personal Teste', trainer_id: trainerId },
   } }));
   await page.route('**/api/students**', (route) => route.fulfill({ json: { students: [] } }));
+  await page.route('**/api/notifications', (route) => route.fulfill({ json: { notifications: [], unread: 0 } }));
   await page.route('**/api/exercises?muscle=chest', (route) => route.fulfill({ json: {
     exercises: [demonstration],
     total: 1,

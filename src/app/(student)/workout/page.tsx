@@ -5,6 +5,8 @@ import {
   Check,
   CalendarClock,
   CheckCircle2,
+  CloudOff,
+  CloudUpload,
   Clock3,
   Dumbbell,
   Loader2,
@@ -25,6 +27,18 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/hooks/use-auth';
+import {
+  completedSetKeysFromQueue,
+  enqueueWorkoutCompletion,
+  queuedWorkoutDayIds,
+  readWorkoutQueue,
+  recordWorkoutQueueAttempt,
+  removeWorkoutCompletion,
+  writeWorkoutQueue,
+  type QueuedWorkoutCompletion,
+  type WorkoutCompletionPayload,
+} from '@/lib/workouts/offline-queue';
 
 interface StudentExercise {
   id: string;
@@ -106,6 +120,19 @@ interface WorkoutResponse {
   error?: string;
 }
 
+interface WorkoutCompletionResponse {
+  error?: string;
+  alreadyCompletedToday?: boolean;
+  alreadyCompletedThisWeek?: boolean;
+}
+
+class WorkoutSubmissionError extends Error {
+  constructor(message: string, readonly retryable: boolean) {
+    super(message);
+    this.name = 'WorkoutSubmissionError';
+  }
+}
+
 const MUSCLE_LABELS: Record<string, string> = {
   chest: 'Peito',
   'upper-back': 'Costas',
@@ -145,15 +172,60 @@ function formatCountdown(seconds: number) {
   return `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
 }
 
-function notifyRestFinished(exerciseName: string) {
+async function submitWorkoutCompletion(payload: WorkoutCompletionPayload) {
+  let response: Response;
+  try {
+    response = await fetch('/api/workout-sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new WorkoutSubmissionError('Sem conexão com o servidor.', true);
+  }
+
+  const data = await response.json().catch(() => ({})) as WorkoutCompletionResponse;
+  if (!response.ok) {
+    const retryable = response.status === 401 || response.status === 408 || response.status === 429 || response.status >= 500;
+    throw new WorkoutSubmissionError(data.error || 'Não foi possível concluir o treino.', retryable);
+  }
+  return data;
+}
+
+function playRestFinishedSound(audioContext: AudioContext | null) {
+  if (!audioContext || audioContext.state === 'closed') return;
+  void audioContext.resume().then(() => {
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(740, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(980, audioContext.currentTime + 0.18);
+    gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.18, audioContext.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.3);
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.32);
+  }).catch(() => undefined);
+}
+
+function notifyRestFinished(exerciseName: string, audioContext: AudioContext | null) {
   if ('vibrate' in navigator) navigator.vibrate([180, 100, 180]);
+  playRestFinishedSound(audioContext);
   if (typeof Notification !== 'undefined' && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
-    new Notification('Descanso finalizado', { body: `${exerciseName}: próxima série liberada.` });
+    try {
+      new Notification('Descanso finalizado', { body: `${exerciseName}: próxima série liberada.` });
+    } catch {
+      // Alguns navegadores móveis exigem Service Worker até para notificações locais.
+    }
   }
   toast.success(`Descanso finalizado para ${exerciseName}. Próxima série liberada!`);
 }
 
 export default function StudentWorkoutPage() {
+  const { user } = useAuth();
+  const studentId = user?.id ?? '';
   const [plan, setPlan] = useState<WorkoutPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -169,9 +241,16 @@ export default function StudentWorkoutPage() {
   const [feedback, setFeedback] = useState('');
   const [restTimer, setRestTimer] = useState<RestTimerState | null>(null);
   const [restAnnouncement, setRestAnnouncement] = useState('');
+  const [isOnline, setIsOnline] = useState(true);
+  const [queuedWorkoutCount, setQueuedWorkoutCount] = useState(0);
+  const [pendingDays, setPendingDays] = useState<Set<string>>(new Set());
+  const [syncingQueuedWorkouts, setSyncingQueuedWorkouts] = useState(false);
+  const [queueError, setQueueError] = useState('');
   const currentPlanCycleId = useRef('');
   const workoutStartedAtByDay = useRef<Record<string, number>>({});
   const clientSessionByDay = useRef<Record<string, string>>({});
+  const queueSyncInProgress = useRef(false);
+  const audioContext = useRef<AudioContext | null>(null);
 
   const loadPlan = useCallback(async (silent = false) => {
     if (silent) setRefreshing(true);
@@ -184,6 +263,11 @@ export default function StudentWorkoutPage() {
 
       const nextPlan = data.plan ?? null;
       if (nextPlan) {
+        const queuedWorkouts = studentId ? readWorkoutQueue(window.localStorage, studentId) : [];
+        const queuedDays = queuedWorkoutDayIds(queuedWorkouts, nextPlan.id);
+        const queuedCompletedSets = completedSetKeysFromQueue(queuedWorkouts, nextPlan.id);
+        setQueuedWorkoutCount(queuedWorkouts.length);
+        setPendingDays(queuedDays);
         const nextCycleId = `${nextPlan.id}:${nextPlan.week.startDate}:${nextPlan.week.currentDate}`;
         const recorded = new Set(
           nextPlan.days.filter((day) => day.completedThisWeek || day.completedToday).map((day) => day.id),
@@ -217,16 +301,16 @@ export default function StudentWorkoutPage() {
               workoutStartedAtByDay.current = decoded.startedAtByDay || {};
               clientSessionByDay.current = decoded.clientSessionByDay || {};
             }
-            setCompletedSets(new Set([...savedSets, ...serverCompletedSets]));
+            setCompletedSets(new Set([...savedSets, ...serverCompletedSets, ...queuedCompletedSets]));
           } catch {
-            setCompletedSets(new Set(serverCompletedSets));
+            setCompletedSets(new Set([...serverCompletedSets, ...queuedCompletedSets]));
           }
           if (initialDayId && !workoutStartedAtByDay.current[initialDayId]) {
             workoutStartedAtByDay.current[initialDayId] = currentTimestamp();
             clientSessionByDay.current[initialDayId] = crypto.randomUUID();
           }
         } else {
-          setCompletedSets((current) => new Set([...current, ...serverCompletedSets]));
+          setCompletedSets((current) => new Set([...current, ...serverCompletedSets, ...queuedCompletedSets]));
           setSelectedDayId((current) => (
             nextPlan.days.some((day) => day.id === current)
               ? current
@@ -234,11 +318,14 @@ export default function StudentWorkoutPage() {
           ));
         }
       } else if (!nextPlan) {
+        const queuedWorkouts = studentId ? readWorkoutQueue(window.localStorage, studentId) : [];
         currentPlanCycleId.current = '';
         setSelectedDayId('');
         setCompletedSets(new Set());
         setSetDetails({});
         setRecordedDays(new Set());
+        setQueuedWorkoutCount(queuedWorkouts.length);
+        setPendingDays(new Set(queuedWorkouts.map((item) => item.workoutDayId)));
       }
       setPlan(nextPlan);
       setError('');
@@ -250,27 +337,75 @@ export default function StudentWorkoutPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [studentId]);
+
+  const flushQueuedWorkouts = useCallback(async (showConfirmation = true) => {
+    if (!studentId || queueSyncInProgress.current) return;
+    let queue = readWorkoutQueue(window.localStorage, studentId);
+    setQueuedWorkoutCount(queue.length);
+    setPendingDays(new Set(queue.map((item) => item.workoutDayId)));
+    if (queue.length === 0 || !navigator.onLine) return;
+
+    queueSyncInProgress.current = true;
+    setSyncingQueuedWorkouts(true);
+    setQueueError('');
+    let synced = 0;
+
+    try {
+      for (const item of [...queue]) {
+        try {
+          await submitWorkoutCompletion(item.payload);
+          queue = removeWorkoutCompletion(queue, item.payload.clientSessionId);
+          setRecordedDays((current) => new Set(current).add(item.workoutDayId));
+          synced += 1;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Não foi possível sincronizar o treino.';
+          queue = recordWorkoutQueueAttempt(queue, item.payload.clientSessionId, message);
+          setQueueError(message);
+          break;
+        }
+      }
+
+      writeWorkoutQueue(window.localStorage, studentId, queue);
+      setQueuedWorkoutCount(queue.length);
+      setPendingDays(new Set(queue.map((item) => item.workoutDayId)));
+      if (synced > 0 && showConfirmation) {
+        toast.success(synced === 1 ? 'Treino sincronizado com sucesso!' : `${synced} treinos sincronizados com sucesso!`);
+      }
+    } finally {
+      queueSyncInProgress.current = false;
+      setSyncingQueuedWorkouts(false);
+    }
+  }, [studentId]);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => void loadPlan(), 0);
-
-    const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible' && navigator.onLine) void loadPlan(true);
-    }, 60_000);
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') void loadPlan(true);
+    const syncAndLoad = async (silent: boolean, showConfirmation: boolean) => {
+      await flushQueuedWorkouts(showConfirmation);
+      await loadPlan(silent);
     };
+    const initialLoad = window.setTimeout(() => {
+      setIsOnline(navigator.onLine);
+      void syncAndLoad(false, false);
+    }, 0);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) void syncAndLoad(true, false);
+    };
+    const handleOnline = () => {
+      setIsOnline(true);
+      void syncAndLoad(true, true);
+    };
+    const handleOffline = () => setIsOnline(false);
     document.addEventListener('visibilitychange', handleVisibility);
-    window.addEventListener('online', handleVisibility);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
     return () => {
       window.clearTimeout(initialLoad);
-      window.clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibility);
-      window.removeEventListener('online', handleVisibility);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
-  }, [loadPlan]);
+  }, [flushQueuedWorkouts, loadPlan]);
 
   useEffect(() => {
     if (!plan) return;
@@ -284,6 +419,12 @@ export default function StudentWorkoutPage() {
       } satisfies SavedWorkoutProgress),
     );
   }, [completedSets, setDetails, plan]);
+
+  useEffect(() => () => {
+    if (audioContext.current && audioContext.current.state !== 'closed') {
+      void audioContext.current.close();
+    }
+  }, []);
 
   const restTimerActive = restTimer !== null;
   useEffect(() => {
@@ -303,23 +444,46 @@ export default function StudentWorkoutPage() {
     const timeout = window.setTimeout(() => {
       setRestTimer(null);
       setRestAnnouncement(`Descanso finalizado para ${exerciseName}. Próxima série liberada.`);
-      notifyRestFinished(exerciseName);
+      notifyRestFinished(exerciseName, audioContext.current);
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [restTimer]);
 
   useEffect(() => {
     if (!restTimerActive || !('wakeLock' in navigator)) return;
-    let released = false;
-    let lock: { release: () => Promise<void> } | null = null;
-    void (navigator as Navigator & { wakeLock: { request: (type: 'screen') => Promise<{ release: () => Promise<void> }> } }).wakeLock.request('screen')
-      .then((sentinel) => {
-        if (released) void sentinel.release();
-        else lock = sentinel;
-      })
-      .catch(() => undefined);
+    type WakeLockSentinel = {
+      released: boolean;
+      release: () => Promise<void>;
+      addEventListener: (type: 'release', listener: () => void) => void;
+    };
+    let disposed = false;
+    let lock: WakeLockSentinel | null = null;
+    const requestLock = async () => {
+      if (disposed || lock || document.visibilityState !== 'visible') return;
+      try {
+        const sentinel = await (navigator as Navigator & {
+          wakeLock: { request: (type: 'screen') => Promise<WakeLockSentinel> };
+        }).wakeLock.request('screen');
+        if (disposed) {
+          await sentinel.release();
+          return;
+        }
+        lock = sentinel;
+        sentinel.addEventListener('release', () => {
+          lock = null;
+        });
+      } catch {
+        // O cronômetro continua usando o horário final mesmo sem Wake Lock.
+      }
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') void requestLock();
+    };
+    void requestLock();
+    document.addEventListener('visibilitychange', handleVisibility);
     return () => {
-      released = true;
+      disposed = true;
+      document.removeEventListener('visibilitychange', handleVisibility);
       if (lock) void lock.release();
     };
   }, [restTimerActive]);
@@ -338,7 +502,8 @@ export default function StudentWorkoutPage() {
     }, 0);
   }, [activeDay, completedSets]);
   const progress = totalSets > 0 ? Math.round((completedInDay / totalSets) * 100) : 0;
-  const activeDayCompleted = Boolean(activeDay && recordedDays.has(activeDay.id));
+  const activeDayPending = Boolean(activeDay && pendingDays.has(activeDay.id));
+  const activeDayCompleted = Boolean(activeDay && (recordedDays.has(activeDay.id) || activeDayPending));
 
   function selectWorkoutDay(dayId: string) {
     setSelectedDayId(dayId);
@@ -355,6 +520,12 @@ export default function StudentWorkoutPage() {
     const key = `${exerciseId}:${setIndex}`;
     const wasChecked = completedSets.has(key);
     if (!wasChecked) {
+      const AudioContextConstructor = window.AudioContext
+        || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!audioContext.current && AudioContextConstructor) {
+        audioContext.current = new AudioContextConstructor();
+      }
+      if (audioContext.current?.state === 'suspended') void audioContext.current.resume();
       const exercise = activeDay?.exercises.find((item) => item.id === exerciseId);
       setSetDetails((current) => ({
         ...current,
@@ -427,58 +598,91 @@ export default function StudentWorkoutPage() {
   }
 
   async function completeWorkout() {
-    if (!activeDay || progress < 100) return;
+    if (!activeDay || !plan || progress < 100) return;
     setCompletingWorkout(true);
-    try {
-      const completedAt = currentTimestamp();
-      const startedAt = workoutStartedAtByDay.current[activeDay.id] ?? completedAt;
-      const clientSessionId = clientSessionByDay.current[activeDay.id] || crypto.randomUUID();
-      clientSessionByDay.current[activeDay.id] = clientSessionId;
-      const response = await fetch('/api/workout-sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          workoutDayId: activeDay.id,
-          clientSessionId,
-          startedAt: new Date(startedAt).toISOString(),
-          durationSeconds: Math.min(21_600, Math.max(0, Math.round((completedAt - startedAt) / 1000))),
-          exercises: activeDay.exercises.map((exercise) => ({
-            workoutExerciseId: exercise.id,
-            sets: Array.from({ length: exercise.sets }, (_, setIndex) => {
-              const key = `${exercise.id}:${setIndex}`;
-              const details = setDetails[key];
-              return {
-                setNumber: setIndex + 1,
-                completed: completedSets.has(key),
-                ...(details?.repetitions !== '' ? { performedRepetitions: Math.floor(Number(details.repetitions)) } : {}),
-                ...(details?.load !== '' ? { performedLoad: Number(details.load) } : {}),
-                ...(details?.rpe !== '' ? { rpe: Math.min(10, Math.max(1, Math.floor(Number(details.rpe)))) } : {}),
-              };
-            }),
-          })),
-          ...(rating > 0 ? { rating } : {}),
-          feedback,
+    const completedAt = currentTimestamp();
+    const startedAt = workoutStartedAtByDay.current[activeDay.id] ?? completedAt;
+    const clientSessionId = clientSessionByDay.current[activeDay.id] || crypto.randomUUID();
+    clientSessionByDay.current[activeDay.id] = clientSessionId;
+    const payload: WorkoutCompletionPayload = {
+      workoutDayId: activeDay.id,
+      clientSessionId,
+      startedAt: new Date(startedAt).toISOString(),
+      completedAt: new Date(completedAt).toISOString(),
+      durationSeconds: Math.min(21_600, Math.max(0, Math.round((completedAt - startedAt) / 1000))),
+      exercises: activeDay.exercises.map((exercise) => ({
+        workoutExerciseId: exercise.id,
+        sets: Array.from({ length: exercise.sets }, (_, setIndex) => {
+          const key = `${exercise.id}:${setIndex}`;
+          const details = setDetails[key];
+          const hasRepetitions = details?.repetitions !== undefined && details.repetitions !== '';
+          const hasLoad = details?.load !== undefined && details.load !== '';
+          const hasRpe = details?.rpe !== undefined && details.rpe !== '';
+          return {
+            setNumber: setIndex + 1,
+            completed: completedSets.has(key),
+            ...(hasRepetitions ? { performedRepetitions: Math.floor(Number(details.repetitions)) } : {}),
+            ...(hasLoad ? { performedLoad: Number(details.load) } : {}),
+            ...(hasRpe ? { rpe: Math.min(10, Math.max(1, Math.floor(Number(details.rpe)))) } : {}),
+          };
         }),
-      });
-      const data = await response.json() as {
-        error?: string;
-        alreadyCompletedToday?: boolean;
-        alreadyCompletedThisWeek?: boolean;
-      };
-      if (!response.ok) throw new Error(data.error || 'Não foi possível concluir o treino.');
-      setRecordedDays((current) => new Set(current).add(activeDay.id));
+      })),
+      ...(rating > 0 ? { rating } : {}),
+      ...(feedback.trim() ? { feedback: feedback.trim() } : {}),
+    };
+
+    const closeCompletedWorkout = () => {
       delete workoutStartedAtByDay.current[activeDay.id];
       delete clientSessionByDay.current[activeDay.id];
       setRestTimer(null);
+    };
+
+    try {
+      if (!navigator.onLine) throw new WorkoutSubmissionError('Sem conexão com o servidor.', true);
+      const data = await submitWorkoutCompletion(payload);
+      setRecordedDays((current) => new Set(current).add(activeDay.id));
+      closeCompletedWorkout();
       if (data.alreadyCompletedToday) toast.info('Este treino já foi registrado hoje.');
       else if (data.alreadyCompletedThisWeek) toast.info('Este treino já atingiu a meta desta semana.');
       else toast.success('Treino concluído e salvo no histórico!');
       await loadPlan(true);
     } catch (completeError) {
-      toast.error(completeError instanceof Error ? completeError.message : 'Não foi possível concluir o treino.');
+      const retryable = completeError instanceof WorkoutSubmissionError && completeError.retryable;
+      if (!retryable || !studentId) {
+        toast.error(completeError instanceof Error ? completeError.message : 'Não foi possível concluir o treino.');
+        return;
+      }
+
+      try {
+        const queuedItem: QueuedWorkoutCompletion = {
+          planId: plan.id,
+          workoutDayId: activeDay.id,
+          queuedAt: payload.completedAt,
+          attempts: 0,
+          payload,
+        };
+        const queue = enqueueWorkoutCompletion(
+          readWorkoutQueue(window.localStorage, studentId),
+          queuedItem,
+        );
+        writeWorkoutQueue(window.localStorage, studentId, queue);
+        setQueuedWorkoutCount(queue.length);
+        setPendingDays(new Set(queue.map((item) => item.workoutDayId)));
+        setQueueError('');
+        setIsOnline(navigator.onLine);
+        closeCompletedWorkout();
+        toast.info('Treino salvo no aparelho. O envio será automático quando a conexão voltar.');
+      } catch {
+        toast.error('Não foi possível guardar o treino neste aparelho. Não feche esta tela e tente novamente.');
+      }
     } finally {
       setCompletingWorkout(false);
     }
+  }
+
+  async function syncPendingWorkoutsNow() {
+    await flushQueuedWorkouts(true);
+    await loadPlan(true);
   }
 
   if (loading) {
@@ -526,7 +730,7 @@ export default function StudentWorkoutPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="dk-kicker text-[#c9ff32]">
-              Ficha sincronizada com seu personal
+              {isOnline ? 'Ficha sincronizada com seu personal' : 'Modo academia sem conexão'}
             </div>
             <h1 className="dk-display mt-5 text-3xl sm:text-4xl">{plan.name}</h1>
             <p className="mt-2 text-sm text-white/70">{plan.goal}</p>
@@ -562,6 +766,42 @@ export default function StudentWorkoutPage() {
           </div>
         </div>
       </div>
+
+      {(!isOnline || queuedWorkoutCount > 0) && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between ${isOnline ? 'border-warn/30 bg-warn-wash' : 'border-border bg-card'}`}
+        >
+          <div className="flex items-start gap-3">
+            <div className={`flex size-10 shrink-0 items-center justify-center rounded-full ${isOnline ? 'bg-warn/15 text-warn' : 'bg-muted text-muted-foreground'}`}>
+              {isOnline ? <CloudUpload className="size-5" /> : <CloudOff className="size-5" />}
+            </div>
+            <div>
+              <p className="font-semibold">
+                {!isOnline
+                  ? 'Você está sem conexão'
+                  : syncingQueuedWorkouts
+                    ? 'Enviando treino salvo no aparelho'
+                    : `${queuedWorkoutCount} treino(s) aguardando envio`}
+              </p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                {!isOnline
+                  ? 'Pode continuar treinando. Seu progresso fica neste aparelho e será enviado automaticamente.'
+                  : queueError || 'A conexão voltou; você pode sincronizar agora.'}
+              </p>
+            </div>
+          </div>
+          {isOnline && queuedWorkoutCount > 0 && (
+            <Button type="button" variant="outline" onClick={() => void syncPendingWorkoutsNow()} disabled={syncingQueuedWorkouts}>
+              {syncingQueuedWorkouts
+                ? <Loader2 className="mr-2 size-4 animate-spin" />
+                : <CloudUpload className="mr-2 size-4" />}
+              Sincronizar agora
+            </Button>
+          )}
+        </div>
+      )}
 
       {plan.isExpired && (
         <div className="flex items-start gap-3 rounded-xl border border-warn/30 bg-warn-wash p-4 text-sm">
@@ -606,10 +846,14 @@ export default function StudentWorkoutPage() {
                 : 'border-border bg-card hover:border-[#9fdb00]'
             }`}
           >
-            {day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-ok'}`} />}
+            {pendingDays.has(day.id)
+              ? <CloudUpload className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-warn'}`} />
+              : day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-ok'}`} />}
             <span className="block text-[10px] font-bold uppercase opacity-75">Treino {day.label}</span>
             <span className="mt-0.5 block truncate text-sm font-semibold">{day.name}</span>
-            <span className="mt-1 block text-[10px] opacity-70">{day.weeklyCompletions}/{day.weeklyAllowance} nesta semana</span>
+            <span className="mt-1 block text-[10px] opacity-70">
+              {pendingDays.has(day.id) ? 'Aguardando envio' : `${day.weeklyCompletions}/${day.weeklyAllowance} nesta semana`}
+            </span>
           </button>
         ))}
       </div>
@@ -621,7 +865,15 @@ export default function StudentWorkoutPage() {
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-semibold">Progresso de hoje</p>
-                  <p className="text-xs text-muted-foreground">{activeDayCompleted ? activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje; a próxima repetição será em outro dia' : `${completedInDay} de ${totalSets} séries concluídas neste treino`}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {activeDayPending
+                      ? 'Treino completo e guardado com segurança neste aparelho'
+                      : activeDayCompleted
+                        ? activeDay.completedThisWeek
+                          ? 'Meta deste treino concluída na semana'
+                          : 'Treino concluído hoje; a próxima repetição será em outro dia'
+                        : `${completedInDay} de ${totalSets} séries concluídas neste treino`}
+                  </p>
                 </div>
                 <span className="text-2xl font-black text-[#668f00]">{progress}%</span>
               </div>
@@ -687,8 +939,10 @@ export default function StudentWorkoutPage() {
                     )}
                     <div>
                       <p className="mb-2 text-xs font-medium text-muted-foreground">
-                        {activeDayCompleted
-                          ? 'Séries registradas no histórico desta semana'
+                        {activeDayPending
+                          ? 'Séries salvas neste aparelho e aguardando envio'
+                          : activeDayCompleted
+                            ? 'Séries registradas no histórico desta semana'
                           : `Marque ao terminar cada série${exercise.restTime > 0 ? ` — descanso automático de ${exercise.restTime}s` : ''}`}
                       </p>
                       <div className="space-y-2">
@@ -728,24 +982,39 @@ export default function StudentWorkoutPage() {
           </div>
 
           {progress === 100 && (
-            <Card className="border-ok/30 bg-ok-wash">
+            <Card className={activeDayPending ? 'border-warn/30 bg-warn-wash' : 'border-ok/30 bg-ok-wash'}>
               <CardContent className="p-5 text-center">
-                <CheckCircle2 className="mx-auto mb-2 size-9 text-ok" />
-                {activeDayCompleted ? <>
+                {activeDayPending ? <CloudUpload className="mx-auto mb-2 size-9 text-warn" /> : <CheckCircle2 className="mx-auto mb-2 size-9 text-ok" />}
+                {activeDayPending ? <>
+                  <h2 className="font-bold">Treino salvo neste aparelho</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    As séries, cargas e sua avaliação estão seguras. O histórico será atualizado assim que o envio terminar.
+                  </p>
+                  {isOnline && (
+                    <Button className="mt-4" variant="outline" onClick={() => void syncPendingWorkoutsNow()} disabled={syncingQueuedWorkouts}>
+                      {syncingQueuedWorkouts ? <Loader2 className="mr-2 size-4 animate-spin" /> : <CloudUpload className="mr-2 size-4" />}
+                      Sincronizar agora
+                    </Button>
+                  )}
+                </> : activeDayCompleted ? <>
                   <h2 className="font-bold">{activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje'}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">O resultado está salvo no histórico e na evolução.</p>
                   {suggestedDay && suggestedDay.id !== activeDay.id && <Button className="mt-4" onClick={() => selectWorkoutDay(suggestedDay.id)}><Dumbbell className="mr-2 size-4" /> Ir para {suggestedDay.name}</Button>}
                   {!suggestedDay && <Badge className="mt-4 bg-ok-wash text-ok">Ciclo semanal completo</Badge>}
                 </> : <>
                   <h2 className="font-bold">Todas as séries foram marcadas</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Conclua para registrar este treino no histórico e na evolução.</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isOnline
+                      ? 'Conclua para registrar este treino no histórico e na evolução.'
+                      : 'Sem internet? Tudo bem: o treino será guardado neste aparelho.'}
+                  </p>
                   <div className="mx-auto mt-4 max-w-sm space-y-3">
                     <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" className="flex size-11 items-center justify-center rounded-full" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'}`} /></button>)}</div>
                     <Textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} maxLength={1000} rows={2} placeholder="Como foi o treino? Dificuldade, dor ou observação (opcional)" />
                   </div>
                   <Button className="mt-4 bg-black text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" onClick={() => void completeWorkout()} disabled={completingWorkout}>
                     {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
-                    Concluir e salvar treino
+                    {isOnline ? 'Concluir e salvar treino' : 'Salvar treino no aparelho'}
                   </Button>
                 </>}
               </CardContent>

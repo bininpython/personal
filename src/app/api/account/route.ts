@@ -31,6 +31,7 @@ export async function DELETE(request: Request) {
         if (avatar) avatarReferences.push(avatar);
       }
       const actorIds = [session.sub, ...(students ?? []).map((student) => student.id)];
+      await admin.from('product_tutorial_progress').delete().in('actor_id', actorIds);
       await admin.from('messages').delete().or(`sender_id.in.(${actorIds.join(',')}),recipient_id.in.(${actorIds.join(',')})`);
       const { error } = await admin.from('trainers').delete().eq('id', session.sub);
       if (error) throw error;
@@ -40,6 +41,7 @@ export async function DELETE(request: Request) {
       const avatar = parsePrivateAvatar(student?.avatar_url);
       if (avatar) avatarReferences.push(avatar);
       legacyAuthIds.push(session.sub);
+      await admin.from('product_tutorial_progress').delete().eq('actor_id', session.sub);
       await admin.from('messages').delete().or(`sender_id.eq.${session.sub},recipient_id.eq.${session.sub}`);
       const { error } = await admin.from('students').delete().eq('id', session.sub);
       if (error) throw error;
@@ -48,6 +50,7 @@ export async function DELETE(request: Request) {
       const { data: individual } = await admin.from('individual_users').select('avatar_url').eq('id', session.sub).single();
       const avatar = parsePrivateAvatar(individual?.avatar_url);
       if (avatar) avatarReferences.push(avatar);
+      await admin.from('product_tutorial_progress').delete().eq('actor_id', session.sub);
       const { error } = await admin.from('individual_users').delete().eq('id', session.sub);
       if (error) throw error;
       await admin.from('app_sessions').delete().eq('actor_id', session.sub);

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ProductTutorialHost } from "@/components/onboarding/product-tutorial";
 import { siteUrl } from "@/lib/site-url";
 
 const inter = Inter({
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <AuthProvider>
             <TooltipProvider>
+              <ProductTutorialHost />
               {children}
               {/*
                 O aviso nasce onde a ação acontece: no celular o polegar está

@@ -48,11 +48,13 @@ test('envia séries, repetições, carga, RPE, duração e idempotência', async
   const body = submitted as unknown as {
     clientSessionId: string;
     startedAt: string;
+    completedAt: string;
     durationSeconds: number;
     exercises: Array<{ sets: Array<Record<string, unknown>> }>;
   };
   expect(body.clientSessionId).toMatch(/^[0-9a-f-]{36}$/);
   expect(Date.parse(body.startedAt)).not.toBeNaN();
+  expect(Date.parse(body.completedAt)).not.toBeNaN();
   expect(body.durationSeconds).toBeGreaterThanOrEqual(0);
   expect(body.exercises[0].sets[0]).toMatchObject({
     setNumber: 1,
@@ -61,4 +63,39 @@ test('envia séries, repetições, carga, RPE, duração e idempotência', async
     performedLoad: 42.5,
     rpe: 8,
   });
+});
+
+test('guarda o treino sem conexão e sincroniza automaticamente quando a rede volta', async ({ context, page }) => {
+  let submitted = false;
+  await page.route('**/api/workout-sessions', async (route) => {
+    if (route.request().method() === 'POST') {
+      submitted = true;
+      await route.fulfill({ status: 201, json: { success: true, session: { id: 'session-offline-e2e' } } });
+    } else await route.fulfill({ json: { history: [], progress: {} } });
+  });
+
+  await page.goto('/workout');
+  await page.getByLabel('Repetições da série 1').fill('10');
+  await page.getByLabel('Carga da série 1').fill('42.5');
+  await page.getByLabel('RPE da série 1').fill('8');
+  await page.getByRole('button', { name: /Série 1/ }).click();
+
+  await context.setOffline(true);
+  await expect(page.getByText('Você está sem conexão')).toBeVisible();
+  await page.getByRole('button', { name: 'Salvar treino no aparelho' }).click();
+  await expect(page.getByRole('heading', { name: 'Treino salvo neste aparelho' })).toBeVisible();
+
+  const queuedBeforeReconnect = await page.evaluate((id) => {
+    const value = localStorage.getItem(`dkong-workout-completion-queue:v1:${id}`);
+    return value ? JSON.parse(value) : [];
+  }, studentId);
+  expect(queuedBeforeReconnect).toHaveLength(1);
+  expect(queuedBeforeReconnect[0].payload.completedAt).toBeTruthy();
+
+  await context.setOffline(false);
+  await expect.poll(() => submitted).toBe(true);
+  await expect.poll(async () => page.evaluate((id) => {
+    const value = localStorage.getItem(`dkong-workout-completion-queue:v1:${id}`);
+    return value ? JSON.parse(value).length : 0;
+  }, studentId)).toBe(0);
 });

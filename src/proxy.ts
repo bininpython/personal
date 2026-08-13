@@ -19,6 +19,7 @@ const PUBLIC_PATHS = new Set([
   '/opengraph-image',
   '/robots.txt',
   '/sitemap.xml',
+  '/manifest.webmanifest',
 ]);
 
 // Arquivos de metadata gerados pelo Next. Precisam responder ao rastreador e
@@ -31,6 +32,7 @@ const METADATA_PATHS = new Set([
   '/twitter-image',
   '/apple-icon',
   '/icon',
+  '/manifest.webmanifest',
 ]);
 
 const TRAINER_PATHS = [
@@ -119,6 +121,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|icon|opengraph-image|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|icon|opengraph-image|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
