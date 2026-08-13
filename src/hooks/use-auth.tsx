@@ -75,6 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore
     } finally {
+      // O cache do service worker sobrevive ao logout e o aparelho pode ser
+      // emprestado. Sair da conta tem que esvaziar o que ficou no disco.
+      navigator.serviceWorker?.controller?.postMessage({ type: 'CLEAR_CACHES' });
       setUser(null);
     }
   }, []);

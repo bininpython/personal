@@ -93,7 +93,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   return (
     <div className="dk-app flex min-h-screen flex-col bg-[#090a08]">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl">
+      <header className="dk-safe-top sticky top-0 z-40 border-b border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <BrandMark compact inverted />
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação do aluno">

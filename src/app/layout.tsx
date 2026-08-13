@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { AuthProvider } from "@/hooks/use-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ProductTutorialHost } from "@/components/onboarding/product-tutorial";
+import { ServiceWorkerRegistrar } from "@/components/pwa/service-worker-registrar";
+import { InstallHint } from "@/components/pwa/install-hint";
 import { siteUrl } from "@/lib/site-url";
 
 const inter = Inter({
@@ -18,6 +20,12 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Pinta a barra de status do app instalado com o fundo da tela, para que a
+  // janela não tenha uma faixa de cor estranha no topo.
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#090a08" },
+  ],
 };
 
 const TITLE = "G KONG — Performance e Gestão de Treinos";
@@ -33,6 +41,18 @@ export const metadata: Metadata = {
   keywords: ["personal trainer", "gestão de treinos", "montar ficha de treino", "exercícios com demonstração", "academia"],
   applicationName: "G KONG",
   alternates: { canonical: "/" },
+  // O Safari ignora boa parte do manifest e lê estas tags próprias. Sem elas o
+  // atalho do iPhone abre dentro do navegador, com barra de endereço e tudo.
+  // O link do manifest o Next injeta sozinho a partir de src/app/manifest.ts.
+  appleWebApp: {
+    capable: true,
+    title: "G KONG",
+    // `black-translucent` jogaria o conteúdo por baixo da ilha e ainda pintaria
+    // o relógio de branco — ilegível sobre o login, que é claro. Com `black` o
+    // iOS reserva a faixa, pinta de preto e mantém os ícones brancos: combina
+    // com o cabeçalho #090a08 do app e continua legível nas páginas claras.
+    statusBarStyle: "black",
+  },
   // Os ícones vêm de src/app/favicon.ico, icon e apple-icon. Não use o logo
   // JPG como favicon, porque ele é muito maior do que os arquivos dedicados.
   openGraph: {
@@ -50,12 +70,27 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full antialiased`} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        {/*
+          O Chrome dispara `beforeinstallprompt` cedo, normalmente antes de o
+          React montar — e o evento só serve se for guardado na hora. Este
+          script roda antes de tudo e segura a referência para o InstallHint.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.__gkInstallPrompt=null;addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__gkInstallPrompt=e});addEventListener('appinstalled',function(){window.__gkInstallPrompt=null})",
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <AuthProvider>
             <TooltipProvider>
               <ProductTutorialHost />
+              <ServiceWorkerRegistrar />
               {children}
+              <InstallHint />
               {/*
                 O aviso nasce onde a ação acontece: no celular o polegar está
                 embaixo, e o canto superior direito era o ponto mais distante

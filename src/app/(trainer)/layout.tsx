@@ -89,7 +89,9 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   };
 
   const renderNavContent = (mobile = false) => (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+    // A gaveta cobre a tela toda, então no celular ela também nasce atrás da
+    // barra de status. Na barra lateral do desktop não há faixa a devolver.
+    <div className={`flex h-full min-h-0 flex-col overflow-hidden${mobile ? ' dk-safe-top' : ''}`}>
       {/* Header */}
       <div className={`flex shrink-0 items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-4 py-5`}>
         <BrandMark inverted compact={collapsed && !mobile} iconOnly={collapsed && !mobile} />
@@ -215,7 +217,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </aside>
 
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-16 bg-[#090a08]/95 text-white backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4">
+      <div className="dk-app-header lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#090a08]/95 text-white backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white hover:bg-white/10 hover:text-white" />}>
@@ -242,7 +244,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       </div>
 
       {/* Main Content */}
-      <main className="dk-app-surface flex-1 overflow-y-auto pt-16 pb-20 lg:pt-0 lg:pb-0">
+      <main className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0">
         <div className="relative z-10 mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8 xl:p-10">
           {children}
         </div>

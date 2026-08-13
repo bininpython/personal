@@ -1,11 +1,10 @@
-import { ImageResponse } from 'next/og';
+import { brandIcon } from '@/lib/brand-icon';
 
 export const size = { width: 64, height: 64 };
 export const contentType = 'image/png';
 
 export default function Icon() {
-  return new ImageResponse(
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 16, background: '#090a08', color: '#c9ff32', fontSize: 23, fontWeight: 900, letterSpacing: '-0.08em' }}>GK</div>,
-    size,
-  );
+  // Na aba do navegador a marca aparece com 16px de lado. Só o gorila: a sigla
+  // nesse tamanho viraria uma mancha.
+  return brandIcon(size.width, { wordmark: false });
 }
