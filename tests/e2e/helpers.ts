@@ -6,7 +6,7 @@ const secret = process.env.SESSION_SECRET || 'fitcontrol-e2e-session-secret-32-c
 
 export async function setOptimisticSession(
   context: BrowserContext,
-  role: 'trainer' | 'student',
+  role: 'trainer' | 'student' | 'individual',
   actorId: string,
   trainerId = actorId,
 ) {

@@ -107,7 +107,17 @@ export async function GET() {
       const workoutExercises = dayIds.length
         ? await fetchAll<{ id: string }>((from, to) => admin.from('individual_workout_exercises').select('*').in('workout_day_id', dayIds).order('created_at').range(from, to))
         : [];
-      exportData = { profile, workoutPlans, workoutDays, workoutExercises };
+      const workoutSessions = await fetchAll<{ id: string }>((from, to) => admin
+        .from('individual_workout_sessions').select('*').eq('user_id', session.sub).order('created_at').range(from, to));
+      const workoutSessionIds = rowIds(workoutSessions);
+      const exerciseSessions = workoutSessionIds.length
+        ? await fetchAll<{ id: string }>((from, to) => admin.from('individual_exercise_sessions').select('*').in('workout_session_id', workoutSessionIds).order('created_at').range(from, to))
+        : [];
+      const exerciseSessionIds = rowIds(exerciseSessions);
+      const setRecords = exerciseSessionIds.length
+        ? await fetchAll<{ id: string }>((from, to) => admin.from('individual_set_records').select('*').in('exercise_session_id', exerciseSessionIds).order('created_at').range(from, to))
+        : [];
+      exportData = { profile, workoutPlans, workoutDays, workoutExercises, workoutSessions, exerciseSessions, setRecords };
     } else {
       const profile = await dataOrThrow(admin
         .from('students')

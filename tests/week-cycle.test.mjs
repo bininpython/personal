@@ -4,6 +4,7 @@ import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
   nextWorkoutDayId,
+  nextWorkoutDayIdAfterLast,
   weeklyWorkoutAllowance,
 } from '../src/lib/workouts/week-cycle.ts';
 
@@ -48,4 +49,11 @@ test('suggests the next workout in round-robin order', () => {
   assert.equal(nextWorkoutDayId(ids, 3, new Map([['A', 1]])), 'B');
   assert.equal(nextWorkoutDayId(ids, 3, new Map([['A', 1], ['B', 1], ['C', 1]])), null);
   assert.equal(nextWorkoutDayId(['A', 'B'], 3, new Map([['A', 1], ['B', 1]])), 'A');
+});
+
+test('keeps the A B rotation across week boundaries', () => {
+  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], null), 'A');
+  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'A'), 'B');
+  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'B'), 'A');
+  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'removed-day'), 'A');
 });

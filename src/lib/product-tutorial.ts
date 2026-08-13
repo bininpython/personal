@@ -1,4 +1,4 @@
-export const PRODUCT_TUTORIAL_VERSION = 3;
+export const PRODUCT_TUTORIAL_VERSION = 4;
 export const PRODUCT_TUTORIAL_OPEN_EVENT = 'g-kong:open-product-tutorial';
 
 export type TutorialRole = import('@/types').UserRole;
@@ -211,7 +211,7 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
           'Preencha repetições, carga e esforço percebido.',
           'Marque cada série concluída antes de avançar.',
         ],
-        tip: 'Se a conexão cair, o G KONG guarda a conclusão neste aparelho e sincroniza quando a internet voltar.',
+        tip: 'A rotação é automática: depois do treino A vem B e, depois do último treino da ficha, a sequência volta ao A.',
         href: '/workout',
         actionLabel: 'Abrir treino',
         icon: 'dumbbell',
@@ -324,6 +324,34 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         icon: 'book-open',
       },
       {
+        id: 'individual-workout',
+        title: 'Execute e registre seu treino',
+        description: 'Inicie o próximo treino da rotação, marque cada série e use a contagem regressiva automática do descanso.',
+        checklist: [
+          'Abra Iniciar treino e confirme o treino destacado.',
+          'Registre repetições, carga e RPE em cada série.',
+          'Conclua e salve para liberar o próximo treino da sequência.',
+        ],
+        tip: 'Com dois treinos, a ordem fica A → B → A → B, inclusive quando uma nova semana começa.',
+        href: '/my-workout',
+        actionLabel: 'Iniciar meu treino',
+        icon: 'dumbbell',
+      },
+      {
+        id: 'individual-history',
+        title: 'Acompanhe sua evolução',
+        description: 'O histórico reúne duração, conclusão, volume, avaliação e observações de cada treino salvo.',
+        checklist: [
+          'Abra Histórico depois de concluir o primeiro treino.',
+          'Compare a constância e o volume registrado.',
+          'Use a execução anterior como referência de carga e repetições.',
+        ],
+        tip: 'Aumente carga ou repetições gradualmente e preserve a técnica do movimento.',
+        href: '/my-history',
+        actionLabel: 'Abrir histórico',
+        icon: 'history',
+      },
+      {
         id: 'individual-plans',
         title: 'Organize suas fichas',
         description: 'Consulte os planos criados e mantenha ativa a ficha que representa sua rotina atual.',
@@ -372,7 +400,7 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
 const APP_PATHS: Record<TutorialRole, readonly string[]> = {
   trainer: ['/dashboard', '/students', '/workouts', '/exercises', '/assessments', '/schedule', '/messages', '/alerts', '/reports', '/settings'],
   student: ['/home', '/workout', '/history', '/progress', '/student-messages', '/profile'],
-  individual: ['/my', '/my-exercises', '/my-plans', '/my-profile'],
+  individual: ['/my', '/my-workout', '/my-history', '/my-exercises', '/my-plans', '/my-profile'],
 };
 
 interface StorageReader {

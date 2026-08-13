@@ -91,6 +91,7 @@ interface WorkoutPlan {
     target: number;
     completed: number;
     isComplete: boolean;
+    completedToday: boolean;
     nextWorkoutDayId: string | null;
   };
   days: WorkoutDay[];
@@ -314,11 +315,13 @@ export default function StudentWorkoutPage() {
           }
         } else {
           setCompletedSets((current) => new Set([...current, ...serverCompletedSets, ...queuedCompletedSets]));
-          setSelectedDayId((current) => (
-            nextPlan.days.some((day) => day.id === current)
-              ? current
-              : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '')
-          ));
+          setSelectedDayId((current) => {
+            const currentDay = nextPlan.days.find((day) => day.id === current);
+            if (currentDay?.completedToday && nextPlan.week.nextWorkoutDayId) {
+              return nextPlan.week.nextWorkoutDayId;
+            }
+            return currentDay ? current : (nextPlan.week.nextWorkoutDayId ?? nextPlan.days[0]?.id ?? '');
+          });
         }
       } else if (!nextPlan) {
         const queuedWorkouts = studentId ? readWorkoutQueue(window.localStorage, studentId) : [];
@@ -506,7 +509,25 @@ export default function StudentWorkoutPage() {
   }, [activeDay, completedSets]);
   const progress = totalSets > 0 ? Math.round((completedInDay / totalSets) * 100) : 0;
   const activeDayPending = Boolean(activeDay && pendingDays.has(activeDay.id));
-  const activeDayCompleted = Boolean(activeDay && (recordedDays.has(activeDay.id) || activeDayPending));
+  const activeDayLockedUntilTomorrow = Boolean(
+    activeDay
+    && plan?.week.completedToday
+    && !activeDay.completedToday
+    && !activeDayPending,
+  );
+  const activeDayLockedByRotation = Boolean(
+    activeDay
+    && plan?.week.nextWorkoutDayId
+    && activeDay.id !== plan.week.nextWorkoutDayId,
+  );
+  const activeDayCompleted = Boolean(
+    activeDay && (
+      recordedDays.has(activeDay.id)
+      || activeDayPending
+      || activeDayLockedUntilTomorrow
+      || activeDayLockedByRotation
+    ),
+  );
 
   function selectWorkoutDay(dayId: string) {
     setSelectedDayId(dayId);
@@ -836,7 +857,7 @@ export default function StudentWorkoutPage() {
               <p className="font-semibold">{plan.week.isComplete ? 'Semana concluída!' : 'Seu ciclo desta semana'}</p>
               <p className="text-xs text-muted-foreground">
                 {plan.week.isComplete
-                  ? 'Os treinos serão liberados novamente na próxima segunda-feira.'
+                  ? `Meta alcançada. A rotação continua pelo ${suggestedDay ? `Treino ${suggestedDay.label}` : 'próximo treino'} na próxima semana.`
                   : `${plan.week.completed} de ${plan.week.target} treino(s) concluído(s). Continue pelo treino destacado.`}
               </p>
             </div>
@@ -872,6 +893,30 @@ export default function StudentWorkoutPage() {
         ))}
       </div>
 
+      {activeDayLockedUntilTomorrow && (
+        <Card className="border-[#9fdb00]/30 bg-[#c9ff32]/10">
+          <CardContent className="flex items-start gap-3 p-4 sm:p-5">
+            <CalendarClock className="mt-0.5 size-5 shrink-0 text-[#668f00]" />
+            <div>
+              <p className="font-bold">Próximo da rotação: Treino {activeDay?.label}</p>
+              <p className="mt-1 text-sm text-muted-foreground">O treino de hoje já foi concluído. Esta ficha fica disponível para execução amanhã; você pode consultá-la agora.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {activeDayLockedByRotation && !activeDayLockedUntilTomorrow && !activeDay?.completedThisWeek && (
+        <Card className="border-amber-500/30 bg-amber-500/10">
+          <CardContent className="flex items-start gap-3 p-4 sm:p-5">
+            <CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" />
+            <div>
+              <p className="font-bold">Ficha disponível somente para consulta</p>
+              <p className="mt-1 text-sm text-muted-foreground">Para manter sua progressão, conclua primeiro o treino destacado na sequência.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {activeDay && (
         <>
           <Card className="border-border/60">
@@ -882,6 +927,10 @@ export default function StudentWorkoutPage() {
                   <p className="text-xs text-muted-foreground">
                     {activeDayPending
                       ? 'Treino completo e guardado com segurança neste aparelho'
+                      : activeDayLockedUntilTomorrow
+                        ? `Próximo da sequência, disponível amanhã`
+                        : activeDayLockedByRotation
+                          ? 'Consulte agora e execute quando chegar a vez deste treino'
                       : activeDayCompleted
                         ? activeDay.completedThisWeek
                           ? 'Meta deste treino concluída na semana'

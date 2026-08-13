@@ -7,6 +7,7 @@ import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
+  nextWorkoutDayIdAfterLast,
   weeklyWorkoutAllowance,
 } from '@/lib/workouts/week-cycle';
 import { getTrailingSaoPauloWeekRange } from '@/lib/time/sao-paulo';
@@ -159,39 +160,74 @@ export async function POST(request: Request) {
       return json({ error: 'Este treino não pertence à sua ficha ativa.' }, 403);
     }
 
-    const { count: totalDays, error: dayCountError } = await admin
+    const { data: planDays, error: planDaysError } = await admin
       .from('workout_days')
-      .select('id', { count: 'exact', head: true })
-      .eq('plan_id', plan.id);
-    if (dayCountError) throw dayCountError;
+      .select('id, order_index')
+      .eq('plan_id', plan.id)
+      .order('order_index', { ascending: true });
+    if (planDaysError) throw planDaysError;
 
     const { startedAt, completedAt, durationSeconds } = timing;
     const weekRange = getWorkoutWeekRange(completedAt);
     const dayRange = getWorkoutDayRange(completedAt);
-    const { data: existingSessions, error: existingError } = await admin
-      .from('workout_sessions')
-      .select('id, completed_at')
-      .eq('student_id', session.sub)
-      .eq('workout_day_id', day.id)
-      .eq('workout_plan_id', plan.id)
-      .eq('status', 'completed')
-      .gte('completed_at', weekRange.startIso)
-      .lt('completed_at', weekRange.nextStartIso)
-      .order('completed_at', { ascending: true });
+    const [existingResult, completedTodayResult, previousSessionResult] = await Promise.all([
+      admin
+        .from('workout_sessions')
+        .select('id, completed_at')
+        .eq('student_id', session.sub)
+        .eq('workout_day_id', day.id)
+        .eq('workout_plan_id', plan.id)
+        .eq('status', 'completed')
+        .gte('completed_at', weekRange.startIso)
+        .lt('completed_at', weekRange.nextStartIso)
+        .order('completed_at', { ascending: true }),
+      admin
+        .from('workout_sessions')
+        .select('id, workout_day_id, completed_at')
+        .eq('student_id', session.sub)
+        .eq('workout_plan_id', plan.id)
+        .eq('status', 'completed')
+        .gte('completed_at', dayRange.startIso)
+        .lt('completed_at', dayRange.nextStartIso)
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      admin
+        .from('workout_sessions')
+        .select('workout_day_id, completed_at')
+        .eq('student_id', session.sub)
+        .eq('workout_plan_id', plan.id)
+        .eq('status', 'completed')
+        .lt('completed_at', completedAt.toISOString())
+        .order('completed_at', { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
+    const { data: existingSessions, error: existingError } = existingResult;
     if (existingError) throw existingError;
-    const completedToday = (existingSessions ?? []).find((item) => (
-      item.completed_at
-      && item.completed_at >= dayRange.startIso
-      && item.completed_at < dayRange.nextStartIso
-    ));
+    if (completedTodayResult.error) throw completedTodayResult.error;
+    if (previousSessionResult.error) throw previousSessionResult.error;
+    const completedToday = completedTodayResult.data;
     if (completedToday) {
       return json({ success: true, session: completedToday, alreadyCompletedToday: true });
     }
 
+    const orderedDayIds = (planDays ?? []).map((planDay) => planDay.id);
+    const expectedWorkoutDayId = nextWorkoutDayIdAfterLast(
+      orderedDayIds,
+      previousSessionResult.data?.workout_day_id,
+    );
+    if (expectedWorkoutDayId && day.id !== expectedWorkoutDayId) {
+      return json({
+        error: 'Siga a sequência da ficha antes de concluir este treino.',
+        nextWorkoutDayId: expectedWorkoutDayId,
+      }, 409);
+    }
+
     const allowance = weeklyWorkoutAllowance(
-      totalDays ?? 0,
-      plan.days_per_week || totalDays || 1,
+      orderedDayIds.length,
+      plan.days_per_week || orderedDayIds.length || 1,
       day.order_index,
     );
     if ((existingSessions ?? []).length >= allowance) {

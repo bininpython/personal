@@ -74,11 +74,11 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
     const planResponse = await context.request.post('/api/individual/workout-plans', { data: {
       name: planName,
       goal: 'Validar a área individual',
-      daysPerWeek: 1,
+      daysPerWeek: 2,
       endDate,
       days: [{
         label: 'A',
-        name: 'Treino Individual QA',
+        name: 'Treino Individual QA A',
         exercises: [{
           exerciseKey: exerciseData.exercises[0].key,
           sets: 1,
@@ -86,6 +86,17 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
           restTime: 0,
           method: 'rest_pause',
           methodNotes: 'Pausa curta entre os miniblocos.',
+        }],
+      }, {
+        label: 'B',
+        name: 'Treino Individual QA B',
+        exercises: [{
+          exerciseKey: exerciseData.exercises[0].key,
+          sets: 1,
+          reps: '12',
+          restTime: 0,
+          method: 'traditional',
+          methodNotes: 'Execução controlada.',
         }],
       }],
     } });
@@ -101,9 +112,64 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
     expect(pdf.headers()['content-type']).toContain('application/pdf');
     expect((await pdf.body()).subarray(0, 4).toString()).toBe('%PDF');
 
+    const activeWorkoutResponse = await context.request.get('/api/individual/workout');
+    expect(activeWorkoutResponse.status()).toBe(200);
+    const activeWorkout = await activeWorkoutResponse.json() as {
+      plan: {
+        week: { nextWorkoutDayId: string; completedToday: boolean };
+        days: Array<{ id: string; label: string; exercises: Array<{ id: string; sets: number }> }>;
+      };
+    };
+    const workoutA = activeWorkout.plan.days.find((day) => day.label === 'A');
+    const workoutB = activeWorkout.plan.days.find((day) => day.label === 'B');
+    expect(workoutA).toBeTruthy();
+    expect(workoutB).toBeTruthy();
+    expect(activeWorkout.plan.week.nextWorkoutDayId).toBe(workoutA!.id);
+
+    const completedAt = new Date();
+    const startedAt = new Date(completedAt.getTime() - 60_000);
+    const workoutSessionResponse = await context.request.post('/api/individual/workout-sessions', { data: {
+      clientSessionId: crypto.randomUUID(),
+      workoutDayId: workoutA!.id,
+      startedAt: startedAt.toISOString(),
+      completedAt: completedAt.toISOString(),
+      durationSeconds: 60,
+      rating: 5,
+      feedback: 'Validação automatizada da rotação individual.',
+      exercises: workoutA!.exercises.map((exercise) => ({
+        workoutExerciseId: exercise.id,
+        sets: Array.from({ length: exercise.sets }, (_, index) => ({
+          setNumber: index + 1,
+          completed: true,
+          performedRepetitions: 10,
+          performedLoad: 20,
+          rpe: 8,
+        })),
+      })),
+    } });
+    expect(workoutSessionResponse.status()).toBe(201);
+
+    const rotatedWorkoutResponse = await context.request.get('/api/individual/workout');
+    expect(rotatedWorkoutResponse.status()).toBe(200);
+    const rotatedWorkout = await rotatedWorkoutResponse.json() as {
+      plan: { week: { nextWorkoutDayId: string; completedToday: boolean } };
+    };
+    expect(rotatedWorkout.plan.week.nextWorkoutDayId).toBe(workoutB!.id);
+    expect(rotatedWorkout.plan.week.completedToday).toBe(true);
+
+    const historyResponse = await context.request.get('/api/individual/workout-sessions');
+    expect(historyResponse.status()).toBe(200);
+    const history = await historyResponse.json() as { summary: { completedWorkouts: number } };
+    expect(history.summary.completedWorkouts).toBe(1);
+
+    await page.goto('/my-workout', { waitUntil: 'networkidle' });
+    await expect(page.getByText('Próximo da rotação: Treino B')).toBeVisible();
+    await page.goto('/my-history', { waitUntil: 'networkidle' });
+    await expect(page.getByText('Treino Individual QA A')).toBeVisible();
+
     const dataExport = await context.request.get('/api/account/export');
     expect(dataExport.status()).toBe(200);
-    for (const route of ['/my', '/my-exercises', '/my-plans', '/my-profile']) {
+    for (const route of ['/my', '/my-workout', '/my-history', '/my-exercises', '/my-plans', '/my-profile']) {
       await page.goto(route, { waitUntil: 'domcontentloaded' });
       await expect(page.locator('body')).not.toContainText('Erro interno do servidor');
       report.checkedRoutes.push(route);

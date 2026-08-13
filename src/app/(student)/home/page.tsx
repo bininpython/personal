@@ -18,6 +18,7 @@ interface HomePlan {
     target: number;
     completed: number;
     isComplete: boolean;
+    completedToday: boolean;
     nextWorkoutDayId: string | null;
   };
   days: Array<{
@@ -117,8 +118,8 @@ export default function StudentHomePage() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <Badge className="dk-volt-chip mb-3 border-0">{plan.week.isComplete ? 'Semana concluída' : 'Próximo treino'}</Badge>
-                <h2 className="text-2xl font-black tracking-[-0.04em] sm:text-3xl">{plan.week.isComplete ? 'Parabéns, ciclo finalizado!' : nextWorkout.name}</h2>
+                <Badge className="dk-volt-chip mb-3 border-0">{plan.week.completedToday ? 'Treino de hoje concluído' : plan.week.isComplete ? 'Meta semanal concluída' : 'Próximo treino'}</Badge>
+                <h2 className="text-2xl font-black tracking-[-0.04em] sm:text-3xl">{nextWorkout.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.name} · {plan.goal}</p>
               </div>
               <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black">
@@ -138,7 +139,7 @@ export default function StudentHomePage() {
               </div>
             </div>
             <Button className="mt-5 h-12 w-full bg-black text-base text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black dark:hover:bg-[#b8ef22]" onClick={() => router.push(`/workout?day=${nextWorkout.id}`)}>
-              <Zap className="mr-2 size-5" /> {plan.week.isComplete ? 'Consultar minha ficha' : 'Começar próximo treino'}
+              <Zap className="mr-2 size-5" /> {plan.week.completedToday || plan.week.isComplete ? `Consultar próximo: treino ${nextWorkout.label}` : 'Começar próximo treino'}
             </Button>
           </CardContent>
         </Card>

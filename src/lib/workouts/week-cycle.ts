@@ -70,3 +70,14 @@ export function nextWorkoutDayId(
   }
   return null;
 }
+
+export function nextWorkoutDayIdAfterLast(
+  dayIds: string[],
+  lastCompletedDayId?: string | null,
+) {
+  if (dayIds.length === 0) return null;
+  if (!lastCompletedDayId) return dayIds[0];
+  const lastIndex = dayIds.indexOf(lastCompletedDayId);
+  if (lastIndex < 0) return dayIds[0];
+  return dayIds[(lastIndex + 1) % dayIds.length];
+}
