@@ -58,7 +58,7 @@ export default function LandingPage() {
               Já tenho acesso
             </Link>
             <Link
-              href="/login"
+              href="#planos"
               className="inline-flex h-11 items-center gap-2 rounded-full bg-black px-5 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
             >
               Começar agora <ArrowUpRight className="size-4" />
