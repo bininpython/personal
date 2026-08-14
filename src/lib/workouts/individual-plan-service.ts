@@ -47,11 +47,12 @@ interface RawPlan {
   end_date: string | null;
   created_at: string;
   updated_at: string;
+  library_template_id: string | null;
   individual_workout_days: RawDay[] | null;
 }
 
 const PLAN_SELECT = `
-  id, user_id, name, goal, days_per_week, status, start_date, end_date, created_at, updated_at,
+  id, user_id, name, goal, days_per_week, status, start_date, end_date, created_at, updated_at, library_template_id,
   individual_workout_days (
     id, name, day_label, order_index,
     individual_workout_exercises (
@@ -104,6 +105,7 @@ function normalizePlan(plan: RawPlan) {
     isExpired: isPlanExpired(plan.end_date),
     createdAt: plan.created_at,
     updatedAt: plan.updated_at,
+    libraryTemplateId: plan.library_template_id,
     workoutDayCount: days.length,
     exerciseCount: days.reduce((total, day) => total + day.exercises.length, 0),
     days,
@@ -136,8 +138,9 @@ export async function getIndividualPlan(userId: string, planId: string) {
 export async function publishIndividualPlan(args: {
   userId: string;
   input: IndividualWorkoutPlanInput;
+  libraryTemplateId?: string;
 }) {
-  const { userId, input } = args;
+  const { userId, input, libraryTemplateId } = args;
   const admin = createAdminClient();
   const today = brazilToday();
   let createdPlanId = '';
@@ -165,6 +168,7 @@ export async function publishIndividualPlan(args: {
         status: 'draft',
         start_date: today,
         end_date: input.endDate,
+        library_template_id: libraryTemplateId || null,
       })
       .select('id, name')
       .single();

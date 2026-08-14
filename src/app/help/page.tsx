@@ -8,6 +8,7 @@ const trainerTutorials = [
   ['Salve seu acesso', 'No cadastro, guarde o código pessoal de 6 números. Sua senha e idade servem somente para recuperar o acesso.'],
   ['Cadastre o aluno', 'Abra Alunos → Novo aluno, confirme a autorização e entregue ao aluno exatamente o nome cadastrado e o código individual gerado.'],
   ['Oriente o primeiro acesso', 'O aluno entra sem e-mail, lê os documentos e confirma diretamente os Termos e a Política de Privacidade antes de usar a ficha.'],
+  ['Use a Biblioteca profissional', 'Abra Biblioteca de fichas, filtre por público, objetivo, mês e nível, confira os exercícios e escolha o aluno. Ao publicar, o programa fica ativo por 8 semanas.'],
   ['Monte e publique', 'Abra Montar ficha, escolha o aluno, crie os dias, adicione exercícios, configure séries, repetições, carga, descanso e o método de treino e publique.'],
   ['Baixe o PDF completo', 'Em Gerenciar fichas, use Baixar PDF para gerar uma versão pronta para consulta ou impressão. Baixe novamente depois de alterar o plano.'],
   ['Envie a ficha para outro aluno', 'Na ficha pronta, escolha Enviar para outro aluno, selecione o destino e confirme. O app cria uma cópia independente para você personalizar.'],
@@ -19,6 +20,7 @@ const studentTutorials = [
   ['Entre sem dados de contato', 'Informe somente seu nome e o código individual enviado pelo personal. Nenhum e-mail ou telefone é solicitado.'],
   ['Conclua o primeiro acesso', 'Leia e confirme os documentos. Peso, altura, gênero e restrições podem ser omitidos quando não forem necessários ao acompanhamento.'],
   ['Confira a ficha ativa', 'Em Início, confirme o plano e a ficha do dia. Se uma atualização não aparecer, recarregue a tela e fale com o personal.'],
+  ['Consulte sua Biblioteca', 'A Biblioteca do aluno mostra somente programas que o personal enviou diretamente para você. Nela é possível iniciar a ficha ou baixar o PDF.'],
   ['Registre a ficha do dia', 'Em Ficha do dia, confira o método e a orientação do personal, informe repetições, carga e esforço de cada série, marque o que concluiu e use o temporizador de descanso. O app libera uma ficha por dia na ordem configurada.'],
   ['Baixe sua ficha', 'Use Baixar ficha em PDF para consultar dias, exercícios e orientações. Para registrar a execução, continue usando o app.'],
   ['Conclua e acompanhe', 'Ao finalizar, avalie o treino. O Histórico guarda duração, conclusão e volume; Evolução mostra sua constância.'],
@@ -28,6 +30,7 @@ const studentTutorials = [
 
 const individualTutorials = [
   ['Confira sua área', 'A Visão geral reúne suas fichas pessoais e os atalhos para continuar organizando a própria rotina.'],
+  ['Escolha na Biblioteca', 'Abra Biblioteca, filtre os programas, confira as fichas A, B, C e demais exercícios. Você pode baixar o PDF ou ativar um programa pronto por 8 semanas.'],
   ['Monte e salve sua ficha', 'Abra Montar ficha, dê um nome ao plano, distribua os dias e configure exercícios, séries, repetições, carga, descanso e o método de treino.'],
   ['Inicie a ficha do dia', 'Abra Ficha do dia, siga a ficha destacada, registre repetições, carga e RPE e use a contagem regressiva automática entre as séries.'],
   ['Siga a sequência semanal', 'Ao concluir A, o próximo dia será B. A sequência segue pelos dias configurados e, quando uma nova semana começa, volta automaticamente à ficha A.'],

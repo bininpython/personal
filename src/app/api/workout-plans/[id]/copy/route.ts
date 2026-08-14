@@ -47,6 +47,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     const validity = inferPlanValidity(source.startDate || today, source.endDate);
     const copiedPlan = await publishWorkoutPlanRevision({
       trainerId: session.trainer_id,
+      libraryTemplateId: source.libraryTemplateId || undefined,
       input: {
         studentId: parsed.data.studentId,
         name: source.name,

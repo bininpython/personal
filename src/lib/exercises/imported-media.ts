@@ -44,7 +44,7 @@ export const IMPORTED_EXERCISES = [
     "name": "Abdominal com Carga",
     "primaryMuscle": "abs",
     "secondaryMuscles": [],
-    "equipment": "Peso corporal",
+    "equipment": "Carga externa",
     "difficulty": "intermediate",
     "instructions": "Execute Abdominal com Carga com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/abdomen/abdominal-com-carga-348e0ec1.mp4",
@@ -162,7 +162,7 @@ export const IMPORTED_EXERCISES = [
     "secondaryMuscles": [
       "abs"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Peso corporal ou carga",
     "difficulty": "intermediate",
     "instructions": "Execute Abdominal Russian Twist com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/abdomen/abdominal-russian-twist-810d0353.mp4",
@@ -1093,7 +1093,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Barra",
     "difficulty": "intermediate",
     "instructions": "Execute Levantamento Terra Romeno com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/levantamento-terra-romeno-30f1a319.mp4",
@@ -1107,7 +1107,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Barra",
     "difficulty": "intermediate",
     "instructions": "Execute Levantamento Terra com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/levantamento-terra-5a8b37ce.mp4",
@@ -1275,7 +1275,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Polia/cabo",
     "difficulty": "intermediate",
     "instructions": "Execute Puxada Alta com Triângulo com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/puxada-alta-com-triangulo-7695ae6a.mp4",
@@ -1289,7 +1289,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Polia/cabo",
     "difficulty": "intermediate",
     "instructions": "Execute Puxada Alta com Um Joelho Apoiado com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/puxada-alta-com-um-joelho-apoiado-0a65ee50.mp4",
@@ -1303,7 +1303,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Polia/cabo",
     "difficulty": "intermediate",
     "instructions": "Execute Puxada Alta Invertida com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/puxada-alta-invertida-cf4b8313.mp4",
@@ -1373,7 +1373,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Polia/cabo",
     "difficulty": "intermediate",
     "instructions": "Execute Puxada Alta com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/puxada-alta-6c99de06.mp4",
@@ -1471,7 +1471,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Polia/cabo",
     "difficulty": "intermediate",
     "instructions": "Execute Remada cruzada no cross com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/remada-cruzada-no-cross-aaecb5c6.mp4",
@@ -1569,7 +1569,7 @@ export const IMPORTED_EXERCISES = [
       "biceps",
       "back-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Barra T",
     "difficulty": "intermediate",
     "instructions": "Execute Remada Curvada em T com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/costas/remada-curvada-em-t-a8e0398f.mp4",
@@ -2618,7 +2618,7 @@ export const IMPORTED_EXERCISES = [
       "triceps",
       "trapezius"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Halteres leves",
     "difficulty": "intermediate",
     "instructions": "Execute Círculos de Braço com Pesos com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/ombro/circulos-de-braco-com-pesos-16bf22cb.mp4",
@@ -3303,7 +3303,7 @@ export const IMPORTED_EXERCISES = [
       "triceps",
       "trapezius"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Halter ou caneleira",
     "difficulty": "intermediate",
     "instructions": "Execute Elevação lateral deitado com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/ombro/elevacao-lateral-deitado-abe8ce79.mp4",
@@ -3705,7 +3705,7 @@ export const IMPORTED_EXERCISES = [
     "name": "Elevação de Panturrilha Sentado com Peso",
     "primaryMuscle": "calves",
     "secondaryMuscles": [],
-    "equipment": "Peso corporal",
+    "equipment": "Máquina ou carga",
     "difficulty": "intermediate",
     "instructions": "Execute Elevação de Panturrilha Sentado com Peso com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/panturrilha/elevacao-de-panturrilha-sentado-com-peso-da4e33bd.mp4",
@@ -4036,7 +4036,7 @@ export const IMPORTED_EXERCISES = [
       "triceps",
       "front-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Máquina assistida",
     "difficulty": "intermediate",
     "instructions": "Execute Mergulho de peito assistido com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/peitoral/mergulho-de-peito-assistido-0bfdd14d.mp4",
@@ -4708,7 +4708,7 @@ export const IMPORTED_EXERCISES = [
       "triceps",
       "front-deltoids"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Barra e banco",
     "difficulty": "intermediate",
     "instructions": "Execute Supino com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/peitoral/supino-43eb1f01.mp4",
@@ -5528,14 +5528,13 @@ export const IMPORTED_EXERCISES = [
   {
     "key": "media:quadriceps:cadeira-flex:2bb688239d",
     "name": "Cadeira flex",
-    "primaryMuscle": "quadriceps",
+    "primaryMuscle": "hamstring",
     "secondaryMuscles": [
-      "gluteal",
-      "hamstring"
+      "calves"
     ],
-    "equipment": "Peso corporal",
-    "difficulty": "intermediate",
-    "instructions": "Execute Cadeira flex com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
+    "equipment": "Máquina",
+    "difficulty": "beginner",
+    "instructions": "Flexione os joelhos mantendo quadril e costas apoiados e retorne com controle.",
     "videoUrl": "/exercise-media/pernas/cadeira-flex-20d7a61e.mp4",
     "sourceName": "cadeira flex.gif"
   },
@@ -5617,12 +5616,11 @@ export const IMPORTED_EXERCISES = [
   {
     "key": "media:quadriceps:mesa-flex-unilateral:64097770c1",
     "name": "Mesa flex unilateral",
-    "primaryMuscle": "quadriceps",
+    "primaryMuscle": "hamstring",
     "secondaryMuscles": [
-      "gluteal",
-      "hamstring"
+      "calves"
     ],
-    "equipment": "Peso corporal",
+    "equipment": "Máquina",
     "difficulty": "intermediate",
     "instructions": "Execute Mesa flex unilateral com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/pernas/mesa-flex-unilateral-d53b6357.mp4",
@@ -5631,14 +5629,13 @@ export const IMPORTED_EXERCISES = [
   {
     "key": "media:quadriceps:mesa-flex:f4a1767bb3",
     "name": "Mesa flex",
-    "primaryMuscle": "quadriceps",
+    "primaryMuscle": "hamstring",
     "secondaryMuscles": [
-      "gluteal",
-      "hamstring"
+      "calves"
     ],
-    "equipment": "Peso corporal",
-    "difficulty": "intermediate",
-    "instructions": "Execute Mesa flex com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
+    "equipment": "Máquina",
+    "difficulty": "beginner",
+    "instructions": "Flexione os joelhos aproximando os calcanhares dos glúteos e retorne lentamente.",
     "videoUrl": "/exercise-media/pernas/mesa-flex-67890298.mp4",
     "sourceName": "mesa flex.gif"
   },
@@ -6022,7 +6019,7 @@ export const IMPORTED_EXERCISES = [
     "name": "Tríceps Coice em Pé",
     "primaryMuscle": "triceps",
     "secondaryMuscles": [],
-    "equipment": "Peso corporal",
+    "equipment": "Halteres",
     "difficulty": "intermediate",
     "instructions": "Execute Tríceps Coice em Pé com postura estável, amplitude confortável e movimento controlado. Ajuste a carga para manter a técnica durante toda a série.",
     "videoUrl": "/exercise-media/triceps/triceps-coice-em-pe-6822dbe7.mp4",

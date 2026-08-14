@@ -51,7 +51,7 @@ export async function getManagedWorkoutPlan(args: {
   let query = admin
     .from('workout_plans')
     .select(`
-      id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at,
+      id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at, library_template_id,
       students (name),
       trainers (name),
       workout_days (
@@ -132,6 +132,7 @@ export async function getManagedWorkoutPlan(args: {
     endDate: data.end_date,
     isExpired: data.status === 'active' && isPlanExpired(data.end_date),
     createdAt: data.created_at,
+    libraryTemplateId: data.library_template_id,
     workoutDayCount: days.length,
     exerciseCount: days.reduce((total, day) => total + day.exercises.length, 0),
     days,

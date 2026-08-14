@@ -73,7 +73,7 @@ export async function GET() {
       const { data, error } = await admin
         .from('workout_plans')
         .select(`
-          id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at,
+          id, student_id, name, goal, days_per_week, status, start_date, end_date, created_at, library_template_id,
           students (name),
           workout_days (id, workout_exercises (id))
         `)
@@ -107,6 +107,7 @@ export async function GET() {
           endDate: plan.end_date,
           isExpired: plan.status === 'active' && isPlanExpired(plan.end_date),
           createdAt: plan.created_at,
+          libraryTemplateId: plan.library_template_id,
         };
       });
 

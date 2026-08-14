@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Users, Dumbbell, BookOpen, ClipboardList,
   Calendar, MessageSquare, BarChart3, Bell, Settings,
-  LogOut, Menu, Moon, Sun, CircleHelp, ChevronLeft, ChevronRight
+  LogOut, Menu, Moon, Sun, CircleHelp, ChevronLeft, ChevronRight, LibraryBig
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -31,6 +31,7 @@ const NAV_GROUPS = [
     label: 'Treinos',
     items: [
       { href: '/workouts', label: 'Fichas publicadas', icon: Dumbbell },
+      { href: '/library', label: 'Biblioteca de fichas', icon: LibraryBig },
       { href: '/exercises', label: 'Montar ficha', icon: BookOpen },
     ],
   },
@@ -50,7 +51,7 @@ const BOTTOM_NAV = [
   { href: '/students', label: 'Alunos', icon: Users },
   { href: '/exercises', label: 'Montar', icon: Dumbbell },
   { href: '/messages', label: 'Chat', icon: MessageSquare },
-  { href: '/alerts', label: 'Alertas', icon: Bell },
+  { href: '/library', label: 'Biblioteca', icon: LibraryBig },
 ];
 
 export default function TrainerLayout({ children }: { children: React.ReactNode }) {

@@ -122,7 +122,7 @@ def infer_primary_muscle(category: str, display_name: str) -> str:
 
     if category_key == "pernas":
         if any(token in name for token in (
-            "flexora", "flexao-de-joelho", "stiff", "romeno", "posterior",
+            "flexora", "mesa-flex", "cadeira-flex", "flexao-de-joelho", "stiff", "romeno", "posterior",
             "nordic", "nordico", "good-morning", "leg-curl",
         )):
             return "hamstring"
@@ -145,6 +145,18 @@ def infer_primary_muscle(category: str, display_name: str) -> str:
 
 def infer_equipment(display_name: str, muscle: str) -> str:
     name = slugify(display_name)
+    if any(token in name for token in ("mesa-flex", "cadeira-flex")):
+        return "Máquina"
+    if "abdominal-com-carga" in name:
+        return "Carga externa"
+    if "russian-twist" in name:
+        return "Peso corporal ou carga"
+    if "remada-curvada-em-t" in name or name.startswith("remada-t"):
+        return "Barra T"
+    if muscle == "triceps" and "coice" in name:
+        return "Halteres"
+    if muscle == "calves" and "sentado-com-peso" in name:
+        return "Máquina ou carga"
     if "barra-fixa" in name:
         return "Barra fixa"
     if "barra-w" in name:
@@ -161,16 +173,18 @@ def infer_equipment(display_name: str, muscle: str) -> str:
         return "Kettlebell"
     if "landmine" in name:
         return "Barra landmine"
-    if any(token in name for token in ("polia", "cabo", "crossover", "cross-over", "pulley")):
-        return "Polia/cabo"
     if any(token in name for token in ("maquina", "alavanca", "equipamento")):
         return "Máquina"
+    if any(token in name for token in ("polia", "cabo", "crossover", "cross-over", "cross", "pulley", "puxada-alta")):
+        return "Polia/cabo"
     if "halter" in name and "barra" in name:
         return "Barra ou halteres"
     if "halter" in name:
         return "Halteres"
     if "barra" in name:
         return "Barra"
+    if name == "supino":
+        return "Barra e banco"
     if "anilha" in name:
         return "Anilhas"
     if any(token in name for token in ("elastico", "faixa", "miniband")):
@@ -179,6 +193,8 @@ def infer_equipment(display_name: str, muscle: str) -> str:
         return "Bola"
     if "corda" in name:
         return "Corda"
+    if "elevacao-lateral-deitado" in name:
+        return "Halter ou caneleira"
     if "banco" in name:
         return "Banco"
     if muscle == "cardio":

@@ -1,4 +1,4 @@
-export const PRODUCT_TUTORIAL_VERSION = 4;
+export const PRODUCT_TUTORIAL_VERSION = 5;
 export const PRODUCT_TUTORIAL_OPEN_EVENT = 'g-kong:open-product-tutorial';
 
 export type TutorialRole = import('@/types').UserRole;
@@ -79,6 +79,20 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         href: '/students/new',
         actionLabel: 'Cadastrar aluno',
         icon: 'user-plus',
+      },
+      {
+        id: 'trainer-library',
+        title: 'Publique uma ficha da Biblioteca',
+        description: 'Escolha um programa profissional já estruturado, confira os exercícios e envie diretamente para o aluno.',
+        checklist: [
+          'Abra Biblioteca de fichas e use os filtros de público, objetivo, mês e nível.',
+          'Confira as fichas A, B, C e os métodos de cada exercício.',
+          'Escolha o aluno e publique o ciclo de 8 semanas.',
+        ],
+        tip: 'Ao publicar um modelo, a ficha anterior do aluno vai para o histórico e a nova fica ativa imediatamente.',
+        href: '/library',
+        actionLabel: 'Abrir Biblioteca',
+        icon: 'book-open',
       },
       {
         id: 'trainer-workout',
@@ -203,6 +217,20 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         icon: 'home',
       },
       {
+        id: 'student-library',
+        title: 'Veja o que seu personal enviou',
+        description: 'Sua Biblioteca é privada e mostra somente fichas que o personal publicou especificamente para você.',
+        checklist: [
+          'Abra Biblioteca para conferir o programa recebido.',
+          'Veja a quantidade de fichas e exercícios.',
+          'Inicie o treino ou baixe o PDF personalizado.',
+        ],
+        tip: 'O catálogo geral não fica disponível para alunos; fale com o personal para receber outro programa.',
+        href: '/student-library',
+        actionLabel: 'Abrir Biblioteca',
+        icon: 'book-open',
+      },
+      {
         id: 'student-workout',
         title: 'Registre cada série',
         description: 'Durante o treino, confira o método orientado, informe repetições e carga, marque as séries concluídas e use o descanso cronometrado.',
@@ -309,6 +337,20 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
         icon: 'dashboard',
       },
       {
+        id: 'individual-library',
+        title: 'Escolha um programa na Biblioteca',
+        description: 'Use um dos programas G KONG já estruturados e comece sem montar a ficha do zero.',
+        checklist: [
+          'Filtre por público, objetivo, mês e nível.',
+          'Confira cada ficha e a demonstração dos exercícios.',
+          'Baixe o PDF ou ative o ciclo de 8 semanas.',
+        ],
+        tip: 'Ao ativar um modelo, sua ficha atual permanece guardada no histórico de planos.',
+        href: '/my-library',
+        actionLabel: 'Abrir Biblioteca',
+        icon: 'book-open',
+      },
+      {
         id: 'individual-builder',
         title: 'Monte sua ficha',
         description: 'Escolha os exercícios, distribua os dias e defina séries, repetições, carga, descanso e o método de treino.',
@@ -398,9 +440,9 @@ export const PRODUCT_TUTORIALS: Record<TutorialRole, ProductTutorial> = {
 };
 
 const APP_PATHS: Record<TutorialRole, readonly string[]> = {
-  trainer: ['/dashboard', '/students', '/workouts', '/exercises', '/assessments', '/schedule', '/messages', '/alerts', '/reports', '/settings'],
-  student: ['/home', '/workout', '/history', '/progress', '/student-messages', '/profile'],
-  individual: ['/my', '/my-workout', '/my-history', '/my-exercises', '/my-plans', '/my-profile'],
+  trainer: ['/dashboard', '/students', '/workouts', '/library', '/exercises', '/assessments', '/schedule', '/messages', '/alerts', '/reports', '/settings'],
+  student: ['/home', '/workout', '/student-library', '/history', '/progress', '/student-messages', '/profile'],
+  individual: ['/my', '/my-workout', '/my-library', '/my-history', '/my-exercises', '/my-plans', '/my-profile'],
 };
 
 interface StorageReader {

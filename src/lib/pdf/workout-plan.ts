@@ -4,6 +4,9 @@ import path from 'node:path';
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import { formatPlanDate } from '@/lib/workouts/plan-validity';
 import { trainingMethodDetails } from '@/lib/workouts/training-methods';
+import { exerciseThumbnailUrl } from '@/lib/exercises/media';
+
+// As imagens resolvidas pelo helper são servidas pelo diretório público /exercise-thumbnails/.
 
 const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
@@ -74,16 +77,6 @@ function wrap(text: string, font: PDFFont, size: number, maxWidth: number, maxLi
     lines[maxLines - 1] = last;
   }
   return lines;
-}
-
-function thumbnailUrl(videoUrl: string | null) {
-  if (!videoUrl?.startsWith('/exercise-media/') || !videoUrl.endsWith('.mp4')) return null;
-  const relative = videoUrl
-    .replace(/^\/exercise-media\//, '')
-    .replace(/\.mp4$/i, '.jpg')
-    .split('/')
-    .filter((part) => part && part !== '.' && part !== '..');
-  return `/exercise-thumbnails/${relative.map(encodeURIComponent).join('/')}`;
 }
 
 function drawFooter(page: PDFPage, regular: PDFFont, pageNumber: number) {
@@ -191,7 +184,7 @@ export async function createWorkoutPlanPdf(args: {
       const thumbY = cardY + 32;
       const thumbWidth = 112;
       const thumbHeight = 75;
-      const assetUrl = thumbnailUrl(exercise.videoUrl);
+      const assetUrl = exerciseThumbnailUrl(exercise.videoUrl);
       let thumbnail = assetUrl ? embeddedThumbnails.get(assetUrl) : undefined;
       if (assetUrl && !thumbnail) {
         try {

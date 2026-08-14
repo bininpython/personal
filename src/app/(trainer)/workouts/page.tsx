@@ -25,6 +25,7 @@ interface WorkoutPlanSummary {
   startDate: string | null;
   endDate: string | null;
   isExpired: boolean;
+  libraryTemplateId?: string | null;
 }
 
 interface StudentSummary {
@@ -161,6 +162,7 @@ export default function WorkoutsPage() {
                 >
                   {plan.isExpired ? 'Prazo encerrado' : plan.status === 'active' ? 'Ativa' : plan.status === 'archived' ? 'Arquivada' : 'Rascunho'}
                 </Badge>
+                {plan.libraryTemplateId && <Badge variant="secondary" className="ml-2">Biblioteca G KONG</Badge>}
                 <CardTitle className="mt-2 text-lg">{plan.name}</CardTitle>
                 <CardDescription className="flex items-center gap-1.5">
                   <User className="size-3.5" /> {plan.student}

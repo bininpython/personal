@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home, Dumbbell, History, TrendingUp,
-  User, LogOut, MessageSquare, Moon, Sun, CircleHelp
+  User, LogOut, MessageSquare, Moon, Sun, CircleHelp, LibraryBig
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 const BOTTOM_NAV = [
   { href: '/home', label: 'Início', icon: Home },
   { href: '/workout', label: 'Ficha do dia', icon: Dumbbell },
+  { href: '/student-library', label: 'Biblioteca', icon: LibraryBig },
   { href: '/history', label: 'Histórico', icon: History },
   { href: '/progress', label: 'Evolução', icon: TrendingUp },
   { href: '/student-messages', label: 'Chat', icon: MessageSquare },

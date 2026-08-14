@@ -15,8 +15,9 @@ export class WorkoutPlanPublishError extends Error {
 export async function publishWorkoutPlanRevision(args: {
   trainerId: string;
   input: WorkoutPlanCreateInput;
+  libraryTemplateId?: string;
 }) {
-  const { trainerId, input } = args;
+  const { trainerId, input, libraryTemplateId } = args;
   const admin = createAdminClient();
   const today = brazilToday();
   let createdPlanId = '';
@@ -86,6 +87,7 @@ export async function publishWorkoutPlanRevision(args: {
         status: 'draft',
         start_date: today,
         end_date: input.endDate,
+        library_template_id: libraryTemplateId || null,
       })
       .select('id, name')
       .single();

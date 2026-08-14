@@ -1,0 +1,5386 @@
+[
+  {
+    "id": "homens-definicao-mes-01",
+    "version": 1,
+    "title": "Definição masculina — mês 01",
+    "audience": "male",
+    "goal": "definition",
+    "level": "beginner",
+    "month": 1,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito e quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Polia alta barra",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "12 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-salto-e-halteres:10a6a6bc1c",
+            "sourceName": "Agachamento com salto e halteres",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha frontal",
+            "sets": 5,
+            "reps": "Máximo",
+            "restTime": 20,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-definicao-mes-03",
+    "version": 1,
+    "title": "Definição masculina — mês 03",
+    "audience": "male",
+    "goal": "definition",
+    "level": "beginner",
+    "month": 3,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino Inclinado",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-maquina:5d4e4c136a",
+            "sourceName": "Flexão plantar",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo com halter",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada polia baixa",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Polia alta corda",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "Coice com halter",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "20 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-kettlebell:2625042955",
+            "sourceName": "Agachamento com kettlebell",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal supra com carga",
+            "sets": 3,
+            "reps": "Máximo",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-definicao-mes-05",
+    "version": 1,
+    "title": "Definição masculina — mês 05",
+    "audience": "male",
+    "goal": "definition",
+    "level": "intermediate",
+    "month": 5,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês bilateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento hack",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora unilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": "50% carga máxima"
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex-unilateral:64097770c1",
+            "sourceName": "Flexora unilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": "50% carga máxima"
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Polia alta corda",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "20 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-kettlebell:2625042955",
+            "sourceName": "Agachamento com kettlebell",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-com-halteres-sentado:ec7c7ce993",
+            "sourceName": "Elevação lateral com halteres",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha frontal",
+            "sets": 5,
+            "reps": "Máximo",
+            "restTime": 20,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-definicao-mes-07",
+    "version": 1,
+    "title": "Definição masculina — mês 07",
+    "audience": "male",
+    "goal": "definition",
+    "level": "intermediate",
+    "month": 7,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e costas",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Polia alta barra (tríceps)",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "to_failure",
+            "methodNotes": "+ uma série até a falha"
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 5,
+            "reps": "15",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "dropset",
+            "methodNotes": "Drop set nas 3 séries"
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "dropset",
+            "methodNotes": "Drop set nas 3 séries"
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação Lateral (ombro)",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "to_failure",
+            "methodNotes": "+ uma série até a falha"
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada polia baixa",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada frente pegada neutra",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "20 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-kettlebell:2625042955",
+            "sourceName": "Agachamento com kettlebell",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-com-elevacao-de-joelhos:dfe4d1ae47",
+            "sourceName": "Mountain climber",
+            "sets": 3,
+            "reps": "20 s",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha frontal",
+            "sets": 5,
+            "reps": "Máximo",
+            "restTime": 20,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-definicao-mes-09",
+    "version": 1,
+    "title": "Definição masculina — mês 09",
+    "audience": "male",
+    "goal": "definition",
+    "level": "advanced",
+    "month": 9,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito e quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-declinado-com-halteres",
+            "sourceName": "Supino declinado",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": "Mínimo 10 rep\nMax 12"
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino 45º",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": "Mínimo 10 rep\nMax 12"
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress baixo",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "HackMachine",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento frente barra",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": "50% carga máxima"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Tríceps pulley",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": "50% carga máxima"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilhas máquina",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — costas e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas (pulley)",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress horizontal",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress 45º",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca scotch",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 20,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "calves:panturrilha-no-leg-press",
+            "sourceName": "Panturrilhas Legpress baixo",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 20,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — quadríceps e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": "Carga moderada"
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas (pulley)",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": "Mínimo 10 rep\nMax 12"
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento barra",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": "Mínimo 10 rep\nMax 12"
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento livre",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-no-smith",
+            "sourceName": "Agachamento Smith",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress 45º",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Tríceps pulley",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-no-smith:0ed02ad80b",
+            "sourceName": "Panturrilhas Smith",
+            "sets": 5,
+            "reps": "Max",
+            "restTime": 20,
+            "method": "to_failure",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "20 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-salto-e-halteres:10a6a6bc1c",
+            "sourceName": "Agachamento com salto e halteres",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-com-elevacao-de-joelhos:dfe4d1ae47",
+            "sourceName": "Mountain climber",
+            "sets": 3,
+            "reps": "20 s",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha frontal",
+            "sets": 5,
+            "reps": "Máximo",
+            "restTime": 20,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-definicao-mes-11",
+    "version": 1,
+    "title": "Definição masculina — mês 11",
+    "audience": "male",
+    "goal": "definition",
+    "level": "advanced",
+    "month": 11,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Treino de definição com musculação, cardio e circuito metabólico, organizado em um ciclo de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-PARA-HOMEM-EMAGRECIMENTO-DEFINICAO(EDITAVEL).docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — bíceps e Peito",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino com halteres",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-invertida:76545d024c",
+            "sourceName": "Puxada frente pegada supinada",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Fly (voador)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halteres",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Encolhimento de ombros com halteres",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-mergulho-no-banco:71444e9762",
+            "sourceName": "Mergulho entre bancos (tríceps)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-halteres-sentado:a47b5af6e4",
+            "sourceName": "Rosca alternada com halteres",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Polia alta barra (tríceps)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Agachamento com barra (livre)",
+            "sets": 6,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Bom dia ( goodmorning)",
+            "sets": 6,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Legpress 45°",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:lower-back:hiperextensao-no-chao:89caf3f5e6",
+            "sourceName": "Abdominal invertido (lombar)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Infra no banco (extensão de pernas)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — circuito metabólico",
+        "exercises": [
+          {
+            "exerciseKey": "media:cardio:bike:fc4cf94980",
+            "sourceName": "Bike",
+            "sets": 1,
+            "reps": "20 min",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-salto-e-halteres:10a6a6bc1c",
+            "sourceName": "Agachamento com salto e halteres",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão de braços",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-com-elevacao-de-joelhos:dfe4d1ae47",
+            "sourceName": "Mountain climber",
+            "sets": 3,
+            "reps": "20 s",
+            "restTime": 0,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha frontal",
+            "sets": 5,
+            "reps": "Máximo",
+            "restTime": 20,
+            "method": "circuit",
+            "methodNotes": "Circuito metabólico: faça os movimentos em sequência e recupere ao final da volta."
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Peito e costas",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas (pulley)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo com halteres no banco reto",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento frente com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:remada-alta-com-halteres:74234a5303",
+            "sourceName": "Remada alta com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-com-pegada-fechada",
+            "sourceName": "Supino pegada fechada (tríceps)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:forearm:rosca-inversa-com-barra:84b2aab735",
+            "sourceName": "Rosca inversa com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "E",
+        "name": "Treino E — panturrilhas e quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento hack (maquina)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:stiff-com-barra:5901edd75b",
+            "sourceName": "Stiff com barra",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora unilateral",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex-unilateral:64097770c1",
+            "sourceName": "Mesa Flexora unilateral",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-no-smith:0ed02ad80b",
+            "sourceName": "Flexão plantar no Smith",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão plantar no Gêmeos",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:lower-back:hiperextensao-no-chao:89caf3f5e6",
+            "sourceName": "Abdominal invertido (lombar)",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-completo-variacao-1:d16f9c49dc",
+            "sourceName": "Abdominal remador",
+            "sets": 3,
+            "reps": "8-12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-01",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 01",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "beginner",
+    "month": 1,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — abdômen e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Supino inclinado com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Encolhimento com halter",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta com barra + Tríceps corda. BISET"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta com barra + Tríceps corda. BISET"
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo alternada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-unilateral:dd7679023b",
+            "sourceName": "Tríceps francês unilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdome supra c/ anilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Abdome infra",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-russian-twist:87c3c88116",
+            "sourceName": "Obliquo c/ anilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e adutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg Press",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "gluteal:stiff",
+            "sourceName": "Stiff",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-livre:8cba66b68a",
+            "sourceName": "Afundo",
+            "sets": 4,
+            "reps": "16 cada perna",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão Plantar Gêmeos",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-03",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 03",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "beginner",
+    "month": 3,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — tríceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino reto com halter",
+            "sets": 5,
+            "reps": "10-10-8-8-6",
+            "restTime": 120,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino Inclinado Barra",
+            "sets": 4,
+            "reps": "8-8-6-6",
+            "restTime": 45,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada frontal Pegada Aberta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 4,
+            "reps": "Mínimo 12",
+            "restTime": 45,
+            "method": "biset",
+            "methodNotes": "Sequência original: Tríceps corda + Tríceps coice. BISET"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-em-pe:3fea5ca5fe",
+            "sourceName": "Tríceps coice",
+            "sets": 4,
+            "reps": "Mínimo 12",
+            "restTime": 45,
+            "method": "biset",
+            "methodNotes": "Sequência original: Tríceps corda + Tríceps coice. BISET"
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta com barra + rosca Martelo com halter. BISET"
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-martelo-com-halter-no-colete-scott:51fdbfd725",
+            "sourceName": "rosca Martelo com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta com barra + rosca Martelo com halter. BISET"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-unilateral:dd7679023b",
+            "sourceName": "Tríceps francês unilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdome supra polia",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Abdome infra",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-russian-twist:87c3c88116",
+            "sourceName": "Obliquo cross",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 4,
+            "reps": "10-10-8-8",
+            "restTime": 120,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento Hack",
+            "sets": 4,
+            "reps": "9",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex-unilateral:64097770c1",
+            "sourceName": "Mesa Flexora unilateral",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:stiff-com-halteres:6bd3360aac",
+            "sourceName": "Stiff com halter",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:passada-com-halteres:f047abaebb",
+            "sourceName": "Passada Longa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-frontal",
+            "sourceName": "Agachamento frontal",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão Plantar Gêmeos",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-05",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 05",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": 5,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — costas e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino Reto com barra",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 180,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento militar",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa-assistida:14241e70d2",
+            "sourceName": "Barra fixa (negativa",
+            "sets": 3,
+            "reps": "4-6",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "PullOver",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: PullOver + Remada cavalinho. BISET"
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: PullOver + Remada cavalinho. BISET"
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral sentado",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta barra",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta barra + Drag Curl. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-com-barra:38e6ddc158",
+            "sourceName": "Drag Curl",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Rosca direta barra + Drag Curl. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "chest:supino-com-pegada-fechada",
+            "sourceName": "Supino pegada Fechada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Rotação externa polia",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 180,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:levantamento-terra-com-barra:ffe9333c96",
+            "sourceName": "Terra Sumô",
+            "sets": 4,
+            "reps": "8-8-6-6",
+            "restTime": 180,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg Press 45",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-com-barra:20b3ce8b6a",
+            "sourceName": "Elevação Pélvica",
+            "sets": 4,
+            "reps": "10 – 12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:passada-com-halteres:f047abaebb",
+            "sourceName": "Passada",
+            "sets": 3,
+            "reps": "10 passos em cada perna e + 1’ cadeira",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Passada + Cadeira isometrica. BISET"
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-na-parede-com-bola-de-exercicio:6814de3c17",
+            "sourceName": "Cadeira isometrica",
+            "sets": 3,
+            "reps": "10 passos em cada perna e + 1’ cadeira",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Passada + Cadeira isometrica. BISET"
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão Plantar em Pé",
+            "sets": 4,
+            "reps": "40",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Flexão Plantar sentado",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — costas e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino com halter",
+            "sets": 5,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crucifixo Polia",
+            "sets": 2,
+            "reps": "40",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada (tronco quase na horizontal)",
+            "sets": 4,
+            "reps": "18-15-12-10",
+            "restTime": 60,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-pegada-invertida-na-barra:47fca53a34",
+            "sourceName": "Remada curvada supinada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Remada curvada supinada + PullDown. BISET"
+          },
+          {
+            "exerciseKey": "media:upper-back:pulldown-com-corda:1abc106f51",
+            "sourceName": "PullDown",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Remada curvada supinada + PullDown. BISET"
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação Lateral",
+            "sets": 2,
+            "reps": "25",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-com-barra:38e6ddc158",
+            "sourceName": "Rosca 21",
+            "sets": 3,
+            "reps": "21",
+            "restTime": 60,
+            "method": "partial_reps",
+            "methodNotes": "7 repetições inferiores, 7 superiores e 7 completas."
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-pegada-invertida:d873b0ee17",
+            "sourceName": "Tríceps barra inversa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "biset",
+            "methodNotes": "Sequência original: Tríceps barra inversa + coice com halter. BISET"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "coice com halter",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "biset",
+            "methodNotes": "Sequência original: Tríceps barra inversa + coice com halter. BISET"
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Rotação externa polia",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-frontal",
+            "sourceName": "Agachamento Frontal",
+            "sets": 4,
+            "reps": "12-12-10-10",
+            "restTime": 60,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo pés em cima do step",
+            "sets": 3,
+            "reps": "8 cada perna",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg Press",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 4,
+            "reps": "12 cada",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Extensora + Flexão nórdica reversa. BISET"
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Flexão nórdica reversa",
+            "sets": 4,
+            "reps": "12 cada",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Extensora + Flexão nórdica reversa. BISET"
+          },
+          {
+            "exerciseKey": "media:gluteal:stiff-com-barra:5901edd75b",
+            "sourceName": "Stiff barra",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 0,
+            "method": "biset",
+            "methodNotes": "Sequência original: Abdutora + adutora. BISET"
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "adutora",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 0,
+            "method": "biset",
+            "methodNotes": "Sequência original: Abdutora + adutora. BISET"
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar step",
+            "sets": 5,
+            "reps": "15",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-07",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 07",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": 7,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — bíceps e costas",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada frontal pegada pronada",
+            "sets": 4,
+            "reps": "15-15-12-10",
+            "restTime": 120,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada Polia Baixa",
+            "sets": 5,
+            "reps": "15-12-10-8-6",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-martelo-com-corda:bc93e589fc",
+            "sourceName": "Rosca polia baixa corda",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-concentrada",
+            "sourceName": "Rosca Concentrada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 5,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:levantamento-terra-com-barra:ffe9333c96",
+            "sourceName": "Terra Sumô",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg Press 45",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "gluteal:stiff",
+            "sourceName": "Stiff",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo pé da frente em cima do step",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão Plantar em Pé",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Flexão Plantar sentado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Peito e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto com barra",
+            "sets": 5,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino com halter",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado com barra",
+            "sets": 5,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crucifixo no cross",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-barra-no-chao:ff9a2a9d7b",
+            "sourceName": "Flexão",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexão + PullOver. BISET"
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "PullOver",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexão + PullOver. BISET"
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-unilateral:dd7679023b",
+            "sourceName": "Francês Unilateral",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps Corda Polia",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-com-pegada-fechada",
+            "sourceName": "Supino Fechado",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "Coice com halter",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 180,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo pés em cima do step",
+            "sets": 3,
+            "reps": "8 cada perna",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra:05ae38878b",
+            "sourceName": "Terra Convencional",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 5,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:stiff-com-barra:5901edd75b",
+            "sourceName": "Stiff barra",
+            "sets": 4,
+            "reps": "2x12 – 2x10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "biset",
+            "methodNotes": "Sequência original: Abdutora + adutora. BISET"
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "adutora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "biset",
+            "methodNotes": "Sequência original: Abdutora + adutora. BISET"
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar step",
+            "sets": 5,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-09",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 09",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "advanced",
+    "month": 9,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — bíceps e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta barra",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-barra:851c79c435",
+            "sourceName": "Rosca alternada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca banco scott",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Polia alta corda",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-unilateral-deitado-no-banco:2fb471018b",
+            "sourceName": "Francês deitado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "Coice com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-no-smith",
+            "sourceName": "Agachamento Smith",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento hack",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-no-smith:0ed02ad80b",
+            "sourceName": "Flexão plantar no Smith",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Gêmeos sentado",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-completo-variacao-1:d16f9c49dc",
+            "sourceName": "Abdominal remador",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Extensão de pernas chão",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-obliquo-deitada:d078e44571",
+            "sourceName": "Lateral aparelho",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — ombros",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-frontal-com-cabo-duplo-no-cross:67ed747545",
+            "sourceName": "Elevação frontal cross",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-maquina:2cb4f5dcba",
+            "sourceName": "Encolhimento maquina",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Encolhimento com halter",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:levantamento-frontal-com-anilha:f081d0cb04",
+            "sourceName": "Elevação frontal com anilha",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — costas e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada polia baixa",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada frente barra neutra",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Puxada frente barra neutra + crucifixo inverso com halter. BISET"
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "crucifixo inverso com halter",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Puxada frente barra neutra + crucifixo inverso com halter. BISET"
+          },
+          {
+            "exerciseKey": "forearm:rosca-de-punho-com-barra",
+            "sourceName": "Rosca punho com barra",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:forearm:rosca-inversa-com-barra:84b2aab735",
+            "sourceName": "Rosca inversa",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-completo-variacao-1:d16f9c49dc",
+            "sourceName": "Abdominal remador",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Extensão de pernas chão",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-obliquo-deitada:d078e44571",
+            "sourceName": "Lateral aparelho",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "E",
+        "name": "Treino E — Peito",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 5,
+            "reps": "5",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Supino inclinado + crucifixo com halter. BISET"
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "crucifixo com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Supino inclinado + crucifixo com halter. BISET"
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino com halter",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-declinado-com-halteres",
+            "sourceName": "Supino declinado",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "homens-hipertrofia-mes-11",
+    "version": 1,
+    "title": "Hipertrofia masculina — mês 11",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "advanced",
+    "month": 11,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia masculina com rotação semanal de fichas e duração de 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA HOMENS/TREINOS/TREINO-HOMEM-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — abdômen e bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-com-pegada-fechada",
+            "sourceName": "Supino fechado",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Rosca francesa",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:paralelas:cfe2bc4254",
+            "sourceName": "Paralelas",
+            "sets": 4,
+            "reps": "Até a falha",
+            "restTime": 120,
+            "method": "to_failure",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-barra:851c79c435",
+            "sourceName": "Rosca alternada",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:forearm:rosca-inversa-com-barra:84b2aab735",
+            "sourceName": "Rosca inversa com barra",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal no pulley",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Supra com carga",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6 - 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "6 - 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-com-barra:887fba5265",
+            "sourceName": "Afundo com halter",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão plantar no gêmeos",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-no-leg-press:df39cb84bb",
+            "sourceName": "Flexão plantar leg press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — ombros e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento com barra atrás",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halter",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-na-barra-livre:4835661163",
+            "sourceName": "Encolhimento com barra a frente",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Encolhimento com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal no pulley",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Supra com carga",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — costas e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra:05ae38878b",
+            "sourceName": "Levantamento terra",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada pulley baixo",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão plantar no gêmeos",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-no-leg-press:df39cb84bb",
+            "sourceName": "Flexão plantar leg press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "E",
+        "name": "Treino E — Peito e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado",
+            "sets": 4,
+            "reps": "6 – 8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "Até a falha",
+            "restTime": 120,
+            "method": "to_failure",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal no pulley",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Supra com carga",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-fullbody-01",
+    "version": 1,
+    "title": "Full body feminino 01",
+    "audience": "female",
+    "goal": "general",
+    "level": "beginner",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 3,
+    "description": "Ficha de corpo inteiro para alternar três vezes por semana, com execução controlada e progressiva.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINOS FULLBODY/FULLBODY--1.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — corpo inteiro",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento Livre",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 180,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado com barra",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada Alta pegada supinada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 3,
+            "reps": "15-12-10-8",
+            "restTime": 60,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo com halter",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-barra:851c79c435",
+            "sourceName": "Rosca Alternada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:elevacao-frontal-com-halteres",
+            "sourceName": "Elevação Frontal",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Pulley Alto com Barra",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Rotação externa Polia",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar step",
+            "sets": 6,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-fullbody-02",
+    "version": 1,
+    "title": "Full body feminino 02",
+    "audience": "female",
+    "goal": "general",
+    "level": "beginner",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 3,
+    "description": "Ficha de corpo inteiro para alternar três vezes por semana, com execução controlada e progressiva.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINOS FULLBODY/FULLBODY--2.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — corpo inteiro",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Supino inclinado com halter",
+            "sets": 5,
+            "reps": "6",
+            "restTime": 180,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo no step",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": "10 movimentos em cada perna"
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-cruzada-no-cross:85262977b8",
+            "sourceName": "Remada Curvada Cross over",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "10 – 12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento com barra",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada Serrote",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Cadeira Extensora",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-com-pegada-fechada",
+            "sourceName": "Tríceps Supino Fechado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-martelo-com-corda:bc93e589fc",
+            "sourceName": "Rosca Pulley com Corda",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps Pulley Corda",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca Martelo",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-fullbody-03",
+    "version": 1,
+    "title": "Full body feminino 03",
+    "audience": "female",
+    "goal": "general",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 3,
+    "description": "Ficha de corpo inteiro para alternar três vezes por semana, com execução controlada e progressiva.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINOS FULLBODY/FULLBODY--3.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — corpo inteiro",
+        "exercises": [
+          {
+            "exerciseKey": "media:gluteal:stiff-com-barra:5901edd75b",
+            "sourceName": "Stiff com Barra",
+            "sets": 5,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento Hack",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo no Crossover alto",
+            "sets": 4,
+            "reps": "18-15-12-10",
+            "restTime": 60,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crucifixo no Crossover Baixo",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:cadeira-flex:2bb688239d",
+            "sourceName": "Cadeira Flexora",
+            "sets": 4,
+            "reps": "12\n8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-concentrada",
+            "sourceName": "Rosca Concentrada",
+            "sets": 5,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-no-banco:242847571f",
+            "sourceName": "Tríceps Banco",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Rotação Interna Polia",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão Plantar Gêmeos",
+            "sets": 5,
+            "reps": "15",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-fullbody-04",
+    "version": 1,
+    "title": "Full body feminino 04",
+    "audience": "female",
+    "goal": "general",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 3,
+    "description": "Ficha de corpo inteiro para alternar três vezes por semana, com execução controlada e progressiva.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINOS FULLBODY/FULLBODY--4.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — corpo inteiro",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino Reto com Halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Supino Reto com Halter + Barra. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Supino Reto com Halter + Barra. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Flexão de Braço apoiado no banco",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com Halter",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada Curvada com Barra",
+            "sets": 5,
+            "reps": "20-15-12-10-15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Cadeira Extensora",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Pulley Alto Barra",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 90,
+            "method": "biset",
+            "methodNotes": "Sequência original: Pulley Alto Barra + Coice com Halter. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "Coice com Halter",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 90,
+            "method": "biset",
+            "methodNotes": "Sequência original: Pulley Alto Barra + Coice com Halter. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca Scoot Barra Reta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-barra:851c79c435",
+            "sourceName": "Rosca Alternada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão Plantar pisando na Anilha",
+            "sets": 4,
+            "reps": "25",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-01",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 01",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "beginner",
+    "month": 1,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Cadeira extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-sumo-livre:bcbe6cdad9",
+            "sourceName": "Agachamento sumô",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento livre",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Gêmeos no step",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa Flexora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdome supra c/ anilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Abdome infra",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-russian-twist:87c3c88116",
+            "sourceName": "Obliquo c/ anilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — bíceps e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino barra",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Triceps pulley",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-curvada-com-barra",
+            "sourceName": "Remada curvada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas pulley",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-com-cabo-de-um-braco:d164fb962d",
+            "sourceName": "Bíceps pulley",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-direta-com-barra-w",
+            "sourceName": "Biceps rosca direta barra W",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halter",
+            "sets": 3,
+            "reps": "10 + 10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-03",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 03",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "beginner",
+    "month": 3,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — ombros e costas",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada aberta na frente",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-cabo:23a72440ca",
+            "sourceName": "Remada sentada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "12 à15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crucifixo-com-halteres-inclinado:32cb3f89c8",
+            "sourceName": "Crucifixo inclinado",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halteres",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-com-halteres-sentado:ec7c7ce993",
+            "sourceName": "Elevação lateral halteres",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Abdominal supra",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — quadríceps e adutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-no-smith",
+            "sourceName": "Agachamento Smith ou Livre",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press 45°",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo com pé no step",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa flexora",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:gluteos-coice-nilateral-polia-baixa:cf40281cbf",
+            "sourceName": "Coice no cross",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no Step",
+            "sets": 4,
+            "reps": "15 + 10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexão plantar no Step + Chão. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:lower-back:hiperextensao-no-chao:89caf3f5e6",
+            "sourceName": "Chão",
+            "sets": 4,
+            "reps": "15 + 10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexão plantar no Step + Chão. Execute os dois movimentos em sequência."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-05",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 05",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": 5,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — abdômen e quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento livre",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "gluteal:stiff",
+            "sourceName": "Stiff",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Elevação de pernas",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdome supra c/ anilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — bíceps e Peito",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino reto com halteres",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Triceps pulley",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-cubano-com-halteres:f3279f3bef",
+            "sourceName": "Desenvolvimento com halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — quadríceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press 45°",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo com halteres",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão plantar no gêmeos ou sentado",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Infra canivete",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Supra declinado na máquina ou supra no colchonete",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — bíceps e Peito",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino reto com barra",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês bilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-halteres-sentado:a47b5af6e4",
+            "sourceName": "Rosca alternada com halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-07",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 07",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": 7,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento Hack",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar no step",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — bíceps e Peito",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino reto com halteres",
+            "sets": 3,
+            "reps": "10-8-6",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "upper-back:remada-invertida",
+            "sourceName": "Remada serrote",
+            "sets": 3,
+            "reps": "10-8-6",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Triceps pulley",
+            "sets": 3,
+            "reps": "10-8-6",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta com barra",
+            "sets": 4,
+            "reps": "2X6 – 2X8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento nuca",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:remada-alta-com-halteres:74234a5303",
+            "sourceName": "Remada alta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "6 – 8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press 45°",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-no-smith",
+            "sourceName": "Agachamento Smith",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Flexão plantar em pé",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-obliquo-deitada:d078e44571",
+            "sourceName": "Abdominal lateral calcanhar",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 30,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "10-8-6-4",
+            "restTime": 90,
+            "method": "pyramid_ascending",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-09",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 09",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "advanced",
+    "month": 9,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-no-smith",
+            "sourceName": "Agachamento Smith",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento hack",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-no-smith:0ed02ad80b",
+            "sourceName": "Flexão plantar no Smith",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Gêmeos sentado",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — bíceps e tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta barra",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-barra:851c79c435",
+            "sourceName": "Rosca alternada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca banco scott",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Polia alta corda",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-unilateral-deitado-no-banco:2fb471018b",
+            "sourceName": "Francês deitado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-halteres:8316f17637",
+            "sourceName": "Coice com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Supra no colchonete",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Extensão de pernas banco inclinado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:remada-lateral-com-halteres-sentado:6587946c84",
+            "sourceName": "Lateral com halter (unilateral)",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento livre",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral caneleira",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-halteres-no-banco:6614884f2d",
+            "sourceName": "Agachamento com halter",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:gluteos-coice-nilateral-polia-baixa:cf40281cbf",
+            "sourceName": "Flexão com caneleira em pé",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — costas e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada polia baixa",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-na-polia-nuca:38980a2b69",
+            "sourceName": "Puxada costas",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino com halter",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Supra no colchonete",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Extensão de pernas banco inclinado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:remada-lateral-com-halteres-sentado:6587946c84",
+            "sourceName": "Lateral com halter (unilateral)",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "E",
+        "name": "Treino E — posterior de coxa e quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-com-barra:887fba5265",
+            "sourceName": "Afundo com halter",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mulheres-hipertrofia-mes-11",
+    "version": 1,
+    "title": "Hipertrofia feminina — mês 11",
+    "audience": "female",
+    "goal": "hypertrophy",
+    "level": "advanced",
+    "month": 11,
+    "durationWeeks": 8,
+    "daysPerWeek": 5,
+    "description": "Programa progressivo de hipertrofia feminina, estruturado em fichas rotativas para 8 semanas.",
+    "sourceFiles": [
+      "TREINO PARA MULHERES/TREINO-MULHER-HIPERTROFIA.docx"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — quadríceps e panturrilhas",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:cadeira-flex:2bb688239d",
+            "sourceName": "Flexora sentada",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-halteres-no-banco:6614884f2d",
+            "sourceName": "Agachamento com halter no banco",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Adutora + sumô. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-sumo-livre:bcbe6cdad9",
+            "sourceName": "sumô",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Adutora + sumô. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-na-maquina-hack:d9f91b9b41",
+            "sourceName": "Agachamento hack pés juntos",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Flexão plantar em cima da anilha",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-maquina:5d4e4c136a",
+            "sourceName": "Flexão plantar unilateral",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — bíceps e abdômen",
+        "exercises": [
+          {
+            "exerciseKey": "biceps:rosca-direta-com-barra-w",
+            "sourceName": "Rosca direta barra “W”",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca banco scott barra reta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-invertida:76545d024c",
+            "sourceName": "Polia alta inversa",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês bilateral",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:gluteos-coice-nilateral-polia-baixa:cf40281cbf",
+            "sourceName": "Coice no cross (polia alta)",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Supra no banco declinado",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Elevação de pernas banco inclinado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-obliquo-deitada:d078e44571",
+            "sourceName": "Lateral calcanhar",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — quadríceps e abdutores",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-livre-com-barra",
+            "sourceName": "Agachamento livre",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Agachamento livre + afundo. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-livre:8cba66b68a",
+            "sourceName": "afundo",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Agachamento livre + afundo. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexora + cadeira isométrica 1’. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-na-parede-com-bola-de-exercicio:6814de3c17",
+            "sourceName": "cadeira isométrica 1’",
+            "sets": 6,
+            "reps": "6",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexora + cadeira isométrica 1’. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral cross",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-frontal",
+            "sourceName": "Agachamento frontal",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:gluteos-coice-nilateral-polia-baixa:cf40281cbf",
+            "sourceName": "Flexão com caneleira em pé",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Peito e costas",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada polia baixa barra reta",
+            "sets": 5,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-em-t:b765665ebf",
+            "sourceName": "Remada cavalinho pegada aberta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada frontal triangulo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-deitado:635cebf47d",
+            "sourceName": "Elevação lateral sentada",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Supino inclinado com halter",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Voador",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Voador + crucifixo. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "crucifixo",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Voador + crucifixo. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-concentrado:22873492ae",
+            "sourceName": "Supra no banco declinado",
+            "sets": 3,
+            "reps": "20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-infra:6e42359a3a",
+            "sourceName": "Elevação de pernas banco inclinado",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:abdominal-obliquo-deitada:d078e44571",
+            "sourceName": "Lateral calcanhar",
+            "sets": 4,
+            "reps": "20",
+            "restTime": 0,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "E",
+        "name": "Treino E — quadríceps e posterior de coxa",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora unilateral",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex-unilateral:64097770c1",
+            "sourceName": "Flexora unilateral",
+            "sets": 2,
+            "reps": "20",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-no-banco-com-halteres:da83e943ba",
+            "sourceName": "Afundo com halter com pé no step",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexora + flexão nórdica reversa. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "flexão nórdica reversa",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Sequência original: Flexora + flexão nórdica reversa. Execute os dois movimentos em sequência."
+          },
+          {
+            "exerciseKey": "abductors:cadeira-abdutora",
+            "sourceName": "Abdutora",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "adductor:cadeira-adutora",
+            "sourceName": "Adutora",
+            "sets": 4,
+            "reps": "16",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  }
+]

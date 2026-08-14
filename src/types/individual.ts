@@ -34,6 +34,7 @@ export interface IndividualPlanView {
   updatedAt: string;
   workoutDayCount: number;
   exerciseCount: number;
+  libraryTemplateId?: string | null;
   days: IndividualPlanDay[];
 }
 

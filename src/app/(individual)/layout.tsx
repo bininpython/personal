@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, Dumbbell, History, LayoutDashboard, LogOut, Menu, Moon, PlayCircle, Sun, UserRound } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, Dumbbell, History, LayoutDashboard, LibraryBig, LogOut, Menu, Moon, PlayCircle, Sun, UserRound } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { useTheme } from '@/hooks/use-theme';
 const NAVIGATION = [
   { href: '/my', label: 'Visão geral', short: 'Início', icon: LayoutDashboard },
   { href: '/my-workout', label: 'Ficha do dia', short: 'Ficha', icon: PlayCircle },
+  { href: '/my-library', label: 'Biblioteca', short: 'Biblioteca', icon: LibraryBig },
   { href: '/my-exercises', label: 'Montar ficha', short: 'Montar', icon: BookOpen },
   { href: '/my-plans', label: 'Minhas fichas', short: 'Fichas', icon: Dumbbell },
   { href: '/my-history', label: 'Histórico', short: 'Histórico', icon: History },
