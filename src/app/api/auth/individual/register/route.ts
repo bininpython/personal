@@ -60,6 +60,11 @@ export async function POST(request: Request) {
       )))).some(Boolean);
       if (codeAlreadyUsed) continue;
 
+      const [accessHash, recoveryPasswordHash] = await Promise.all([
+        hashPassword(canonicalCode),
+        hashPassword(parsed.data.password),
+      ]);
+
       const userId = crypto.randomUUID();
       const { data: user, error } = await admin
         .from('individual_users')
@@ -67,12 +72,14 @@ export async function POST(request: Request) {
           id: userId,
           name: parsed.data.full_name,
           login_name_normalized: normalizedName,
-          access_code_hash: await hashPassword(canonicalCode),
+          access_code_hash: accessHash,
+          password_hash: recoveryPasswordHash,
           access_code_hint: getCodeHint(accessCode),
           access_code_changed_at: new Date().toISOString(),
           credential_version: 2,
           goal: parsed.data.goal || null,
           level: parsed.data.level,
+          age: parsed.data.age,
           terms_accepted_at: new Date().toISOString(),
           terms_version: '2026-08-11',
           privacy_policy_version: '2026-08-11',

@@ -100,8 +100,12 @@ export default function IndividualLoginPage() {
           </Button>
         </form>
 
-        <div className="mt-7 flex items-center justify-between text-sm font-semibold">
-          <Link href="/login/individual/migrate" className="text-black/55 hover:text-black">Tenho conta com e-mail</Link>
+        <div className="mt-7 flex flex-col items-center gap-4 text-sm font-semibold sm:flex-row sm:justify-between">
+          <div className="flex gap-4">
+            <Link href="/login/individual/migrate" className="text-black/55 hover:text-black">Tenho conta com e-mail</Link>
+            <span className="text-black/20 hidden sm:inline">•</span>
+            <Link href="/recover/individual" className="text-black/55 hover:text-black">Esqueci o código</Link>
+          </div>
           <Link href="/register/individual" className="text-[#557900] hover:underline">Criar conta</Link>
         </div>
       </AuthScene>

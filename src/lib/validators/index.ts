@@ -56,6 +56,8 @@ export const individualRegisterSchema = z.object({
   full_name: z.string().trim().min(3, 'Informe seu nome completo').max(160),
   goal: z.string().trim().max(200).optional(),
   level: z.enum(['beginner', 'intermediate', 'advanced']),
+  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres').max(72, 'Senha muito longa'),
+  age: z.number().int('Informe uma idade válida').min(18, 'Você deve ter pelo menos 18 anos').max(100, 'Informe uma idade válida'),
   terms_accepted: z.boolean().refine((value) => value, 'Aceite os Termos e a Política de Privacidade.'),
 }).strict();
 

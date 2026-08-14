@@ -121,11 +121,21 @@ export default function IndividualRegisterPage() {
                     <option value="advanced">Avançado</option>
                   </select>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="age" className="text-xs font-bold uppercase tracking-[0.12em]">Idade</Label>
+                  <Input id="age" type="number" min={18} max={100} inputMode="numeric" placeholder="18" className="h-12 rounded-xl border-black/12 bg-white px-4" {...register('age', { valueAsNumber: true })} />
+                  {errors.age && <p className="text-xs text-destructive">{errors.age.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-xs font-bold uppercase tracking-[0.12em]">Senha de recuperação</Label>
+                  <Input id="password" type="password" placeholder="Mínimo de 6 caracteres" className="h-12 rounded-xl border-black/12 bg-white px-4" {...register('password')} />
+                  {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+                </div>
               </div>
 
               <div className="flex gap-3 rounded-2xl border border-black/8 bg-white/60 p-4">
                 <ShieldCheck className="mt-0.5 size-5 shrink-0" />
-                <p className="text-xs leading-5 text-black/50">Sua conta não precisa de e-mail ou senha. O acesso será feito com seu nome completo e o código pessoal.</p>
+                <p className="text-xs leading-5 text-black/50">A senha não é pedida no login. Ela confirma sua identidade apenas quando você precisa gerar um novo código.</p>
               </div>
               <label className="flex items-start gap-3 text-xs leading-5 text-black/55">
                 <input type="checkbox" className="mt-0.5 size-4 accent-black" {...register('terms_accepted')} />
