@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Download, Eye, Loader2, Lock, Search, Send, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
-import { DEMO_ALLOWED_LIBRARY_IDS, isDemoUser } from '@/lib/auth/demo';
+import { isDemoUser } from '@/lib/auth/demo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
