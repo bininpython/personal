@@ -77,7 +77,7 @@ export default function IndividualDashboardPage() {
               <div className="mt-4 flex gap-2">
                 <Button nativeButton={false} size="sm" render={<Link href="/my-workout" />} className="flex-1">{activeWorkout?.week.completedToday ? 'Consultar próxima' : 'Iniciar ficha'}</Button>
                 {isDemoUser(user?.id) ? (
-                  <Button size="icon" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}><Lock className="size-4" /></Button>
+                  <Button size="icon" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}><Lock className="size-4" /></Button>
                 ) : (
                   <Button nativeButton={false} size="icon" variant="outline" render={<a href={`/api/individual/workout-plans/${activePlan.id}/pdf`} download />} className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" aria-label="Baixar PDF"><Download className="size-4" /></Button>
                 )}

@@ -775,7 +775,7 @@ export default function StudentWorkoutPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             {isDemoUser(user?.id) ? (
-              <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para alunos ativos. Solicite o link de cadastro ao seu personal.')} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+              <Button variant="outline" onClick={() => toast.error('Exclusivo para alunos.', { description: 'Solicite o link completo de cadastro ao seu personal para liberar o PDF.' })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
                 <Lock className="mr-2 size-3.5" /> Baixar PDF
               </Button>
             ) : (

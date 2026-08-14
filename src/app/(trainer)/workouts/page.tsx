@@ -198,7 +198,7 @@ export default function WorkoutsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {isDemoUser(user?.id) ? (
-                    <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+                    <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
                       <Lock className="mr-2 size-4" /> PDF
                     </Button>
                   ) : (

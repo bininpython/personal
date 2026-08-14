@@ -226,8 +226,8 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
                   <Button variant="outline" onClick={() => void openTemplate(template.id)} disabled={detailLoading === template.id}>
                     {detailLoading === template.id ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Eye className="mr-2 size-4" />} Ver ficha
                   </Button>
-                  {isDemoUser(user?.id) && !DEMO_ALLOWED_LIBRARY_IDS.includes(template.id) ? (
-                    <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+                  {isDemoUser(user?.id) ? (
+                    <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download de todas as fichas.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
                       <Lock className="mr-2 size-4" /> PDF
                     </Button>
                   ) : (
@@ -253,8 +253,8 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
               <Tabs defaultValue={selected.days[0]?.label}><TabsList className="h-11 max-w-full overflow-x-auto">{selected.days.map((day) => <TabsTrigger key={day.label} value={day.label} className="px-4">Ficha {day.label}</TabsTrigger>)}</TabsList>{selected.days.map((day) => <TabsContent key={day.label} value={day.label} className="mt-5"><div className="mb-4 flex items-center justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#668b00]">Rotina {day.label}</p><h3 className="text-lg font-black">{day.name}</h3></div><Badge variant="secondary">{day.exercises.length} exercícios</Badge></div><div className="grid gap-3 md:grid-cols-2">{day.exercises.map((exercise, index) => <div key={`${day.label}-${exercise.exerciseKey}-${index}`} className="grid grid-cols-[96px_1fr] overflow-hidden rounded-2xl border bg-card"><ExerciseImage name={exercise.sourceName || exercise.catalog.name} videoUrl={exercise.catalog.videoUrl} className="min-h-32" /><div className="min-w-0 p-3"><div className="flex items-start gap-2"><span className="text-[10px] font-black text-[#668b00]">{String(index + 1).padStart(2, '0')}</span><h4 className="leading-5 font-bold">{exercise.sourceName || exercise.catalog.name}</h4></div><p className="mt-1 text-[11px] text-muted-foreground">{exercise.primaryMuscleLabel} · {exercise.catalog.equipment}</p><p className="mt-2 text-xs font-bold">{exercise.sets} séries · {exercise.reps} reps · {exercise.restTime}s</p><Badge variant="outline" className="mt-2 text-[9px]">{METHOD_LABELS[exercise.method] || exercise.method}</Badge>{exercise.methodNotes && <p className="mt-2 line-clamp-2 text-[10px] leading-4 text-muted-foreground">{exercise.methodNotes}</p>}</div></div>)}</div></TabsContent>)}</Tabs>
             </div>
             <DialogFooter className="sticky bottom-0 mt-2 bg-popover/95 backdrop-blur-xl">
-              {isDemoUser(user?.id) && !DEMO_ALLOWED_LIBRARY_IDS.includes(selected.id) ? (
-                <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+              {isDemoUser(user?.id) ? (
+                <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download de todas as fichas.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
                   <Lock className="mr-2 size-4" /> Baixar PDF
                 </Button>
               ) : (

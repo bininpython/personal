@@ -400,7 +400,7 @@ export default function IndividualWorkoutPage() {
               <div className="flex flex-wrap gap-2">
                 <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my-history" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><History className="mr-2 size-4" /> Histórico</Button>
                 {isDemoUser(user?.id) ? (
-                  <Button size="sm" variant="secondary" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                  <Button size="sm" variant="secondary" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
                     <Lock className="mr-2 size-4" /> PDF
                   </Button>
                 ) : (

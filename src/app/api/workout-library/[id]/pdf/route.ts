@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
-import { DEMO_ALLOWED_LIBRARY_IDS, isDemoUser } from '@/lib/auth/demo';
+import { isDemoUser } from '@/lib/auth/demo';
 import { createWorkoutPlanPdf, workoutPlanPdfFilename } from '@/lib/pdf/workout-plan';
 import { getWorkoutLibraryTemplate, workoutLibraryToPrintablePlan } from '@/lib/workout-library';
 
@@ -15,7 +15,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const parsed = templateIdSchema.safeParse((await params).id);
     if (!parsed.success) return Response.json({ error: 'Modelo inválido.' }, { status: 400 });
     
-    if (isDemoUser(session.sub) && !DEMO_ALLOWED_LIBRARY_IDS.includes(parsed.data)) {
+    if (isDemoUser(session.sub)) {
       return Response.json({ error: 'Download restrito na conta de demonstração.' }, { status: 403 });
     }
     const template = getWorkoutLibraryTemplate(parsed.data);

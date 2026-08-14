@@ -11,5 +11,3 @@ export function isDemoUser(userId: string | null | undefined): boolean {
   return DEMO_IDS_ARRAY.includes(userId as any);
 }
 
-// Fichas da biblioteca liberadas para teste
-export const DEMO_ALLOWED_LIBRARY_IDS = ['WL-001', 'WL-002'];

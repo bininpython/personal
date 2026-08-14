@@ -37,7 +37,7 @@ export default function IndividualPlanDetailPage() {
 
   return <div className="space-y-7 pb-10 animate-fade-in"><div className="flex flex-wrap items-center justify-between gap-3"><Button nativeButton={false} variant="ghost" render={<Link href="/my-plans" />}><ArrowLeft className="mr-2 size-4" /> Minhas fichas</Button><div className="flex flex-wrap gap-2"><Button nativeButton={false} variant="outline" render={<Link href={`/my-exercises?planId=${plan.id}`} />}><Pencil className="mr-2 size-4" /> Editar</Button>
   {isDemoUser(user?.id) ? (
-    <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+    <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
       <Lock className="mr-2 size-4" /> Baixar PDF
     </Button>
   ) : (
