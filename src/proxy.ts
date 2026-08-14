@@ -14,6 +14,7 @@ const PUBLIC_PATHS = new Set([
   '/terms',
   '/privacy',
   '/recover',
+  '/recover/individual',
   '/help',
   '/icon',
   '/opengraph-image',
