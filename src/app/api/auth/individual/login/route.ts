@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { verifyPassword } from '@/lib/auth/hash';
+import { normalizeAuthCode } from '@/lib/auth/credentials';
+import { normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { clearRateLimit, consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -7,7 +8,7 @@ import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 import { DATABASE_UPDATE_REQUIRED, isCommercialSchemaMissing } from '@/lib/supabase/errors';
 import { individualLoginSchema } from '@/lib/validators';
 
-const GENERIC_ERROR = 'E-mail ou senha inválidos.';
+const GENERIC_ERROR = 'Nome ou código de acesso inválido.';
 
 function json(body: Record<string, unknown>, status: number, headers?: HeadersInit) {
   return NextResponse.json(body, {
@@ -19,13 +20,15 @@ function json(body: Record<string, unknown>, status: number, headers?: HeadersIn
 export async function POST(request: Request) {
   try {
     const parsed = individualLoginSchema.safeParse(await request.json());
-    if (!parsed.success) return json({ error: 'Revise seu e-mail e sua senha.' }, 400);
+    if (!parsed.success) return json({ error: 'Revise seu nome e o código informado.' }, 400);
 
-    const email = parsed.data.email.trim().toLocaleLowerCase('pt-BR');
+    const { name, access_code: accessCode, remember } = parsed.data;
+    const normalizedName = normalizeName(name);
+    const canonicalCode = normalizeAuthCode(accessCode).toUpperCase();
     const limit = await consumeRateLimit({
       request,
       scope: 'individual-login',
-      identifier: email,
+      identifier: normalizedName,
       maxAttempts: 5,
       windowSeconds: 900,
       blockSeconds: 900,
@@ -39,28 +42,36 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
-    const { data: user, error } = await admin
+    const { data: candidates, error } = await admin
       .from('individual_users')
-      .select('id, name, password_hash, status, failed_login_attempts, locked_until, avatar_url')
-      .eq('email_normalized', email)
+      .select('id, name, status, access_code_hash, failed_login_attempts, locked_until, avatar_url')
+      .eq('login_name_normalized', normalizedName)
       .is('deleted_at', null)
-      .maybeSingle();
+      .limit(10);
     if (error) throw error;
 
-    const locked = user?.locked_until && new Date(user.locked_until) > new Date();
-    const passwordIsValid = user && !locked
-      ? await verifyPassword(parsed.data.password, user.password_hash).catch(() => false)
-      : false;
+    let user: NonNullable<typeof candidates>[number] | null = null;
+    for (const candidate of candidates ?? []) {
+      if (candidate.status !== 'active') continue;
+      if (candidate.locked_until && new Date(candidate.locked_until) > new Date()) continue;
+      const valid = candidate.access_code_hash
+        ? await verifyPassword(canonicalCode, candidate.access_code_hash).catch(() => false)
+        : false;
+      if (valid) {
+        user = candidate;
+        break;
+      }
+    }
 
-    if (!user || user.status !== 'active' || !passwordIsValid) {
-      if (user) {
-        const attempts = Number(user.failed_login_attempts || 0) + 1;
+    if (!user) {
+      for (const candidate of candidates ?? []) {
+        const attempts = Number(candidate.failed_login_attempts || 0) + 1;
         await admin.from('individual_users').update({
           failed_login_attempts: attempts,
           locked_until: attempts >= 5
             ? new Date(Date.now() + 15 * 60 * 1000).toISOString()
             : null,
-        }).eq('id', user.id);
+        }).eq('id', candidate.id);
       }
       return json({ error: GENERIC_ERROR }, 401);
     }
@@ -76,7 +87,7 @@ export async function POST(request: Request) {
       role: 'individual',
       trainerId: user.id,
       request,
-      remember: parsed.data.remember,
+      remember,
     });
 
     return json({

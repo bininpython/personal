@@ -54,17 +54,23 @@ export type StudentLoginInput = z.infer<typeof studentLoginSchema>;
 
 export const individualRegisterSchema = z.object({
   full_name: z.string().trim().min(3, 'Informe seu nome completo').max(160),
-  email: z.string().trim().toLowerCase().email('Informe um e-mail válido').max(254),
-  password: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres').max(72, 'Senha muito longa'),
   goal: z.string().trim().max(200).optional(),
   level: z.enum(['beginner', 'intermediate', 'advanced']),
   terms_accepted: z.boolean().refine((value) => value, 'Aceite os Termos e a Política de Privacidade.'),
 }).strict();
 
 export const individualLoginSchema = z.object({
+  name: z.string().trim().min(3, 'Informe seu nome completo').max(160),
+  access_code: z.string().trim().refine(
+    (code) => /^\d{6}$/.test(normalizeAuthCode(code)),
+    'Use o código de 6 números',
+  ),
+  remember: z.boolean().optional(),
+}).strict();
+
+export const individualLegacyMigrationSchema = z.object({
   email: z.string().trim().toLowerCase().email('Informe um e-mail válido').max(254),
   password: z.string().min(8).max(72),
-  remember: z.boolean().optional(),
 }).strict();
 
 export const individualProfileSchema = z.object({
@@ -83,6 +89,7 @@ export const individualProfileSchema = z.object({
 
 export type IndividualRegisterInput = z.infer<typeof individualRegisterSchema>;
 export type IndividualLoginInput = z.infer<typeof individualLoginSchema>;
+export type IndividualLegacyMigrationInput = z.infer<typeof individualLegacyMigrationSchema>;
 export type IndividualProfileInput = z.infer<typeof individualProfileSchema>;
 
 // ---- Student Registration (by trainer) ----

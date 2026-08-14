@@ -18,7 +18,10 @@ export function AccountControls({ name, trainer = false, individual = false }: {
   async function rotateCodes() {
     setRotating(true);
     try {
-      const response = await fetch('/api/auth/trainer/rotate-codes', { method: 'POST' });
+      const endpoint = individual
+        ? '/api/auth/individual/rotate-code'
+        : '/api/auth/trainer/rotate-codes';
+      const response = await fetch(endpoint, { method: 'POST' });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Não foi possível trocar o código.');
       setNewAccessCode(data.access_code);
@@ -55,7 +58,7 @@ export function AccountControls({ name, trainer = false, individual = false }: {
         <Button nativeButton={false} variant="outline" render={<a href="/api/account/export" download />}>
           <Download className="mr-2 size-4" /> Exportar meus dados
         </Button>
-        {trainer && <Button variant="outline" onClick={() => void rotateCodes()} disabled={rotating}>
+        {(trainer || individual) && <Button variant="outline" onClick={() => void rotateCodes()} disabled={rotating}>
           {rotating ? <Loader2 className="mr-2 size-4 animate-spin" /> : <KeyRound className="mr-2 size-4" />} Trocar código de acesso
         </Button>}
       </div>
@@ -63,7 +66,11 @@ export function AccountControls({ name, trainer = false, individual = false }: {
         <div className="space-y-3 rounded-lg border border-warn/30 bg-warn-wash p-4">
           <p className="font-medium">Salve agora. Este código aparece uma única vez.</p>
           <div><span className="text-xs text-muted-foreground">NOVO CÓDIGO PESSOAL</span><code className="mt-1 block font-mono text-2xl font-bold tracking-[0.16em]">{newAccessCode}</code></div>
-          <p className="text-xs text-muted-foreground">Sua senha e idade continuam válidas para recuperação.</p>
+          <p className="text-xs text-muted-foreground">
+            {individual
+              ? 'O código anterior deixou de funcionar. Guarde este novo código em local seguro.'
+              : 'Sua senha e idade continuam válidas para recuperação.'}
+          </p>
         </div>
       )}
       {!showDelete ? (

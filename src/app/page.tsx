@@ -178,7 +178,7 @@ export default function LandingPage() {
               {[
                 { icon: ShieldCheck, tag: 'PERSONAL', title: 'Nome + código pessoal', text: 'Cadastre-se uma vez e receba um único código no formato 000-000.' },
                 { icon: KeyRound, tag: 'ALUNO', title: 'Nome + código do aluno', text: 'O personal cria o código no perfil do aluno e envia. Só isso.' },
-                { icon: Sparkles, tag: 'INDEPENDENTE', title: 'E-mail + senha próprios', text: 'Crie suas fichas, gerencie o perfil e baixe o treino em PDF sem depender de um personal.' },
+                { icon: Sparkles, tag: 'INDEPENDENTE', title: 'Nome + código pessoal', text: 'Crie suas fichas, gerencie o perfil e baixe o treino em PDF sem depender de um personal.' },
                 { icon: Zap, tag: 'RECUPERAÇÃO', title: 'Acesso protegido', text: 'Sessões revogáveis e bloqueio automático contra tentativas repetidas.' },
               ].map((step, index) => (
                 <div key={step.tag} className="grid gap-5 rounded-3xl border border-black/10 bg-white p-6 shadow-sm sm:grid-cols-[56px_1fr_auto] sm:items-center">

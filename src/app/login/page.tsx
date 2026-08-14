@@ -52,7 +52,7 @@ export default function LoginPage() {
 
         <div className="mt-7 flex items-center gap-3 rounded-2xl border border-black/8 bg-white/60 p-4 text-xs leading-5 text-black/48">
           <Dumbbell className="size-5 shrink-0 text-black" />
-          Personal e aluno acessam por código. A conta individual usa e-mail e senha próprios.
+          Todos os perfis acessam com nome e código pessoal de 6 números.
         </div>
       </AuthScene>
     </div>

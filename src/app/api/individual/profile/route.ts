@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth/session';
+import { normalizeName } from '@/lib/auth/hash';
 import { isPrivateAvatar } from '@/lib/profile/private-avatar';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { individualProfileSchema } from '@/lib/validators';
@@ -13,7 +14,6 @@ function publicProfile(row: Record<string, unknown>) {
   return {
     id: row.id,
     full_name: row.name,
-    email: row.email,
     avatar_url: isPrivateAvatar(avatar)
       ? `/api/profile/avatar/image?user=${encodeURIComponent(String(row.id))}`
       : avatar,
@@ -31,7 +31,7 @@ function publicProfile(row: Record<string, unknown>) {
   };
 }
 
-const PROFILE_COLUMNS = 'id, name, email, avatar_url, city, birth_date, gender, height, weight, goal, level, available_days, restrictions, biography, created_at';
+const PROFILE_COLUMNS = 'id, name, avatar_url, city, birth_date, gender, height, weight, goal, level, available_days, restrictions, biography, created_at';
 
 export async function GET() {
   try {
@@ -65,6 +65,7 @@ export async function PATCH(request: Request) {
       .from('individual_users')
       .update({
         name: value.full_name,
+        login_name_normalized: normalizeName(value.full_name),
         city: value.city || null,
         birth_date: value.birth_date || null,
         gender: value.gender || null,

@@ -58,6 +58,10 @@ export function generateStudentPrivateCode() {
   return generateAccessCode();
 }
 
+export function generateIndividualPrivateCode() {
+  return generateAccessCode();
+}
+
 // Mantido apenas como identificador interno para compatibilidade com contas
 // anteriores. Este valor nunca é exibido como uma credencial ao usuário.
 export function generateTrainerPublicCode() {

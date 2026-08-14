@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/auth/hash';
+import {
+  generateIndividualPrivateCode,
+  getCodeHint,
+  normalizeAuthCode,
+} from '@/lib/auth/credentials';
+import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { consumeRateLimit } from '@/lib/auth/rate-limit';
 import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -36,51 +41,67 @@ export async function POST(request: Request) {
     }
 
     const admin = createAdminClient();
-    const email = parsed.data.email.trim().toLocaleLowerCase('pt-BR');
-    const { data: existing, error: existingError } = await admin
+    const normalizedName = normalizeName(parsed.data.full_name);
+    const { data: existingCandidates, error: candidatesError } = await admin
       .from('individual_users')
-      .select('id')
-      .eq('email_normalized', email)
+      .select('access_code_hash')
+      .eq('login_name_normalized', normalizedName)
       .is('deleted_at', null)
-      .maybeSingle();
-    if (existingError) throw existingError;
-    if (existing) return json({ error: 'Este e-mail já possui uma conta individual.' }, 409);
+      .limit(50);
+    if (candidatesError) throw candidatesError;
 
-    const userId = crypto.randomUUID();
-    const { data: user, error } = await admin
-      .from('individual_users')
-      .insert({
-        id: userId,
-        name: parsed.data.full_name,
-        email,
-        email_normalized: email,
-        password_hash: await hashPassword(parsed.data.password),
-        goal: parsed.data.goal || null,
-        level: parsed.data.level,
-        terms_accepted_at: new Date().toISOString(),
-        terms_version: '2026-08-11',
-        privacy_policy_version: '2026-08-11',
-      })
-      .select('id, name')
-      .single();
-    if (error || !user) throw error || new Error('Conta individual não criada.');
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      const accessCode = generateIndividualPrivateCode();
+      const canonicalCode = normalizeAuthCode(accessCode).toUpperCase();
+      const codeAlreadyUsed = (await Promise.all((existingCandidates ?? []).map((candidate) => (
+        candidate.access_code_hash
+          ? verifyPassword(canonicalCode, candidate.access_code_hash).catch(() => false)
+          : Promise.resolve(false)
+      )))).some(Boolean);
+      if (codeAlreadyUsed) continue;
 
-    await createSession({
-      actorId: user.id,
-      role: 'individual',
-      trainerId: user.id,
-      request,
-    });
+      const userId = crypto.randomUUID();
+      const { data: user, error } = await admin
+        .from('individual_users')
+        .insert({
+          id: userId,
+          name: parsed.data.full_name,
+          login_name_normalized: normalizedName,
+          access_code_hash: await hashPassword(canonicalCode),
+          access_code_hint: getCodeHint(accessCode),
+          access_code_changed_at: new Date().toISOString(),
+          credential_version: 2,
+          goal: parsed.data.goal || null,
+          level: parsed.data.level,
+          terms_accepted_at: new Date().toISOString(),
+          terms_version: '2026-08-11',
+          privacy_policy_version: '2026-08-11',
+        })
+        .select('id, name')
+        .single();
+      if (error || !user) throw error || new Error('Conta individual não criada.');
 
-    return json({
-      success: true,
-      user: {
-        id: user.id,
+      await createSession({
+        actorId: user.id,
         role: 'individual',
-        name: user.name,
-        trainer_id: user.id,
-      },
-    }, 201);
+        trainerId: user.id,
+        request,
+      });
+
+      return json({
+        success: true,
+        access_code: accessCode,
+        codes_shown_once: true,
+        user: {
+          id: user.id,
+          role: 'individual',
+          name: user.name,
+          trainer_id: user.id,
+        },
+      }, 201);
+    }
+
+    return json({ error: 'Não foi possível gerar um código exclusivo. Tente novamente.' }, 503);
   } catch (error) {
     if (isCommercialSchemaMissing(error)) {
       console.error('[Individual Register] Database migration required:', error);

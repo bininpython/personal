@@ -41,7 +41,6 @@ export interface IndividualPlanView {
 export interface IndividualProfileView {
   id: string;
   full_name: string;
-  email: string;
   avatar_url: string;
   city: string;
   birth_date: string;
