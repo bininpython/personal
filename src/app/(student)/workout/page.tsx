@@ -496,6 +496,10 @@ export default function StudentWorkoutPage() {
 
   const activeDay = plan?.days.find((day) => day.id === selectedDayId) ?? plan?.days[0] ?? null;
   const suggestedDay = plan?.days.find((day) => day.id === plan.week.nextWorkoutDayId) ?? null;
+  const weeklySequence = plan
+    ? Array.from({ length: plan.week.target }, (_, index) => plan.days[index % plan.days.length]?.label)
+      .filter((label): label is string => Boolean(label))
+    : [];
   const totalSets = activeDay?.exercises.reduce((total, exercise) => total + exercise.sets, 0) ?? 0;
   const completedInDay = useMemo(() => {
     if (!activeDay) return 0;
@@ -790,7 +794,7 @@ export default function StudentWorkoutPage() {
           <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
             <Dumbbell className="mb-1 size-4" />
             <p className="text-lg font-bold">{plan.days.length}</p>
-            <p className="text-[11px] text-black/65">treinos diferentes</p>
+            <p className="text-[11px] text-black/65">fichas diferentes</p>
           </div>
           <div className="col-span-2 rounded-2xl border border-white/12 bg-white/[0.06] p-4 sm:col-span-1">
             <CheckCircle2 className="mb-1 size-4 text-[#c9ff32]" />
@@ -844,7 +848,7 @@ export default function StudentWorkoutPage() {
           <div>
             <p className="font-semibold text-warn">O prazo desta ficha terminou</p>
             <p className="mt-1 text-muted-foreground">
-              Ela continua disponível para consulta e execução. Seu personal recebeu um alerta para revisar ou renovar o treino.
+              Ela continua disponível para consulta e execução. Seu personal recebeu um alerta para revisar ou renovar a ficha.
             </p>
           </div>
         </div>
@@ -854,11 +858,11 @@ export default function StudentWorkoutPage() {
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold">{plan.week.isComplete ? 'Semana concluída!' : 'Seu ciclo desta semana'}</p>
+              <p className="font-semibold">{plan.week.isComplete ? 'Sequência semanal concluída!' : 'Fichas desta semana'}</p>
               <p className="text-xs text-muted-foreground">
                 {plan.week.isComplete
-                  ? `Meta alcançada. A rotação continua pelo ${suggestedDay ? `Treino ${suggestedDay.label}` : 'próximo treino'} na próxima semana.`
-                  : `${plan.week.completed} de ${plan.week.target} treino(s) concluído(s). Continue pelo treino destacado.`}
+                  ? `Meta alcançada. Na próxima semana, a sequência começa novamente pela Ficha ${plan.days[0]?.label}.`
+                  : `Sequência: ${weeklySequence.join(' → ')}. ${plan.week.completed} de ${plan.week.target} ficha(s) concluída(s); continue pela ficha destacada.`}
               </p>
             </div>
             <span className="text-2xl font-black text-[#668f00]">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</span>
@@ -884,7 +888,7 @@ export default function StudentWorkoutPage() {
             {pendingDays.has(day.id)
               ? <CloudUpload className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-warn'}`} />
               : day.completedThisWeek && <CheckCircle2 className={`absolute right-2 top-2 size-4 ${activeDay?.id === day.id ? 'text-white' : 'text-ok'}`} />}
-            <span className="block text-[10px] font-bold uppercase opacity-75">Treino {day.label}</span>
+            <span className="block text-[10px] font-bold uppercase opacity-75">Ficha {day.label}</span>
             <span className="mt-0.5 block truncate text-sm font-semibold">{day.name}</span>
             <span className="mt-1 block text-[10px] opacity-70">
               {pendingDays.has(day.id) ? 'Aguardando envio' : `${day.weeklyCompletions}/${day.weeklyAllowance} nesta semana`}
@@ -898,8 +902,8 @@ export default function StudentWorkoutPage() {
           <CardContent className="flex items-start gap-3 p-4 sm:p-5">
             <CalendarClock className="mt-0.5 size-5 shrink-0 text-[#668f00]" />
             <div>
-              <p className="font-bold">Próximo da rotação: Treino {activeDay?.label}</p>
-              <p className="mt-1 text-sm text-muted-foreground">O treino de hoje já foi concluído. Esta ficha fica disponível para execução amanhã; você pode consultá-la agora.</p>
+              <p className="font-bold">Próxima ficha do dia: Ficha {activeDay?.label}</p>
+              <p className="mt-1 text-sm text-muted-foreground">A ficha de hoje já foi concluída. Esta próxima ficha fica disponível amanhã; você pode consultá-la agora.</p>
             </div>
           </CardContent>
         </Card>
@@ -911,7 +915,7 @@ export default function StudentWorkoutPage() {
             <CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" />
             <div>
               <p className="font-bold">Ficha disponível somente para consulta</p>
-              <p className="mt-1 text-sm text-muted-foreground">Para manter sua progressão, conclua primeiro o treino destacado na sequência.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Para manter sua progressão, conclua primeiro a ficha destacada na sequência.</p>
             </div>
           </CardContent>
         </Card>
@@ -926,16 +930,16 @@ export default function StudentWorkoutPage() {
                   <p className="text-sm font-semibold">Progresso de hoje</p>
                   <p className="text-xs text-muted-foreground">
                     {activeDayPending
-                      ? 'Treino completo e guardado com segurança neste aparelho'
+                      ? 'Ficha completa e guardada com segurança neste aparelho'
                       : activeDayLockedUntilTomorrow
-                        ? `Próximo da sequência, disponível amanhã`
+                        ? 'Próxima ficha da sequência, disponível amanhã'
                         : activeDayLockedByRotation
-                          ? 'Consulte agora e execute quando chegar a vez deste treino'
+                          ? 'Consulte agora e execute quando chegar a vez desta ficha'
                       : activeDayCompleted
                         ? activeDay.completedThisWeek
-                          ? 'Meta deste treino concluída na semana'
-                          : 'Treino concluído hoje; a próxima repetição será em outro dia'
-                        : `${completedInDay} de ${totalSets} séries concluídas neste treino`}
+                          ? 'Meta desta ficha concluída na semana'
+                          : 'Ficha concluída hoje; a próxima ficha será liberada em outro dia'
+                        : `${completedInDay} de ${totalSets} séries concluídas nesta ficha`}
                   </p>
                 </div>
                 <span className="text-2xl font-black text-[#668f00]">{progress}%</span>
@@ -1045,7 +1049,7 @@ export default function StudentWorkoutPage() {
               <CardContent className="p-5 text-center">
                 {activeDayPending ? <CloudUpload className="mx-auto mb-2 size-9 text-warn" /> : <CheckCircle2 className="mx-auto mb-2 size-9 text-ok" />}
                 {activeDayPending ? <>
-                  <h2 className="font-bold">Treino salvo neste aparelho</h2>
+                  <h2 className="font-bold">Ficha salva neste aparelho</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
                     As séries, cargas e sua avaliação estão seguras. O histórico será atualizado assim que o envio terminar.
                   </p>
@@ -1056,7 +1060,7 @@ export default function StudentWorkoutPage() {
                     </Button>
                   )}
                 </> : activeDayCompleted ? <>
-                  <h2 className="font-bold">{activeDay.completedThisWeek ? 'Meta deste treino concluída na semana' : 'Treino concluído hoje'}</h2>
+                  <h2 className="font-bold">{activeDay.completedThisWeek ? 'Meta desta ficha concluída na semana' : 'Ficha concluída hoje'}</h2>
                   <p className="mt-1 text-sm text-muted-foreground">O resultado está salvo no histórico e na evolução.</p>
                   {suggestedDay && suggestedDay.id !== activeDay.id && <Button className="mt-4" onClick={() => selectWorkoutDay(suggestedDay.id)}><Dumbbell className="mr-2 size-4" /> Ir para {suggestedDay.name}</Button>}
                   {!suggestedDay && <Badge className="mt-4 bg-ok-wash text-ok">Ciclo semanal completo</Badge>}
@@ -1064,8 +1068,8 @@ export default function StudentWorkoutPage() {
                   <h2 className="font-bold">Todas as séries foram marcadas</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {isOnline
-                      ? 'Conclua para registrar este treino no histórico e na evolução.'
-                      : 'Sem internet? Tudo bem: o treino será guardado neste aparelho.'}
+                      ? 'Conclua para registrar esta ficha no histórico e na evolução.'
+                      : 'Sem internet? Tudo bem: a ficha será guardada neste aparelho.'}
                   </p>
                   <div className="mx-auto mt-4 max-w-sm space-y-3">
                     <div className="flex justify-center gap-1" aria-label="Avaliação do treino">{[1, 2, 3, 4, 5].map((value) => <button key={value} type="button" className="flex size-11 items-center justify-center rounded-full" onClick={() => setRating(value)} aria-label={`${value} estrela(s)`}><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'}`} /></button>)}</div>
@@ -1073,7 +1077,7 @@ export default function StudentWorkoutPage() {
                   </div>
                   <Button className="mt-4 bg-black text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black" onClick={() => void completeWorkout()} disabled={completingWorkout}>
                     {completingWorkout && <Loader2 className="mr-2 size-4 animate-spin" />}
-                    {isOnline ? 'Concluir e salvar treino' : 'Salvar treino no aparelho'}
+                    {isOnline ? 'Concluir e salvar ficha' : 'Salvar ficha no aparelho'}
                   </Button>
                 </>}
               </CardContent>

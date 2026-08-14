@@ -110,7 +110,10 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
     const pdf = await context.request.get(`/api/individual/workout-plans/${plan.plan.id}/pdf`);
     expect(pdf.status()).toBe(200);
     expect(pdf.headers()['content-type']).toContain('application/pdf');
-    expect((await pdf.body()).subarray(0, 4).toString()).toBe('%PDF');
+    expect(pdf.headers()['content-disposition']).toContain('individual-qa');
+    const pdfBody = await pdf.body();
+    expect(pdfBody.subarray(0, 4).toString()).toBe('%PDF');
+    await testInfo.attach('ficha-individual.pdf', { body: pdfBody, contentType: 'application/pdf' });
 
     const activeWorkoutResponse = await context.request.get('/api/individual/workout');
     expect(activeWorkoutResponse.status()).toBe(200);
@@ -163,7 +166,7 @@ test('jornada real da conta individual', async ({ browser, baseURL }, testInfo) 
     expect(history.summary.completedWorkouts).toBe(1);
 
     await page.goto('/my-workout', { waitUntil: 'networkidle' });
-    await expect(page.getByText('Próximo da rotação: Treino B')).toBeVisible();
+    await expect(page.getByText('Próxima ficha do dia: Ficha B')).toBeVisible();
     await page.goto('/my-history', { waitUntil: 'networkidle' });
     await expect(page.getByText('Treino Individual QA A')).toBeVisible();
 

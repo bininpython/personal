@@ -118,7 +118,7 @@ export default function StudentHomePage() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <Badge className="dk-volt-chip mb-3 border-0">{plan.week.completedToday ? 'Treino de hoje concluído' : plan.week.isComplete ? 'Meta semanal concluída' : 'Próximo treino'}</Badge>
+                <Badge className="dk-volt-chip mb-3 border-0">{plan.week.completedToday ? 'Ficha de hoje concluída' : plan.week.isComplete ? 'Meta semanal concluída' : 'Próxima ficha'}</Badge>
                 <h2 className="text-2xl font-black tracking-[-0.04em] sm:text-3xl">{nextWorkout.name}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">{plan.name} · {plan.goal}</p>
               </div>
@@ -130,7 +130,7 @@ export default function StudentHomePage() {
               <div className="dk-metric p-4">
                 <Dumbbell className="mb-2 size-4" />
                 <p className="text-lg font-black">{nextWorkout.exercises.length} exercícios</p>
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Treino {nextWorkout.label}</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Ficha {nextWorkout.label}</p>
               </div>
               <div className="dk-metric p-4">
                 <Target className="mb-2 size-4 text-[#7cae00]" />
@@ -139,7 +139,7 @@ export default function StudentHomePage() {
               </div>
             </div>
             <Button className="mt-5 h-12 w-full bg-black text-base text-white hover:bg-black/80 dark:bg-[#c9ff32] dark:text-black dark:hover:bg-[#b8ef22]" onClick={() => router.push(`/workout?day=${nextWorkout.id}`)}>
-              <Zap className="mr-2 size-5" /> {plan.week.completedToday || plan.week.isComplete ? `Consultar próximo: treino ${nextWorkout.label}` : 'Começar próximo treino'}
+              <Zap className="mr-2 size-5" /> {plan.week.completedToday || plan.week.isComplete ? `Consultar próxima: ficha ${nextWorkout.label}` : 'Começar ficha do dia'}
             </Button>
           </CardContent>
         </Card>
@@ -174,7 +174,7 @@ export default function StudentHomePage() {
                 className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-colors hover:border-[#9fdb00] hover:bg-[#c9ff32]/10 ${day.completedThisWeek ? 'border-[#9fdb00]/40 bg-[#c9ff32]/10' : ''}`}
               >
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#668f00]">Treino {day.label}</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#668f00]">Ficha {day.label}</p>
                   <p className="font-medium">{day.name}</p>
                   <p className="text-xs text-muted-foreground">{day.exercises.length} exercícios</p>
                 </div>

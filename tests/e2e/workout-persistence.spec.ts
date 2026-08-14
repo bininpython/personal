@@ -45,7 +45,7 @@ test('envia séries, repetições, carga, RPE, duração e idempotência', async
   await page.getByLabel('Carga da série 1').fill('42.5');
   await page.getByLabel('RPE da série 1').fill('8');
   await page.getByRole('button', { name: /Série 1/ }).click();
-  await page.getByRole('button', { name: 'Concluir e salvar treino' }).click();
+  await page.getByRole('button', { name: 'Concluir e salvar ficha' }).click();
   await expect.poll(() => submitted).not.toBeNull();
 
   const body = submitted as unknown as {
@@ -85,8 +85,8 @@ test('guarda o treino sem conexão e sincroniza automaticamente quando a rede vo
 
   await context.setOffline(true);
   await expect(page.getByText('Você está sem conexão')).toBeVisible();
-  await page.getByRole('button', { name: 'Salvar treino no aparelho' }).click();
-  await expect(page.getByRole('heading', { name: 'Treino salvo neste aparelho' })).toBeVisible();
+  await page.getByRole('button', { name: 'Salvar ficha no aparelho' }).click();
+  await expect(page.getByRole('heading', { name: 'Ficha salva neste aparelho' })).toBeVisible();
 
   const queuedBeforeReconnect = await page.evaluate((id) => {
     const value = localStorage.getItem(`dkong-workout-completion-queue:v1:${id}`);

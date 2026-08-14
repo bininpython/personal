@@ -52,7 +52,7 @@ export default function HistoryPage() {
       {error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center text-sm text-destructive">{error}</div>
       ) : history.length === 0 ? (
-        <Card className="border-dashed"><CardContent className="flex flex-col items-center p-10 text-center"><Dumbbell className="mb-3 size-10 text-muted-foreground/30" /><h2 className="font-bold">Nenhum treino concluído ainda</h2><p className="mt-1 max-w-sm text-sm text-muted-foreground">Marque todas as séries na aba Treino e use “Concluir e salvar treino”. O registro aparecerá aqui.</p></CardContent></Card>
+        <Card className="border-dashed"><CardContent className="flex flex-col items-center p-10 text-center"><Dumbbell className="mb-3 size-10 text-muted-foreground/30" /><h2 className="font-bold">Nenhuma ficha concluída ainda</h2><p className="mt-1 max-w-sm text-sm text-muted-foreground">Marque todas as séries em Ficha do dia e use “Concluir e salvar ficha”. O registro aparecerá aqui.</p></CardContent></Card>
       ) : (
         <div className="space-y-3">
           {history.map((workout) => (

@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     return new Response(Buffer.from(bytes), {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${workoutPlanPdfFilename(plan.name)}"`,
+        'Content-Disposition': `attachment; filename="${workoutPlanPdfFilename(`${user.name}-${plan.name}`)}"`,
         'Cache-Control': 'private, no-store',
         'X-Content-Type-Options': 'nosniff',
       },

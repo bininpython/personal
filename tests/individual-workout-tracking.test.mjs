@@ -32,11 +32,11 @@ test('execução individual valida propriedade, séries, limite diário e rotaç
   assert.match(route, /plan\.user_id !== session\.sub/);
   assert.match(route, /alreadyCompletedToday/);
   assert.match(route, /workout_date: dayRange\.date/);
-  assert.match(route, /Siga a sequência da ficha/);
-  assert.match(service, /nextWorkoutDayIdAfterLast/);
-  assert.match(page, /Iniciar treino/);
+  assert.match(route, /Siga a sequência semanal/);
+  assert.match(service, /nextWorkoutDayId/);
+  assert.match(page, /Iniciar ficha/);
   assert.match(page, /Tempo de descanso/);
-  assert.match(page, /Concluir e salvar treino/);
+  assert.match(page, /Concluir e salvar ficha/);
   assert.match(page, /disponível amanhã/);
 });
 

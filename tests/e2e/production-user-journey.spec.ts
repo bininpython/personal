@@ -282,10 +282,10 @@ test('jornada real de personal, aluno vinculado e atleta individual', async ({ b
       studentPage.waitForResponse((response) => (
         response.url().endsWith('/api/workout-sessions') && response.request().method() === 'POST'
       ), { timeout: 20_000 }),
-      studentPage.getByRole('button', { name: 'Concluir e salvar treino' }).click(),
+      studentPage.getByRole('button', { name: 'Concluir e salvar ficha' }).click(),
     ]);
     expect(completeWorkoutResponse.status()).toBe(201);
-    await expect(studentPage.getByRole('heading', { name: /Treino concluído hoje|Meta deste treino concluída/ })).toBeVisible();
+    await expect(studentPage.getByRole('heading', { name: /Ficha concluída hoje|Meta desta ficha concluída/ })).toBeVisible();
 
     const studentExport = await studentContext.request.get('/api/account/export');
     expect(studentExport.status()).toBe(200);

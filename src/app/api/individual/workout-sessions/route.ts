@@ -6,7 +6,7 @@ import { listIndividualWorkoutHistory } from '@/lib/workouts/individual-workout-
 import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
-  nextWorkoutDayIdAfterLast,
+  nextWorkoutDayId,
   weeklyWorkoutAllowance,
 } from '@/lib/workouts/week-cycle';
 
@@ -86,67 +86,60 @@ export async function POST(request: Request) {
     const { startedAt, completedAt, durationSeconds } = timing;
     const weekRange = getWorkoutWeekRange(completedAt);
     const dayRange = getWorkoutDayRange(completedAt);
-    const [sameDayResult, sameWorkoutWeekResult, previousSessionResult] = await Promise.all([
-      admin
-        .from('individual_workout_sessions')
-        .select('id, workout_day_id, completed_at')
-        .eq('user_id', session.sub)
-        .eq('workout_plan_id', plan.id)
-        .eq('status', 'completed')
-        .gte('completed_at', dayRange.startIso)
-        .lt('completed_at', dayRange.nextStartIso)
-        .order('completed_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      admin
-        .from('individual_workout_sessions')
-        .select('id, completed_at')
-        .eq('user_id', session.sub)
-        .eq('workout_day_id', day.id)
-        .eq('workout_plan_id', plan.id)
-        .eq('status', 'completed')
-        .gte('completed_at', weekRange.startIso)
-        .lt('completed_at', weekRange.nextStartIso)
-        .order('completed_at', { ascending: true }),
-      admin
-        .from('individual_workout_sessions')
-        .select('workout_day_id, completed_at')
-        .eq('user_id', session.sub)
-        .eq('workout_plan_id', plan.id)
-        .eq('status', 'completed')
-        .lt('completed_at', completedAt.toISOString())
-        .order('completed_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-    ]);
-    if (sameDayResult.error) throw sameDayResult.error;
-    if (sameWorkoutWeekResult.error) throw sameWorkoutWeekResult.error;
-    if (previousSessionResult.error) throw previousSessionResult.error;
-    if (sameDayResult.data) {
-      return json({ success: true, session: sameDayResult.data, alreadyCompletedToday: true });
+    const { data: weekSessions, error: weekSessionsError } = await admin
+      .from('individual_workout_sessions')
+      .select('id, workout_day_id, completed_at')
+      .eq('user_id', session.sub)
+      .eq('workout_plan_id', plan.id)
+      .eq('status', 'completed')
+      .gte('completed_at', weekRange.startIso)
+      .lt('completed_at', weekRange.nextStartIso)
+      .order('completed_at', { ascending: true });
+    if (weekSessionsError) throw weekSessionsError;
+
+    const completedToday = (weekSessions ?? []).find((item) => (
+      item.completed_at >= dayRange.startIso
+      && item.completed_at < dayRange.nextStartIso
+    ));
+    if (completedToday) {
+      return json({ success: true, session: completedToday, alreadyCompletedToday: true });
     }
 
     const orderedDayIds = (planDays ?? []).map((planDay) => planDay.id);
-    const expectedWorkoutDayId = nextWorkoutDayIdAfterLast(
+    const completedByDay = new Map<string, number>();
+    for (const completed of weekSessions ?? []) {
+      completedByDay.set(completed.workout_day_id, (completedByDay.get(completed.workout_day_id) ?? 0) + 1);
+    }
+    const weeklyTarget = Math.max(orderedDayIds.length, plan.days_per_week || orderedDayIds.length);
+    const expectedWorkoutDayId = nextWorkoutDayId(
       orderedDayIds,
-      previousSessionResult.data?.workout_day_id,
+      weeklyTarget,
+      completedByDay,
     );
-    if (expectedWorkoutDayId && day.id !== expectedWorkoutDayId) {
+    if (!expectedWorkoutDayId) {
       return json({
-        error: 'Siga a sequência da ficha antes de concluir este treino.',
+        success: true,
+        session: (weekSessions ?? []).at(-1),
+        alreadyCompletedThisWeek: true,
+      });
+    }
+    if (day.id !== expectedWorkoutDayId) {
+      return json({
+        error: 'Siga a sequência semanal antes de concluir esta ficha.',
         nextWorkoutDayId: expectedWorkoutDayId,
       }, 409);
     }
 
+    const sameWorkoutWeek = (weekSessions ?? []).filter((item) => item.workout_day_id === day.id);
     const allowance = weeklyWorkoutAllowance(
       orderedDayIds.length,
       plan.days_per_week || orderedDayIds.length || 1,
       day.order_index,
     );
-    if ((sameWorkoutWeekResult.data ?? []).length >= allowance) {
+    if (sameWorkoutWeek.length >= allowance) {
       return json({
         success: true,
-        session: sameWorkoutWeekResult.data?.at(-1),
+        session: sameWorkoutWeek.at(-1),
         alreadyCompletedThisWeek: true,
       });
     }

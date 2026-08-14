@@ -18,8 +18,8 @@ const trainerTutorials = [
 const studentTutorials = [
   ['Entre sem dados de contato', 'Informe somente seu nome e o código individual enviado pelo personal. Nenhum e-mail ou telefone é solicitado.'],
   ['Conclua o primeiro acesso', 'Leia e confirme os documentos. Peso, altura, gênero e restrições podem ser omitidos quando não forem necessários ao acompanhamento.'],
-  ['Confira a ficha ativa', 'Em Início, confirme o plano e o treino do dia. Se uma atualização não aparecer, recarregue a tela e fale com o personal.'],
-  ['Registre o treino', 'Em Treino, confira o método e a orientação do personal, informe repetições, carga e esforço de cada série, marque o que concluiu e use o temporizador de descanso. A sequência gira automaticamente: A, B e A novamente.'],
+  ['Confira a ficha ativa', 'Em Início, confirme o plano e a ficha do dia. Se uma atualização não aparecer, recarregue a tela e fale com o personal.'],
+  ['Registre a ficha do dia', 'Em Ficha do dia, confira o método e a orientação do personal, informe repetições, carga e esforço de cada série, marque o que concluiu e use o temporizador de descanso. O app libera uma ficha por dia na ordem configurada.'],
   ['Baixe sua ficha', 'Use Baixar ficha em PDF para consultar dias, exercícios e orientações. Para registrar a execução, continue usando o app.'],
   ['Conclua e acompanhe', 'Ao finalizar, avalie o treino. O Histórico guarda duração, conclusão e volume; Evolução mostra sua constância.'],
   ['Peça orientação', 'Use Mensagens para dúvidas. Se sentir dor, pare o exercício e informe qual movimento, região e momento causaram o desconforto.'],
@@ -29,8 +29,8 @@ const studentTutorials = [
 const individualTutorials = [
   ['Confira sua área', 'A Visão geral reúne suas fichas pessoais e os atalhos para continuar organizando a própria rotina.'],
   ['Monte e salve sua ficha', 'Abra Montar ficha, dê um nome ao plano, distribua os dias e configure exercícios, séries, repetições, carga, descanso e o método de treino.'],
-  ['Inicie o próximo treino', 'Abra Iniciar treino, siga a ficha destacada, registre repetições, carga e RPE e use a contagem regressiva automática entre as séries.'],
-  ['Siga a rotação automática', 'Ao concluir A, o próximo será B. Depois do último treino, a sequência volta ao primeiro e continua girando sem reiniciar errado na segunda-feira.'],
+  ['Inicie a ficha do dia', 'Abra Ficha do dia, siga a ficha destacada, registre repetições, carga e RPE e use a contagem regressiva automática entre as séries.'],
+  ['Siga a sequência semanal', 'Ao concluir A, o próximo dia será B. A sequência segue pelos dias configurados e, quando uma nova semana começa, volta automaticamente à ficha A.'],
   ['Acompanhe o histórico', 'Em Histórico, consulte duração, conclusão, volume e avaliação dos treinos já salvos.'],
   ['Organize seus planos', 'Em Minhas fichas, confira os dias e a validade e mantenha sua rotina atual fácil de encontrar.'],
   ['Baixe o PDF completo', 'Na ficha desejada, use Baixar PDF. Gere uma nova versão sempre que atualizar exercícios ou orientações.'],

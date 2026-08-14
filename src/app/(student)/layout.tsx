@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 
 const BOTTOM_NAV = [
   { href: '/home', label: 'Início', icon: Home },
-  { href: '/workout', label: 'Treino', icon: Dumbbell },
+  { href: '/workout', label: 'Ficha do dia', icon: Dumbbell },
   { href: '/history', label: 'Histórico', icon: History },
   { href: '/progress', label: 'Evolução', icon: TrendingUp },
   { href: '/student-messages', label: 'Chat', icon: MessageSquare },

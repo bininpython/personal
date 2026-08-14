@@ -105,12 +105,12 @@ test('executa a ficha com descanso e libera B somente no dia seguinte', async ({
 
   await page.goto('/my-workout');
   await expect(page.getByRole('heading', { name: 'Ficha Individual E2E' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Iniciar treino A' })).toBeVisible();
-  await page.getByRole('button', { name: /Treino B.*Treino Inferior/ }).click();
+  await expect(page.getByRole('button', { name: 'Iniciar ficha A' })).toBeVisible();
+  await page.getByRole('button', { name: /Ficha B.*Treino Inferior/ }).click();
   await expect(page.getByText('Ficha disponível somente para consulta')).toBeVisible();
   await expect(page.getByLabel('Repetições da série 1')).toBeDisabled();
-  await page.getByRole('button', { name: /Treino A.*Treino Superior/ }).click();
-  await page.getByRole('button', { name: 'Iniciar treino A' }).click();
+  await page.getByRole('button', { name: /Ficha A.*Treino Superior/ }).click();
+  await page.getByRole('button', { name: 'Iniciar ficha A' }).click();
 
   await page.getByLabel('Repetições da série 1').fill('10');
   await page.getByLabel('Carga da série 1').fill('40');
@@ -125,7 +125,7 @@ test('executa a ficha com descanso e libera B somente no dia seguinte', async ({
   await page.getByRole('button', { name: 'Série 2' }).click();
   await page.getByRole('button', { name: '4 estrela(s)' }).click();
   await page.getByPlaceholder('Como foi o treino? (opcional)').fill('Treino concluído com boa execução.');
-  await page.getByRole('button', { name: 'Concluir e salvar treino' }).click();
+  await page.getByRole('button', { name: 'Concluir e salvar ficha' }).click();
 
   await expect.poll(() => submitted).not.toBeNull();
   const body = submitted as unknown as {
@@ -140,7 +140,7 @@ test('executa a ficha com descanso e libera B somente no dia seguinte', async ({
     expect.objectContaining({ performedRepetitions: 9, performedLoad: 40, rpe: 9 }),
   ]);
 
-  await expect(page.getByText('Próximo da rotação: Treino B')).toBeVisible();
+  await expect(page.getByText('Próxima ficha do dia: Ficha B')).toBeVisible();
   await expect(page.getByText(/disponível amanhã/)).toBeVisible();
   await expect(page.getByLabel('Repetições da série 1')).toBeDisabled();
 });

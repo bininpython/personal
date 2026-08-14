@@ -87,13 +87,17 @@ test('PDF da ficha é privado, identificado e usa a marca G KONG', () => {
   const generator = read('src/lib/pdf/workout-plan.ts');
   assert.match(route, /session\.role !== 'individual'/);
   assert.match(route, /Content-Type': 'application\/pdf'/);
+  assert.match(route, /workoutPlanPdfFilename\(`\$\{user\.name\}-\$\{plan\.name\}`\)/);
   assert.match(managedRoute, /session\.role !== 'trainer' && session\.role !== 'student'/);
   assert.match(managedRoute, /studentId: session\.role === 'student' \? session\.sub : undefined/);
   assert.match(managedRoute, /activeOnly: session\.role === 'student'/);
   assert.match(managedRoute, /Content-Type': 'application\/pdf'/);
+  assert.match(managedRoute, /workoutPlanPdfFilename\(`\$\{plan\.studentName\}-\$\{plan\.name\}`\)/);
   assert.match(generator, /gkong-logo\.jpg/);
   assert.match(generator, /PERFORMANCE SYSTEM/);
   assert.match(generator, /PERSONAL RESPONSÁVEL/);
+  assert.match(generator, /FICHA \$\{args\.userName\.toLocaleUpperCase/);
+  assert.match(generator, /workoutDayCount} fichas/);
   assert.match(generator, /exercise-thumbnails/);
 });
 

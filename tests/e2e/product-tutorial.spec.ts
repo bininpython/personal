@@ -64,8 +64,8 @@ test('student can dismiss and reopen the tutorial on a phone', async ({ page }) 
   await page.goto('/help');
 
   const dialog = page.getByRole('dialog');
-  await expect(dialog.getByRole('heading', { name: 'Seu treino, passo a passo' })).toBeVisible();
-  await expect(dialog.getByText('Se a conexão cair', { exact: false })).toBeHidden();
+  await expect(dialog.getByRole('heading', { name: 'Sua ficha, passo a passo' })).toBeVisible();
+  await expect(dialog.getByText('A sequência é semanal', { exact: false })).toBeHidden();
   await dialog.getByRole('button', { name: 'Ver depois' }).click();
   await expect(dialog).toBeHidden();
 
@@ -73,9 +73,9 @@ test('student can dismiss and reopen the tutorial on a phone', async ({ page }) 
   await expect(dialog.getByRole('heading', { name: 'Conclua seu primeiro acesso' })).toBeVisible();
   await expect(dialog.getByText('Digite seu nome da mesma forma', { exact: false })).toBeVisible();
   await dialog.getByRole('button', { name: 'Próximo' }).click();
-  await expect(dialog.getByRole('heading', { name: 'Confira o treino do dia' })).toBeVisible();
+  await expect(dialog.getByRole('heading', { name: 'Confira a ficha do dia' })).toBeVisible();
   await dialog.getByRole('button', { name: 'Próximo' }).click();
-  await expect(dialog.getByText('Se a conexão cair', { exact: false })).toBeVisible();
+  await expect(dialog.getByText('A sequência é semanal', { exact: false })).toBeVisible();
 });
 
 test('independent athlete receives only the self-service tutorial', async ({ page }) => {

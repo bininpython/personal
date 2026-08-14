@@ -16,7 +16,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 const NAVIGATION = [
   { href: '/my', label: 'Visão geral', short: 'Início', icon: LayoutDashboard },
-  { href: '/my-workout', label: 'Iniciar treino', short: 'Treinar', icon: PlayCircle },
+  { href: '/my-workout', label: 'Ficha do dia', short: 'Ficha', icon: PlayCircle },
   { href: '/my-exercises', label: 'Montar ficha', short: 'Montar', icon: BookOpen },
   { href: '/my-plans', label: 'Minhas fichas', short: 'Fichas', icon: Dumbbell },
   { href: '/my-history', label: 'Histórico', short: 'Histórico', icon: History },

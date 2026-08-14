@@ -8,7 +8,7 @@ import { isPlanExpired } from '@/lib/workouts/plan-validity';
 import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
-  nextWorkoutDayIdAfterLast,
+  nextWorkoutDayId,
   weeklyWorkoutAllowance,
 } from '@/lib/workouts/week-cycle';
 import {
@@ -137,29 +137,16 @@ export async function GET() {
 
     const weekRange = getWorkoutWeekRange();
     const dayRange = getWorkoutDayRange();
-    const [completedResult, lastCompletedResult] = await Promise.all([
-      admin
-        .from('workout_sessions')
-        .select('workout_day_id, completed_at')
-        .eq('student_id', session.sub)
-        .eq('workout_plan_id', data.id)
-        .eq('status', 'completed')
-        .gte('completed_at', weekRange.startIso)
-        .lt('completed_at', weekRange.nextStartIso)
-        .order('completed_at', { ascending: true }),
-      admin
-        .from('workout_sessions')
-        .select('workout_day_id, completed_at')
-        .eq('student_id', session.sub)
-        .eq('workout_plan_id', data.id)
-        .eq('status', 'completed')
-        .order('completed_at', { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-    ]);
-    const { data: completedSessions, error: completedError } = completedResult;
+    const { data: completedSessions, error: completedError } = await admin
+      .from('workout_sessions')
+      .select('workout_day_id, completed_at')
+      .eq('student_id', session.sub)
+      .eq('workout_plan_id', data.id)
+      .eq('status', 'completed')
+      .gte('completed_at', weekRange.startIso)
+      .lt('completed_at', weekRange.nextStartIso)
+      .order('completed_at', { ascending: true });
     if (completedError) throw completedError;
-    if (lastCompletedResult.error) throw lastCompletedResult.error;
 
     const currentExerciseIds = Array.from(new Set(((data.workout_days ?? []) as RelatedWorkoutDay[]).flatMap((day) => (
       (day.workout_exercises ?? []).flatMap((item) => {
@@ -305,9 +292,10 @@ export async function GET() {
           completed: completedThisWeek,
           isComplete: completedThisWeek >= weeklyTarget,
           completedToday,
-          nextWorkoutDayId: nextWorkoutDayIdAfterLast(
+          nextWorkoutDayId: nextWorkoutDayId(
             days.map((day) => day.id),
-            lastCompletedResult.data?.workout_day_id,
+            weeklyTarget,
+            completedByDay,
           ),
         },
         days,

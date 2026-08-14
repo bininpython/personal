@@ -4,7 +4,6 @@ import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
   nextWorkoutDayId,
-  nextWorkoutDayIdAfterLast,
   weeklyWorkoutAllowance,
 } from '../src/lib/workouts/week-cycle.ts';
 
@@ -51,9 +50,20 @@ test('suggests the next workout in round-robin order', () => {
   assert.equal(nextWorkoutDayId(['A', 'B'], 3, new Map([['A', 1], ['B', 1]])), 'A');
 });
 
-test('keeps the A B rotation across week boundaries', () => {
-  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], null), 'A');
-  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'A'), 'B');
-  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'B'), 'A');
-  assert.equal(nextWorkoutDayIdAfterLast(['A', 'B'], 'removed-day'), 'A');
+test('restarts every weekly sequence at A', () => {
+  const ids = ['A', 'B', 'C', 'D'];
+  assert.equal(nextWorkoutDayId(ids, 4, new Map()), 'A');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 1]])), 'B');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 1], ['B', 1], ['C', 1]])), 'D');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 1], ['B', 1], ['C', 1], ['D', 1]])), null);
+  assert.equal(nextWorkoutDayId(ids, 4, new Map()), 'A');
+});
+
+test('repeats A and B inside a four-day week before restarting at A', () => {
+  const ids = ['A', 'B'];
+  assert.equal(nextWorkoutDayId(ids, 4, new Map()), 'A');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 1]])), 'B');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 1], ['B', 1]])), 'A');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 2], ['B', 1]])), 'B');
+  assert.equal(nextWorkoutDayId(ids, 4, new Map([['A', 2], ['B', 2]])), null);
 });

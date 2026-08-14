@@ -121,9 +121,11 @@ export async function createWorkoutPlanPdf(args: {
   cover.drawImage(logo, { x: MARGIN + 4, y: PAGE_HEIGHT - 94, width: 50, height: 50 });
   cover.drawText('G KONG', { x: 112, y: PAGE_HEIGHT - 65, size: 24, font: bold, color: rgb(1, 1, 1) });
   cover.drawText('PERFORMANCE SYSTEM', { x: 113, y: PAGE_HEIGHT - 84, size: 8, font: bold, color: VOLT });
-  cover.drawText('FICHA DE TREINO', { x: MARGIN, y: PAGE_HEIGHT - 150, size: 9, font: bold, color: VOLT });
-  const titleLines = wrap(args.plan.name, bold, 27, PAGE_WIDTH - MARGIN * 2, 2);
-  titleLines.forEach((line, index) => cover.drawText(line, { x: MARGIN, y: PAGE_HEIGHT - 181 - index * 29, size: 27, font: bold, color: rgb(1, 1, 1) }));
+  const planLabel = clean(`FICHA DE TREINO - ${args.plan.name}`);
+  const planLabelLines = wrap(planLabel, bold, 8, PAGE_WIDTH - MARGIN * 2, 1);
+  cover.drawText(planLabelLines[0] || 'FICHA DE TREINO', { x: MARGIN, y: PAGE_HEIGHT - 150, size: 8, font: bold, color: VOLT });
+  const titleLines = wrap(`FICHA ${args.userName.toLocaleUpperCase('pt-BR')}`, bold, 24, PAGE_WIDTH - MARGIN * 2, 2);
+  titleLines.forEach((line, index) => cover.drawText(line, { x: MARGIN, y: PAGE_HEIGHT - 181 - index * 27, size: 24, font: bold, color: rgb(1, 1, 1) }));
 
   let y = PAGE_HEIGHT - 260;
   cover.drawText('ATLETA', { x: MARGIN, y, size: 8, font: bold, color: GRAY });
@@ -140,7 +142,7 @@ export async function createWorkoutPlanPdf(args: {
   const metrics = [
     ['OBJETIVO', args.plan.goal],
     ['FREQUENCIA', `${args.plan.daysPerWeek}x por semana`],
-    ['ESTRUTURA', `${args.plan.workoutDayCount} treinos / ${args.plan.exerciseCount} exercicios`],
+    ['ESTRUTURA', `${args.plan.workoutDayCount} fichas / ${args.plan.exerciseCount} exercicios`],
     ['VALIDADE', `${formatPlanDate(args.plan.startDate)} a ${formatPlanDate(args.plan.endDate)}`],
   ];
   metrics.forEach(([label, value], index) => {
@@ -162,7 +164,7 @@ export async function createWorkoutPlanPdf(args: {
   for (const [dayIndex, day] of args.plan.days.entries()) {
     let page = newPage();
     let cursor = PAGE_HEIGHT - 62;
-    page.drawText(`TREINO ${clean(day.label)}`, { x: MARGIN, y: cursor, size: 9, font: bold, color: rgb(0.37, 0.52, 0) });
+    page.drawText(`FICHA ${clean(day.label)}`, { x: MARGIN, y: cursor, size: 9, font: bold, color: rgb(0.37, 0.52, 0) });
     cursor -= 31;
     page.drawText(clean(day.name), { x: MARGIN, y: cursor, size: 25, font: bold, color: INK });
     const counter = `${day.exercises.length} EXERCICIOS  /  DIA ${dayIndex + 1} DE ${args.plan.days.length}`;
@@ -176,7 +178,7 @@ export async function createWorkoutPlanPdf(args: {
       if (cursor - cardHeight < 42) {
         page = newPage();
         cursor = PAGE_HEIGHT - 56;
-        page.drawText(`TREINO ${clean(day.label)}  /  CONTINUACAO`, { x: MARGIN, y: cursor, size: 9, font: bold, color: rgb(0.37, 0.52, 0) });
+        page.drawText(`FICHA ${clean(day.label)}  /  CONTINUACAO`, { x: MARGIN, y: cursor, size: 9, font: bold, color: rgb(0.37, 0.52, 0) });
         cursor -= 23;
         page.drawLine({ start: { x: MARGIN, y: cursor }, end: { x: PAGE_WIDTH - MARGIN, y: cursor }, thickness: 3, color: VOLT });
         cursor -= 18;
@@ -239,7 +241,7 @@ export async function createWorkoutPlanPdf(args: {
     }
   }
 
-  pdf.setTitle(`Ficha ${clean(args.plan.name)} - G KONG`);
+  pdf.setTitle(`Ficha ${clean(args.userName)} - ${clean(args.plan.name)} - G KONG`);
   pdf.setAuthor('G KONG Performance System');
   pdf.setSubject(`Ficha de treino de ${clean(args.userName)}`);
   pdf.setCreator('G KONG');

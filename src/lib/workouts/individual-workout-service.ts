@@ -4,7 +4,7 @@ import { getIndividualPlan } from './individual-plan-service';
 import {
   getWorkoutDayRange,
   getWorkoutWeekRange,
-  nextWorkoutDayIdAfterLast,
+  nextWorkoutDayId,
   weeklyWorkoutAllowance,
 } from './week-cycle';
 
@@ -134,9 +134,6 @@ export async function getActiveIndividualWorkout(userId: string) {
   });
 
   const weeklyTarget = Math.max(days.length, plan.daysPerWeek);
-  const latestPlanSession = recentSessions.find((session) => (
-    days.some((day) => day.id === session.workout_day_id)
-  ));
   const completedToday = weekSessions.some((session) => (
     session.completed_at >= dayRange.startIso
     && session.completed_at < dayRange.nextStartIso
@@ -153,9 +150,10 @@ export async function getActiveIndividualWorkout(userId: string) {
       completed: weekSessions.length,
       isComplete: weekSessions.length >= weeklyTarget,
       completedToday,
-      nextWorkoutDayId: nextWorkoutDayIdAfterLast(
+      nextWorkoutDayId: nextWorkoutDayId(
         days.map((day) => day.id),
-        latestPlanSession?.workout_day_id,
+        weeklyTarget,
+        completedByDay,
       ),
     },
   };
