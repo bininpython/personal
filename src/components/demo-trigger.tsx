@@ -6,9 +6,11 @@ import { Dumbbell, Loader2, PlaySquare, ShieldCheck, UserCheck, Zap } from 'luci
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useAuth } from '@/hooks/use-auth';
 
 export function DemoTrigger() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -21,6 +23,9 @@ export function DemoTrigger() {
         body: JSON.stringify({ role }),
       });
       if (!res.ok) throw new Error('Falha ao iniciar teste');
+      
+      await refreshUser();
+      
       router.push(role === 'trainer' ? '/workouts' : role === 'student' ? '/workout' : '/my');
       router.refresh();
     } catch (error) {
