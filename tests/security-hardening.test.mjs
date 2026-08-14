@@ -105,6 +105,7 @@ test('PDF da ficha é privado, identificado e usa a marca G KONG', () => {
   assert.match(generator, /PERSONAL RESPONSÁVEL/);
   assert.match(generator, /FICHA \$\{args\.userName\.toLocaleUpperCase/);
   assert.match(generator, /workoutDayCount} fichas/);
+  assert.match(generator, /Siga a ordem das fichas/);
   assert.match(generator, /exercise-thumbnails/);
 });
 

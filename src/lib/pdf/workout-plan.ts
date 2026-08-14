@@ -158,7 +158,7 @@ export async function createWorkoutPlanPdf(args: {
   y -= 194;
   cover.drawRectangle({ x: MARGIN, y: y - 92, width: PAGE_WIDTH - MARGIN * 2, height: 104, color: INK });
   cover.drawText('COMO USAR ESTA FICHA', { x: MARGIN + 18, y: y - 12, size: 9, font: bold, color: VOLT });
-  const note = 'Siga a ordem dos treinos e respeite series, repeticoes e descanso. Cada demonstracao tem uma imagem de referencia e acesso ao movimento completo na plataforma.';
+  const note = 'Siga a ordem das fichas e respeite series, repeticoes e descanso. Cada demonstracao tem uma imagem de referencia e acesso ao movimento completo na plataforma.';
   wrap(note, regular, 10, PAGE_WIDTH - MARGIN * 2 - 36, 4).forEach((line, index) => cover.drawText(line, { x: MARGIN + 18, y: y - 35 - index * 14, size: 10, font: regular, color: rgb(0.88, 0.9, 0.86) }));
 
   for (const [dayIndex, day] of args.plan.days.entries()) {
