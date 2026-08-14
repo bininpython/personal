@@ -1,114 +1,126 @@
 import Link from 'next/link';
-import { ArrowUpRight, Check, Sparkles } from 'lucide-react';
+import { ArrowRight, Check, Dumbbell, Lock, PlaySquare, User, UserCheck } from 'lucide-react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { PublicBackLink } from '@/components/navigation/public-back-link';
-import { MAX_STUDENTS_PER_TRAINER } from '@/constants';
-
-const included = [
-  'Acesso por nome e código, sem e-mail',
-  `Até ${MAX_STUDENTS_PER_TRAINER} alunos ativos ao mesmo tempo`,
-  'Biblioteca com 705 exercícios, incluindo 490 demonstrações',
-  'Montador de fichas pelo diagrama muscular',
-  'Registro de série, carga e RPE com histórico',
-  'Alertas de constância, risco e inatividade',
-  'Avaliações físicas e relatório em PDF',
-  'Mensagens diretas com o aluno',
-];
 
 export default function PlansPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#f6f6f1] text-[#0a0a0a]">
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <PublicBackLink href="/" />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-5 pb-16 sm:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#5c7f00]">Planos</p>
-          <h1 className="mt-4 text-[clamp(2.5rem,6vw,4rem)] font-black leading-[1.02] tracking-[-0.06em]">
-            TUDO LIBERADO<br />ENQUANTO VOCÊ CRESCE.
+      
+      <main className="mx-auto w-full max-w-4xl flex-1 px-5 pb-20 pt-10 sm:px-8">
+        <header className="mb-12 text-left">
+          <BrandMark className="mb-8" compact />
+          <p className="text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#c9ff32]">Plano Trimestral</p>
+          <h1 className="mt-4 text-[clamp(2.5rem,6vw,4rem)] font-black leading-[0.95] tracking-[-0.06em]">
+            TREINE MELHOR.<br />EVOLUA COM O G KONG<span className="text-[#c9ff32]">.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-lg text-base leading-7 text-black/60">
-            Nenhum recurso fica atrás de um cadeado. O que define o plano é quantos alunos você
-            acompanha ao mesmo tempo.
+          <p className="mt-5 max-w-lg text-sm leading-6 text-white/60">
+            Biblioteca de treinos, GIFs de execução, acompanhamento e evolução em um sistema direto, simples e profissional.
           </p>
-        </div>
+        </header>
 
-        <div className="mx-auto mt-12 grid max-w-4xl gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white p-7 shadow-[0_28px_70px_rgba(0,0,0,0.08)] sm:p-9">
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-[#c9ff32]" />
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-black/40">Plano atual</p>
-                <h2 className="mt-2 text-4xl font-black tracking-[-0.05em]">Gratuito</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Individual Plan */}
+          <div className="relative flex flex-col rounded-3xl border border-white/10 bg-white/5 p-8 transition-colors hover:border-white/20">
+            <div className="flex items-center gap-4">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-[#c9ff32]/10 text-[#c9ff32]">
+                <User className="size-6" />
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#c9ff32] px-3 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.14em]">
-                <Sparkles className="size-3.5" /> Sem cartão
-              </span>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-[#c9ff32]">Plano</p>
+                <h2 className="text-lg font-black tracking-[-0.03em]">INDIVIDUAL</h2>
+              </div>
             </div>
-            <p className="mt-4 text-sm leading-6 text-black/55">
-              Para o personal que está começando a organizar a operação. Você não paga nada e o
-              aluno também não.
-            </p>
+            
+            <div className="mt-8 border-b border-white/10 pb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold">R$</span>
+                <span className="text-6xl font-black tracking-tighter">4,99</span>
+              </div>
+              <p className="mt-2 text-sm text-white/40">3 meses</p>
+            </div>
 
-            <ul className="mt-7 space-y-3">
-              {included.map((item) => (
-                <li key={item} className="flex gap-3 text-sm leading-6">
-                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-black text-white">
-                    <Check className="size-3" />
-                  </span>
-                  {item}
+            <ul className="mt-8 space-y-4">
+              {['Biblioteca de treinos', 'GIFs de exercícios', 'Acompanhamento', 'Evolução', 'Fichas prontas inclusas'].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-white/70">
+                  <Check className="size-4 text-[#c9ff32]" /> {item}
                 </li>
               ))}
             </ul>
 
-            <Link
-              href="/register"
-              className="mt-8 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-black px-7 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
-            >
-              Criar conta de personal <ArrowUpRight className="size-4" />
+            <Link href="/register/individual" className="mt-auto pt-8">
+              <button className="h-14 w-full rounded-full border border-white/10 bg-white/5 text-sm font-bold transition-colors hover:bg-white/10">
+                Selecionar Individual
+              </button>
             </Link>
-            <Link
-              href="/login"
-              className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
-            >
-              Já tenho acesso
-            </Link>
-          </section>
+          </div>
 
-          <aside className="flex flex-col gap-4">
-            <div className="rounded-[1.75rem] bg-[#0a0a0a] p-7 text-white">
-              <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-[#c9ff32]">Próximo degrau</p>
-              <h3 className="mt-3 text-2xl font-black tracking-[-0.03em]">Passou de {MAX_STUDENTS_PER_TRAINER} alunos?</h3>
-              <p className="mt-3 text-sm leading-6 text-white/55">
-                O limite vale para alunos <strong className="text-white">ativos</strong>. Aluno
-                arquivado não ocupa vaga e mantém todo o histórico — então você pode girar a
-                carteira sem perder dado nenhum.
-              </p>
-              <p className="mt-4 text-sm leading-6 text-white/55">
-                Novos limites ainda não estão disponíveis. A página será atualizada quando houver
-                uma oferta comercial pronta, com preço e canal de atendimento definidos.
-              </p>
+          {/* Personal Plan */}
+          <div className="relative flex flex-col rounded-3xl border border-[#c9ff32] bg-[#c9ff32]/5 p-8">
+            <div className="flex items-center gap-4">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-[#c9ff32]/10 text-[#c9ff32]">
+                <UserCheck className="size-6" />
+              </div>
+              <div>
+                <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-[#c9ff32]">Plano</p>
+                <h2 className="text-lg font-black tracking-[-0.03em]">PERSONAL</h2>
+              </div>
+            </div>
+            
+            <div className="mt-8 border-b border-white/10 pb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xl font-bold">R$</span>
+                <span className="text-6xl font-black tracking-tighter">9,99</span>
+              </div>
+              <p className="mt-2 text-sm text-white/40">3 meses • Até 10 alunos</p>
             </div>
 
-            <div className="rounded-[1.75rem] border border-black/10 bg-white p-7">
-              <h3 className="text-lg font-black tracking-[-0.02em]">O aluno paga alguma coisa?</h3>
-              <p className="mt-2 text-sm leading-6 text-black/55">
-                Não. Ele entra com nome e código, executa o treino e acompanha a evolução sem
-                nenhum custo e sem criar conta.
-              </p>
-            </div>
-          </aside>
-        </div>
-      </main>
+            <ul className="mt-8 space-y-4">
+              {['Biblioteca de treinos', 'GIFs de exercícios', 'Acompanhamento dos alunos', 'Evolução', 'Fichas prontas inclusas'].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-white/70">
+                  <Check className="size-4 text-[#c9ff32]" /> {item}
+                </li>
+              ))}
+            </ul>
 
-      <footer className="px-5 py-8 sm:px-8">
-        <div className="mx-auto flex max-w-5xl flex-col gap-5 border-t border-black/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
-          <BrandMark compact />
-          <div className="flex gap-5 text-xs font-semibold text-black/55">
-            <Link href="/terms" className="hover:text-black">Termos</Link>
-            <Link href="/privacy" className="hover:text-black">Privacidade</Link>
-            <Link href="/help" className="hover:text-black">Ajuda</Link>
+            <Link href="/register" className="mt-auto pt-8">
+              <button className="h-14 w-full rounded-full bg-[#c9ff32] text-sm font-bold text-black transition-colors hover:bg-[#b0e620]">
+                Selecionar Personal
+              </button>
+            </Link>
           </div>
         </div>
-      </footer>
+
+        {/* Stats Bar */}
+        <div className="mt-6 flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 sm:flex-row sm:items-center sm:justify-around">
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-white/5 text-[#c9ff32]">
+              <Dumbbell className="size-6" />
+            </div>
+            <div>
+              <p className="text-3xl font-black tracking-tighter text-[#c9ff32]">705</p>
+              <p className="text-xs text-white/40">exercícios</p>
+            </div>
+          </div>
+          <div className="hidden h-12 w-px bg-white/10 sm:block" />
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-white/5 text-[#c9ff32]">
+              <PlaySquare className="size-6" />
+            </div>
+            <div>
+              <p className="text-3xl font-black tracking-tighter text-[#c9ff32]">490</p>
+              <p className="text-xs text-white/40">demonstrações</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 text-center text-sm text-white/40">
+          <p className="flex items-center justify-center gap-2">
+            <Lock className="size-4" /> Acesse e comece seu treino hoje
+          </p>
+        </div>
+      </main>
     </div>
   );
 }

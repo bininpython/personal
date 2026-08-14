@@ -20,6 +20,7 @@ export default function IndividualRegisterPage() {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<IndividualRegisterInput>({
     resolver: zodResolver(individualRegisterSchema),
@@ -42,8 +43,8 @@ export default function IndividualRegisterPage() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Não foi possível criar sua conta.');
       setAccessCode(result.access_code);
-      login(result.user);
-      toast.success('Conta criada. Salve seu código pessoal.');
+      setCheckoutUrl(result.checkout_url);
+      toast.success('Conta pendente. Conclua o pagamento para ativar.');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Erro de conexão. Tente novamente.');
     } finally {
@@ -75,9 +76,9 @@ export default function IndividualRegisterPage() {
         {accessCode ? (
           <div className="mx-auto max-w-lg text-center">
             <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-[#c9ff32]"><CheckCircle2 className="size-8" /></div>
-            <p className="mt-7 text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Cadastro concluído</p>
+            <p className="mt-7 text-[0.65rem] font-black uppercase tracking-[0.25em] text-[#648d00]">Código reservado</p>
             <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">Seu código G KONG</h1>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/50">Use este código com seu nome completo para entrar na sua área individual.</p>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/50">Guarde seu código, ele será a sua chave de acesso. Para finalizar e ativar a conta, conclua a assinatura.</p>
 
             <div className="mt-8 rounded-3xl bg-black p-7 text-white shadow-2xl">
               <p className="text-[0.62rem] font-black uppercase tracking-[0.22em] text-white/40">Código pessoal</p>
@@ -90,11 +91,17 @@ export default function IndividualRegisterPage() {
             </div>
 
             <div className="mt-6 rounded-2xl border border-warn/25 bg-warn-wash p-4 text-left text-xs leading-5 text-black/55">
-              Salve agora: por segurança, o código completo aparece somente nesta tela. Você poderá gerar um novo código em Meu perfil.
+              Salve agora: por segurança, o código completo não ficará visível depois desta tela.
             </div>
-            <Button className="mt-7 h-14 w-full rounded-full bg-black text-white" onClick={() => { router.replace('/my'); router.refresh(); }}>
-              Acessar minha área <ArrowRight className="ml-2 size-4" />
-            </Button>
+            {checkoutUrl ? (
+              <a href={checkoutUrl} className="mt-7 flex h-14 w-full items-center justify-center rounded-full bg-black text-white hover:bg-black/85">
+                Efetuar Pagamento <ArrowRight className="ml-2 size-4" />
+              </a>
+            ) : (
+              <Button className="mt-7 h-14 w-full rounded-full bg-black text-white" onClick={() => { router.replace('/login/individual'); router.refresh(); }}>
+                Ir para o Login <ArrowRight className="ml-2 size-4" />
+              </Button>
+            )}
           </div>
         ) : (
           <div>

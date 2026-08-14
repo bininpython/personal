@@ -80,6 +80,7 @@ export async function POST(request: Request) {
           goal: parsed.data.goal || null,
           level: parsed.data.level,
           age: parsed.data.age,
+          status: 'pending_payment',
           terms_accepted_at: new Date().toISOString(),
           terms_version: '2026-08-11',
           privacy_policy_version: '2026-08-11',
@@ -88,17 +89,22 @@ export async function POST(request: Request) {
         .single();
       if (error || !user) throw error || new Error('Conta individual não criada.');
 
-      await createSession({
-        actorId: user.id,
-        role: 'individual',
-        trainerId: user.id,
-        request,
+      const { createCheckoutPreference } = await import('@/lib/mercadopago');
+      const checkoutUrl = await createCheckoutPreference({
+        title: 'G KONG - Plano Individual',
+        price: 4.99,
+        payerName: parsed.data.full_name,
+        payerEmail: 'nao-informado@gkong.app',
+        externalReference: user.id,
+        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`,
+        returnUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login/individual`,
       });
 
       return json({
         success: true,
         access_code: accessCode,
         codes_shown_once: true,
+        checkout_url: checkoutUrl,
         user: {
           id: user.id,
           role: 'individual',

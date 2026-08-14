@@ -89,6 +89,7 @@ export async function POST(request: Request) {
           city,
           nickname: nickname || null,
           age,
+          status: 'pending_payment',
         })
         .select('id, name')
         .single();
@@ -96,17 +97,22 @@ export async function POST(request: Request) {
       if (error?.code === '23505') continue;
       if (error || !trainer) throw error || new Error('Cadastro não criado.');
 
-      await createSession({
-        actorId: trainer.id,
-        role: 'trainer',
-        trainerId: trainer.id,
-        request,
+      const { createCheckoutPreference } = await import('@/lib/mercadopago');
+      const checkoutUrl = await createCheckoutPreference({
+        title: 'G KONG - Plano Personal',
+        price: 9.99,
+        payerName: full_name,
+        payerEmail: 'nao-informado@gkong.app',
+        externalReference: trainerId,
+        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/mercadopago`,
+        returnUrl: `${process.env.NEXT_PUBLIC_APP_URL}/login/trainer`,
       });
 
       return json({
         success: true,
         access_code: privateCode,
         codes_shown_once: true,
+        checkout_url: checkoutUrl,
         user: {
           id: trainer.id,
           role: 'trainer',

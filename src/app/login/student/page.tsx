@@ -47,6 +47,27 @@ export default function StudentLoginPage() {
     }
   };
 
+  const loginDemo = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'student' }),
+      });
+      const result = await response.json();
+      if (!response.ok) return toast.error(result.error || 'Não foi possível entrar no modo teste.');
+      login(result.user);
+      toast.success('Modo Teste ativado!');
+      router.replace('/home');
+      router.refresh();
+    } catch {
+      toast.error('Erro de conexão.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#f4f4ef] text-black">
       <PublicBackLink href="/login" />
@@ -93,10 +114,16 @@ export default function StudentLoginPage() {
             <input type="checkbox" className="size-4 accent-black" {...register('remember')} />
             Manter conectado por 30 dias
           </label>
-          <Button type="submit" className="h-14 w-full rounded-full bg-black text-white hover:bg-black/85" disabled={isLoading}>
-            {isLoading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <ArrowRight className="mr-2 size-4" />}
-            Abrir meu treino
-          </Button>
+          
+          <div className="flex flex-col gap-3">
+            <Button type="submit" className="h-14 w-full rounded-full bg-black text-white hover:bg-black/85" disabled={isLoading}>
+              {isLoading ? <Loader2 className="mr-2 size-4 animate-spin" /> : <ArrowRight className="mr-2 size-4" />}
+              Abrir meu treino
+            </Button>
+            <Button type="button" variant="outline" className="h-14 w-full rounded-full border-black/10 text-black hover:bg-black/5" onClick={loginDemo} disabled={isLoading}>
+              Acessar ambiente de teste
+            </Button>
+          </div>
         </form>
 
         <p className="mt-7 rounded-2xl border border-black/8 bg-white/60 p-4 text-center text-xs leading-5 text-black/48">
