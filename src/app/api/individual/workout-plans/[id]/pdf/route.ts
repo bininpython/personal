@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
+import { isDemoUser } from '@/lib/auth/demo';
 import { createWorkoutPlanPdf, workoutPlanPdfFilename } from '@/lib/pdf/workout-plan';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getIndividualPlan } from '@/lib/workouts/individual-plan-service';
@@ -8,6 +9,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   try {
     const session = await getSession();
     if (!session || session.role !== 'individual') return Response.json({ error: 'Não autorizado.' }, { status: 401 });
+    
+    if (isDemoUser(session.sub)) {
+      return Response.json({ error: 'Download restrito na conta de demonstração.' }, { status: 403 });
+    }
+
     const parsed = z.string().uuid().safeParse((await params).id);
     if (!parsed.success) return Response.json({ error: 'Ficha inválida.' }, { status: 400 });
     const plan = await getIndividualPlan(session.sub, parsed.data);

@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, ClockAlert, Download, Dumbbell, Loader2, Pencil, Plus, Search, Send, User } from 'lucide-react';
+import { Calendar, ClockAlert, Download, Dumbbell, Loader2, Lock, Pencil, Plus, Search, Send, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/use-auth';
+import { isDemoUser } from '@/lib/auth/demo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,6 +38,7 @@ interface StudentSummary {
 
 export default function WorkoutsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [plans, setPlans] = useState<WorkoutPlanSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -194,13 +197,19 @@ export default function WorkoutsPage() {
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    nativeButton={false}
-                    variant="outline"
-                    render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
-                  >
-                    <Download className="mr-2 size-4" /> PDF
-                  </Button>
+                  {isDemoUser(user?.id) ? (
+                    <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+                      <Lock className="mr-2 size-4" /> PDF
+                    </Button>
+                  ) : (
+                    <Button
+                      nativeButton={false}
+                      variant="outline"
+                      render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+                    >
+                      <Download className="mr-2 size-4" /> PDF
+                    </Button>
+                  )}
                   <Button variant="outline" onClick={() => openCopyDialog(plan)}>
                     <Send className="mr-2 size-4" /> Enviar
                   </Button>

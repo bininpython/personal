@@ -11,6 +11,7 @@ import {
   Dumbbell,
   History,
   Loader2,
+  Lock,
   Play,
   PlayCircle,
   Plus,
@@ -31,6 +32,7 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { TrainingMethodGuidance } from '@/components/workouts/training-method-guidance';
 import { useAuth } from '@/hooks/use-auth';
+import { isDemoUser } from '@/lib/auth/demo';
 
 interface LastPerformance {
   sets: number;
@@ -392,8 +394,22 @@ export default function IndividualWorkoutPage() {
     <div className="mx-auto max-w-5xl space-y-5 pb-12 animate-fade-in">
       <section className="dk-hero-panel p-6 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div><p className="dk-kicker text-[#c9ff32]">Minha ficha individual</p><h1 className="dk-display mt-4 text-3xl sm:text-4xl">{plan.name}</h1><p className="mt-2 text-sm text-white/70">{plan.goal}</p></div>
-          <div className="flex flex-wrap gap-2"><Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my-history" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><History className="mr-2 size-4" /> Histórico</Button><Button nativeButton={false} size="sm" variant="secondary" render={<a href={`/api/individual/workout-plans/${plan.id}/pdf`} download />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><Download className="mr-2 size-4" /> PDF</Button><Button size="sm" variant="secondary" onClick={() => void loadPlan(true)} disabled={refreshing} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><RefreshCw className={`mr-2 size-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar</Button></div>
+          <div className="mb-6 rounded-2xl border border-[#c9ff32]/30 bg-[#c9ff32]/5 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#c9ff32]">Sua ficha ativa</p><h1 className="mt-1 text-xl font-bold">{plan.name}</h1><p className="mt-1 text-sm text-white/60">{plan.goal}</p></div>
+              <div className="flex flex-wrap gap-2">
+                <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my-history" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><History className="mr-2 size-4" /> Histórico</Button>
+                {isDemoUser(user?.id) ? (
+                  <Button size="sm" variant="secondary" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                    <Lock className="mr-2 size-4" /> PDF
+                  </Button>
+                ) : (
+                  <Button nativeButton={false} size="sm" variant="secondary" render={<a href={`/api/individual/workout-plans/${plan.id}/pdf`} download />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><Download className="mr-2 size-4" /> PDF</Button>
+                )}
+                <Button size="sm" variant="secondary" onClick={() => void loadPlan(true)} disabled={refreshing} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><RefreshCw className={`mr-2 size-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar</Button>
+              </div>
+            </div>
+          </div>
         </div>
         <div className="mt-5 grid grid-cols-3 gap-3"><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Target className="size-4 text-[#c9ff32]" /><p className="mt-2 text-lg font-black">{plan.daysPerWeek}x</p><p className="text-[10px] text-white/60">fichas por semana</p></div><div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><CheckCircle2 className="size-4" /><p className="mt-2 text-lg font-black">{plan.week.completed}/{plan.week.target}</p><p className="text-[10px] text-black/60">concluídas</p></div><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Dumbbell className="size-4 text-[#c9ff32]" /><p className="mt-2 text-lg font-black">{suggestedDay?.label || activeDay.label}</p><p className="text-[10px] text-white/60">próxima ficha</p></div></div>
       </section>

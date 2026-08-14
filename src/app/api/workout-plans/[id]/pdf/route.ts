@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { getSession } from '@/lib/auth/session';
 import { canAccessStudentFeatures } from '@/lib/auth/session-types';
+import { isDemoUser } from '@/lib/auth/demo';
 import { createWorkoutPlanPdf, workoutPlanPdfFilename } from '@/lib/pdf/workout-plan';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import { getManagedWorkoutPlan } from '@/lib/workouts/managed-plan-service';
@@ -10,6 +11,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const session = await getSession();
     if (!session || (session.role !== 'trainer' && session.role !== 'student')) {
       return Response.json({ error: 'Não autorizado.' }, { status: 401 });
+    }
+    if (isDemoUser(session.sub)) {
+      return Response.json({ error: 'Download restrito na conta de demonstração.' }, { status: 403 });
     }
     if (!canAccessStudentFeatures(session)) {
       return Response.json({ error: 'Conclua o primeiro acesso para continuar.' }, { status: 403 });

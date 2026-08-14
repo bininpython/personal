@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, BookOpen, CalendarDays, Download, Dumbbell, FileText, History, Loader2, PlayCircle, Sparkles, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, CalendarDays, Download, Dumbbell, FileText, History, Loader2, Lock, PlayCircle, Sparkles, Target } from 'lucide-react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
+import { isDemoUser } from '@/lib/auth/demo';
 import type { IndividualPlanView, IndividualProfileView } from '@/types/individual';
 
 const LEVELS = { beginner: 'Iniciante', intermediate: 'Intermediário', advanced: 'Avançado' } as const;
@@ -63,7 +65,24 @@ export default function IndividualDashboardPage() {
           </div>
           <div className="rounded-3xl border border-white/12 bg-white/[0.06] p-5 backdrop-blur">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#c9ff32]">Ficha em uso</p>
-            {activePlan ? <><p className="mt-3 text-[10px] font-black uppercase tracking-[0.16em] text-[#c9ff32]">{activeWorkout?.week.completedToday ? 'Disponível amanhã' : 'Ficha do dia'}</p><h2 className="mt-1 text-2xl font-black">{nextWorkout ? `Ficha ${nextWorkout.label} · ${nextWorkout.name}` : activePlan.name}</h2><p className="mt-2 text-sm text-white/60">{activePlan.name} · {activePlan.goal}</p><div className="mt-5 grid grid-cols-3 gap-2"><div className="rounded-xl bg-white/8 p-3"><p className="text-xl font-black">{activePlan.workoutDayCount}</p><p className="text-[9px] uppercase text-white/45">Fichas</p></div><div className="rounded-xl bg-[#c9ff32] p-3 text-black"><p className="text-xl font-black">{activeWorkout?.week.completed ?? 0}/{activeWorkout?.week.target ?? activePlan.daysPerWeek}</p><p className="text-[9px] uppercase text-black/55">Na semana</p></div><div className="rounded-xl bg-white/8 p-3"><p className="text-xl font-black">{activePlan.daysPerWeek}x</p><p className="text-[9px] uppercase text-white/45">Meta</p></div></div><div className="mt-4 flex gap-2"><Button nativeButton={false} size="sm" render={<Link href="/my-workout" />} className="flex-1">{activeWorkout?.week.completedToday ? 'Consultar próxima' : 'Iniciar ficha'}</Button><Button nativeButton={false} size="icon" variant="outline" render={<a href={`/api/individual/workout-plans/${activePlan.id}/pdf`} download />} className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" aria-label="Baixar PDF"><Download className="size-4" /></Button></div></> : <div className="py-7 text-center"><Sparkles className="mx-auto size-9 text-[#c9ff32]" /><p className="mt-4 font-bold">Sua primeira ficha começa aqui</p><p className="mt-2 text-xs leading-5 text-white/50">Escolha o músculo, adicione exercícios e publique para você mesmo.</p></div>}
+            {activePlan ? <>
+              <p className="mt-3 text-[10px] font-black uppercase tracking-[0.16em] text-[#c9ff32]">{activeWorkout?.week.completedToday ? 'Disponível amanhã' : 'Ficha do dia'}</p>
+              <h2 className="mt-1 text-2xl font-black">{nextWorkout ? `Ficha ${nextWorkout.label} · ${nextWorkout.name}` : activePlan.name}</h2>
+              <p className="mt-2 text-sm text-white/60">{activePlan.name} · {activePlan.goal}</p>
+              <div className="mt-5 grid grid-cols-3 gap-2">
+                <div className="rounded-xl bg-white/8 p-3"><p className="text-xl font-black">{activePlan.workoutDayCount}</p><p className="text-[9px] uppercase text-white/45">Fichas</p></div>
+                <div className="rounded-xl bg-[#c9ff32] p-3 text-black"><p className="text-xl font-black">{activeWorkout?.week.completed ?? 0}/{activeWorkout?.week.target ?? activePlan.daysPerWeek}</p><p className="text-[9px] uppercase text-black/55">Na semana</p></div>
+                <div className="rounded-xl bg-white/8 p-3"><p className="text-xl font-black">{activePlan.daysPerWeek}x</p><p className="text-[9px] uppercase text-white/45">Meta</p></div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button nativeButton={false} size="sm" render={<Link href="/my-workout" />} className="flex-1">{activeWorkout?.week.completedToday ? 'Consultar próxima' : 'Iniciar ficha'}</Button>
+                {isDemoUser(user?.id) ? (
+                  <Button size="icon" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}><Lock className="size-4" /></Button>
+                ) : (
+                  <Button nativeButton={false} size="icon" variant="outline" render={<a href={`/api/individual/workout-plans/${activePlan.id}/pdf`} download />} className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" aria-label="Baixar PDF"><Download className="size-4" /></Button>
+                )}
+              </div>
+            </> : <div className="py-7 text-center"><Sparkles className="mx-auto size-9 text-[#c9ff32]" /><p className="mt-4 font-bold">Sua primeira ficha começa aqui</p><p className="mt-2 text-xs leading-5 text-white/50">Escolha o músculo, adicione exercícios e publique para você mesmo.</p></div>}
           </div>
         </div>
       </section>

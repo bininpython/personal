@@ -5,12 +5,19 @@ import {
   Check,
   CalendarClock,
   CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Clock,
   CloudOff,
   CloudUpload,
   Clock3,
   Download,
   Dumbbell,
+  History,
+  Info,
   Loader2,
+  Lock,
+  Play,
   PlayCircle,
   Plus,
   RefreshCw,
@@ -19,6 +26,8 @@ import {
   Star,
   Target,
   Timer,
+  Undo2,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +39,7 @@ import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
+import { isDemoUser } from '@/lib/auth/demo';
 import {
   completedSetKeysFromQueue,
   enqueueWorkoutCompletion,
@@ -764,15 +774,21 @@ export default function StudentWorkoutPage() {
             <p className="mt-2 text-sm text-white/70">{plan.goal}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button
-              nativeButton={false}
-              variant="secondary"
-              size="sm"
-              render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
-              className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
-            >
-              <Download className="mr-2 size-3.5" /> Baixar PDF
-            </Button>
+            {isDemoUser(user?.id) ? (
+              <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para alunos ativos. Solicite o link de cadastro ao seu personal.')} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                <Lock className="mr-2 size-3.5" /> Baixar PDF
+              </Button>
+            ) : (
+              <Button
+                nativeButton={false}
+                variant="secondary"
+                size="sm"
+                render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+                className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
+              >
+                <Download className="mr-2 size-3.5" /> Baixar PDF
+              </Button>
+            )}
             <Button
               variant="secondary"
               size="sm"

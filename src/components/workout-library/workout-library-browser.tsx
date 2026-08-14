@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, Download, Eye, Loader2, Search, Send, Sparkles } from 'lucide-react';
+import { CheckCircle2, Download, Eye, Loader2, Lock, Search, Send, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/hooks/use-auth';
+import { DEMO_ALLOWED_LIBRARY_IDS, isDemoUser } from '@/lib/auth/demo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -78,6 +80,7 @@ function ExerciseImage({ name, videoUrl, className = '' }: { name: string; video
 }
 
 export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
+  const { user } = useAuth();
   const [templates, setTemplates] = useState<TemplateSummary[]>([]);
   const [students, setStudents] = useState<StudentSummary[]>([]);
   const [selected, setSelected] = useState<TemplateDetail | null>(null);
@@ -219,7 +222,20 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-xl bg-muted/55 p-3"><p className="font-black">{template.workoutDayCount}</p><p className="text-[9px] uppercase text-muted-foreground">Fichas</p></div><div className="rounded-xl bg-muted/55 p-3"><p className="font-black">{template.exerciseCount}</p><p className="text-[9px] uppercase text-muted-foreground">Exercícios</p></div><div className="rounded-xl bg-muted/55 p-3"><p className="font-black">{template.daysPerWeek}x</p><p className="text-[9px] uppercase text-muted-foreground">Semana</p></div></div>
-                <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => void openTemplate(template.id)} disabled={detailLoading === template.id}>{detailLoading === template.id ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Eye className="mr-2 size-4" />} Ver ficha</Button><Button nativeButton={false} variant="outline" render={<a href={`/api/workout-library/${template.id}/pdf`} download />}><Download className="mr-2 size-4" /> PDF</Button></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" onClick={() => void openTemplate(template.id)} disabled={detailLoading === template.id}>
+                    {detailLoading === template.id ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Eye className="mr-2 size-4" />} Ver ficha
+                  </Button>
+                  {isDemoUser(user?.id) && !DEMO_ALLOWED_LIBRARY_IDS.includes(template.id) ? (
+                    <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+                      <Lock className="mr-2 size-4" /> PDF
+                    </Button>
+                  ) : (
+                    <Button nativeButton={false} variant="outline" render={<a href={`/api/workout-library/${template.id}/pdf`} download />}>
+                      <Download className="mr-2 size-4" /> PDF
+                    </Button>
+                  )}
+                </div>
                 <Button className="w-full" onClick={() => void openTemplate(template.id)} disabled={detailLoading === template.id}>{mode === 'trainer' ? <Send className="mr-2 size-4" /> : <CheckCircle2 className="mr-2 size-4" />}{mode === 'trainer' ? 'Enviar para aluno' : 'Usar esta ficha'}</Button>
               </CardContent>
             </Card>
@@ -237,7 +253,15 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
               <Tabs defaultValue={selected.days[0]?.label}><TabsList className="h-11 max-w-full overflow-x-auto">{selected.days.map((day) => <TabsTrigger key={day.label} value={day.label} className="px-4">Ficha {day.label}</TabsTrigger>)}</TabsList>{selected.days.map((day) => <TabsContent key={day.label} value={day.label} className="mt-5"><div className="mb-4 flex items-center justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#668b00]">Rotina {day.label}</p><h3 className="text-lg font-black">{day.name}</h3></div><Badge variant="secondary">{day.exercises.length} exercícios</Badge></div><div className="grid gap-3 md:grid-cols-2">{day.exercises.map((exercise, index) => <div key={`${day.label}-${exercise.exerciseKey}-${index}`} className="grid grid-cols-[96px_1fr] overflow-hidden rounded-2xl border bg-card"><ExerciseImage name={exercise.sourceName || exercise.catalog.name} videoUrl={exercise.catalog.videoUrl} className="min-h-32" /><div className="min-w-0 p-3"><div className="flex items-start gap-2"><span className="text-[10px] font-black text-[#668b00]">{String(index + 1).padStart(2, '0')}</span><h4 className="leading-5 font-bold">{exercise.sourceName || exercise.catalog.name}</h4></div><p className="mt-1 text-[11px] text-muted-foreground">{exercise.primaryMuscleLabel} · {exercise.catalog.equipment}</p><p className="mt-2 text-xs font-bold">{exercise.sets} séries · {exercise.reps} reps · {exercise.restTime}s</p><Badge variant="outline" className="mt-2 text-[9px]">{METHOD_LABELS[exercise.method] || exercise.method}</Badge>{exercise.methodNotes && <p className="mt-2 line-clamp-2 text-[10px] leading-4 text-muted-foreground">{exercise.methodNotes}</p>}</div></div>)}</div></TabsContent>)}</Tabs>
             </div>
             <DialogFooter className="sticky bottom-0 mt-2 bg-popover/95 backdrop-blur-xl">
-              <Button nativeButton={false} variant="outline" render={<a href={`/api/workout-library/${selected.id}/pdf`} download />}><Download className="mr-2 size-4" /> Baixar PDF</Button>
+              {isDemoUser(user?.id) && !DEMO_ALLOWED_LIBRARY_IDS.includes(selected.id) ? (
+                <Button variant="outline" onClick={() => toast.error('O download deste PDF é exclusivo para assinantes. Assine o G KONG para liberar o acesso.')}>
+                  <Lock className="mr-2 size-4" /> Baixar PDF
+                </Button>
+              ) : (
+                <Button nativeButton={false} variant="outline" render={<a href={`/api/workout-library/${selected.id}/pdf`} download />}>
+                  <Download className="mr-2 size-4" /> Baixar PDF
+                </Button>
+              )}
               {mode === 'trainer' && <Select value={studentId} onValueChange={(value) => setStudentId(value ?? '')}><SelectTrigger className="h-10 w-full sm:w-64"><SelectValue placeholder="Escolha o aluno" /></SelectTrigger><SelectContent>{students.length ? students.map((student) => <SelectItem key={student.id} value={student.id}>{student.name}</SelectItem>) : <SelectItem value="none" disabled>Nenhum aluno ativo</SelectItem>}</SelectContent></Select>}
               <Button onClick={() => void applyTemplate()} disabled={working || (mode === 'trainer' && !studentId)}>{working ? <Loader2 className="mr-2 size-4 animate-spin" /> : mode === 'trainer' ? <Send className="mr-2 size-4" /> : <CheckCircle2 className="mr-2 size-4" />}{mode === 'trainer' ? 'Publicar para aluno' : 'Ativar por 8 semanas'}</Button>
             </DialogFooter>

@@ -17,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { BrandMark } from '@/components/brand/brand-mark';
+import { DemoTrigger } from '@/components/demo-trigger';
 
 const capabilities = [
   {
@@ -91,12 +92,7 @@ export default function LandingPage() {
               >
                 Acessar plataforma <ArrowRight className="size-4" />
               </Link>
-              <Link
-                href="#planos"
-                className="inline-flex h-14 items-center justify-center rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]"
-              >
-                Montar meu próprio treino
-              </Link>
+              <DemoTrigger />
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3">
               {highlights.map((item) => (
