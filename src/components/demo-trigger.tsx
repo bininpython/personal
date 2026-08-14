@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Loader2, PlaySquare, ShieldCheck, UserCheck, Zap } from 'lucide-react';
+import { Dumbbell, Loader2, PlaySquare, ShieldCheck, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -28,7 +28,7 @@ export function DemoTrigger() {
       
       router.push(role === 'trainer' ? '/workouts' : role === 'student' ? '/workout' : '/my');
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error('Não foi possível iniciar o ambiente de teste.');
       setLoading(null);
     }

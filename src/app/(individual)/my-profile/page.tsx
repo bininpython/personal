@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { KeyRound, Loader2, Save, ShieldCheck, Target, UserRound } from 'lucide-react';
+import { KeyRound, Loader2, Save, Target, UserRound } from 'lucide-react';
 import { toast } from 'sonner';
 import { AccountControls } from '@/components/privacy/account-controls';
 import { AvatarPicker } from '@/components/profile/avatar-picker';

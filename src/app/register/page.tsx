@@ -11,13 +11,11 @@ import { PublicBackLink } from '@/components/navigation/public-back-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/use-auth';
 import { trainerRegisterSchema, type TrainerRegisterInput } from '@/lib/validators';
 import { toast } from 'sonner';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);

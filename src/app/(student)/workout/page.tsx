@@ -5,19 +5,13 @@ import {
   Check,
   CalendarClock,
   CheckCircle2,
-  ChevronDown,
-  ChevronRight,
-  Clock,
   CloudOff,
   CloudUpload,
   Clock3,
   Download,
   Dumbbell,
-  History,
-  Info,
   Loader2,
   Lock,
-  Play,
   PlayCircle,
   Plus,
   RefreshCw,
@@ -26,8 +20,6 @@ import {
   Star,
   Target,
   Timer,
-  Undo2,
-  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';

@@ -8,7 +8,6 @@ import {
 } from '@/lib/auth/credentials';
 import { hashPassword, normalizeName, verifyPassword } from '@/lib/auth/hash';
 import { consumeRateLimit } from '@/lib/auth/rate-limit';
-import { createSession } from '@/lib/auth/session';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { SupabaseConfigurationError } from '@/lib/supabase/config';
 import { DATABASE_UPDATE_REQUIRED, isCommercialSchemaMissing } from '@/lib/supabase/errors';

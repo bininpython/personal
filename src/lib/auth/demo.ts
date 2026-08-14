@@ -4,10 +4,10 @@ export const DEMO_IDS = {
   STUDENT: '33333333-3333-3333-3333-333333333333',
 } as const;
 
-export const DEMO_IDS_ARRAY = Object.values(DEMO_IDS);
+export const DEMO_IDS_ARRAY: readonly string[] = Object.values(DEMO_IDS);
 
 export function isDemoUser(userId: string | null | undefined): boolean {
   if (!userId) return false;
-  return DEMO_IDS_ARRAY.includes(userId as any);
+  return DEMO_IDS_ARRAY.includes(userId);
 }
 

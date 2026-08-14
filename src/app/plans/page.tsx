@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Check, Dumbbell, Lock, PlaySquare, User, UserCheck } from 'lucide-react';
+import { Check, Dumbbell, Lock, PlaySquare, User, UserCheck } from 'lucide-react';
 import { BrandMark } from '@/components/brand/brand-mark';
 import { PublicBackLink } from '@/components/navigation/public-back-link';
 

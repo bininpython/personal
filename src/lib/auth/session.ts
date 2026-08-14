@@ -145,7 +145,7 @@ export async function getSession(): Promise<AuthSession | null> {
       name: student.name,
       trainer_id: student.trainer_id,
       avatar_url: displayedAvatar(student.avatar_url, student.id),
-      onboarding_complete: student.id === '33333333-3333-3333-3333-333333333333' ? true : Boolean(student.privacy_consent_at && student.terms_accepted_at),
+      onboarding_complete: Boolean(student.privacy_consent_at && student.terms_accepted_at) || student.id === '33333333-3333-3333-3333-333333333333',
     };
   } catch (error) {
     console.error('[Auth] Failed to resolve session:', error);

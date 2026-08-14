@@ -12,12 +12,10 @@ import { PublicBackLink } from '@/components/navigation/public-back-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/use-auth';
 import { individualRegisterSchema, type IndividualRegisterInput } from '@/lib/validators';
 
 export default function IndividualRegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [accessCode, setAccessCode] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
