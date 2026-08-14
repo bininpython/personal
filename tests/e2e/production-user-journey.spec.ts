@@ -264,8 +264,8 @@ test('jornada real de personal, aluno vinculado e atleta individual', async ({ b
     await gotoReady(studentPage, '/home');
     report.studentTutorialSteps = await completeTutorial(
       studentPage,
-      'Seu treino, passo a passo',
-      'Abrir meu treino',
+      'Sua ficha, passo a passo',
+      'Abrir ficha do dia',
     );
     await studentPage.waitForURL('**/workout', { timeout: 20_000 });
     await expect(studentPage.getByText(planName).first()).toBeVisible();

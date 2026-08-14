@@ -64,6 +64,13 @@ test('cabeçalhos impedem framing e sniffing', () => {
   assert.match(config, /poweredByHeader: false/);
 });
 
+test('falha transitória ao gerar alertas não derruba as notificações existentes', () => {
+  const route = read('src/app/api/notifications/route.ts');
+  assert.match(route, /try \{\s*await generateTrainerNotifications/);
+  assert.match(route, /Generation warning/);
+  assert.match(route, /notifications: data \?\? \[\]/);
+});
+
 test('conta individual usa tabelas isoladas e não recebe recursos profissionais', () => {
   const migration = read('supabase/migrations/20260811_individual_training.sql');
   const proxy = read('src/proxy.ts');

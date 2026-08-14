@@ -15,7 +15,12 @@ export async function GET() {
     const session = await getSession();
     if (!session || session.role !== 'trainer') return json({ error: 'Não autorizado.' }, 401);
     const admin = createAdminClient();
-    await generateTrainerNotifications(session.trainer_id);
+    try {
+      await generateTrainerNotifications(session.trainer_id);
+    } catch (generationError) {
+      // A geração automática é complementar: alertas já existentes continuam disponíveis.
+      console.warn('[Notifications] Generation warning:', generationError);
+    }
 
     const { data, error } = await admin
       .from('notifications')
