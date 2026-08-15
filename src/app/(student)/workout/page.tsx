@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
@@ -235,6 +236,7 @@ function notifyRestFinished(exerciseName: string, audioContext: AudioContext | n
 }
 
 export default function StudentWorkoutPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const studentId = user?.id ?? '';
   const [plan, setPlan] = useState<WorkoutPlan | null>(null);
@@ -802,7 +804,19 @@ export default function StudentWorkoutPage() {
               <ArrowLeft className="mr-1.5 size-3.5 text-[#c9ff32]" /> Início
             </Button>
             {isDemoUser(user?.id) ? (
-              <Button variant="outline" onClick={() => toast.error('Exclusivo para alunos.', { description: 'Solicite o link completo de cadastro ao seu personal para liberar o PDF.' })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+              <Button
+                variant="outline"
+                onClick={() => toast.error('Exclusivo para assinantes.', {
+                  description: 'Assine o G KONG para liberar o download do PDF.',
+                  action: {
+                    label: 'Ver planos',
+                    onClick: () => {
+                      router.push('/plans');
+                    },
+                  },
+                })}
+                className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
+              >
                 <Lock className="mr-1.5 size-3.5" /> Baixar PDF
               </Button>
             ) : (

@@ -97,7 +97,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (PUBLIC_PATHS.has(pathname)) {
-    if (session?.sub && pathname !== '/' && pathname !== '/help') {
+    if (session?.sub && pathname !== '/' && pathname !== '/help' && pathname !== '/plans' && pathname !== '/terms' && pathname !== '/privacy') {
       return NextResponse.redirect(new URL(roleHome(role), request.url));
     }
     return NextResponse.next();
