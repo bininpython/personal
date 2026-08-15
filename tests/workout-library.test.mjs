@@ -9,14 +9,14 @@ const catalogByKey = new Map(EXERCISE_CATALOG.map((exercise) => [exercise.key, e
 const allDays = templates.flatMap((template) => template.days);
 const allExercises = allDays.flatMap((day) => day.exercises);
 
-test('library consolidates all source programs into 42 professional templates', () => {
-  assert.equal(templates.length, 42);
-  assert.equal(new Set(templates.map((template) => template.id)).size, 42);
-  assert.equal(templates.filter((template) => template.audience === 'male').length, 32);
-  assert.equal(templates.filter((template) => template.audience === 'female').length, 10);
-  assert.equal(templates.filter((template) => template.goal === 'hypertrophy').length, 31);
+test('library consolidates all source programs into 72 professional templates', () => {
+  assert.equal(templates.length, 72);
+  assert.equal(new Set(templates.map((template) => template.id)).size, 72);
+  assert.equal(templates.filter((template) => template.audience === 'male').length, 37);
+  assert.equal(templates.filter((template) => template.audience === 'female').length, 35);
+  assert.equal(templates.filter((template) => template.goal === 'hypertrophy').length, 59);
   assert.equal(templates.filter((template) => template.goal === 'definition').length, 6);
-  assert.equal(templates.filter((template) => template.goal === 'general').length, 5);
+  assert.equal(templates.filter((template) => template.goal === 'general').length, 7);
 });
 
 test('every template is complete, rotational and valid for eight weeks', () => {
@@ -32,8 +32,8 @@ test('every template is complete, rotational and valid for eight weeks', () => {
 });
 
 test('every library prescription resolves to a catalog exercise with a local photo', () => {
-  assert.equal(allDays.length, 144);
-  assert.equal(allExercises.length, 996);
+  assert.equal(allDays.length, 264);
+  assert.equal(allExercises.length, 1693);
   for (const prescription of allExercises) {
     const exercise = catalogByKey.get(prescription.exerciseKey);
     assert.ok(exercise, `Missing catalog key ${prescription.exerciseKey}`);
