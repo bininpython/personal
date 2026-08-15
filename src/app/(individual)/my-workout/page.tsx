@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowLeft,
   CalendarClock,
   Check,
   CheckCircle2,
@@ -33,6 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { TrainingMethodGuidance } from '@/components/workouts/training-method-guidance';
 import { useAuth } from '@/hooks/use-auth';
 import { isDemoUser } from '@/lib/auth/demo';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 
 interface LastPerformance {
   sets: number;
@@ -398,15 +400,24 @@ export default function IndividualWorkoutPage() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#c9ff32]">Sua ficha ativa</p><h1 className="mt-1 text-xl font-bold">{plan.name}</h1><p className="mt-1 text-sm text-white/60">{plan.goal}</p></div>
               <div className="flex flex-wrap gap-2">
-                <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my-history" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><History className="mr-2 size-4" /> Histórico</Button>
+                <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                  <ArrowLeft className="mr-1.5 size-4 text-[#c9ff32]" /> Início
+                </Button>
+                <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/my-history" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                  <History className="mr-1.5 size-4" /> Histórico
+                </Button>
                 {isDemoUser(user?.id) ? (
                   <Button size="sm" variant="secondary" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
-                    <Lock className="mr-2 size-4" /> PDF
+                    <Lock className="mr-1.5 size-4" /> PDF
                   </Button>
                 ) : (
-                  <Button nativeButton={false} size="sm" variant="secondary" render={<a href={`/api/individual/workout-plans/${plan.id}/pdf`} download />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><Download className="mr-2 size-4" /> PDF</Button>
+                  <Button size="sm" variant="secondary" onClick={() => void downloadPdfFile(`/api/individual/workout-plans/${plan.id}/pdf`, `${plan.name}.pdf`)} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                    <Download className="mr-1.5 size-4 text-[#c9ff32]" /> PDF
+                  </Button>
                 )}
-                <Button size="sm" variant="secondary" onClick={() => void loadPlan(true)} disabled={refreshing} className="border border-white/15 bg-white/10 text-white hover:bg-white/20"><RefreshCw className={`mr-2 size-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar</Button>
+                <Button size="sm" variant="secondary" onClick={() => void loadPlan(true)} disabled={refreshing} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                  <RefreshCw className={`mr-1.5 size-4 ${refreshing ? 'animate-spin' : ''}`} /> Atualizar
+                </Button>
               </div>
             </div>
           </div>

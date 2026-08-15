@@ -1,7 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowLeft,
   Check,
   CalendarClock,
   CheckCircle2,
@@ -32,6 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
 import { isDemoUser } from '@/lib/auth/demo';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 import {
   completedSetKeysFromQueue,
   enqueueWorkoutCompletion,
@@ -766,19 +769,21 @@ export default function StudentWorkoutPage() {
             <p className="mt-2 text-sm text-white/70">{plan.goal}</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Button nativeButton={false} size="sm" variant="secondary" render={<Link href="/home" />} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+              <ArrowLeft className="mr-1.5 size-3.5 text-[#c9ff32]" /> Início
+            </Button>
             {isDemoUser(user?.id) ? (
               <Button variant="outline" onClick={() => toast.error('Exclusivo para alunos.', { description: 'Solicite o link completo de cadastro ao seu personal para liberar o PDF.' })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
-                <Lock className="mr-2 size-3.5" /> Baixar PDF
+                <Lock className="mr-1.5 size-3.5" /> Baixar PDF
               </Button>
             ) : (
               <Button
-                nativeButton={false}
                 variant="secondary"
                 size="sm"
-                render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+                onClick={() => void downloadPdfFile(`/api/workout-plans/${plan.id}/pdf`, `${plan.name}.pdf`)}
                 className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
               >
-                <Download className="mr-2 size-3.5" /> Baixar PDF
+                <Download className="mr-1.5 size-3.5 text-[#c9ff32]" /> Baixar PDF
               </Button>
             )}
             <Button
@@ -788,7 +793,7 @@ export default function StudentWorkoutPage() {
               disabled={refreshing}
               className="border border-white/15 bg-white/10 text-white hover:bg-white/20"
             >
-              <RefreshCw className={`mr-2 size-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`mr-1.5 size-3.5 ${refreshing ? 'animate-spin' : ''}`} />
               Atualizar
             </Button>
           </div>

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
 import {
+  ArrowLeft,
   CheckCircle2,
   Clock,
   Dumbbell,
@@ -31,6 +32,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { exerciseThumbnailUrl } from '@/lib/exercises/media';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 
 type LibraryMode = 'trainer' | 'individual';
 
@@ -710,9 +712,8 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
                       </Button>
                     ) : (
                       <Button
-                        nativeButton={false}
                         variant="outline"
-                        render={<a href={`/api/workout-library/${template.id}/pdf`} download />}
+                        onClick={() => void downloadPdfFile(`/api/workout-library/${template.id}/pdf`, `${template.title}.pdf`)}
                         className="rounded-xl font-bold"
                       >
                         <Download className="mr-2 size-4 text-[#c9ff32]" /> PDF
@@ -746,6 +747,14 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
           {selected && (
             <>
               <div className="sticky top-0 z-10 border-b bg-popover/95 p-5 pr-14 backdrop-blur-xl sm:p-6">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelected(null)}
+                  className="mb-3 h-8 px-2.5 text-xs font-bold text-foreground/80 hover:bg-accent sm:hidden"
+                >
+                  <ArrowLeft className="mr-1.5 size-4 text-[#c9ff32]" /> Voltar ao Acervo
+                </Button>
                 <DialogHeader>
                   <div className="flex flex-wrap gap-2">
                     <Badge
@@ -860,9 +869,8 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
                     </Button>
                   ) : (
                     <Button
-                      nativeButton={false}
                       variant="outline"
-                      render={<a href={`/api/workout-library/${selected.id}/pdf`} download />}
+                      onClick={() => void downloadPdfFile(`/api/workout-library/${selected.id}/pdf`, `${selected.title}.pdf`)}
                       className="rounded-xl font-bold"
                     >
                       <Download className="mr-2 size-4 text-[#c9ff32]" /> Baixar PDF

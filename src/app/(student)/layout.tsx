@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home, Dumbbell, History, TrendingUp,
-  User, LogOut, MessageSquare, Moon, Sun, CircleHelp, LibraryBig
+  User, LogOut, MessageSquare, Moon, Sun, CircleHelp, LibraryBig, ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -72,6 +72,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     return pathname.startsWith(href);
   };
 
+  const isRootPage = pathname === '/home';
+
   const handleLogout = async () => {
     await logout();
     router.replace('/login');
@@ -95,8 +97,23 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     <div className="dk-app flex min-h-screen flex-col bg-[#090a08]">
       {/* Top Header */}
       <header className="dk-safe-top sticky top-0 z-40 border-b border-white/10 bg-[#090a08]/95 text-white backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <BrandMark compact inverted />
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:px-6">
+          <div className="flex items-center gap-2">
+            {!isRootPage && (
+              <Button
+                nativeButton={false}
+                variant="ghost"
+                size="sm"
+                render={<Link href="/home" />}
+                className="h-9 px-2 text-xs font-bold text-white hover:bg-white/10 lg:hidden"
+                aria-label="Voltar para o início"
+              >
+                <ChevronLeft className="mr-1 size-4 text-[#c9ff32]" />
+                Início
+              </Button>
+            )}
+            <BrandMark compact inverted />
+          </div>
           <nav className="hidden items-center gap-1 lg:flex" aria-label="Navegação do aluno">
             {BOTTOM_NAV.map((item) => {
               const active = isActive(item.href);
@@ -114,33 +131,35 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
           </nav>
           <div className="flex items-center gap-1 sm:gap-2">
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => router.push('/help')} />}>
-                <CircleHelp className="w-4 h-4" />
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="size-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => router.push('/help')} aria-label="Ajuda e tutoriais" />}>
+                <CircleHelp className="size-4" />
               </TooltipTrigger>
               <TooltipContent>Ajuda e tutoriais</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} />}>
-                {resolvedTheme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="size-9 text-white/60 hover:bg-white/10 hover:text-white" onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} aria-label="Alternar tema" />}>
+                {resolvedTheme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
               </TooltipTrigger>
               <TooltipContent>{resolvedTheme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger render={<Button variant="ghost" size="icon" className="hidden h-9 w-9 text-white/60 hover:bg-white/10 hover:text-white sm:inline-flex" onClick={handleLogout} />}>
-                <LogOut className="w-4 h-4" />
+              <TooltipTrigger render={<Button variant="ghost" size="icon" className="size-9 text-red-400 hover:bg-red-500/20 hover:text-red-300" onClick={handleLogout} aria-label="Sair do aplicativo" title="Sair do aplicativo" />}>
+                <LogOut className="size-4" />
               </TooltipTrigger>
-              <TooltipContent>Sair</TooltipContent>
+              <TooltipContent>Sair da conta</TooltipContent>
             </Tooltip>
             <div className="ml-1 hidden text-right xl:block">
               <p className="max-w-28 truncate text-xs font-bold">{user?.name || 'Aluno'}</p>
               <p className="rounded-md bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-black">Atleta G KONG</p>
             </div>
-            <Avatar className="w-9 h-9 ring-2 ring-[#c9ff32]/30">
-              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-              <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
-                {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AL'}
-              </AvatarFallback>
-            </Avatar>
+            <Link href="/profile">
+              <Avatar className="size-8 sm:size-9 ring-2 ring-[#c9ff32]/30">
+                {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
+                <AvatarFallback className="bg-[#c9ff32] text-black text-xs font-black">
+                  {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'AL'}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
           </div>
         </div>
       </header>

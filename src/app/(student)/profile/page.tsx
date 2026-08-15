@@ -1,10 +1,12 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Activity, Calendar, Dumbbell, Loader2, Ruler, ShieldCheck, Target, TrendingUp, Weight } from 'lucide-react';
+import { Activity, Calendar, Dumbbell, Loader2, LogOut, Ruler, ShieldCheck, Target, TrendingUp, Weight } from 'lucide-react';
 import { AvatarPicker } from '@/components/profile/avatar-picker';
 import { StudentProgressDashboard } from '@/components/students/student-progress-dashboard';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import type { StudentProgressData } from '@/types/student-progress';
@@ -29,7 +31,8 @@ const LEVELS: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const { user, refreshUser } = useAuth();
+  const router = useRouter();
+  const { user, logout, refreshUser } = useAuth();
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [progress, setProgress] = useState<StudentProgressData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,6 +113,29 @@ export default function ProfilePage() {
       <Card><CardHeader className="border-b border-black/8 dark:border-white/8"><p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#668f00]">Performance real</p><CardTitle className="mt-1 flex items-center gap-2 text-2xl font-black tracking-tight"><TrendingUp className="size-5" /> Minha evolução detalhada</CardTitle></CardHeader><CardContent className="flex items-start gap-3 p-5 sm:p-6"><Activity className="mt-0.5 size-5 shrink-0 text-[#7cae00]" /><p className="text-sm leading-6 text-muted-foreground">Suas avaliações, mudanças corporais, constância e treinos registrados pelo personal aparecem abaixo.</p></CardContent></Card>
       <StudentProgressDashboard data={progress} />
       <Card><CardHeader className="border-b border-black/8 dark:border-white/8"><CardTitle className="flex items-center gap-2 text-xl font-black"><ShieldCheck className="size-5 text-[#7cae00]" /> Meus dados e privacidade</CardTitle></CardHeader><CardContent className="p-5 sm:p-6"><AccountControls name={profile.full_name} /></CardContent></Card>
+      <Card className="border-red-500/30 bg-red-500/5">
+        <CardHeader className="border-b border-red-500/20">
+          <CardTitle className="flex items-center gap-2 text-xl text-red-500">
+            <LogOut className="size-5" /> Sair do aplicativo
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-5 sm:p-6 space-y-3">
+          <p className="text-xs leading-5 text-muted-foreground">
+            Deseja sair da sua conta de aluno neste aparelho? Você precisará do seu nome e código de 6 dígitos para entrar novamente.
+          </p>
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              await logout();
+              router.replace('/login');
+              router.refresh();
+            }}
+            className="w-full sm:w-auto font-bold bg-red-600 hover:bg-red-700 text-white"
+          >
+            <LogOut className="mr-2 size-4" /> Desconectar agora
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

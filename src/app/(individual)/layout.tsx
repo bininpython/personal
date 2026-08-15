@@ -41,6 +41,8 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
     router.refresh();
   }
 
+  const isRootPage = pathname === '/my';
+
   const navigation = (mobile = false) => (
     // A gaveta cobre a tela toda, então no celular ela também nasce atrás da
     // barra de status. Na barra lateral do desktop não há faixa a devolver.
@@ -77,14 +79,35 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
         <button onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')} className={`flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-white/65 hover:bg-white/8 hover:text-white ${collapsed && !mobile ? 'justify-center' : ''}`}>
           {resolvedTheme === 'dark' ? <Sun className="size-[18px]" /> : <Moon className="size-[18px]" />}{(!collapsed || mobile) && <span>{resolvedTheme === 'dark' ? 'Modo claro' : 'Modo escuro'}</span>}
         </button>
+        {mobile && (
+          <Button
+            variant="destructive"
+            onClick={() => void handleLogout()}
+            className="mt-2 w-full justify-center gap-2 rounded-xl bg-red-600 font-bold text-white hover:bg-red-700"
+          >
+            <LogOut className="size-4" /> Sair da conta
+          </Button>
+        )}
         <Separator className="my-2 bg-white/10" />
         <div className={`flex items-center ${collapsed && !mobile ? 'justify-center' : 'gap-3'} px-3 py-2`}>
-          <Avatar className="size-9 shrink-0 ring-2 ring-[#c9ff32]/25">
-            {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
-            <AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback>
-          </Avatar>
-          {(!collapsed || mobile) && <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-white">{user?.name || 'Atleta'}</p><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#c9ff32]">Independente</p></div>}
-          {(!collapsed || mobile) && <button type="button" aria-label="Sair da conta" title="Sair" onClick={() => void handleLogout()} className="text-white/40 transition-colors hover:text-[#c9ff32]"><LogOut className="size-4" /></button>}
+          <Link href="/my-profile" className="flex items-center gap-3 min-w-0 flex-1">
+            <Avatar className="size-9 shrink-0 ring-2 ring-[#c9ff32]/25">
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
+              <AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback>
+            </Avatar>
+            {(!collapsed || mobile) && <div className="min-w-0 flex-1"><p className="truncate text-sm font-bold text-white">{user?.name || 'Atleta'}</p><p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#c9ff32]">Independente</p></div>}
+          </Link>
+          {(!collapsed || mobile) && (
+            <button
+              type="button"
+              aria-label="Sair da conta"
+              title="Sair"
+              onClick={() => void handleLogout()}
+              className="text-white/40 transition-colors hover:text-red-400 p-1"
+            >
+              <LogOut className="size-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -99,15 +122,54 @@ export default function IndividualLayout({ children }: { children: React.ReactNo
         </button>
       </aside>
 
-      <header className="dk-app-header fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-white/10 bg-[#090a08]/95 px-4 text-white backdrop-blur-xl lg:hidden">
-        <div className="flex items-center gap-2">
+      <header className="dk-app-header fixed inset-x-0 top-0 z-40 flex items-center justify-between border-b border-white/10 bg-[#090a08]/95 px-3 sm:px-4 text-white backdrop-blur-xl lg:hidden">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {!isRootPage && (
+            <Button
+              nativeButton={false}
+              variant="ghost"
+              size="sm"
+              render={<Link href="/my" />}
+              className="h-9 px-2.5 text-xs font-bold text-white hover:bg-white/10"
+              aria-label="Voltar para o início"
+            >
+              <ChevronLeft className="mr-1 size-4 text-[#c9ff32]" />
+              Início
+            </Button>
+          )}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger render={<Button variant="ghost" size="icon" className="size-10 text-white hover:bg-white/10 hover:text-white" />}><Menu className="size-5" /></SheetTrigger>
+            <SheetTrigger render={<Button variant="ghost" size="icon" className="size-9 text-white hover:bg-white/10 hover:text-white" aria-label="Abrir menu de navegação" />}><Menu className="size-5" /></SheetTrigger>
             <SheetContent side="left" className="w-[290px] border-white/10 bg-[#090a08] p-0 text-white">{navigation(true)}</SheetContent>
           </Sheet>
           <BrandMark compact inverted />
         </div>
-        <Avatar className="size-9 ring-2 ring-[#c9ff32]/25">{user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}<AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback></Avatar>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 text-white/70 hover:bg-white/10 hover:text-white"
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            aria-label="Alternar tema"
+          >
+            {resolvedTheme === 'dark' ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-9 text-red-400 hover:bg-red-500/20 hover:text-red-300"
+            onClick={() => void handleLogout()}
+            aria-label="Sair do aplicativo"
+            title="Sair do aplicativo"
+          >
+            <LogOut className="size-4" />
+          </Button>
+          <Link href="/my-profile">
+            <Avatar className="size-8 sm:size-9 ring-2 ring-[#c9ff32]/25">
+              {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={`Avatar de ${user.name}`} />}
+              <AvatarFallback className="bg-[#c9ff32] text-xs font-black text-black">{initials}</AvatarFallback>
+            </Avatar>
+          </Link>
+        </div>
       </header>
 
       <main className="dk-app-surface dk-app-header-offset flex-1 overflow-y-auto pb-20 lg:pb-0">

@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageHeader } from '@/components/ui/page-header';
 
+import { downloadPdfFile } from '@/lib/pdf/download-client';
+
 interface Assignment {
   id: string;
   templateId: string;
@@ -57,7 +59,7 @@ export function StudentLibrary() {
           <Lock className="mr-2 size-4" /> Baixar PDF
         </Button>
       ) : (
-        <Button nativeButton={false} variant="outline" render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}><Download className="mr-2 size-4" /> PDF</Button>
+        <Button variant="outline" onClick={() => void downloadPdfFile(`/api/workout-plans/${plan.id}/pdf`, `${plan.name}.pdf`)}><Download className="mr-2 size-4" /> PDF</Button>
       )}
       </div></CardContent></Card>)}</div>}
     </div>
