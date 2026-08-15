@@ -396,20 +396,20 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
               <Sparkles className="size-3.5" /> Acervo Oficial Consolidado
             </div>
             <h2 className="text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl text-white">
-              122 fichas completas, 464 rotinas e mais de 2.700 prescrições
+              172 fichas completas, 664 rotinas e mais de 3.600 prescrições
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
-              Coleção completa de programas estruturados (H01 a H50 masculinos e F01 a F50 femininos) com fotos locais,
+              Coleção completa de programas estruturados (H01 a H75 masculinos e F01 a F75 femininos) com fotos locais,
               métodos de treino, contagem de descanso e PDF pronto para download no padrão G KONG.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-3 text-center sm:min-w-[340px]">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
-              <p className="text-2xl font-black text-[#38bdf8]">{maleCount || 62}</p>
+              <p className="text-2xl font-black text-[#38bdf8]">{maleCount || 87}</p>
               <p className="text-[10px] uppercase font-bold tracking-wider text-white/60">Homens</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
-              <p className="text-2xl font-black text-[#f472b6]">{femaleCount || 60}</p>
+              <p className="text-2xl font-black text-[#f472b6]">{femaleCount || 85}</p>
               <p className="text-[10px] uppercase font-bold tracking-wider text-white/60">Mulheres</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm">

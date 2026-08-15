@@ -9,13 +9,13 @@ const catalogByKey = new Map(EXERCISE_CATALOG.map((exercise) => [exercise.key, e
 const allDays = templates.flatMap((template) => template.days);
 const allExercises = allDays.flatMap((day) => day.exercises);
 
-test('library consolidates all source programs into 122 professional templates', () => {
-  assert.equal(templates.length, 122);
-  assert.equal(new Set(templates.map((template) => template.id)).size, 122);
-  assert.equal(templates.filter((template) => template.audience === 'male').length, 62);
-  assert.equal(templates.filter((template) => template.audience === 'female').length, 60);
-  assert.equal(templates.filter((template) => template.goal === 'hypertrophy').length, 96);
-  assert.equal(templates.filter((template) => template.goal === 'definition').length, 14);
+test('library consolidates all source programs into 172 professional templates', () => {
+  assert.equal(templates.length, 172);
+  assert.equal(new Set(templates.map((template) => template.id)).size, 172);
+  assert.equal(templates.filter((template) => template.audience === 'male').length, 87);
+  assert.equal(templates.filter((template) => template.audience === 'female').length, 85);
+  assert.equal(templates.filter((template) => template.goal === 'hypertrophy').length, 144);
+  assert.equal(templates.filter((template) => template.goal === 'definition').length, 16);
   assert.equal(templates.filter((template) => template.goal === 'general').length, 12);
 });
 
@@ -32,8 +32,8 @@ test('every template is complete, rotational and valid for eight weeks', () => {
 });
 
 test('every library prescription resolves to a catalog exercise with a local photo', () => {
-  assert.equal(allDays.length, 464);
-  assert.equal(allExercises.length, 2754);
+  assert.equal(allDays.length, 664);
+  assert.equal(allExercises.length, 3663);
   for (const prescription of allExercises) {
     const exercise = catalogByKey.get(prescription.exerciseKey);
     assert.ok(exercise, `Missing catalog key ${prescription.exerciseKey}`);
