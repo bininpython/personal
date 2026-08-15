@@ -397,10 +397,10 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
               <Sparkles className="size-3.5" /> Acervo Oficial Consolidado
             </div>
             <h2 className="text-2xl font-black tracking-tight sm:text-3xl lg:text-4xl text-white">
-              172 fichas completas, 664 rotinas e mais de 3.600 prescrições
+              222 fichas completas, 864 rotinas e mais de 4.400 prescrições
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
-              Coleção completa de programas estruturados (H01 a H75 masculinos e F01 a F75 femininos) com fotos locais,
+              Coleção completa de programas estruturados (H01 a H100 masculinos e F01 a F100 femininos) com fotos locais,
               métodos de treino, contagem de descanso e PDF pronto para download no padrão G KONG.
             </p>
           </div>
