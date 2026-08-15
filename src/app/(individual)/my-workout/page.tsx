@@ -461,20 +461,119 @@ export default function IndividualWorkoutPage() {
             </div>
           </div>
         </div>
-        <div className="mt-5 grid grid-cols-3 gap-3"><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Target className="size-4 text-[#c9ff32]" /><p className="mt-2 text-lg font-black">{plan.daysPerWeek}x</p><p className="text-[10px] text-white/60">fichas por semana</p></div><div className="rounded-2xl bg-[#c9ff32] p-4 text-black"><CheckCircle2 className="size-4" /><p className="mt-2 text-lg font-black">{plan.week.completed}/{plan.week.target}</p><p className="text-[10px] text-black/60">concluídas</p></div><div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4"><Dumbbell className="size-4 text-[#c9ff32]" /><p className="mt-2 text-lg font-black">{suggestedDay?.label || activeDay.label}</p><p className="text-[10px] text-white/60">próxima ficha</p></div></div>
+        <div className="mt-5 grid grid-cols-3 gap-3">
+          <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4">
+            <Target className="size-4 text-[#c9ff32]" />
+            <p className="mt-2 text-lg font-black">{plan.daysPerWeek}x</p>
+            <p className="text-[10px] text-white/60">treinos na semana</p>
+          </div>
+          <div className="rounded-2xl bg-[#c9ff32] p-4 text-black">
+            <CheckCircle2 className="size-4" />
+            <p className="mt-2 text-lg font-black">{plan.week.completed}/{plan.week.target}</p>
+            <p className="text-[10px] text-black/60">treinos concluídos</p>
+          </div>
+          <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-4">
+            <Dumbbell className="size-4 text-[#c9ff32]" />
+            <p className="mt-2 text-lg font-black">{suggestedDay?.label || activeDay.label}</p>
+            <p className="text-[10px] text-white/60">próxima ficha da rotina</p>
+          </div>
+        </div>
       </section>
 
-      <Card className={plan.week.isComplete ? 'border-[#9fdb00]/30 bg-[#c9ff32]/10' : ''}><CardContent className="p-4 sm:p-5"><div className="flex items-center justify-between gap-4"><div><p className="font-bold">{plan.week.isComplete ? 'Sequência semanal concluída' : 'Fichas desta semana'}</p><p className="text-xs text-muted-foreground">Sequência: {weeklySequence.join(' → ')}. Na próxima semana, começa novamente pela Ficha {plan.days[0]?.label}.</p></div><strong className="text-2xl text-[#668f00]">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</strong></div><Progress className="mt-3" value={(plan.week.completed / Math.max(1, plan.week.target)) * 100} /></CardContent></Card>
+      <Card className={plan.week.isComplete ? 'border-[#9fdb00]/30 bg-[#c9ff32]/10' : ''}>
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-bold">{plan.week.isComplete ? 'Sequência semanal concluída' : 'Fichas desta semana'}</p>
+              <p className="text-xs text-muted-foreground">Sequência programada: {weeklySequence.map((lbl) => `Ficha ${lbl}`).join(' → ')}. Na próxima semana, reinicia pela Ficha {plan.days[0]?.label}.</p>
+            </div>
+            <strong className="text-2xl text-[#668f00]">{Math.min(100, Math.round((plan.week.completed / Math.max(1, plan.week.target)) * 100))}%</strong>
+          </div>
+          <Progress className="mt-3" value={(plan.week.completed / Math.max(1, plan.week.target)) * 100} />
+        </CardContent>
+      </Card>
 
-      <div className="flex gap-2 overflow-x-auto pb-1">{plan.days.map((day) => <button type="button" key={day.id} onClick={() => selectDay(day.id)} className={`relative min-w-[135px] rounded-xl border px-4 py-3 text-left ${activeDay.id === day.id ? 'border-black bg-black text-[#c9ff32] dark:border-[#c9ff32] dark:bg-[#c9ff32] dark:text-black' : day.completedThisWeek ? 'border-[#9fdb00]/40 bg-[#c9ff32]/10' : 'border-border bg-card'}`}>{day.completedThisWeek && <CheckCircle2 className="absolute right-2 top-2 size-4" />}<span className="block text-[10px] font-black uppercase opacity-70">Ficha {day.label}</span><span className="mt-1 block truncate font-bold">{day.name}</span><span className="mt-1 block text-[10px] opacity-70">{day.weeklyCompletions}/{day.weeklyAllowance} na semana</span></button>)}</div>
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {plan.days.map((day) => (
+          <button
+            type="button"
+            key={day.id}
+            onClick={() => selectDay(day.id)}
+            className={`relative min-w-[140px] rounded-2xl border px-4 py-3 text-left transition-all ${
+              activeDay.id === day.id
+                ? 'border-foreground bg-foreground text-background shadow-md'
+                : day.completedThisWeek
+                  ? 'border-[#9fdb00]/40 bg-[#c9ff32]/10'
+                  : 'border-border bg-card hover:border-foreground/40'
+            }`}
+          >
+            {day.completedThisWeek && <CheckCircle2 className="absolute right-2.5 top-2.5 size-4 text-[#668f00] dark:text-[#c9ff32]" />}
+            <span className="block text-[10px] font-black uppercase opacity-70">Ficha {day.label}</span>
+            <span className="mt-1 block truncate font-bold">{day.name}</span>
+            <span className="mt-1 block text-[10px] opacity-70">{day.weeklyCompletions} de {day.weeklyAllowance} na semana</span>
+          </button>
+        ))}
+      </div>
 
-      {lockedUntilTomorrow && <Card className="border-[#9fdb00]/30 bg-[#c9ff32]/10"><CardContent className="flex gap-3 p-5"><CalendarClock className="mt-0.5 size-5 shrink-0 text-[#668f00]" /><div><p className="font-bold">Próxima ficha do dia: Ficha {activeDay.label}</p><p className="mt-1 text-sm text-muted-foreground">Você já concluiu a ficha de hoje. A próxima fica disponível amanhã, mas pode ser consultada agora.</p></div></CardContent></Card>}
+      {lockedUntilTomorrow && (
+        <Card className="border-[#9fdb00]/30 bg-[#c9ff32]/10">
+          <CardContent className="flex gap-3 p-5">
+            <CalendarClock className="mt-0.5 size-5 shrink-0 text-[#668f00]" />
+            <div>
+              <p className="font-bold">Próxima ficha do dia: Ficha {activeDay.label}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Você já concluiu a ficha de hoje. A próxima fica disponível amanhã, mas pode ser consultada agora.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {lockedByRotation && !lockedUntilTomorrow && !activeDay.completedThisWeek && <Card className="border-amber-500/30 bg-amber-500/10"><CardContent className="flex gap-3 p-5"><CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" /><div><p className="font-bold">Ficha disponível somente para consulta</p><p className="mt-1 text-sm text-muted-foreground">Para manter sua progressão, conclua primeiro a ficha destacada na sequência.</p></div></CardContent></Card>}
+      {lockedByRotation && !lockedUntilTomorrow && !activeDay.completedThisWeek && (
+        <Card className="border-amber-500/30 bg-amber-500/10">
+          <CardContent className="flex gap-3 p-5">
+            <CalendarClock className="mt-0.5 size-5 shrink-0 text-amber-600" />
+            <div>
+              <p className="font-bold">Ficha disponível somente para consulta</p>
+              <p className="mt-1 text-sm text-muted-foreground">Para manter sua progressão correta, conclua primeiro a ficha destacada na sequência semanal.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-      {!isRunning && !unavailable && <Card className="overflow-hidden border-[#9fdb00]/30"><CardContent className="p-6 text-center sm:p-8"><div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Play className="ml-1 size-6" /></div><p className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#668f00]">Ficha do dia</p><h2 className="mt-2 text-2xl font-black">Ficha {activeDay.label} · {activeDay.name}</h2><p className="mt-2 text-sm text-muted-foreground">{activeDay.exercises.length} exercícios · {totalSets} séries. O tempo começa quando você tocar no botão.</p><Button className="mt-5 h-12 bg-black px-8 text-white dark:bg-[#c9ff32] dark:text-black" onClick={startWorkout}><Play className="mr-2 size-4" /> Iniciar ficha {activeDay.label}</Button></CardContent></Card>}
+      {!isRunning && !unavailable && (
+        <Card className="overflow-hidden border-[#9fdb00]/30">
+          <CardContent className="p-6 text-center sm:p-8">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#c9ff32] text-black shadow-[0_0_20px_rgba(201,255,50,0.35)]">
+              <Play className="ml-1 size-6" />
+            </div>
+            <p className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#668f00] dark:text-[#c9ff32]">Ficha do dia</p>
+            <h2 className="mt-2 text-2xl font-black">Ficha {activeDay.label} · {activeDay.name}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{activeDay.exercises.length} exercícios organizados · {totalSets} séries totais. O tempo de treino começa ao tocar no botão.</p>
+            <Button className="mt-5 h-12 rounded-2xl bg-foreground px-8 font-black text-background hover:bg-foreground/90" onClick={startWorkout}>
+              <Play className="mr-2 size-4" /> Iniciar ficha {activeDay.label}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
-      {isRunning && <Card><CardContent className="p-4 sm:p-5"><div className="flex items-center justify-between gap-4"><div><p className="font-bold">Ficha {activeDay.label} em andamento</p><p className="text-xs text-muted-foreground">{completedCount} de {totalSets} séries concluídas</p></div><strong className="text-2xl text-[#668f00]">{progress}%</strong></div><Progress className="mt-3" value={progress} />{progress > 0 && <Button variant="ghost" size="sm" className="mt-2 text-xs text-muted-foreground" onClick={clearLocalProgress}><RotateCcw className="mr-1 size-3" /> Reiniciar ficha</Button>}</CardContent></Card>}
+      {isRunning && (
+        <Card>
+          <CardContent className="p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="font-bold">Ficha {activeDay.label} em andamento</p>
+                <p className="text-xs text-muted-foreground">{completedCount} de {totalSets} séries concluídas</p>
+              </div>
+              <strong className="text-2xl text-[#668f00] dark:text-[#c9ff32]">{progress}%</strong>
+            </div>
+            <Progress className="mt-3" value={progress} />
+            {progress > 0 && (
+              <Button variant="ghost" size="sm" className="mt-2 text-xs text-muted-foreground" onClick={clearLocalProgress}>
+                <RotateCcw className="mr-1 size-3" /> Reiniciar ficha
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="space-y-5">
         {activeDay.exercises.map((exercise, exerciseIndex) => {
@@ -505,36 +604,40 @@ export default function IndividualWorkoutPage() {
                         {exercise.name}
                       </CardTitle>
                       <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-                        <Badge variant="outline" className="font-bold">{exercise.primaryMuscleLabel}</Badge>
+                        <Badge variant="outline" className="font-bold border-border/80 bg-background/60">
+                          {exercise.primaryMuscleLabel ? `Músculo: ${exercise.primaryMuscleLabel}` : 'Geral'}
+                        </Badge>
                         <Badge className="bg-[#c9ff32]/15 text-[#5c8000] dark:text-[#c9ff32] border-0 font-bold">
-                          {exercise.sets} séries × {exercise.reps}
+                          {exercise.sets} séries de {exercise.reps} repetições
                         </Badge>
                         {exercise.restTime > 0 && (
-                          <Badge variant="secondary" className="font-medium">
-                            <Clock3 className="mr-1 size-3 text-[#668f00] dark:text-[#c9ff32]" /> {exercise.restTime}s descanso
+                          <Badge variant="secondary" className="font-medium bg-muted/70">
+                            <Clock3 className="mr-1.5 size-3.5 text-[#668f00] dark:text-[#c9ff32]" /> {exercise.restTime} segundos de descanso
                           </Badge>
                         )}
                       </div>
                       {exercise.lastPerformance && (
-                        <p className="mt-2.5 inline-flex items-center gap-1.5 rounded-xl border border-[#9fdb00]/30 bg-[#c9ff32]/10 px-3 py-1.5 text-xs">
-                          <strong className="font-black text-[#668f00] dark:text-[#c9ff32]">Última vez:</strong>{' '}
-                          <span>{exercise.lastPerformance.sets}×{exercise.lastPerformance.repetitions ?? '—'}</span>
+                        <p className="mt-2.5 inline-flex flex-wrap items-center gap-1.5 rounded-xl border border-[#9fdb00]/30 bg-[#c9ff32]/10 px-3.5 py-1.5 text-xs">
+                          <strong className="font-black text-[#668f00] dark:text-[#c9ff32]">Último treino:</strong>{' '}
+                          <span>{exercise.lastPerformance.sets} séries de {exercise.lastPerformance.repetitions ?? '—'} repetições</span>
                           {exercise.lastPerformance.load !== null && <span>com <strong>{exercise.lastPerformance.load} kg</strong></span>}
-                          {exercise.lastPerformance.rpe !== null && <span className="opacity-75">· RPE {exercise.lastPerformance.rpe}</span>}
+                          {exercise.lastPerformance.rpe !== null && <span className="opacity-75">· Esforço RPE {exercise.lastPerformance.rpe}</span>}
                         </p>
                       )}
                     </div>
                   </div>
                   {exercise.videoUrl && (
                     <Button
-                      size="icon"
+                      type="button"
                       variant="outline"
-                      className="size-10 rounded-2xl border-border/80 text-foreground hover:border-[#c9ff32] hover:text-[#668f00]"
+                      size="sm"
+                      className="h-9 gap-1.5 rounded-full border-border/80 bg-background/90 px-3.5 text-xs font-black text-foreground shadow-sm hover:border-[#c9ff32] hover:bg-[#c9ff32]/10 hover:text-[#5c8000] dark:hover:text-[#c9ff32]"
                       onClick={() => setPlayingVideo(exercise.videoUrl)}
-                      title="Ver vídeo de execução"
-                      aria-label="Ver vídeo do exercício"
+                      title="Assistir ao vídeo com a execução do exercício"
+                      aria-label="Vídeo de Execução"
                     >
-                      <PlayCircle className="size-5" />
+                      <PlayCircle className="size-4 text-[#668f00] dark:text-[#c9ff32]" />
+                      <span>Execução</span>
                     </Button>
                   )}
                 </div>
@@ -550,12 +653,12 @@ export default function IndividualWorkoutPage() {
 
                 {/* Set Checklist Table */}
                 <div className="space-y-2 pt-1">
-                  <div className="grid grid-cols-[48px_1fr_1fr_48px] sm:grid-cols-[64px_1fr_1fr_72px_56px] items-center gap-2 px-1 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">
-                    <span className="text-center">Série</span>
-                    <span className="text-center">Reps</span>
+                  <div className="grid grid-cols-[auto_1fr_1fr_auto] sm:grid-cols-[100px_1fr_1fr_80px_60px] items-center gap-2 px-1 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                    <span>Série</span>
+                    <span className="text-center">Repetições</span>
                     <span className="text-center">Carga (kg)</span>
-                    <span className="hidden sm:block text-center">RPE</span>
-                    <span className="text-center">Status</span>
+                    <span className="hidden sm:block text-center">Esforço (RPE)</span>
+                    <span className="text-center">Concluir</span>
                   </div>
 
                   <div className="space-y-2">
@@ -566,26 +669,41 @@ export default function IndividualWorkoutPage() {
                       return (
                         <div
                           key={key}
-                          className={`grid grid-cols-[48px_1fr_1fr_48px] sm:grid-cols-[64px_1fr_1fr_72px_56px] items-center gap-2 rounded-2xl border p-2 sm:p-2.5 transition-all duration-200 ${
+                          className={`grid grid-cols-[auto_1fr_1fr_auto] sm:grid-cols-[100px_1fr_1fr_80px_60px] items-center gap-2 rounded-2xl border p-2 sm:p-2.5 transition-all duration-200 ${
                             checked
                               ? 'border-[#9fdb00]/60 bg-[#c9ff32]/10 shadow-[0_2px_12px_rgba(201,255,50,0.06)]'
                               : 'border-border/70 bg-card/60 hover:border-border'
                           }`}
                         >
-                          {/* Set number badge */}
-                          <div className="flex justify-center">
-                            <span
-                              className={`flex size-8 items-center justify-center rounded-xl text-xs font-black transition-colors ${
+                          {/* Interactive Circular Ball for Set */}
+                          <div className="flex items-center">
+                            <button
+                              type="button"
+                              disabled={!isRunning || unavailable}
+                              onClick={() => toggleSet(exercise, setIndex)}
+                              aria-label={`Série ${setIndex + 1}`}
+                              className={`group flex items-center gap-1.5 rounded-full p-0.5 sm:px-2 sm:py-1 transition-all ${
                                 checked
-                                  ? 'bg-[#c9ff32] text-black font-black'
-                                  : 'bg-muted text-muted-foreground'
+                                  ? 'bg-[#c9ff32] text-black font-black shadow-[0_0_14px_rgba(201,255,50,0.35)]'
+                                  : 'bg-muted text-foreground hover:bg-[#c9ff32]/20 hover:text-[#5c8000] dark:hover:text-[#c9ff32]'
                               }`}
                             >
-                              {setIndex + 1}
-                            </span>
+                              <span
+                                className={`flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-black transition-all ${
+                                  checked
+                                    ? 'bg-black text-[#c9ff32]'
+                                    : 'bg-background border border-border text-foreground group-hover:border-[#c9ff32]'
+                                }`}
+                              >
+                                {checked ? <Check className="size-4 stroke-[3]" /> : setIndex + 1}
+                              </span>
+                              <span className="hidden sm:inline text-xs font-black whitespace-nowrap pr-1">
+                                Série {setIndex + 1}
+                              </span>
+                            </button>
                           </div>
 
-                          {/* Reps Input */}
+                          {/* Repetições Input */}
                           <div>
                             <Input
                               aria-label={`Repetições da série ${setIndex + 1}`}
@@ -598,10 +716,10 @@ export default function IndividualWorkoutPage() {
                             />
                           </div>
 
-                          {/* Load Input */}
+                          {/* Carga (kg) Input */}
                           <div>
                             <Input
-                              aria-label={`Carga da série ${setIndex + 1}`}
+                              aria-label={`Carga em kg da série ${setIndex + 1}`}
                               inputMode="decimal"
                               disabled={!isRunning || unavailable}
                               className="h-10 text-center font-bold text-sm bg-background/80"
@@ -611,10 +729,10 @@ export default function IndividualWorkoutPage() {
                             />
                           </div>
 
-                          {/* RPE Input (desktop) */}
+                          {/* Esforço RPE (desktop) */}
                           <div className="hidden sm:block">
                             <Input
-                              aria-label={`RPE da série ${setIndex + 1}`}
+                              aria-label={`Nível de esforço RPE da série ${setIndex + 1}`}
                               inputMode="numeric"
                               disabled={!isRunning || unavailable}
                               className="h-10 text-center text-xs font-medium bg-background/80"
@@ -624,14 +742,14 @@ export default function IndividualWorkoutPage() {
                             />
                           </div>
 
-                          {/* Big tactile checkmark button */}
+                          {/* Circular Concluir Ball Button */}
                           <div className="flex justify-center">
                             <button
                               type="button"
                               disabled={!isRunning || unavailable}
                               onClick={() => toggleSet(exercise, setIndex)}
                               aria-label={`Concluir série ${setIndex + 1}`}
-                              className={`size-10 sm:size-11 rounded-2xl flex items-center justify-center transition-all duration-200 ${
+                              className={`size-10 sm:size-11 rounded-full flex items-center justify-center transition-all duration-200 ${
                                 checked
                                   ? 'bg-[#c9ff32] text-black shadow-[0_0_16px_rgba(201,255,50,0.45)] scale-105'
                                   : 'border-2 border-border/80 bg-background text-muted-foreground hover:border-[#9fdb00] hover:text-foreground active:scale-95'
