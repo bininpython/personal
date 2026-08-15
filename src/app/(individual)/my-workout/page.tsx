@@ -14,6 +14,7 @@ import {
   History,
   Loader2,
   Lock,
+  Minus,
   Play,
   PlayCircle,
   Plus,
@@ -36,6 +37,7 @@ import { TrainingMethodGuidance } from '@/components/workouts/training-method-gu
 import { useAuth } from '@/hooks/use-auth';
 import { isDemoUser } from '@/lib/auth/demo';
 import { downloadPdfFile } from '@/lib/pdf/download-client';
+import { playRestTimerChime, triggerHapticFeedback } from '@/lib/workouts/timer-sound';
 
 interface LastPerformance {
   sets: number;
@@ -232,8 +234,11 @@ export default function IndividualWorkoutPage() {
     const exerciseName = restTimer.exerciseName;
     const timeout = window.setTimeout(() => {
       setRestTimer(null);
-      if ('vibrate' in navigator) navigator.vibrate([180, 100, 180]);
-      toast.success(`Descanso finalizado para ${exerciseName}.`);
+      playRestTimerChime();
+      triggerHapticFeedback([100, 50, 100]);
+      toast.success(`Descanso finalizado!`, {
+        description: `Pronto para a próxima série de ${exerciseName}.`,
+      });
     }, 0);
     return () => window.clearTimeout(timeout);
   }, [restTimer]);
@@ -295,6 +300,7 @@ export default function IndividualWorkoutPage() {
     setSetDetails({});
     setRating(0);
     setFeedback('');
+    triggerHapticFeedback(30);
   }
 
   function updateSetDetail(key: string, field: keyof SetPerformance, value: string) {
@@ -310,21 +316,52 @@ export default function IndividualWorkoutPage() {
     }));
   }
 
+  function adjustRestTime(deltaSeconds: number) {
+    setRestTimer((current) => {
+      if (!current) return null;
+      const newRemaining = Math.max(5, current.remainingSeconds + deltaSeconds);
+      const newTotal = Math.max(newRemaining, current.totalSeconds + (deltaSeconds > 0 ? deltaSeconds : 0));
+      return {
+        ...current,
+        totalSeconds: newTotal,
+        remainingSeconds: newRemaining,
+        endsAt: Date.now() + newRemaining * 1000,
+      };
+    });
+  }
+
   function toggleSet(exercise: IndividualWorkoutExercise, setIndex: number) {
     if (!isRunning || unavailable) return;
     const key = `${exercise.id}:${setIndex}`;
     const wasCompleted = completedSets.has(key);
     if (!wasCompleted) {
-      setSetDetails((current) => ({
-        ...current,
-        [key]: current[key] || {
-          repetitions: exercise.lastPerformance?.repetitions !== null && exercise.lastPerformance?.repetitions !== undefined
+      triggerHapticFeedback(25);
+      setSetDetails((current) => {
+        const existing = current[key];
+        const defaultReps = existing?.repetitions || (
+          exercise.lastPerformance?.repetitions !== null && exercise.lastPerformance?.repetitions !== undefined
             ? String(exercise.lastPerformance.repetitions)
-            : /^\d+$/.test(exercise.reps) ? exercise.reps : '',
-          load: exercise.lastPerformance?.load !== null && exercise.lastPerformance?.load !== undefined ? String(exercise.lastPerformance.load) : '',
-          rpe: exercise.lastPerformance?.rpe !== null && exercise.lastPerformance?.rpe !== undefined ? String(exercise.lastPerformance.rpe) : '',
-        },
-      }));
+            : /^\d+$/.test(exercise.reps) ? exercise.reps : exercise.reps.split(/[–—\-]/)[0]?.trim() || ''
+        );
+        const defaultLoad = existing?.load || (
+          exercise.lastPerformance?.load !== null && exercise.lastPerformance?.load !== undefined
+            ? String(exercise.lastPerformance.load)
+            : ''
+        );
+        const defaultRpe = existing?.rpe || (
+          exercise.lastPerformance?.rpe !== null && exercise.lastPerformance?.rpe !== undefined
+            ? String(exercise.lastPerformance.rpe)
+            : ''
+        );
+        return {
+          ...current,
+          [key]: {
+            repetitions: defaultReps,
+            load: defaultLoad,
+            rpe: defaultRpe,
+          },
+        };
+      });
     }
     setCompletedSets((current) => {
       const next = new Set(current);
@@ -439,21 +476,304 @@ export default function IndividualWorkoutPage() {
 
       {isRunning && <Card><CardContent className="p-4 sm:p-5"><div className="flex items-center justify-between gap-4"><div><p className="font-bold">Ficha {activeDay.label} em andamento</p><p className="text-xs text-muted-foreground">{completedCount} de {totalSets} séries concluídas</p></div><strong className="text-2xl text-[#668f00]">{progress}%</strong></div><Progress className="mt-3" value={progress} />{progress > 0 && <Button variant="ghost" size="sm" className="mt-2 text-xs text-muted-foreground" onClick={clearLocalProgress}><RotateCcw className="mr-1 size-3" /> Reiniciar ficha</Button>}</CardContent></Card>}
 
-      <div className="space-y-4">{activeDay.exercises.map((exercise, exerciseIndex) => {
-        const exerciseCompleted = Array.from({ length: exercise.sets }).every((_, index) => completedSets.has(`${exercise.id}:${index}`));
-        return <Card key={exercise.id} className={`overflow-hidden ${exerciseCompleted ? 'border-[#9fdb00]/40 bg-[#c9ff32]/8' : ''} ${!isRunning || unavailable ? 'opacity-85' : ''}`}><CardHeader className="border-b border-border/50 pb-4"><div className="flex items-start justify-between gap-3"><div className="flex min-w-0 gap-3"><span className={`flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-black ${exerciseCompleted ? 'bg-[#c9ff32] text-black' : 'bg-black text-[#c9ff32] dark:bg-[#c9ff32] dark:text-black'}`}>{exerciseCompleted ? <Check className="size-4" /> : exerciseIndex + 1}</span><div><CardTitle className="text-base">{exercise.name}</CardTitle><div className="mt-2 flex flex-wrap gap-1.5"><Badge variant="outline">{exercise.primaryMuscleLabel}</Badge><Badge variant="secondary">{exercise.sets} × {exercise.reps}</Badge><Badge variant="secondary"><Clock3 className="mr-1 size-3" /> {exercise.restTime}s</Badge></div>{exercise.lastPerformance && <p className="mt-3 rounded-xl border border-[#9fdb00]/25 bg-[#c9ff32]/10 px-3 py-2 text-xs"><strong className="text-[#668f00]">Última vez:</strong> {exercise.lastPerformance.sets}×{exercise.lastPerformance.repetitions ?? '—'}{exercise.lastPerformance.load !== null ? ` com ${exercise.lastPerformance.load} kg` : ''}{exercise.lastPerformance.rpe !== null ? ` · RPE ${exercise.lastPerformance.rpe}` : ''}</p>}</div></div>{exercise.videoUrl && <Button size="icon" variant="outline" onClick={() => setPlayingVideo(exercise.videoUrl)}><PlayCircle className="size-4 text-danger" /></Button>}</div></CardHeader><CardContent className="space-y-4 p-4 sm:p-5"><p className="text-sm leading-6 text-muted-foreground">{exercise.instructions}</p><TrainingMethodGuidance method={exercise.method} methodNotes={exercise.methodNotes} noteLabel="Minha orientação" /><div className="space-y-2">{Array.from({ length: exercise.sets }).map((_, setIndex) => {
-          const key = `${exercise.id}:${setIndex}`;
-          const checked = completedSets.has(key);
-          const details = setDetails[key] || { repetitions: '', load: '', rpe: '' };
-          return <div key={key} className={`rounded-xl border p-3 ${checked ? 'border-[#9fdb00]/40 bg-[#c9ff32]/10' : 'border-border'}`}><div className="flex items-center gap-3"><button type="button" disabled={!isRunning || unavailable} onClick={() => toggleSet(exercise, setIndex)} aria-label={`Série ${setIndex + 1}`} className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 font-black ${checked ? 'border-[#9fdb00] bg-[#c9ff32] text-black' : 'border-border'}`}>{checked ? <Check className="size-5" /> : setIndex + 1}</button><div className="grid min-w-0 flex-1 grid-cols-3 gap-2"><label className="text-[10px] font-bold uppercase text-muted-foreground">Reps<Input aria-label={`Repetições da série ${setIndex + 1}`} inputMode="numeric" disabled={!isRunning || unavailable} className="mt-1 h-9 px-2" placeholder={exercise.reps} value={details.repetitions} onChange={(event) => updateSetDetail(key, 'repetitions', event.target.value)} /></label><label className="text-[10px] font-bold uppercase text-muted-foreground">Carga kg<Input aria-label={`Carga da série ${setIndex + 1}`} inputMode="decimal" disabled={!isRunning || unavailable} className="mt-1 h-9 px-2" placeholder="0" value={details.load} onChange={(event) => updateSetDetail(key, 'load', event.target.value)} /></label><label className="text-[10px] font-bold uppercase text-muted-foreground">RPE<Input aria-label={`RPE da série ${setIndex + 1}`} inputMode="numeric" disabled={!isRunning || unavailable} className="mt-1 h-9 px-2" placeholder="1-10" value={details.rpe} onChange={(event) => updateSetDetail(key, 'rpe', event.target.value)} /></label></div></div></div>;
-        })}</div></CardContent></Card>;
-      })}</div>
+      <div className="space-y-5">
+        {activeDay.exercises.map((exercise, exerciseIndex) => {
+          const exerciseCompleted = Array.from({ length: exercise.sets }).every((_, index) => completedSets.has(`${exercise.id}:${index}`));
+          return (
+            <Card
+              key={exercise.id}
+              className={`overflow-hidden border transition-all duration-300 ${
+                exerciseCompleted
+                  ? 'border-[#9fdb00]/50 bg-[#c9ff32]/[0.04] shadow-[0_4px_24px_rgba(201,255,50,0.08)]'
+                  : 'border-border/80 bg-card/95'
+              } ${!isRunning || unavailable ? 'opacity-85' : ''}`}
+            >
+              <CardHeader className="border-b border-border/50 p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-2xl text-sm font-black transition-all ${
+                        exerciseCompleted
+                          ? 'bg-[#c9ff32] text-black shadow-[0_0_20px_rgba(201,255,50,0.4)]'
+                          : 'bg-black text-[#c9ff32] dark:bg-[#c9ff32]/20 dark:text-[#c9ff32]'
+                      }`}
+                    >
+                      {exerciseCompleted ? <Check className="size-5 stroke-[2.5]" /> : exerciseIndex + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base sm:text-lg font-black tracking-tight leading-snug text-foreground">
+                        {exercise.name}
+                      </CardTitle>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+                        <Badge variant="outline" className="font-bold">{exercise.primaryMuscleLabel}</Badge>
+                        <Badge className="bg-[#c9ff32]/15 text-[#5c8000] dark:text-[#c9ff32] border-0 font-bold">
+                          {exercise.sets} séries × {exercise.reps}
+                        </Badge>
+                        {exercise.restTime > 0 && (
+                          <Badge variant="secondary" className="font-medium">
+                            <Clock3 className="mr-1 size-3 text-[#668f00] dark:text-[#c9ff32]" /> {exercise.restTime}s descanso
+                          </Badge>
+                        )}
+                      </div>
+                      {exercise.lastPerformance && (
+                        <p className="mt-2.5 inline-flex items-center gap-1.5 rounded-xl border border-[#9fdb00]/30 bg-[#c9ff32]/10 px-3 py-1.5 text-xs">
+                          <strong className="font-black text-[#668f00] dark:text-[#c9ff32]">Última vez:</strong>{' '}
+                          <span>{exercise.lastPerformance.sets}×{exercise.lastPerformance.repetitions ?? '—'}</span>
+                          {exercise.lastPerformance.load !== null && <span>com <strong>{exercise.lastPerformance.load} kg</strong></span>}
+                          {exercise.lastPerformance.rpe !== null && <span className="opacity-75">· RPE {exercise.lastPerformance.rpe}</span>}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {exercise.videoUrl && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      className="size-10 rounded-2xl border-border/80 text-foreground hover:border-[#c9ff32] hover:text-[#668f00]"
+                      onClick={() => setPlayingVideo(exercise.videoUrl)}
+                      title="Ver vídeo de execução"
+                      aria-label="Ver vídeo do exercício"
+                    >
+                      <PlayCircle className="size-5" />
+                    </Button>
+                  )}
+                </div>
+              </CardHeader>
 
-      {isRunning && progress === 100 && <Card className="border-[#9fdb00]/40 bg-[#c9ff32]/10"><CardContent className="p-6 text-center"><CheckCircle2 className="mx-auto size-10 text-[#668f00]" /><h2 className="mt-3 text-xl font-black">Todas as séries concluídas</h2><p className="mt-1 text-sm text-muted-foreground">Avalie e salve a Ficha {activeDay.label} para liberar a próxima ficha da semana.</p><div className="mt-4 flex justify-center gap-1">{[1, 2, 3, 4, 5].map((value) => <button type="button" key={value} onClick={() => setRating(value)} aria-label={`${value} estrela(s)`} className="flex size-11 items-center justify-center rounded-full"><Star className={`size-6 ${value <= rating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'}`} /></button>)}</div><Textarea className="mx-auto mt-3 max-w-md" rows={2} maxLength={1000} value={feedback} onChange={(event) => setFeedback(event.target.value)} placeholder="Como foi o treino? (opcional)" /><Button className="mt-4 bg-black text-white dark:bg-[#c9ff32] dark:text-black" disabled={submitting} onClick={() => void completeWorkout()}>{submitting && <Loader2 className="mr-2 size-4 animate-spin" />} Concluir e salvar ficha</Button></CardContent></Card>}
+              <CardContent className="space-y-4 p-4 sm:p-5">
+                {exercise.instructions && (
+                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                    {exercise.instructions}
+                  </p>
+                )}
+                <TrainingMethodGuidance method={exercise.method} methodNotes={exercise.methodNotes} noteLabel="Orientação da ficha" />
 
-      {restTimer && <div className="fixed bottom-20 left-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-2xl border border-[#9fdb00]/40 bg-background/95 p-4 shadow-2xl backdrop-blur lg:bottom-6"><div className="flex items-center gap-4"><span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Timer className="size-6" /></span><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-black uppercase tracking-wide text-[#668f00]">Tempo de descanso</p><p className="truncate font-bold">{restTimer.exerciseName} · próxima série {restTimer.nextSet}</p></div><strong className="font-mono text-2xl text-[#668f00]">{formatCountdown(restTimer.remainingSeconds)}</strong></div><Progress className="mt-2 h-2" value={((restTimer.totalSeconds - restTimer.remainingSeconds) / Math.max(1, restTimer.totalSeconds)) * 100} /><div className="mt-3 flex gap-2"><Button size="sm" variant="outline" onClick={() => setRestTimer((current) => current ? { ...current, totalSeconds: current.totalSeconds + 15, remainingSeconds: current.remainingSeconds + 15, endsAt: current.endsAt + 15_000 } : null)}><Plus className="mr-1 size-3" /> 15s</Button><Button size="sm" variant="ghost" onClick={() => setRestTimer(null)}><SkipForward className="mr-1 size-3" /> Pular descanso</Button></div></div></div></div>}
+                {/* Set Checklist Table */}
+                <div className="space-y-2 pt-1">
+                  <div className="grid grid-cols-[48px_1fr_1fr_48px] sm:grid-cols-[64px_1fr_1fr_72px_56px] items-center gap-2 px-1 text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                    <span className="text-center">Série</span>
+                    <span className="text-center">Reps</span>
+                    <span className="text-center">Carga (kg)</span>
+                    <span className="hidden sm:block text-center">RPE</span>
+                    <span className="text-center">Status</span>
+                  </div>
 
-      <Dialog open={Boolean(playingVideo)} onOpenChange={(open) => !open && setPlayingVideo(null)}><DialogContent className="overflow-hidden border-zinc-800 bg-black p-0 sm:max-w-3xl"><DialogTitle className="sr-only">Vídeo de execução do exercício</DialogTitle><div className="aspect-video w-full bg-black">{playingVideo && <video src={playingVideo} controls autoPlay playsInline className="size-full object-contain" />}</div></DialogContent></Dialog>
+                  <div className="space-y-2">
+                    {Array.from({ length: exercise.sets }).map((_, setIndex) => {
+                      const key = `${exercise.id}:${setIndex}`;
+                      const checked = completedSets.has(key);
+                      const details = setDetails[key] || { repetitions: '', load: '', rpe: '' };
+                      return (
+                        <div
+                          key={key}
+                          className={`grid grid-cols-[48px_1fr_1fr_48px] sm:grid-cols-[64px_1fr_1fr_72px_56px] items-center gap-2 rounded-2xl border p-2 sm:p-2.5 transition-all duration-200 ${
+                            checked
+                              ? 'border-[#9fdb00]/60 bg-[#c9ff32]/10 shadow-[0_2px_12px_rgba(201,255,50,0.06)]'
+                              : 'border-border/70 bg-card/60 hover:border-border'
+                          }`}
+                        >
+                          {/* Set number badge */}
+                          <div className="flex justify-center">
+                            <span
+                              className={`flex size-8 items-center justify-center rounded-xl text-xs font-black transition-colors ${
+                                checked
+                                  ? 'bg-[#c9ff32] text-black font-black'
+                                  : 'bg-muted text-muted-foreground'
+                              }`}
+                            >
+                              {setIndex + 1}
+                            </span>
+                          </div>
+
+                          {/* Reps Input */}
+                          <div>
+                            <Input
+                              aria-label={`Repetições da série ${setIndex + 1}`}
+                              inputMode="numeric"
+                              disabled={!isRunning || unavailable}
+                              className="h-10 text-center font-bold text-sm bg-background/80"
+                              placeholder={exercise.reps}
+                              value={details.repetitions}
+                              onChange={(event) => updateSetDetail(key, 'repetitions', event.target.value)}
+                            />
+                          </div>
+
+                          {/* Load Input */}
+                          <div>
+                            <Input
+                              aria-label={`Carga da série ${setIndex + 1}`}
+                              inputMode="decimal"
+                              disabled={!isRunning || unavailable}
+                              className="h-10 text-center font-bold text-sm bg-background/80"
+                              placeholder="0 kg"
+                              value={details.load}
+                              onChange={(event) => updateSetDetail(key, 'load', event.target.value)}
+                            />
+                          </div>
+
+                          {/* RPE Input (desktop) */}
+                          <div className="hidden sm:block">
+                            <Input
+                              aria-label={`RPE da série ${setIndex + 1}`}
+                              inputMode="numeric"
+                              disabled={!isRunning || unavailable}
+                              className="h-10 text-center text-xs font-medium bg-background/80"
+                              placeholder="1-10"
+                              value={details.rpe}
+                              onChange={(event) => updateSetDetail(key, 'rpe', event.target.value)}
+                            />
+                          </div>
+
+                          {/* Big tactile checkmark button */}
+                          <div className="flex justify-center">
+                            <button
+                              type="button"
+                              disabled={!isRunning || unavailable}
+                              onClick={() => toggleSet(exercise, setIndex)}
+                              aria-label={`Concluir série ${setIndex + 1}`}
+                              className={`size-10 sm:size-11 rounded-2xl flex items-center justify-center transition-all duration-200 ${
+                                checked
+                                  ? 'bg-[#c9ff32] text-black shadow-[0_0_16px_rgba(201,255,50,0.45)] scale-105'
+                                  : 'border-2 border-border/80 bg-background text-muted-foreground hover:border-[#9fdb00] hover:text-foreground active:scale-95'
+                              }`}
+                            >
+                              <Check className={`size-5 stroke-[2.8] ${checked ? 'text-black animate-scale-in' : 'opacity-40'}`} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {isRunning && progress === 100 && (
+        <Card className="border-[#9fdb00]/40 bg-[#c9ff32]/10 shadow-[0_10px_35px_rgba(201,255,50,0.1)] animate-fade-in-up">
+          <CardContent className="p-6 text-center sm:p-8">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#c9ff32] text-black shadow-[0_0_24px_rgba(201,255,50,0.4)]">
+              <CheckCircle2 className="size-8" />
+            </div>
+            <h2 className="mt-4 text-2xl font-black">Todas as séries concluídas!</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Avalie seu treino e salve para registrar a evolução da semana.</p>
+            <div className="mt-5 flex justify-center gap-1.5" aria-label="Avaliação do treino">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  type="button"
+                  key={value}
+                  onClick={() => setRating(value)}
+                  aria-label={`${value} estrela(s)`}
+                  className="flex size-11 items-center justify-center rounded-2xl transition-transform hover:scale-110"
+                >
+                  <Star className={`size-7 ${value <= rating ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]' : 'text-muted-foreground/30'}`} />
+                </button>
+              ))}
+            </div>
+            <Textarea
+              className="mx-auto mt-4 max-w-md rounded-2xl bg-background/80"
+              rows={2}
+              maxLength={1000}
+              value={feedback}
+              onChange={(event) => setFeedback(event.target.value)}
+              placeholder="Como foi o treino? Cargas, fadiga ou observações (opcional)"
+            />
+            <Button
+              className="mt-5 h-12 rounded-2xl bg-foreground px-8 font-black text-background hover:bg-foreground/90"
+              disabled={submitting}
+              onClick={() => void completeWorkout()}
+            >
+              {submitting ? <Loader2 className="mr-2 size-5 animate-spin" /> : <Check className="mr-2 size-5" />}
+              Concluir e salvar ficha
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Floating Modern Rest Timer Bar */}
+      {restTimer && (
+        <div className="fixed bottom-20 sm:bottom-6 left-1/2 z-50 w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 rounded-3xl border border-[#9fdb00]/50 bg-[#0d0f0a]/95 p-4 sm:p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl animate-fade-in-up text-white">
+          <div className="flex items-center gap-3.5 sm:gap-4">
+            <div className="flex size-12 sm:size-14 shrink-0 items-center justify-center rounded-2xl bg-[#c9ff32] text-black shadow-[0_0_20px_rgba(201,255,50,0.35)]">
+              <Timer className="size-6 sm:size-7 animate-pulse" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#c9ff32]">Tempo de descanso</p>
+                  <p className="truncate font-black text-sm text-white mt-0.5">{restTimer.exerciseName}</p>
+                  <p className="truncate text-xs text-white/60">Próxima: Série {restTimer.nextSet}</p>
+                </div>
+                <strong className="font-mono text-2xl sm:text-3xl font-black text-[#c9ff32] tracking-tight">
+                  {formatCountdown(restTimer.remainingSeconds)}
+                </strong>
+              </div>
+
+              {/* Progress bar */}
+              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="h-full bg-gradient-to-r from-[#9fdb00] to-[#c9ff32] transition-all duration-300 rounded-full"
+                  style={{
+                    width: `${Math.min(100, Math.max(0, ((restTimer.totalSeconds - restTimer.remainingSeconds) / Math.max(1, restTimer.totalSeconds)) * 100))}%`,
+                  }}
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustRestTime(-15)}
+                    className="h-8 px-2.5 text-xs font-bold border-white/15 bg-white/5 text-white hover:bg-white/10"
+                    title="Diminuir 15 segundos"
+                  >
+                    <Minus className="mr-1 size-3" /> 15s
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustRestTime(15)}
+                    className="h-8 px-2.5 text-xs font-bold border-white/15 bg-white/5 text-white hover:bg-white/10"
+                    title="Aumentar 15 segundos"
+                  >
+                    <Plus className="mr-1 size-3 text-[#c9ff32]" /> 15s
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => adjustRestTime(30)}
+                    className="h-8 px-2.5 text-xs font-bold border-white/15 bg-white/5 text-white hover:bg-white/10"
+                    title="Aumentar 30 segundos"
+                  >
+                    <Plus className="mr-1 size-3 text-[#c9ff32]" /> 30s
+                  </Button>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setRestTimer(null)}
+                  className="h-8 px-3 text-xs font-bold text-white/70 hover:text-white hover:bg-white/10"
+                >
+                  <SkipForward className="mr-1.5 size-3.5" /> Pular
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Dialog open={Boolean(playingVideo)} onOpenChange={(open) => !open && setPlayingVideo(null)}>
+        <DialogContent className="overflow-hidden border-zinc-800 bg-black p-0 sm:max-w-3xl">
+          <DialogTitle className="sr-only">Vídeo de execução do exercício</DialogTitle>
+          <div className="aspect-video w-full bg-black">
+            {playingVideo && <video src={playingVideo} controls autoPlay playsInline className="size-full object-contain" />}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
