@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Calendar, Download, Dumbbell, Loader2, Pencil, PlayCircle, Timer, Wrench, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
@@ -17,6 +17,7 @@ import type { IndividualPlanView } from '@/types/individual';
 function date(value: string | null) { return value ? new Date(`${value}T12:00:00`).toLocaleDateString('pt-BR') : 'Sem prazo'; }
 
 export default function IndividualPlanDetailPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [plan, setPlan] = useState<IndividualPlanView | null>(null);
@@ -47,7 +48,7 @@ export default function IndividualPlanDetailPage() {
             <Pencil className="mr-2 size-4" /> Editar
           </Button>
           {isDemoUser(user?.id) ? (
-            <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
+            <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { router.push('/plans'); } } })}>
               <Lock className="mr-2 size-4" /> Baixar PDF
             </Button>
           ) : (

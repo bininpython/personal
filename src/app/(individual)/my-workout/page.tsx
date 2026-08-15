@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowLeft,
@@ -128,6 +129,7 @@ function currentTimestamp() {
 }
 
 export default function IndividualWorkoutPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const individualId = user?.id ?? '';
   const [plan, setPlan] = useState<IndividualWorkoutPlan | null>(null);
@@ -407,7 +409,7 @@ export default function IndividualWorkoutPage() {
                   <History className="mr-1.5 size-4" /> Histórico
                 </Button>
                 {isDemoUser(user?.id) ? (
-                  <Button size="sm" variant="secondary" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
+                  <Button size="sm" variant="secondary" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { router.push('/plans'); } } })} className="border border-white/15 bg-white/10 text-white hover:bg-white/20">
                     <Lock className="mr-1.5 size-4" /> PDF
                   </Button>
                 ) : (

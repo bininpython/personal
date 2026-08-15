@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, CheckCircle2, Download, Dumbbell, Eye, FileText, Loader2, Lock, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -12,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { PageHeader } from '@/components/ui/page-header';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 import type { IndividualPlanView } from '@/types/individual';
 
 function date(value: string | null) {
@@ -19,6 +21,7 @@ function date(value: string | null) {
 }
 
 export default function IndividualPlansPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [plans, setPlans] = useState<IndividualPlanView[]>([]);
   const [search, setSearch] = useState('');
@@ -92,11 +95,11 @@ export default function IndividualPlansPage() {
         const active = plan.status === 'active' && !plan.isExpired;
         return <Card key={plan.id} className={`overflow-hidden ${active ? 'border-[#9fdb00] shadow-[0_18px_55px_rgba(159,219,0,0.12)]' : ''}`}><div className={`h-1.5 ${active ? 'bg-[#c9ff32]' : 'bg-muted'}`} /><CardHeader className="pb-4"><div className="flex items-center justify-between gap-3"><div className="flex flex-wrap gap-2"><Badge variant="outline" className={plan.isExpired ? 'border-danger/30 bg-danger-wash text-danger' : active ? 'border-[#9fdb00]/40 bg-[#c9ff32]/15 text-[#527300]' : ''}>{plan.isExpired ? 'Prazo encerrado' : active ? 'Ficha ativa' : 'Histórico'}</Badge>{plan.libraryTemplateId && <Badge variant="secondary">Biblioteca G KONG</Badge>}</div><span className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{plan.workoutDayCount} treinos</span></div><CardTitle className="mt-3 text-xl">{plan.name}</CardTitle><p className="line-clamp-2 text-sm leading-6 text-muted-foreground">{plan.goal}</p></CardHeader><CardContent className="space-y-4"><div className="grid grid-cols-3 gap-2"><div className="rounded-xl bg-muted/60 p-3 text-center"><p className="text-lg font-black">{plan.exerciseCount}</p><p className="text-[9px] uppercase text-muted-foreground">Exercícios</p></div><div className="rounded-xl bg-muted/60 p-3 text-center"><p className="text-lg font-black">{plan.daysPerWeek}x</p><p className="text-[9px] uppercase text-muted-foreground">Semana</p></div><div className="rounded-xl bg-muted/60 p-3 text-center"><p className="text-lg font-black">{plan.workoutDayCount}</p><p className="text-[9px] uppercase text-muted-foreground">Rotinas</p></div></div><div className="flex items-center justify-between rounded-xl border border-border/60 p-3 text-xs"><span className="flex items-center gap-1.5 text-muted-foreground"><Calendar className="size-3.5" /> Validade</span><span className="font-bold">{date(plan.endDate)}</span></div><div className="grid grid-cols-2 gap-2"><Button nativeButton={false} variant="outline" render={<Link href={`/my-plans/${plan.id}`} />}><Eye className="mr-2 size-4" /> Abrir</Button>
         {isDemoUser(user?.id) ? (
-          <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
+          <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { router.push('/plans'); } } })}>
             <Lock className="mr-2 size-4" /> PDF
           </Button>
         ) : (
-          <Button nativeButton={false} variant="outline" render={<a href={`/api/individual/workout-plans/${plan.id}/pdf`} download />}><Download className="mr-2 size-4" /> PDF</Button>
+          <Button variant="outline" onClick={() => void downloadPdfFile(`/api/individual/workout-plans/${plan.id}/pdf`, `${plan.name}.pdf`)}><Download className="mr-2 size-4" /> PDF</Button>
         )}
         <Button nativeButton={false} variant="outline" render={<Link href={`/my-exercises?planId=${plan.id}`} />}><Pencil className="mr-2 size-4" /> Editar</Button>{active ? <Button variant="outline" disabled><CheckCircle2 className="mr-2 size-4" /> Ativa</Button> : <Button onClick={() => void activate(plan)} disabled={working === plan.id || plan.isExpired}>{working === plan.id ? <Loader2 className="mr-2 size-4 animate-spin" /> : <CheckCircle2 className="mr-2 size-4" />} Ativar</Button>}</div><Button variant="ghost" className="w-full text-destructive hover:bg-destructive/8 hover:text-destructive" onClick={() => setDeletePlan(plan)}><Trash2 className="mr-2 size-4" /> Excluir ficha</Button></CardContent></Card>;
       })}</div>}

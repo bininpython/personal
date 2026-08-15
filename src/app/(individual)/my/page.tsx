@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, BookOpen, CalendarDays, Download, Dumbbell, FileText, History, Loader2, Lock, PlayCircle, Sparkles, Target } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/hooks/use-auth';
 import { isDemoUser } from '@/lib/auth/demo';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 import type { IndividualPlanView, IndividualProfileView } from '@/types/individual';
 
 const LEVELS = { beginner: 'Iniciante', intermediate: 'Intermediário', advanced: 'Avançado' } as const;
@@ -19,6 +21,7 @@ interface ActiveWorkoutSummary {
 }
 
 export default function IndividualDashboardPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [plans, setPlans] = useState<IndividualPlanView[]>([]);
   const [profile, setProfile] = useState<IndividualProfileView | null>(null);
@@ -77,9 +80,9 @@ export default function IndividualDashboardPage() {
               <div className="mt-4 flex gap-2">
                 <Button nativeButton={false} size="sm" render={<Link href="/my-workout" />} className="flex-1">{activeWorkout?.week.completedToday ? 'Consultar próxima' : 'Iniciar ficha'}</Button>
                 {isDemoUser(user?.id) ? (
-                  <Button size="icon" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}><Lock className="size-4" /></Button>
+                  <Button size="icon" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { router.push('/plans'); } } })}><Lock className="size-4" /></Button>
                 ) : (
-                  <Button nativeButton={false} size="icon" variant="outline" render={<a href={`/api/individual/workout-plans/${activePlan.id}/pdf`} download />} className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" aria-label="Baixar PDF"><Download className="size-4" /></Button>
+                  <Button size="icon" variant="outline" onClick={() => void downloadPdfFile(`/api/individual/workout-plans/${activePlan.id}/pdf`, `${activePlan.name}.pdf`)} className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white" aria-label="Baixar PDF"><Download className="size-4" /></Button>
                 )}
               </div>
             </> : <div className="py-7 text-center"><Sparkles className="mx-auto size-9 text-[#c9ff32]" /><p className="mt-4 font-bold">Sua primeira ficha começa aqui</p><p className="mt-2 text-xs leading-5 text-white/50">Escolha o músculo, adicione exercícios e publique para você mesmo.</p></div>}

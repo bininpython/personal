@@ -19,7 +19,7 @@ const WEEKDAYS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', '
 
 export default function IndividualProfilePage() {
   const router = useRouter();
-  const { user, logout, refreshUser } = useAuth();
+  const { logout, refreshUser } = useAuth();
   const [profile, setProfile] = useState<IndividualProfileView | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

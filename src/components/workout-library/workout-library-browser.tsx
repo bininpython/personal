@@ -1,16 +1,15 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowLeft,
   CheckCircle2,
-  Clock,
   Dumbbell,
   Download,
   Eye,
   Filter,
-  Flame,
   Layers,
   Loader2,
   Lock,
@@ -18,7 +17,6 @@ import {
   Send,
   Sparkles,
   Users,
-  Zap,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
@@ -268,6 +266,7 @@ function ExerciseImage({ name, videoUrl, className = '' }: { name: string; video
 }
 
 export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
+  const router = useRouter();
   const { user } = useAuth();
   const [templates, setTemplates] = useState<TemplateSummary[]>([]);
   const [students, setStudents] = useState<StudentSummary[]>([]);
@@ -701,7 +700,7 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
                             action: {
                               label: 'Ver planos',
                               onClick: () => {
-                                window.location.href = '/';
+                                router.push('/plans');
                               },
                             },
                           })
@@ -858,7 +857,7 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
                           action: {
                             label: 'Ver planos',
                             onClick: () => {
-                              window.location.href = '/';
+                              router.push('/plans');
                             },
                           },
                         })

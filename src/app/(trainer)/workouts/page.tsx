@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { PageHeader } from '@/components/ui/page-header';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { downloadPdfFile } from '@/lib/pdf/download-client';
 
 interface WorkoutPlanSummary {
   id: string;
@@ -198,16 +199,15 @@ export default function WorkoutsPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {isDemoUser(user?.id) ? (
-                    <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { window.location.href = '/'; } } })}>
+                    <Button variant="outline" onClick={() => toast.error('Exclusivo para assinantes.', { description: 'Assine o G KONG para liberar o download do PDF.', action: { label: 'Ver planos', onClick: () => { router.push('/plans'); } } })}>
                       <Lock className="mr-2 size-4" /> PDF
                     </Button>
                   ) : (
                     <Button
-                      nativeButton={false}
                       variant="outline"
-                      render={<a href={`/api/workout-plans/${plan.id}/pdf`} download />}
+                      onClick={() => void downloadPdfFile(`/api/workout-plans/${plan.id}/pdf`, `${plan.name}.pdf`)}
                     >
-                      <Download className="mr-2 size-4" /> PDF
+                      <Download className="mr-2 size-4 text-[#c9ff32]" /> PDF
                     </Button>
                   )}
                   <Button variant="outline" onClick={() => openCopyDialog(plan)}>
