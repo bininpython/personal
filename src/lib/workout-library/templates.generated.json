@@ -5382,5 +5382,5163 @@
         ]
       }
     ]
+  },
+  {
+    "id": "h01-hipertrofia-classica",
+    "version": 1,
+    "title": "H01 — Hipertrofia Clássica",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa clássico de hipertrofia com divisão ABCD focada em sobrecarga progressiva e alta intensidade.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H01 — Hipertrofia Clássica"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto barra",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Supino inclinado halteres",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "10–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-unilateral:dd7679023b",
+            "sourceName": "Tríceps unilateral",
+            "sets": 2,
+            "reps": "12–15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas + Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca Scott",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 2,
+            "reps": "12–15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Quadríceps + Panturrilha",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 150,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack squat",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:afundo-com-barra:887fba5265",
+            "sourceName": "Afundo",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha em pé",
+            "sets": 4,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Panturrilha sentado",
+            "sets": 3,
+            "reps": "15–20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Posterior + Glúteos + Ombros",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Mesa flexora",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 3,
+            "reps": "8–12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento halteres",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h02-upper-lower-hipertrofia",
+    "version": 1,
+    "title": "H02 — Upper/Lower Hipertrofia",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Divisão superior/inferior equilibrada duas vezes na semana para máximo estímulo neuromuscular.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H02 — Upper/Lower Hipertrofia"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Superior 1",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada aberta",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Inferior 1",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 150,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Superior 2",
+        "exercises": [
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento militar",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Tríceps francês",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Inferior 2",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack squat",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:cadeira-flex:2bb688239d",
+            "sourceName": "Flexora sentada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora unilateral",
+            "sets": 3,
+            "reps": "12 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-sentado-com-peso:05e7229db8",
+            "sourceName": "Panturrilha sentada",
+            "sets": 4,
+            "reps": "15–20",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h03-peitoral-em-destaque",
+    "version": 1,
+    "title": "H03 — Peitoral em Destaque",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa especializado com ênfase completa no desenvolvimento do peitoral e deltoides.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H03 — Peitoral em Destaque"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "5–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Tríceps francês",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas + Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca W",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15–20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Peito Superior + Ombros",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado barra",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Supino inclinado halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:cross-over-polia-baixa:d4c60fde0f",
+            "sourceName": "Crossover baixo",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h04-costas-em-destaque",
+    "version": 1,
+    "title": "H04 — Costas em Destaque",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Foco em densidade, largura e espessura do complexo dorsal com trabalho complementar balanceado.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H04 — Costas em Destaque"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Costas Largura",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada aberta",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pulldown-unilateral-no-cabo:43af48182b",
+            "sourceName": "Pulldown unilateral",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover polia",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca Scott",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Peito + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Inclinado halteres",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Costas Espessura + Ombro Posterior",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-unilateral-com-barra:3fe3cbfbe5",
+            "sourceName": "Remada unilateral",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:forearm:rosca-inversa-com-barra:84b2aab735",
+            "sourceName": "Rosca inversa",
+            "sets": 2,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h05-ombros-3d",
+    "version": 1,
+    "title": "H05 — Ombros 3D",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Periodização completa para deltoides anteriores, laterais e posteriores para aspecto tridimensional.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H05 — Ombros 3D"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Ombros + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-militar-com-barra",
+            "sourceName": "Desenvolvimento militar",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-na-maquina:3128c3e559",
+            "sourceName": "Desenvolvimento máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Peito + Costas",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros + Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "front-deltoids:desenvolvimento-arnold",
+            "sourceName": "Arnold press",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-de-bracos-com-cabo:7b274cef9b",
+            "sourceName": "Elevação lateral polia",
+            "sets": 4,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:elevacao-lateral-na-maquina",
+            "sourceName": "Elevação lateral máquina",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca Scott",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 2,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h06-bracos-em-destaque",
+    "version": 1,
+    "title": "H06 — Braços em Destaque",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa com foco em braços com sessões dedicadas de bíceps, tríceps e antebraço.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H06 — Braços em Destaque"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Bíceps + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Scott",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:forearm:rosca-inversa-com-barra:84b2aab735",
+            "sourceName": "Rosca inversa",
+            "sets": 2,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-unilateral:dd7679023b",
+            "sourceName": "Tríceps unilateral",
+            "sets": 2,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10–12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15–20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Peito + Costas",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino reto",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros + Braços",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca W",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Tríceps barra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Rosca martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h07-full-body-abcd",
+    "version": 1,
+    "title": "H07 — Full Body A/B/C/D",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Treino de alta frequência de corpo inteiro distribuído em 4 sessões com variações de ângulos.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H07 — Full Body A/B/C/D"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Full Body 1",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Full Body 2",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps corda",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Full Body 3",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack squat",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Inclinado halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Full Body 4",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h08-forca-hipertrofia",
+    "version": 1,
+    "title": "H08 — Força + Hipertrofia",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "advanced",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Periodização ondulatória combinando dias pesados de força com dias de alto volume de hipertrofia.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H08 — Força + Hipertrofia"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Superior Força",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 5,
+            "reps": "4–6",
+            "restTime": 150,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "5–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "5–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Inferior Força",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 5,
+            "reps": "4–6",
+            "restTime": 150,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 4,
+            "reps": "5–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Superior Volume",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Inferior Volume",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15–20",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h09-push-pull-legs-full",
+    "version": 1,
+    "title": "H09 — Push / Pull / Legs / Full",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Estrutura moderna que combina a clássica divisão PPL com uma quarta sessão de consolidação Full Body.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H09 — Push / Pull / Legs / Full"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Push",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pull",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Legs",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Full Body",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca + corda",
+            "sets": 2,
+            "reps": "12 cada",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Execute os movimentos combinados em sequência."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h10-iniciante-abcd",
+    "version": 1,
+    "title": "H10 — Iniciante ABCD",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "beginner",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Programa ideal para transição de iniciantes para treinos divididos com foco em máquinas e postura.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H10 — Iniciante ABCD"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito + Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Tríceps máquina",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas + Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "10–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-kettlebell:2625042955",
+            "sourceName": "Agachamento goblet",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros + Core",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-na-maquina:3128c3e559",
+            "sourceName": "Desenvolvimento máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 2,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha",
+            "sets": 3,
+            "reps": "30–45s",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal máquina",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h11-maquinas",
+    "version": 1,
+    "title": "H11 — Máquinas",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Treino 100% estruturado em máquinas guiadas e polias, ideal para controle articular e tensão contínua.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H11 — Máquinas"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito e Tríceps na Máquina",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 4,
+            "reps": "8–12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-na-maquina:9a4b935f9f",
+            "sourceName": "Inclinado máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-barra:7b408847f9",
+            "sourceName": "Tríceps máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas e Bíceps na Máquina",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-alavanca:0110422a04",
+            "sourceName": "Puxada máquina",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada articulada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:maquina-de-rosca-direta:3d300e05da",
+            "sourceName": "Rosca máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-scott-com-alavanca:b4d2ca42fc",
+            "sourceName": "Scott máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas na Máquina",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:cadeira-flex:2bb688239d",
+            "sourceName": "Flexora sentada",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha máquina",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros e Glúteo na Máquina",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-na-maquina:3128c3e559",
+            "sourceName": "Desenvolvimento máquina",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "front-deltoids:elevacao-lateral-na-maquina",
+            "sourceName": "Elevação lateral máquina",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:voador-para-deltoides-posterior-com-cabo:d9faadce58",
+            "sourceName": "Crucifixo inverso máquina",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Glute drive",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:abdominal-com-carga:a57f0deaea",
+            "sourceName": "Abdominal máquina",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h12-halteres",
+    "version": 1,
+    "title": "H12 — Halteres",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Ficha versátil executada exclusivamente com halteres e peso livre, ideal para academias cheias ou home gym.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H12 — Halteres"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito e Tríceps com Halteres",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-com-halteres:4a7d0f04a3",
+            "sourceName": "Supino halteres",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Inclinado halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:crucifixo-com-halteres",
+            "sourceName": "Crucifixo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-com-halteres:2b1af890ad",
+            "sourceName": "Francês halter",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-coice-com-cabo:1370324202",
+            "sourceName": "Coice tríceps",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas e Bíceps com Halteres",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-unilateral-com-barra:3fe3cbfbe5",
+            "sourceName": "Remada unilateral",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-inclinada-com-pegada-neutra-com-halteres:2776cdbf1e",
+            "sourceName": "Remada inclinada halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-alternada-com-halteres-sentado:a47b5af6e4",
+            "sourceName": "Rosca alternada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas com Halteres",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-com-kettlebell:2625042955",
+            "sourceName": "Goblet squat",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL halteres",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:passada-com-halteres:f047abaebb",
+            "sourceName": "Passada",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:flexao-plantar-com-peso-corporal:cff8e6bad8",
+            "sourceName": "Panturrilha halteres",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros e Trapézio com Halteres",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Encolhimento",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Farmer walk",
+            "sets": 3,
+            "reps": "30m",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h13-torso-pernas",
+    "version": 1,
+    "title": "H13 — Torso / Pernas",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Divisão eficiente alternando tronco completo e membros inferiores para recuperação muscular otimizada.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H13 — Torso / Pernas"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Torso 1",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 2,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pernas 1",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Torso 2",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Pernas 2",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h14-atletico",
+    "version": 1,
+    "title": "H14 — Atlético",
+    "audience": "male",
+    "goal": "general",
+    "level": "advanced",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Condicionamento físico integrado combinando força básica, estabilidade de core e capacidade de trabalho.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H14 — Atlético"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Força e Core",
+        "exercises": [
+          {
+            "exerciseKey": "quadriceps:agachamento-frontal",
+            "sourceName": "Agachamento frontal",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:trapezius:encolhimento-livre-com-halteres:57b14e38ac",
+            "sourceName": "Farmer walk",
+            "sets": 4,
+            "reps": "30m",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:abs:prancha-frontal-alta-variacao-1:4078810193",
+            "sourceName": "Prancha",
+            "sets": 3,
+            "reps": "45s",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Cadeia Posterior e Estabilidade",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "Terra romeno",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-unilateral-com-barra:3fe3cbfbe5",
+            "sourceName": "Remada unilateral",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:retrocesso-com-halteres:548a6dcdb3",
+            "sourceName": "Step-up",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:obliques:prancha-alta-com-rotacao-de-tronco:d5d25617f8",
+            "sourceName": "Pallof press",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Hipertrofia Funcional",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack squat",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Inclinado halteres",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:passada-com-halteres:f047abaebb",
+            "sourceName": "Passada",
+            "sets": 3,
+            "reps": "10 cada",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Densidade e Acessórios",
+        "exercises": [
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca + tríceps",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "biset",
+            "methodNotes": "Execute os movimentos combinados em sequência."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h15-peito-costas-duas-vezes",
+    "version": 1,
+    "title": "H15 — Peito + Costas Duas Vezes",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Foco em antagonistas peito e costas com alta frequência (2x na semana) em blocos pesado e de volume.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H15 — Peito + Costas Duas Vezes"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito/Costas Pesado",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Peito/Costas Volume",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-na-maquina:9a4b935f9f",
+            "sourceName": "Inclinado máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros + Braços",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Posterior",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca W",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Scott",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h16-pernas-2x-semana",
+    "version": 1,
+    "title": "H16 — Pernas 2× Semana",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Foco intensivo em membros inferiores com divisão separada em dia de quadríceps e dia de posterior.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H16 — Pernas 2× Semana"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Quadríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:agachamento-bulgaro",
+            "sourceName": "Búlgaro",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Superior Push",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Posterior e Glúteos",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:gluteal:elevacao-pelvica-na-maquina:12b6c34c90",
+            "sourceName": "Hip thrust",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:passada-com-halteres:f047abaebb",
+            "sourceName": "Passada longa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex-unilateral:64097770c1",
+            "sourceName": "Flexora unilateral",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Superior Pull",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h17-peitoral-superior",
+    "version": 1,
+    "title": "H17 — Peitoral Superior",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Especialização para o feixe clavicular (peitoral superior) com estímulos em diferentes inclinações.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H17 — Peitoral Superior"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Foco Clavicular",
+        "exercises": [
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Supino inclinado barra",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-com-halteres:c70483a5f2",
+            "sourceName": "Inclinado halteres",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:cross-over-polia-baixa:d4c60fde0f",
+            "sourceName": "Crossover baixo",
+            "sets": 3,
+            "reps": "12–15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-na-maquina:9a4b935f9f",
+            "sourceName": "Chest press inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Costas e Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-unilateral-com-barra:3fe3cbfbe5",
+            "sourceName": "Remada unilateral",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros e Peito Acessório",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Elevação lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-inclinado-na-maquina:9a4b935f9f",
+            "sourceName": "Supino inclinado máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h18-costas-largura",
+    "version": 1,
+    "title": "H18 — Costas Largura",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Foco direcionado para abertura da cintura escapular e expansão da asa das dorsais.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H18 — Costas Largura"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Dorsal Largura Principal",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "6–10",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada aberta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pulldown-unilateral-no-cabo:43af48182b",
+            "sourceName": "Pulldown unilateral",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-scott-com-barra-w",
+            "sourceName": "Rosca Scott",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Peito e Ombros",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Tríceps",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Costas Densidade e Posterior",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada máquina",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h19-costas-espessura",
+    "version": 1,
+    "title": "H19 — Costas Espessura",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Foco em remadas pesadas e adução escapular para ganho expressivo de densidade e relevo muscular.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H19 — Costas Espessura"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Remadas e Densidade",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada curvada",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-t-com-alavanca:5677f3c883",
+            "sourceName": "Remada cavalinho",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-na-maquina:0a7295d8d2",
+            "sourceName": "Remada articulada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-unilateral-com-barra:3fe3cbfbe5",
+            "sourceName": "Remada unilateral",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:remada-de-deltoide-posterior-sentado-com-haltere:89153cb205",
+            "sourceName": "Face pull",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Peito e Tríceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6–8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:voador-na-maquina:0270bf9af1",
+            "sourceName": "Peck deck",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-hack-com-barra:945bf51111",
+            "sourceName": "Hack",
+            "sets": 4,
+            "reps": "8–10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg press",
+            "sets": 4,
+            "reps": "12",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Puxadas e Ombros",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada aberta",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta-com-triangulo:98e2dbb6d7",
+            "sourceName": "Puxada neutra",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:pullover-com-cabo:6cfe60a13a",
+            "sourceName": "Pullover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Posterior",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "h20-push-duplo",
+    "version": 1,
+    "title": "H20 — Push Duplo",
+    "audience": "male",
+    "goal": "hypertrophy",
+    "level": "intermediate",
+    "month": null,
+    "durationWeeks": 8,
+    "daysPerWeek": 4,
+    "description": "Alta frequência de empurrar (peitoral, deltoides e tríceps) com divisão estratégica ABCD.",
+    "sourceFiles": [
+      "Acervo G KONG — Programa H20 — Push Duplo"
+    ],
+    "days": [
+      {
+        "label": "A",
+        "name": "Treino A — Peito em Foco",
+        "exercises": [
+          {
+            "exerciseKey": "media:chest:supino:7a1e977b35",
+            "sourceName": "Supino",
+            "sets": 4,
+            "reps": "6",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "chest:supino-inclinado-com-barra",
+            "sourceName": "Inclinado",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Chest press",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-testa-com-barra:84c414a1c2",
+            "sourceName": "Tríceps testa",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-pulley-corda:81482ea302",
+            "sourceName": "Corda",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "B",
+        "name": "Treino B — Costas e Bíceps",
+        "exercises": [
+          {
+            "exerciseKey": "media:upper-back:barra-fixa:e010fc4640",
+            "sourceName": "Barra fixa",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-curvada-com-barra-de-pegada-alternada-ampla-com-aducao-de-escapula:899b6f498a",
+            "sourceName": "Remada",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:puxada-alta:6d9410273c",
+            "sourceName": "Puxada",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:remada-sentada-com-corda-na-polia:75a9fe1e24",
+            "sourceName": "Remada baixa",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:biceps:rosca-direta-com-barra:60f3d11fa9",
+            "sourceName": "Rosca direta",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "biceps:rosca-martelo",
+            "sourceName": "Martelo",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "C",
+        "name": "Treino C — Pernas",
+        "exercises": [
+          {
+            "exerciseKey": "media:quadriceps:agachamento-barra:895c743bfb",
+            "sourceName": "Agachamento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 120,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:leg-press:5cc7bfe1b4",
+            "sourceName": "Leg",
+            "sets": 4,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:upper-back:levantamento-terra-romeno:37901d74a5",
+            "sourceName": "RDL",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:quadriceps:mesa-flex:f4a1767bb3",
+            "sourceName": "Flexora",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "quadriceps:cadeira-extensora",
+            "sourceName": "Extensora",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:calves:elevacao-de-panturrilha-em-maquina-em-pe:44ac741c85",
+            "sourceName": "Panturrilha",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 45,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      },
+      {
+        "label": "D",
+        "name": "Treino D — Ombros e Push Geral",
+        "exercises": [
+          {
+            "exerciseKey": "media:front-deltoids:desenvolvimento-de-ombro-no-banco-com-halteres:7d81cce7e8",
+            "sourceName": "Desenvolvimento",
+            "sets": 4,
+            "reps": "8",
+            "restTime": 90,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:front-deltoids:elevacao-lateral-alternada-com-halteres:408197ff57",
+            "sourceName": "Lateral",
+            "sets": 4,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:back-deltoids:crucifixo-inverso-unilateral-com-cabo:20ff92fae8",
+            "sourceName": "Crucifixo inverso",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:supino-na-maquina:d1cbb2dad8",
+            "sourceName": "Supino máquina",
+            "sets": 3,
+            "reps": "10",
+            "restTime": 75,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:chest:crossover-com-cabos:cfc6e43faa",
+            "sourceName": "Crossover",
+            "sets": 3,
+            "reps": "15",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          },
+          {
+            "exerciseKey": "media:triceps:triceps-frances-barra-w:4bea5741d9",
+            "sourceName": "Francês",
+            "sets": 3,
+            "reps": "12",
+            "restTime": 60,
+            "method": "standard",
+            "methodNotes": ""
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -184,8 +184,8 @@ export function WorkoutLibraryBrowser({ mode }: { mode: LibraryMode }) {
         <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="max-w-3xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#c9ff32]/30 bg-[#c9ff32]/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-[#c9ff32]"><Sparkles className="size-3.5" /> Programas revisados</div>
-            <h2 className="text-2xl font-black tracking-tight sm:text-3xl">22 fichas prontas, 64 rotinas e mais de 500 prescrições</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65">Conteúdo consolidado das planilhas mensais de homens e mulheres, com métodos estruturados, vídeos e PDF no padrão G KONG.</p>
+            <h2 className="text-2xl font-black tracking-tight sm:text-3xl">42 fichas prontas, 144 rotinas e quase 1.000 prescrições</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/65">Acervo completo de programas profissionais para homens e mulheres (H01 a H20, divisões clássicas, grupos em destaque, máquinas e halteres), com métodos estruturados, vídeos e PDF no padrão G KONG.</p>
           </div>
           <div className="grid grid-cols-2 gap-3 text-center">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-2xl font-black text-[#c9ff32]">8</p><p className="text-[10px] uppercase tracking-wider text-white/55">semanas</p></div>
