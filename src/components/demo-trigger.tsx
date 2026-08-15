@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Loader2, PlaySquare, ShieldCheck, UserCheck } from 'lucide-react';
+import { ChevronRight, Dumbbell, Loader2, PlaySquare, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -34,67 +34,91 @@ export function DemoTrigger() {
     }
   }
 
+  const options = [
+    {
+      role: 'trainer' as const,
+      title: 'Personal Trainer',
+      badge: 'Gestão & Fichas',
+      desc: 'Prescreva treinos, gerencie alunos, veja aderência e explore o acervo completo.',
+      icon: ShieldCheck,
+      color: 'bg-[#c9ff32] text-black',
+    },
+    {
+      role: 'individual' as const,
+      title: 'Atleta Independente',
+      badge: 'Treino Autônomo',
+      desc: 'Crie suas fichas, use o cronômetro com checklist e registre suas cargas e evolução.',
+      icon: Dumbbell,
+      color: 'bg-black text-white dark:bg-white dark:text-black',
+    },
+    {
+      role: 'student' as const,
+      title: 'Aluno (Consultoria)',
+      badge: 'Execução Guiada',
+      desc: 'Veja como o aluno recebe o treino do personal, marca séries e acompanha o descanso.',
+      icon: UserCheck,
+      color: 'bg-[#c9ff32] text-black',
+    },
+  ];
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={
-        <button className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-black/15 bg-white px-7 text-sm font-bold transition-colors hover:bg-[#c9ff32]">
-          <PlaySquare className="size-4" />
-          Amostra Grátis
+        <button
+          type="button"
+          className="inline-flex h-14 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full border border-black/15 bg-white px-7 text-sm font-bold text-black transition-all hover:bg-[#c9ff32] hover:border-black/20 hover:shadow-lg active:scale-95"
+        >
+          <PlaySquare className="size-4 text-[#5c8000]" />
+          <span>Amostra Grátis</span>
         </button>
       } />
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-black">Como você quer testar?</DialogTitle>
-          <DialogDescription>
-            Escolha um perfil para entrar no ambiente de demonstração.
+      <DialogContent className="w-[calc(100%-2rem)] max-w-lg p-5 sm:p-7 rounded-3xl">
+        <DialogHeader className="text-left">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-[#c9ff32]/20 text-[#5c8000] dark:text-[#c9ff32] border-0 text-[10px] font-black uppercase tracking-wider">
+              <Sparkles className="mr-1 size-3" /> Amostra Grátis
+            </Badge>
+          </div>
+          <DialogTitle className="text-xl sm:text-2xl font-black mt-2 leading-tight">
+            Como você deseja testar o G KONG?
+          </DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
+            Escolha um perfil para entrar no ambiente demonstrativo sem precisar de cadastro.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-3 py-4">
-          <Button
-            variant="outline"
-            className="h-auto flex-col items-start gap-1 p-4"
-            onClick={() => void handleDemo('trainer')}
-            disabled={loading !== null}
-          >
-            <div className="flex w-full items-center justify-between">
-              <span className="flex items-center gap-2 font-bold"><ShieldCheck className="size-4" /> Personal Trainer</span>
-              {loading === 'trainer' && <Loader2 className="size-4 animate-spin" />}
-            </div>
-            <p className="text-xs font-normal text-muted-foreground text-left">
-              Teste o envio de fichas, gestão de alunos e acesso à biblioteca.
-            </p>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto flex-col items-start gap-1 p-4"
-            onClick={() => void handleDemo('individual')}
-            disabled={loading !== null}
-          >
-            <div className="flex w-full items-center justify-between">
-              <span className="flex items-center gap-2 font-bold"><Dumbbell className="size-4" /> Atleta Independente</span>
-              {loading === 'individual' && <Loader2 className="size-4 animate-spin" />}
-            </div>
-            <p className="text-xs font-normal text-muted-foreground text-left">
-              Crie seu próprio treino e copie fichas da biblioteca para você.
-            </p>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto flex-col items-start gap-1 p-4"
-            onClick={() => void handleDemo('student')}
-            disabled={loading !== null}
-          >
-            <div className="flex w-full items-center justify-between">
-              <span className="flex items-center gap-2 font-bold"><UserCheck className="size-4" /> Aluno (Guiado)</span>
-              {loading === 'student' && <Loader2 className="size-4 animate-spin" />}
-            </div>
-            <p className="text-xs font-normal text-muted-foreground text-left">
-              Veja como o aluno recebe e executa os treinos que o personal envia.
-            </p>
-          </Button>
+        <div className="grid gap-3 pt-3 pb-1">
+          {options.map((opt) => (
+            <button
+              type="button"
+              key={opt.role}
+              disabled={loading !== null}
+              onClick={() => void handleDemo(opt.role)}
+              className="group relative flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-3.5 sm:p-4 text-left transition-all duration-200 hover:border-[#c9ff32] hover:bg-muted/40 hover:shadow-md active:scale-[0.99] disabled:opacity-60"
+            >
+              <div className={`flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-2xl ${opt.color} shadow-sm transition-transform group-hover:scale-105`}>
+                {loading === opt.role ? (
+                  <Loader2 className="size-5 animate-spin" />
+                ) : (
+                  <opt.icon className="size-5 sm:size-6" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-black text-sm sm:text-base text-foreground leading-tight">
+                    {opt.title}
+                  </span>
+                  <Badge variant="outline" className="text-[10px] shrink-0 font-bold opacity-75">
+                    {opt.badge}
+                  </Badge>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  {opt.desc}
+                </p>
+              </div>
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-1 group-hover:text-foreground" />
+            </button>
+          ))}
         </div>
       </DialogContent>
     </Dialog>
