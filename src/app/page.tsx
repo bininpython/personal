@@ -135,7 +135,7 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-            <div className="absolute -bottom-6 -right-3 rounded-2xl bg-black px-5 py-4 text-white shadow-2xl sm:-right-8">
+            <div className="absolute -bottom-6 -right-8 z-20 hidden rounded-2xl bg-black px-5 py-4 text-white shadow-2xl sm:block">
               <div className="flex items-center gap-3">
                 <span className="flex size-9 items-center justify-center rounded-full bg-[#c9ff32] text-black"><Zap className="size-4 fill-current" /></span>
                 <div><p className="text-xs font-bold">Operação rápida</p><p className="text-[0.65rem] text-white/50">do cadastro ao treino</p></div>
